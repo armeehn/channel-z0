@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHANNEL Z0 — a Riposte Laboratories transmission</title>
+<meta name="description" content="Channel Z0. A local channel, for locals. One signal, always on. Sponsored by Riposte Laboratories.">
+<style>
+  /* ============================================================
+     CHANNEL Z0 · designation RL-Z0
+     Design language: Riposte Laboratories (ripostelabs.xyz)
+     Paper / ink / one red. Spec sheets, hairlines, checkers.
+     No webfonts, no ocean freight.
+     ============================================================ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --paper: #f2f0e9;
+    --paper-2: #e9e6dc;
+    --ink: #141414;
+    --ink-2: #55524a;
+    --hairline: #141414;
+    --red: #e02a1b;      /* riposte red — ON AIR, accents, the counter-attack */
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", "IBM Plex Mono", Menlo, Consolas, "Courier New", monospace;
+    --checker-size: 9px;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--mono);
+    line-height: 1.5;
+    font-size: 15px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px 72px; }
+  a { color: var(--ink); text-underline-offset: 3px; }
+  a:hover { color: var(--red); }
+
+  /* ---------- checker motif ---------- */
+  .checker {
+    height: calc(var(--checker-size) * 2);
+    background:
+      conic-gradient(var(--ink) 90deg, transparent 90deg 180deg, var(--ink) 180deg 270deg, transparent 270deg);
+    background-size: calc(var(--checker-size) * 2) calc(var(--checker-size) * 2);
+  }
+
+  /* ---------- top bar ---------- */
+  .topbar {
+    display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; justify-content: space-between;
+    padding: 14px 0; border-bottom: 2px solid var(--ink);
+    font-size: 12px; letter-spacing: .08em;
+  }
+  .topbar .mark { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+  .mark .esh {
+    width: 18px; height: 18px; display: inline-block;
+    background:
+      conic-gradient(var(--ink) 90deg, var(--paper) 90deg 180deg, var(--ink) 180deg 270deg, var(--paper) 270deg);
+    background-size: 9px 9px; border: 1px solid var(--ink);
+  }
+  .topbar .meta { color: var(--ink-2); display: flex; gap: 18px; flex-wrap: wrap; }
+  .topbar .meta b { color: var(--ink); }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 58px 0 40px; border-bottom: 1px solid var(--ink); }
+  .kicker {
+    font-size: 12px; letter-spacing: .22em; color: var(--ink-2); margin-bottom: 18px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .kicker .dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; }
+  h1.masthead {
+    font-size: clamp(2.6rem, 9vw, 5.4rem);
+    line-height: .95; letter-spacing: -.01em; font-weight: 700;
+    text-transform: uppercase;
+  }
+  h1.masthead .z0 { color: var(--red); }
+  .hero .sub {
+    margin-top: 22px; max-width: 560px; font-size: 15px; color: var(--ink-2);
+  }
+  .hero .sub b { color: var(--ink); }
+  .hero .statline {
+    margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px 26px;
+    font-size: 12px; letter-spacing: .1em;
+  }
+  .statline .cell { display: flex; gap: 8px; }
+  .statline .k { color: var(--ink-2); }
+
+  /* ---------- sections ---------- */
+  section { padding: 44px 0 50px; border-bottom: 1px solid var(--ink); }
+  .sec-head {
+    display: flex; align-items: baseline; gap: 16px; margin-bottom: 26px; flex-wrap: wrap;
+  }
+  .sec-no { font-size: 12px; letter-spacing: .18em; color: var(--red); font-weight: 700; }
+  .sec-title { font-size: clamp(1.3rem, 3.5vw, 1.9rem); font-weight: 700; text-transform: uppercase; letter-spacing: .02em; }
+  .sec-note { margin-left: auto; font-size: 11px; color: var(--ink-2); letter-spacing: .12em; }
+
+  /* ---------- SEC.01 live feed ---------- */
+  .feed-grid { display: grid; grid-template-columns: minmax(0, 1fr) 236px; gap: 22px; align-items: start; }
+  .screen-frame { border: 2px solid var(--ink); background: #000; position: relative; }
+  .screen-frame video { display: block; width: 100%; aspect-ratio: 16/9; object-fit: contain; background: #000; }
+  .offair {
+    position: absolute; inset: 0; display: none; flex-direction: column;
+    align-items: center; justify-content: center; gap: 10px;
+    background:
+      conic-gradient(#0d0d0d 90deg, #1f1f1f 90deg 180deg, #0d0d0d 180deg 270deg, #1f1f1f 270deg);
+    background-size: 26px 26px;
+  }
+  .offair.show { display: flex; }
+  .offair .tag {
+    background: var(--red); color: #fff; padding: 6px 16px;
+    font-weight: 700; letter-spacing: .28em; font-size: 14px;
+  }
+  .offair .sub { color: #cfcabc; font-size: 11px; letter-spacing: .16em; background: rgba(0,0,0,.65); padding: 4px 10px; text-align: center; }
+
+  .feed-controls {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; align-items: center;
+  }
+  .btn {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .14em; font-weight: 700;
+    background: var(--ink); color: var(--paper);
+    border: 2px solid var(--ink); padding: 10px 18px; cursor: pointer;
+    transition: transform .05s;
+  }
+  .btn:hover { background: var(--red); border-color: var(--red); color: #fff; }
+  .btn:active { transform: translateY(2px); }
+  .btn.ghost { background: transparent; color: var(--ink); }
+  .btn.ghost:hover { color: var(--red); border-color: var(--red); background: transparent; }
+  .live-status { margin-left: auto; display: flex; gap: 18px; align-items: center; font-size: 12px; letter-spacing: .1em; }
+  .onair-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 2px solid var(--ink); padding: 6px 12px; font-weight: 700;
+  }
+  .onair-chip .b { width: 9px; height: 9px; border-radius: 50%; background: #b9b4a6; }
+  .onair-chip.on { border-color: var(--red); color: var(--red); }
+  .onair-chip.on .b { background: var(--red); animation: pulse 1.6s infinite; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  @media (prefers-reduced-motion: reduce) { .onair-chip.on .b { animation: none; } }
+
+  .speccard { border: 2px solid var(--ink); background: var(--paper-2); }
+  .speccard .spec-head {
+    background: var(--ink); color: var(--paper); padding: 8px 12px;
+    font-size: 11px; letter-spacing: .2em; font-weight: 700;
+    display: flex; justify-content: space-between; gap: 8px;
+  }
+  .speccard .spec-head .code { color: #f0b9b3; }
+  .spec-rows { padding: 6px 0; }
+  .spec-row { display: grid; grid-template-columns: 92px 1fr; gap: 8px; padding: 6px 12px; font-size: 12px; }
+  .spec-row + .spec-row { border-top: 1px dashed #b9b4a6; }
+  .spec-row .k { color: var(--ink-2); letter-spacing: .06em; }
+  .spec-row .v b { color: var(--red); }
+
+  /* ---------- SEC.02 program ---------- */
+  .program { border: 2px solid var(--ink); }
+  .program-head {
+    display: grid; grid-template-columns: 110px 1fr; background: var(--ink); color: var(--paper);
+    font-size: 11px; letter-spacing: .2em; font-weight: 700; padding: 8px 14px;
+  }
+  .p-row { display: grid; grid-template-columns: 110px 1fr; border-top: 1px solid var(--ink); }
+  .p-row .p-time { padding: 10px 14px; font-weight: 700; font-size: 13px; border-right: 1px solid var(--ink); }
+  .p-row .p-prog { padding: 10px 14px; }
+  .p-name { font-weight: 700; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; }
+  .p-desc { font-size: 12px; color: var(--ink-2); margin-top: 2px; }
+  .p-row.flagship .p-name::before { content: "▸ "; color: var(--red); }
+  .p-row.current { background: var(--ink); color: var(--paper); }
+  .p-row.current .p-desc { color: #b9b4a6; }
+  .p-row.current .p-time { color: var(--paper); }
+  .now-chip {
+    display: inline-block; background: var(--red); color: #fff; font-size: 10px;
+    letter-spacing: .18em; padding: 2px 8px; margin-left: 10px; font-weight: 700; vertical-align: 2px;
+  }
+  .program-foot { border-top: 1px solid var(--ink); padding: 8px 14px; font-size: 11px; color: var(--ink-2); letter-spacing: .1em; }
+
+  /* ---------- SEC.03 ground zero dossier ---------- */
+  .dossier { display: grid; grid-template-columns: minmax(0,1fr) 250px; gap: 26px; align-items: start; }
+  .dossier-copy p { margin-bottom: 14px; max-width: 60ch; }
+  .dossier-copy .lede { font-size: 17px; font-weight: 700; }
+  .dossier-copy em { font-style: normal; background: var(--ink); color: var(--paper); padding: 0 6px; }
+  .gz-spec .figure-box {
+    border: 2px solid var(--ink); background: var(--paper-2); text-align: center;
+    padding: 26px 10px 18px; position: relative; margin-bottom: 14px;
+  }
+  .figure-box .checker-mini {
+    position: absolute; top: 0; left: 0; right: 0; height: 10px;
+    background: conic-gradient(var(--ink) 90deg, transparent 90deg 180deg, var(--ink) 180deg 270deg, transparent 270deg);
+    background-size: 10px 10px;
+  }
+  .figure-box .glyph { font-size: 46px; display: block; }
+  .figure-box .cap { font-size: 10px; letter-spacing: .18em; color: var(--ink-2); margin-top: 10px; }
+
+  /* ---------- SEC.04 file a spot ---------- */
+  .spot-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 26px; align-items: start; }
+  .req-table { width: 100%; border-collapse: collapse; border: 2px solid var(--ink); font-size: 13px; }
+  .req-table td { border: 1px solid var(--ink); padding: 9px 12px; }
+  .req-table td:first-child { width: 32%; font-weight: 700; font-size: 11px; letter-spacing: .12em; background: var(--paper-2); }
+  .spot-copy p { margin-bottom: 14px; max-width: 55ch; }
+  .fine { font-size: 12px; color: var(--ink-2); }
+
+  /* ---------- SEC.05 the lab ---------- */
+  .lab-card { border: 2px solid var(--ink); padding: 24px; display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
+  .lab-esh {
+    width: 64px; height: 64px; border: 2px solid var(--ink);
+    background: conic-gradient(var(--ink) 90deg, var(--paper) 90deg 180deg, var(--ink) 180deg 270deg, var(--paper) 270deg);
+    background-size: 16px 16px;
+  }
+  .lab-copy p { max-width: 62ch; }
+  .lab-copy .wordmark { font-weight: 700; }
+  .mantra {
+    margin-top: 26px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);
+    padding: 10px 0; white-space: nowrap; overflow: hidden;
+    font-size: 12px; letter-spacing: .3em; color: var(--ink-2);
+  }
+
+  /* ---------- footer ---------- */
+  footer { padding: 30px 0 0; font-size: 11px; letter-spacing: .12em; color: var(--ink-2); }
+  footer .rows { display: flex; flex-wrap: wrap; gap: 8px 30px; justify-content: space-between; }
+
+  @media (max-width: 720px) {
+    .feed-grid, .dossier, .spot-grid { grid-template-columns: 1fr; }
+    .lab-card { grid-template-columns: 1fr; }
+    .sec-note { margin-left: 0; }
+    .live-status { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ TOP BAR ============ -->
+  <div class="topbar">
+    <span class="mark"><span class="esh" aria-hidden="true"></span> RIPOSTE LABORATORIES</span>
+    <span class="meta"><span>PROJECT: <b>CHANNEL Z0</b></span> <span>DESIG: <b>RL-Z0</b></span> <span>VER: <b>FULL</b></span> <span class="clockbox">T: <b id="clock">--:--:--</b></span></span>
+  </div>
+
+  <!-- ============ HERO ============ -->
+  <div class="hero">
+    <div class="kicker"><span class="dot" aria-hidden="true"></span> A RIPOSTE LABORATORIES TRANSMISSION</div>
+    <h1 class="masthead">The world streams.<br>We broadcast. <span class="z0">Z0.</span></h1>
+    <p class="sub"><b>A local channel, for locals.</b> One signal, always on, made where you live.
+       Leave it playing in the shop, the kitchen, the garage. Neighborhood ads between programs.
+       Sign-off at midnight, like civilization intended.</p>
+    <div class="statline">
+      <span class="cell"><span class="k">SIGNAL</span><span>HLS · CONTINUOUS</span></span>
+      <span class="cell"><span class="k">REACH</span><span>THE NEIGHBORHOOD</span></span>
+      <span class="cell"><span class="k">LATENCY</span><span>~20s, BY DESIGN</span></span>
+      <span class="cell"><span class="k">FREIGHT</span><span>NONE · LOCAL SIGNAL LOOP</span></span>
+    </div>
+  </div>
+
+  <!-- ============ SEC.01 LIVE FEED ============ -->
+  <section id="live">
+    <div class="sec-head">
+      <span class="sec-no">SEC.01</span>
+      <span class="sec-title">Live Feed</span>
+      <span class="sec-note" id="viewerNote">RECEIVERS: —</span>
+    </div>
+    <div class="feed-grid">
+      <div>
+        <div class="screen-frame">
+          <video id="tv" playsinline muted></video>
+          <div class="offair show" id="offair">
+            <span class="tag">OFF AIR</span>
+            <span class="sub" id="offairSub">TRANSMISSION RESUMES SHORTLY — STAY TUNED</span>
+          </div>
+        </div>
+        <div class="feed-controls">
+          <button class="btn" id="tuneBtn">TUNE IN ▸</button>
+          <button class="btn ghost" id="soundBtn" aria-label="Toggle sound">SOUND: OFF</button>
+          <span class="live-status">
+            <span class="onair-chip" id="airChip"><span class="b" aria-hidden="true"></span><span id="airLabel">OFF AIR</span></span>
+            <a id="chatLink" href="#" target="_blank" rel="noopener">LIVE CHAT →</a>
+          </span>
+        </div>
+      </div>
+      <aside class="speccard" aria-label="Channel specification">
+        <div class="spec-head"><span>SPEC</span><span class="code">RL-Z0</span></div>
+        <div class="spec-rows">
+          <div class="spec-row"><span class="k">FEED</span><span class="v" id="nowShowing">—</span></div>
+          <div class="spec-row"><span class="k">FORMAT</span><span class="v">LINEAR TV · 1080p</span></div>
+          <div class="spec-row"><span class="k">UPTIME</span><span class="v">24/7 · SIGN-OFF 00:00</span></div>
+          <div class="spec-row"><span class="k">ADS</span><span class="v">LOCALLY SOURCED</span></div>
+          <div class="spec-row"><span class="k">SPONSOR</span><span class="v">RIPOSTE LABS</span></div>
+          <div class="spec-row"><span class="k">STATUS</span><span class="v" id="specStatus"><b>STANDBY</b></span></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ SEC.02 PROGRAM ============ -->
+  <section id="program">
+    <div class="sec-head">
+      <span class="sec-no">SEC.02</span>
+      <span class="sec-title">Program</span>
+      <span class="sec-note" id="pvDate">—</span>
+    </div>
+    <div class="program">
+      <div class="program-head"><span>TIME</span><span>TRANSMISSION</span></div>
+      <div id="pvGrid"><!-- rows injected --></div>
+      <div class="program-foot">ALL TIMES LOCAL · SCHEDULE SUBJECT TO THE WHIMS OF MASTER CONTROL</div>
+    </div>
+  </section>
+
+  <!-- ============ SEC.03 GROUND ZERO ============ -->
+  <section id="ground-zero">
+    <div class="sec-head">
+      <span class="sec-no">SEC.03</span>
+      <span class="sec-title">Ground Zero</span>
+      <span class="sec-note">FLAGSHIP · NIGHTLY 19:00</span>
+    </div>
+    <div class="dossier">
+      <div class="dossier-copy">
+        <p class="lede">While observing spacetime from a comfortable distance, our correspondent picked up a distress signal originating from Earth.</p>
+        <p>Naturally, they opened a wormhole and came to check on us. They study us. They don't
+           fully understand us. <em>But they are trying.</em> Wearing a very convincing human skin
+           and armed with a french baguette that is absolutely, definitely a microphone, they walk
+           among the locals and ask the questions no one else will.</p>
+        <p class="fine">Filed nightly from a ship that is bigger on the inside, parked somewhere overhead.</p>
+      </div>
+      <aside class="gz-spec">
+        <div class="figure-box">
+          <div class="checker-mini" aria-hidden="true"></div>
+          <span class="glyph" aria-hidden="true">🥖</span>
+          <div class="cap">FIELD EQUIPMENT: BAGUETTE (MIC)</div>
+        </div>
+        <div class="speccard">
+          <div class="spec-head"><span>DOSSIER</span><span class="code">RL-GZ01</span></div>
+          <div class="spec-rows">
+            <div class="spec-row"><span class="k">ORIGIN</span><span class="v">OFF-WORLD</span></div>
+            <div class="spec-row"><span class="k">SKIN</span><span class="v">HUMAN · CONVINCING</span></div>
+            <div class="spec-row"><span class="k">TRANSIT</span><span class="v">WORMHOLE, PRIVATE</span></div>
+            <div class="spec-row"><span class="k">MIC</span><span class="v">BAGUETTE · FRESH DAILY</span></div>
+            <div class="spec-row"><span class="k">STATUS</span><span class="v"><b>TRYING</b></span></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ SEC.04 FILE A SPOT ============ -->
+  <section id="submit-ad">
+    <div class="sec-head">
+      <span class="sec-no">SEC.04</span>
+      <span class="sec-title">File a Spot</span>
+      <span class="sec-note">AIRTIME: FREE WHILE WE'RE SMALL</span>
+    </div>
+    <div class="spot-grid">
+      <div class="spot-copy">
+        <p>Channel Z0 airs commercials from the neighborhood: your shop, your band, your garage
+           sale, your inexplicable hobby. Make something worth interrupting a movie for.</p>
+        <p class="fine">Every spot is screened before air and loudness-normalized — your ad will be
+           exactly as loud as everything else, a courtesy the 20th century never gave anyone.
+           Station reserves the right to decline anything, with love.</p>
+        <p><button class="btn" id="adMail">SUBMIT YOUR SPOT ▸</button></p>
+      </div>
+      <table class="req-table" aria-label="Submission requirements">
+        <tr><td>LENGTH</td><td>15 / 30 / 60 seconds, exactly</td></tr>
+        <tr><td>FILE</td><td>MP4 · H.264 video + AAC audio</td></tr>
+        <tr><td>PICTURE</td><td>1080p or 720p, landscape</td></tr>
+        <tr><td>RIGHTS</td><td>You own everything in it — music too</td></tr>
+        <tr><td>TONE</td><td>Neighborly. A kid might be watching.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ SEC.05 THE LAB ============ -->
+  <section id="lab">
+    <div class="sec-head">
+      <span class="sec-no">SEC.05</span>
+      <span class="sec-title">The Lab</span>
+      <span class="sec-note">SPONSOR OF RECORD</span>
+    </div>
+    <div class="lab-card">
+      <div class="lab-esh" aria-hidden="true"></div>
+      <div class="lab-copy">
+        <p><span class="wordmark">Channel Z0 is sponsored by Riposte Laboratories</span> — an engineering
+           company that transforms discarded plastic and end-of-life battery cells into durable, modular
+           products. Between programs you'll see what the lab has been building lately. Come by sometime.</p>
+        <p class="fine"><a id="labLink" href="https://ripostelabs.xyz" target="_blank" rel="noopener">ripostelabs.xyz →</a></p>
+      </div>
+    </div>
+    <div class="mantra" aria-hidden="true">PARRY · RIPOSTE · RECYCLE · REPEAT ♻ &nbsp;&nbsp; PARRY · RIPOSTE · RECYCLE · REPEAT ♻ &nbsp;&nbsp; PARRY · RIPOSTE · RECYCLE · REPEAT ♻ &nbsp;&nbsp; PARRY · RIPOSTE · RECYCLE · REPEAT ♻</div>
+  </section>
+
+  <!-- ============ SEC.06 SIGN-OFF ============ -->
+  <footer>
+    <div class="sec-head" style="margin-bottom:14px">
+      <span class="sec-no">SEC.06</span>
+      <span class="sec-title" style="font-size:1.1rem">Sign-Off</span>
+    </div>
+    <div class="rows">
+      <span>THIS STATION CONCLUDES ITS BROADCAST DAY AT MIDNIGHT.</span>
+      <span>SHORT SIGNAL LOOPS · LONG-LIVED PROGRAMS · NO OCEAN FREIGHT</span>
+      <span>© CHANNEL Z0 · A RIPOSTE LABORATORIES TRANSMISSION · EST. 2026</span>
+    </div>
+  </footer>
+  <div class="checker" style="margin-top:22px" aria-hidden="true"></div>
+
+</div>
+<script>
+/* ==========================================================================
+   CHANNEL Z0 · RL-Z0 — station logic
+   Edit CONFIG, upload as index.html, done.
+   ========================================================================== */
+const CONFIG = {
+  // Your live HLS stream (Owncast serves this at /hls/stream.m3u8):
+  STREAM_URL:   "https://watch.channelz0.example/hls/stream.m3u8",
+  // Owncast base URL — enables the ON AIR chip + receiver count via /api/status.
+  // Leave "" to skip polling (chip then follows the player itself).
+  OWNCAST_BASE: "https://watch.channelz0.example",
+  AD_EMAIL:     "ads@channelz0.example",
+  CHAT_URL:     "https://watch.channelz0.example",
+  LAB_URL:      "https://ripostelabs.xyz",
+  STATUS_POLL_SECONDS: 30,
+  RETRY_SECONDS: 20,
+};
+
+/* ---- today's programs (edit freely; times are 24h local) ---- */
+const SCHEDULE = [
+  { t: "06:00", name: "SIGN-ON · MORNING PATTERN",  desc: "Anthem, test card, and the day begins" },
+  { t: "06:30", name: "STRETCH & COFFEE",           desc: "Slow television from around the neighborhood" },
+  { t: "07:00", name: "CARTOON BLOCK",              desc: "Public-domain toons, drawn before your grandparents met" },
+  { t: "09:00", name: "PRELINGER THEATER",          desc: "Vintage PSAs & educational shorts — trust the narrator" },
+  { t: "11:00", name: "LAB HOUR",                   desc: "What Riposte Labs is building this week, sometimes live" },
+  { t: "12:00", name: "LUNCH LOOPS",                desc: "Music + the community bulletin board" },
+  { t: "14:00", name: "AFTERNOON PICTURE SHOW",     desc: "A feature film older than the concept of streaming" },
+  { t: "16:00", name: "CARTOON BLOCK II",           desc: "The toons return, as toons do" },
+  { t: "18:00", name: "NEIGHBORHOOD DESK",          desc: "Notices, events, found cats, lost causes" },
+  { t: "19:00", name: "GROUND ZERO",                desc: "Alien street interviews via baguette — flagship transmission", flagship: true },
+  { t: "20:00", name: "PRIME MOVIE",                desc: "The big picture, with local ad breaks as nature intended" },
+  { t: "22:00", name: "GROUND ZERO — ENCORE",       desc: "Tonight's contact, retransmitted for the late crowd", flagship: true },
+  { t: "23:00", name: "NIGHT PATTERN",              desc: "Mellow signals for the last ones awake" },
+  { t: "00:00", name: "SIGN-OFF",                   desc: "Test card until sunrise. Goodnight, locals." },
+];
+
+/* ---------------- element handles ---------------- */
+const $ = (id) => document.getElementById(id);
+const tv = $("tv");
+const els = {
+  offair: $("offair"), offairSub: $("offairSub"),
+  airChip: $("airChip"), airLabel: $("airLabel"),
+  clock: $("clock"), nowShowing: $("nowShowing"), specStatus: $("specStatus"),
+  viewerNote: $("viewerNote"), pvGrid: $("pvGrid"), pvDate: $("pvDate"),
+  tuneBtn: $("tuneBtn"), soundBtn: $("soundBtn"),
+  chatLink: $("chatLink"), adMail: $("adMail"), labLink: $("labLink"),
+};
+
+const state = { tuned: false, hls: null, retryTimer: null, owncastOnline: null };
+
+/* ---------------- hls.js loader (cdnjs → jsdelivr → native) ---------------- */
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    const s = document.createElement("script");
+    s.src = src; s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
+async function ensureHls() {
+  if (window.Hls) return true;
+  const cdns = [
+    "https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.6.16/hls.min.js",
+    "https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js",
+  ];
+  for (const url of cdns) {
+    try { await loadScript(url); if (window.Hls) return true; } catch (e) { /* next */ }
+  }
+  return false;
+}
+
+/* ---------------- the feed ---------------- */
+function setOnAir(on) {
+  els.airChip.classList.toggle("on", on);
+  els.airLabel.textContent = on ? "ON AIR" : "OFF AIR";
+  els.specStatus.innerHTML = on ? "<b>LIVE — SIGNAL ACQUIRED</b>" : (state.tuned ? "<b>SEEKING SIGNAL</b>" : "<b>STANDBY</b>");
+}
+function showOffair(show) { els.offair.classList.toggle("show", show); }
+
+async function tuneIn() {
+  clearTimeout(state.retryTimer);
+  state.tuned = true;
+  els.tuneBtn.textContent = "RE-TUNE ▸";
+  const url = CONFIG.STREAM_URL;
+
+  const hasHls = await ensureHls();
+  if (hasHls && window.Hls && Hls.isSupported()) {
+    if (state.hls) state.hls.destroy();
+    const hls = new Hls({ liveDurationInfinity: true });
+    state.hls = hls;
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      tv.play().catch(() => {});
+      showOffair(false); setOnAir(true);
+    });
+    hls.on(Hls.Events.ERROR, (_, data) => { if (data.fatal) signalLost(); });
+    hls.loadSource(url);
+    hls.attachMedia(tv);
+  } else if (tv.canPlayType("application/vnd.apple.mpegurl")) {
+    tv.src = url;
+    tv.play().then(() => { showOffair(false); setOnAir(true); }).catch(() => signalLost());
+    tv.onerror = () => signalLost();
+  } else {
+    els.offairSub.textContent = "THIS RECEIVER CANNOT DECODE OUR SIGNAL — TRY ANOTHER BROWSER";
+    signalLost(true);
+  }
+}
+
+function signalLost(noRetry) {
+  if (state.hls) { state.hls.destroy(); state.hls = null; }
+  showOffair(true);
+  if (state.owncastOnline === null) setOnAir(false); // no status API — chip follows player
+  else els.specStatus.innerHTML = "<b>SEEKING SIGNAL</b>";
+  if (!noRetry) state.retryTimer = setTimeout(tuneIn, CONFIG.RETRY_SECONDS * 1000);
+}
+
+/* ---------------- controls ---------------- */
+els.tuneBtn.addEventListener("click", tuneIn);
+els.soundBtn.addEventListener("click", () => {
+  tv.muted = !tv.muted;
+  els.soundBtn.textContent = tv.muted ? "SOUND: OFF" : "SOUND: ON";
+  if (!state.tuned) tuneIn();
+});
+
+/* ---------------- owncast status ---------------- */
+async function pollStatus() {
+  if (!CONFIG.OWNCAST_BASE) return;
+  try {
+    const r = await fetch(CONFIG.OWNCAST_BASE.replace(/\/$/, "") + "/api/status", { cache: "no-store" });
+    const j = await r.json();
+    state.owncastOnline = !!j.online;
+    setOnAir(state.owncastOnline);
+    if (typeof j.viewerCount === "number") els.viewerNote.textContent = "RECEIVERS: " + j.viewerCount;
+  } catch (e) { state.owncastOnline = null; els.viewerNote.textContent = "RECEIVERS: —"; }
+}
+
+/* ---------------- clock + program grid ---------------- */
+function tick() {
+  const n = new Date();
+  const p = (x) => String(x).padStart(2, "0");
+  els.clock.textContent = `${p(n.getHours())}:${p(n.getMinutes())}:${p(n.getSeconds())}`;
+}
+function minutesOf(t) { const [h, m] = t.split(":").map(Number); return h * 60 + m; }
+function currentSlotIndex() {
+  // Broadcast day starts at the first slot; times before it (e.g. 00:00 sign-off)
+  // belong to the *end* of the day, so shift them past midnight before comparing.
+  const dayStart = minutesOf(SCHEDULE[0].t);
+  const adj = (m) => (m < dayStart ? m + 1440 : m);
+  const now = new Date();
+  const nowMin = adj(now.getHours() * 60 + now.getMinutes());
+  let idx = -1;
+  SCHEDULE.forEach((s, i) => { if (adj(minutesOf(s.t)) <= nowMin) idx = i; });
+  return idx === -1 ? SCHEDULE.length - 1 : idx;
+}
+function renderSchedule() {
+  const cur = currentSlotIndex();
+  els.pvGrid.innerHTML = "";
+  SCHEDULE.forEach((s, i) => {
+    const row = document.createElement("div");
+    row.className = "p-row" + (i === cur ? " current" : "") + (s.flagship ? " flagship" : "");
+    row.innerHTML = `
+      <div class="p-time">${s.t}</div>
+      <div class="p-prog">
+        <div class="p-name">${s.name}${i === cur ? '<span class="now-chip">NOW</span>' : ""}</div>
+        <div class="p-desc">${s.desc}</div>
+      </div>`;
+    els.pvGrid.appendChild(row);
+  });
+  els.nowShowing.textContent = SCHEDULE[cur].name;
+  els.pvDate.textContent = new Date().toLocaleDateString(undefined,
+    { weekday: "long", month: "long", day: "numeric" }).toUpperCase();
+}
+
+/* ---------------- boot ---------------- */
+els.chatLink.href = CONFIG.CHAT_URL || "#";
+els.labLink.href = CONFIG.LAB_URL;
+els.adMail.addEventListener("click", () => {
+  location.href = "mailto:" + CONFIG.AD_EMAIL +
+    "?subject=" + encodeURIComponent("Channel Z0 — ad submission") +
+    "&body=" + encodeURIComponent("Business/name:\nSpot length (15/30/60s):\nLink to file (or attach):\nI own the rights to all video, audio, and music in this spot: YES\n");
+});
+setInterval(tick, 1000); tick();
+renderSchedule(); setInterval(renderSchedule, 30 * 1000);
+pollStatus(); setInterval(pollStatus, CONFIG.STATUS_POLL_SECONDS * 1000);
+</script>
+</body>
+</html>

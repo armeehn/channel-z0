@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHANNEL Z0 — a local channel, for locals</title>
+<meta name="description" content="Channel Z0. Community television. Always on somewhere in the neighborhood.">
+<style>
+  /* ============================================================
+     CHANNEL Z0 — station styles
+     Phosphor green: #33ff66 · Prevue blue: #0d0d8f · Amber: #ffb000
+     ============================================================ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --phosphor: #33ff66;
+    --phosphor-dim: #1a9940;
+    --amber: #ffb000;
+    --prevue-blue: #0d0d8f;
+    --prevue-deep: #06064a;
+    --room: #0a0a0e;
+    --wood-1: #4a2f1d;
+    --wood-2: #3a2415;
+    --wood-3: #5c3b24;
+    --metal: #1c1c22;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background:
+      radial-gradient(ellipse 120% 80% at 50% -10%, #16161f 0%, var(--room) 55%, #050508 100%);
+    color: #e8e8e8;
+    font-family: "Courier New", Courier, monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 0 16px 60px; }
+
+  /* ---------- station header ---------- */
+  header {
+    display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+    gap: 12px; padding: 26px 4px 18px;
+    border-bottom: 1px solid #222230;
+  }
+  .ident { display: flex; align-items: baseline; gap: 14px; }
+  .ident h1 {
+    font-size: clamp(1.6rem, 4.5vw, 2.6rem);
+    letter-spacing: 0.18em;
+    color: var(--phosphor);
+    text-shadow: 0 0 6px rgba(51,255,102,.75), 0 0 24px rgba(51,255,102,.35);
+    font-weight: 700;
+  }
+  .ident .z0 { color: #fff; text-shadow: 0 0 8px rgba(255,255,255,.6); }
+  .tagline { color: #9a9aa8; font-size: .8rem; letter-spacing: .12em; }
+
+  .status-cluster { display: flex; align-items: center; gap: 18px; font-size: .85rem; letter-spacing: .1em; }
+  .lamp { display: inline-flex; align-items: center; gap: 8px; }
+  .lamp .bulb {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: #3a3a44; box-shadow: inset 0 0 3px #000;
+    transition: all .4s;
+  }
+  .lamp.on .bulb { background: #ff2d2d; box-shadow: 0 0 10px #ff2d2d, 0 0 22px rgba(255,45,45,.6); }
+  .lamp.on .lamp-label { color: #ff5c5c; }
+  .lamp-label { color: #77778a; }
+  .clock { color: var(--phosphor); text-shadow: 0 0 6px rgba(51,255,102,.6); font-size: 1rem; }
+
+  /* ---------- the television ---------- */
+  .tv-hall { padding: 34px 0 10px; }
+  .tv-cabinet {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 118px;
+    gap: 0;
+    border-radius: 22px;
+    padding: 26px 18px 30px 26px;
+    background:
+      repeating-linear-gradient(88deg, var(--wood-1) 0 7px, var(--wood-2) 7px 11px, var(--wood-3) 11px 21px, var(--wood-2) 21px 26px),
+      linear-gradient(180deg, #4a2f1d, #2c1a0e);
+    background-blend-mode: overlay;
+    box-shadow:
+      0 24px 60px rgba(0,0,0,.75),
+      inset 0 2px 2px rgba(255,220,180,.18),
+      inset 0 -6px 14px rgba(0,0,0,.5);
+  }
+  .crt-frame {
+    background: #0c0c0c;
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: inset 0 0 0 3px #1a1a1a, inset 0 4px 18px rgba(0,0,0,.9);
+  }
+  .crt {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 12px / 16px;
+    overflow: hidden;
+    box-shadow: inset 0 0 40px rgba(0,0,0,.85);
+  }
+  .crt video { width: 100%; height: 100%; object-fit: contain; background: #000; display: block; }
+
+  /* screen overlays */
+  .scanlines {
+    position: absolute; inset: 0; pointer-events: none; z-index: 6;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px);
+    mix-blend-mode: multiply;
+  }
+  .rollbar {
+    position: absolute; left: 0; right: 0; height: 90px; z-index: 6; pointer-events: none;
+    background: linear-gradient(180deg, transparent, rgba(255,255,255,.045), transparent);
+    animation: roll 9s linear infinite;
+  }
+  @keyframes roll { from { top: -25%; } to { top: 115%; } }
+  .vignette {
+    position: absolute; inset: 0; z-index: 7; pointer-events: none;
+    background: radial-gradient(ellipse 108% 100% at 50% 50%, transparent 62%, rgba(0,0,0,.5) 100%);
+  }
+  .glass {
+    position: absolute; inset: 0; z-index: 8; pointer-events: none;
+    background: linear-gradient(115deg, rgba(255,255,255,.07) 0%, transparent 22%);
+  }
+  .crt.flicker-on { animation: flicker 4.2s infinite; }
+  @keyframes flicker {
+    0%,100% { opacity: 1; } 96.5% { opacity: 1; } 97% { opacity: .92; } 97.5% { opacity: 1; } 98.6% { opacity: .95; } 99% { opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rollbar { display: none; }
+    .crt.flicker-on { animation: none; }
+  }
+
+  /* OSD */
+  .osd {
+    position: absolute; top: 10px; right: 16px; z-index: 9;
+    color: var(--phosphor);
+    font-size: clamp(.9rem, 2.4vw, 1.5rem); font-weight: 700; letter-spacing: .1em;
+    text-shadow: 0 0 6px rgba(51,255,102,.9), 2px 2px 0 rgba(0,60,20,.8);
+    opacity: 0; transition: opacity .3s;
+  }
+  .osd.show { opacity: 1; }
+
+  /* off-air: SMPTE bars */
+  .offair {
+    position: absolute; inset: 0; z-index: 4; display: none;
+    background: linear-gradient(90deg,
+      #c0c0c0 0 14.28%, #c0c000 0 28.57%, #00c0c0 0 42.85%,
+      #00c000 0 57.14%, #c000c0 0 71.42%, #c00000 0 85.71%, #0000c0 0 100%);
+  }
+  .offair.show { display: block; }
+  .offair .offair-caption {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 26%;
+    background: rgba(0,0,0,.82);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    color: #fff; letter-spacing: .3em; text-align: center; font-size: clamp(.7rem, 1.8vw, 1rem);
+  }
+  .offair .offair-sub { color: #bdbdbd; letter-spacing: .12em; font-size: .72em; }
+
+  /* powered-off screen */
+  .screen-off {
+    position: absolute; inset: 0; z-index: 5; background: #050505; display: flex;
+    align-items: center; justify-content: center;
+  }
+  .screen-off .dot { color: #22222a; font-size: .8rem; letter-spacing: .3em; }
+  .screen-off.hidden { display: none; }
+
+  /* static noise canvas */
+  #static { position: absolute; inset: 0; z-index: 5; width: 100%; height: 100%; display: none; }
+  #static.show { display: block; }
+
+  /* ---------- control panel ---------- */
+  .panel {
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    padding: 10px 0 4px 14px;
+  }
+  .speaker { width: 74px; flex: 1; margin-bottom: 14px; border-radius: 6px;
+    background: repeating-linear-gradient(0deg, #24180b 0 3px, #1a1006 3px 6px);
+  }
+  .knob-row { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+  .knob {
+    width: 58px; height: 58px; border-radius: 50%;
+    background:
+      radial-gradient(circle at 35% 30%, #55555f, #1b1b21 60%, #0c0c10 100%);
+    border: 2px solid #0a0a0c;
+    box-shadow: 0 3px 8px rgba(0,0,0,.7), inset 0 1px 2px rgba(255,255,255,.25);
+    position: relative; cursor: pointer;
+    transition: transform .15s;
+  }
+  .knob:active { transform: scale(.94) rotate(24deg); }
+  .knob::after {
+    content: ""; position: absolute; left: 50%; top: 6px; width: 3px; height: 16px;
+    background: var(--amber); transform: translateX(-50%); border-radius: 2px;
+    box-shadow: 0 0 5px rgba(255,176,0,.8);
+  }
+  .knob-label { font-size: .6rem; letter-spacing: .18em; color: #c9a877; margin-top: 5px; text-align: center; }
+  .knob.lit { box-shadow: 0 0 14px rgba(51,255,102,.5), 0 3px 8px rgba(0,0,0,.7); }
+
+  /* under-TV strip */
+  .under-tv {
+    display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; justify-content: space-between;
+    padding: 16px 6px; font-size: .85rem; letter-spacing: .1em; color: #9a9aa8;
+  }
+  .now-showing { color: var(--amber); text-shadow: 0 0 8px rgba(255,176,0,.4); }
+  .under-tv a { color: var(--phosphor); text-decoration: none; }
+  .under-tv a:hover { text-decoration: underline; }
+
+  /* ---------- sections ---------- */
+  section { margin-top: 54px; }
+  .sect-title {
+    font-size: 1.05rem; letter-spacing: .3em; color: var(--phosphor);
+    text-shadow: 0 0 8px rgba(51,255,102,.5);
+    margin-bottom: 18px; display: flex; align-items: center; gap: 14px;
+  }
+  .sect-title::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, #2a4, transparent); }
+
+  /* Prevue-style schedule */
+  .prevue {
+    border-radius: 10px; overflow: hidden;
+    border: 2px solid #2a2ab0;
+    box-shadow: 0 0 30px rgba(20,20,160,.35);
+    font-family: "Courier New", monospace;
+  }
+  .prevue-head {
+    background: linear-gradient(180deg, #1414a8, var(--prevue-deep));
+    color: var(--amber); padding: 12px 18px; letter-spacing: .22em; font-weight: 700;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px;
+    text-shadow: 1px 1px 0 #000;
+  }
+  .prevue-head .pv-date { color: #cfcfff; font-weight: 400; letter-spacing: .1em; }
+  .prevue-grid { background: linear-gradient(180deg, var(--prevue-blue), var(--prevue-deep)); }
+  .pv-row {
+    display: grid; grid-template-columns: 92px 1fr; gap: 0;
+    border-top: 1px solid rgba(255,255,255,.14);
+  }
+  .pv-time {
+    padding: 10px 12px; color: var(--amber); font-weight: 700; text-shadow: 1px 1px 0 #000;
+    border-right: 1px solid rgba(255,255,255,.14); font-size: .9rem;
+  }
+  .pv-prog { padding: 10px 14px; }
+  .pv-name { color: #ffffff; font-weight: 700; letter-spacing: .06em; text-shadow: 1px 1px 0 #000; font-size: .92rem; }
+  .pv-desc { color: #c3c3ef; font-size: .78rem; margin-top: 2px; }
+  .pv-row.current { background: var(--amber); }
+  .pv-row.current .pv-time, .pv-row.current .pv-name { color: #1a1a06; text-shadow: none; }
+  .pv-row.current .pv-desc { color: #4a3a10; }
+  .pv-row.current .pv-time { border-right-color: rgba(0,0,0,.25); }
+  .pv-row.flagship .pv-name { color: var(--phosphor); text-shadow: 0 0 6px rgba(51,255,102,.6); }
+  .pv-row.current.flagship .pv-name { color: #063; text-shadow: none; }
+  .now-chip {
+    display: inline-block; background: #1a1a06; color: var(--amber);
+    font-size: .62rem; letter-spacing: .2em; padding: 2px 7px; border-radius: 3px; margin-left: 10px;
+    vertical-align: 2px;
+  }
+  .prevue-foot { background: var(--prevue-deep); color: #8f8fd8; font-size: .72rem; padding: 9px 16px; letter-spacing: .12em; }
+
+  /* Ground Zero feature card */
+  .gz-card {
+    border: 1px solid rgba(51,255,102,.4); border-radius: 12px;
+    background:
+      radial-gradient(ellipse 90% 120% at 85% -10%, rgba(51,255,102,.09), transparent 55%),
+      linear-gradient(180deg, #0d1210, #07090b);
+    box-shadow: 0 0 34px rgba(51,255,102,.12), inset 0 0 60px rgba(0,0,0,.6);
+    padding: 30px 30px 26px;
+    display: grid; grid-template-columns: minmax(0,1fr) 200px; gap: 26px; align-items: center;
+  }
+  .gz-kicker { color: var(--phosphor-dim); letter-spacing: .3em; font-size: .72rem; margin-bottom: 10px; }
+  .gz-title {
+    color: var(--phosphor); font-size: clamp(1.5rem, 4vw, 2.2rem); letter-spacing: .14em;
+    text-shadow: 0 0 10px rgba(51,255,102,.6); margin-bottom: 14px;
+  }
+  .gz-copy { color: #b8c4bb; font-size: .92rem; line-height: 1.65; }
+  .gz-copy em { color: #e4ffe9; font-style: normal; }
+  .gz-meta { margin-top: 16px; color: var(--amber); font-size: .8rem; letter-spacing: .16em; }
+  .gz-art {
+    aspect-ratio: 3/4; border-radius: 8px; position: relative; overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 26%, rgba(51,255,102,.35), transparent 34%),
+      radial-gradient(ellipse 120% 30% at 50% 78%, rgba(120,90,50,.5), transparent 60%),
+      linear-gradient(180deg, #04070c 0%, #0a1420 58%, #101a12 100%);
+    border: 1px solid #1c2a20;
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+  .gz-art .figure { font-size: 3.2rem; margin-bottom: 34px; filter: drop-shadow(0 0 12px rgba(51,255,102,.6)); }
+  .gz-art .caption {
+    position: absolute; bottom: 0; left: 0; right: 0; text-align: center;
+    font-size: .6rem; letter-spacing: .22em; color: #7fbf93; padding: 8px 4px;
+    background: rgba(0,0,0,.55);
+  }
+  .gz-art .stars { position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 15%, #fff, transparent),
+      radial-gradient(1px 1px at 70% 8%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 84% 22%, #9cf, transparent),
+      radial-gradient(1px 1px at 40% 30%, #fff, transparent),
+      radial-gradient(1px 1px at 60% 18%, #ffd, transparent);
+  }
+
+  /* submit an ad */
+  .ad-board {
+    display: grid; grid-template-columns: minmax(0,1.2fr) minmax(0,1fr); gap: 24px;
+  }
+  .bulletin {
+    background: linear-gradient(180deg, #f4ecd8, #e8dcc0);
+    color: #2a2118; border-radius: 6px; padding: 26px 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.5), inset 0 0 40px rgba(120,90,40,.12);
+    font-family: "Courier New", monospace;
+    position: relative;
+  }
+  .bulletin::before {
+    content: "📌"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%) rotate(-6deg);
+    font-size: 1.4rem;
+  }
+  .bulletin h3 { letter-spacing: .18em; font-size: 1rem; margin-bottom: 14px; text-align: center; }
+  .bulletin p { font-size: .85rem; line-height: 1.6; margin-bottom: 10px; }
+  .spec-table { width: 100%; border-collapse: collapse; font-size: .8rem; margin: 14px 0; }
+  .spec-table td { border: 1px solid #b9a87f; padding: 6px 9px; }
+  .spec-table td:first-child { font-weight: 700; width: 34%; background: rgba(185,168,127,.25); }
+  .fine-print { font-size: .7rem; color: #6b5a3e; }
+  .ad-cta { text-align: center; margin-top: 16px; }
+  .btn {
+    display: inline-block; background: #1a1a06; color: var(--amber);
+    padding: 12px 26px; border-radius: 4px; text-decoration: none;
+    letter-spacing: .2em; font-size: .8rem; font-weight: 700;
+    border: 1px solid #4a3a10;
+    box-shadow: 0 4px 0 #000;
+  }
+  .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #000; }
+  .side-note { color: #9a9aa8; font-size: .85rem; line-height: 1.7; }
+  .side-note strong { color: var(--phosphor); font-weight: 700; letter-spacing: .06em; }
+  .side-note .lab { color: var(--amber); }
+
+  /* footer */
+  footer {
+    margin-top: 70px; padding-top: 26px; border-top: 1px solid #222230;
+    color: #62626f; font-size: .75rem; letter-spacing: .14em; line-height: 2;
+    text-align: center;
+  }
+  footer .signoff { color: #8a8a99; }
+
+  @media (max-width: 760px) {
+    .tv-cabinet { grid-template-columns: 1fr; padding: 18px 14px 22px; }
+    .panel { flex-direction: row; padding: 14px 0 0; }
+    .speaker { display: none; }
+    .knob-row { flex-direction: row; gap: 22px; }
+    .gz-card { grid-template-columns: 1fr; }
+    .gz-art { max-width: 220px; margin: 0 auto; }
+    .ad-board { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ STATION HEADER ============ -->
+  <header>
+    <div class="ident">
+      <h1>CHANNEL <span class="z0">Z0</span></h1>
+      <span class="tagline">a local channel, for locals</span>
+    </div>
+    <div class="status-cluster">
+      <span class="lamp" id="airLamp"><span class="bulb"></span><span class="lamp-label" id="airLabel">OFF AIR</span></span>
+      <span class="clock" id="clock">--:--:--</span>
+    </div>
+  </header>
+
+  <!-- ============ THE TELEVISION ============ -->
+  <div class="tv-hall">
+    <div class="tv-cabinet">
+      <div class="crt-frame">
+        <div class="crt" id="crt">
+          <video id="tv" playsinline muted></video>
+
+          <!-- off-air bars -->
+          <div class="offair" id="offair">
+            <div class="offair-caption">
+              <div>★ &nbsp;OFF AIR&nbsp; ★</div>
+              <div class="offair-sub" id="offairSub">TRANSMISSION RESUMES SHORTLY — STAY TUNED</div>
+            </div>
+          </div>
+
+          <canvas id="static"></canvas>
+          <div class="screen-off" id="screenOff"><span class="dot">· PRESS PWR ·</span></div>
+
+          <div class="scanlines"></div>
+          <div class="rollbar"></div>
+          <div class="vignette"></div>
+          <div class="glass"></div>
+          <div class="osd" id="osd">CH 0</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="speaker" aria-hidden="true"></div>
+        <div class="knob-row">
+          <div>
+            <button class="knob" id="pwrKnob" aria-label="Power"></button>
+            <div class="knob-label">PWR</div>
+          </div>
+          <div>
+            <button class="knob" id="volKnob" aria-label="Sound on or off"></button>
+            <div class="knob-label" id="volLabel">VOL&nbsp;·&nbsp;MUTED</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="under-tv">
+      <span>NOW SHOWING: <span class="now-showing" id="nowShowing">—</span></span>
+      <span id="viewerBox" style="display:none">VIEWERS: <span id="viewerCount">0</span></span>
+      <a id="chatLink" href="#" target="_blank" rel="noopener">JOIN THE LIVE CHAT →</a>
+    </div>
+  </div>
+
+  <!-- ============ SCHEDULE ============ -->
+  <section id="schedule">
+    <div class="sect-title">TODAY'S PROGRAMS</div>
+    <div class="prevue">
+      <div class="prevue-head">
+        <span>CHANNEL Z0 &nbsp;·&nbsp; CH 0</span>
+        <span class="pv-date" id="pvDate">—</span>
+      </div>
+      <div class="prevue-grid" id="pvGrid"><!-- rows injected --></div>
+      <div class="prevue-foot">ALL TIMES LOCAL · SCHEDULE SUBJECT TO THE WHIMS OF MASTER CONTROL · SIGN-OFF AT MIDNIGHT</div>
+    </div>
+  </section>
+
+  <!-- ============ GROUND ZERO ============ -->
+  <section id="ground-zero">
+    <div class="sect-title">FLAGSHIP TRANSMISSION</div>
+    <div class="gz-card">
+      <div>
+        <div class="gz-kicker">NIGHTLY · 7:00 PM · FILED FROM AN UNDISCLOSED ALTITUDE</div>
+        <div class="gz-title">GROUND ZERO</div>
+        <p class="gz-copy">
+          While observing spacetime from a comfortable distance, our correspondent picked up
+          a distress signal originating from Earth. Naturally, they opened a wormhole and came
+          to check on us. They study us. They don't fully understand us. <em>But they are trying.</em>
+          Wearing a very convincing human skin and armed with a french baguette that is
+          absolutely, definitely a microphone, they walk among the locals and ask the
+          questions no one else will.
+        </p>
+        <div class="gz-meta">SHIP: BIGGER ON THE INSIDE · PARKING: SOMEWHERE OVERHEAD · BAGUETTE: FRESH DAILY</div>
+      </div>
+      <div class="gz-art" aria-hidden="true">
+        <div class="stars"></div>
+        <div class="figure">🥖</div>
+        <div class="caption">THE INTERVIEWS BEGIN AT SUNDOWN</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SUBMIT AN AD ============ -->
+  <section id="submit-ad">
+    <div class="sect-title">GET YOUR AD ON Z0</div>
+    <div class="ad-board">
+      <div class="bulletin">
+        <h3>STATION BULLETIN № 1</h3>
+        <p>Channel Z0 airs commercials from the neighborhood: your shop, your band,
+           your garage sale, your inexplicable hobby. Airtime is free while we're small.
+           Make something worth interrupting a movie for.</p>
+        <table class="spec-table">
+          <tr><td>LENGTH</td><td>15 / 30 / 60 seconds, exactly</td></tr>
+          <tr><td>FILE</td><td>MP4 · H.264 video + AAC audio</td></tr>
+          <tr><td>PICTURE</td><td>1080p or 720p, landscape</td></tr>
+          <tr><td>RIGHTS</td><td>You own everything in it (music too)</td></tr>
+          <tr><td>TONE</td><td>Neighborly. A kid might be watching.</td></tr>
+        </table>
+        <p class="fine-print">All spots are screened before air and loudness-normalized, so your
+           ad will be exactly as loud as everything else — a courtesy the 20th century never gave anyone.
+           Station reserves the right to decline anything, with love.</p>
+        <div class="ad-cta"><a class="btn" id="adMail" href="#">SUBMIT YOUR SPOT →</a></div>
+      </div>
+      <div class="side-note">
+        <p><strong>WHY WE'RE HERE.</strong><br><br>
+        Channel Z0 is community television the old way: one channel, always on,
+        made where you live. Leave it playing in the shop, the kitchen, the garage.
+        It's designed to be good company.<br><br>
+        <span class="lab">Sponsored by the lab</span> — between programs you'll see
+        what we've been building lately. Come by sometime.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>CHANNEL Z0 · BROADCASTING FROM THE NEIGHBORHOOD · EST. 2026</div>
+    <div class="signoff">This station concludes its broadcast day at midnight. Color bars until sunrise.</div>
+    <div>· · · —— Z0 —— · · ·</div>
+  </footer>
+
+</div>
+<script>
+/* ==========================================================================
+   CHANNEL Z0 — station logic
+   Edit CONFIG, upload, done. Everything else is set dressing.
+   ========================================================================== */
+const CONFIG = {
+  // Your live HLS stream (Owncast serves this at /hls/stream.m3u8):
+  STREAM_URL:   "https://watch.channelz0.example/hls/stream.m3u8",
+  // Owncast base URL — enables the ON AIR lamp + viewer count via /api/status.
+  // Leave as "" to skip status polling (lamp then follows the player itself).
+  OWNCAST_BASE: "https://watch.channelz0.example",
+  AD_EMAIL:     "ads@channelz0.example",
+  CHAT_URL:     "https://watch.channelz0.example",
+  STATUS_POLL_SECONDS: 30,
+  RETRY_SECONDS: 20,
+};
+
+/* ---- today's programs (edit freely; times are 24h local) ---- */
+const SCHEDULE = [
+  { t: "06:00", name: "SIGN-ON · MORNING PATTERN",  desc: "Anthem, test card, and the day begins" },
+  { t: "06:30", name: "STRETCH & COFFEE",           desc: "Slow television from around the neighborhood" },
+  { t: "07:00", name: "CARTOON BLOCK",              desc: "Public-domain toons, drawn before your grandparents met" },
+  { t: "09:00", name: "PRELINGER THEATER",          desc: "Vintage PSAs & educational shorts — trust the narrator" },
+  { t: "11:00", name: "LAB HOUR",                   desc: "What the lab is building this week, sometimes live" },
+  { t: "12:00", name: "LUNCH LOOPS",                desc: "Music + the community bulletin board" },
+  { t: "14:00", name: "AFTERNOON PICTURE SHOW",     desc: "A feature film older than the concept of streaming" },
+  { t: "16:00", name: "CARTOON BLOCK II",           desc: "The toons return, as toons do" },
+  { t: "18:00", name: "NEIGHBORHOOD DESK",          desc: "Notices, events, found cats, lost causes" },
+  { t: "19:00", name: "GROUND ZERO",                desc: "Alien street interviews via baguette — flagship transmission", flagship: true },
+  { t: "20:00", name: "PRIME MOVIE",                desc: "The big picture, with local ad breaks as nature intended" },
+  { t: "22:00", name: "GROUND ZERO — ENCORE",       desc: "Tonight's contact, retransmitted for the late crowd", flagship: true },
+  { t: "23:00", name: "NIGHT PATTERN",              desc: "Mellow signals for the last ones awake" },
+  { t: "00:00", name: "SIGN-OFF",                   desc: "Color bars until sunrise. Goodnight, locals." },
+];
+
+/* ---------------- element handles ---------------- */
+const $ = (id) => document.getElementById(id);
+const tv = $("tv"), crt = $("crt");
+const els = {
+  offair: $("offair"), screenOff: $("screenOff"), staticC: $("static"),
+  osd: $("osd"), airLamp: $("airLamp"), airLabel: $("airLabel"),
+  clock: $("clock"), nowShowing: $("nowShowing"),
+  viewerBox: $("viewerBox"), viewerCount: $("viewerCount"),
+  pvGrid: $("pvGrid"), pvDate: $("pvDate"),
+  pwrKnob: $("pwrKnob"), volKnob: $("volKnob"), volLabel: $("volLabel"),
+  chatLink: $("chatLink"), adMail: $("adMail"), offairSub: $("offairSub"),
+};
+
+const state = { powered: false, playing: false, hls: null, retryTimer: null, owncastOnline: null };
+
+/* ---------------- static noise ---------------- */
+const sctx = els.staticC.getContext("2d");
+let staticRAF = null;
+function drawStatic() {
+  const w = els.staticC.width = 320, h = els.staticC.height = 180;
+  const img = sctx.createImageData(w, h);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const v = (Math.random() * 255) | 0;
+    img.data[i] = img.data[i+1] = img.data[i+2] = v; img.data[i+3] = 255;
+  }
+  sctx.putImageData(img, 0, 0);
+  staticRAF = requestAnimationFrame(drawStatic);
+}
+function staticBurst(ms, done) {
+  els.staticC.classList.add("show");
+  if (!staticRAF) drawStatic();
+  setTimeout(() => {
+    els.staticC.classList.remove("show");
+    cancelAnimationFrame(staticRAF); staticRAF = null;
+    if (done) done();
+  }, ms);
+}
+
+/* ---------------- hls.js loader (cdnjs → jsdelivr → native) ---------------- */
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    const s = document.createElement("script");
+    s.src = src; s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
+async function ensureHls() {
+  if (window.Hls) return true;
+  const cdns = [
+    "https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.6.16/hls.min.js",
+    "https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js",
+  ];
+  for (const url of cdns) {
+    try { await loadScript(url); if (window.Hls) return true; } catch (e) { /* next */ }
+  }
+  return false;
+}
+
+/* ---------------- the tube ---------------- */
+function setOnAir(on) {
+  els.airLamp.classList.toggle("on", on);
+  els.airLabel.textContent = on ? "ON AIR" : "OFF AIR";
+}
+function showOffair(show) { els.offair.classList.toggle("show", show); }
+
+async function tuneIn() {
+  clearTimeout(state.retryTimer);
+  const url = CONFIG.STREAM_URL;
+
+  const hasHls = await ensureHls();
+  if (hasHls && window.Hls && Hls.isSupported()) {
+    if (state.hls) state.hls.destroy();
+    const hls = new Hls({ liveDurationInfinity: true });
+    state.hls = hls;
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      tv.play().catch(() => {});
+      state.playing = true; showOffair(false); setOnAir(true); flashOSD();
+    });
+    hls.on(Hls.Events.ERROR, (_, data) => {
+      if (data.fatal) { signalLost(); }
+    });
+    hls.loadSource(url);
+    hls.attachMedia(tv);
+  } else if (tv.canPlayType("application/vnd.apple.mpegurl")) {
+    tv.src = url;
+    tv.play().then(() => {
+      state.playing = true; showOffair(false); setOnAir(true); flashOSD();
+    }).catch(() => signalLost());
+    tv.onerror = () => signalLost();
+  } else {
+    els.offairSub.textContent = "THIS RECEIVER CANNOT DECODE OUR SIGNAL — TRY ANOTHER BROWSER";
+    signalLost(true);
+  }
+}
+
+function signalLost(noRetry) {
+  state.playing = false;
+  if (state.hls) { state.hls.destroy(); state.hls = null; }
+  if (!state.powered) return;
+  showOffair(true);
+  if (state.owncastOnline === null) setOnAir(false); // no status API — lamp follows player
+  if (!noRetry) state.retryTimer = setTimeout(tuneIn, CONFIG.RETRY_SECONDS * 1000);
+}
+
+function flashOSD() {
+  els.osd.classList.add("show");
+  setTimeout(() => els.osd.classList.remove("show"), 4000);
+}
+
+/* ---------------- knobs ---------------- */
+els.pwrKnob.addEventListener("click", () => {
+  state.powered = !state.powered;
+  els.pwrKnob.classList.toggle("lit", state.powered);
+  if (state.powered) {
+    els.screenOff.classList.add("hidden");
+    crt.classList.add("flicker-on");
+    staticBurst(650, tuneIn);
+  } else {
+    clearTimeout(state.retryTimer);
+    if (state.hls) { state.hls.destroy(); state.hls = null; }
+    tv.pause(); tv.removeAttribute("src"); tv.load();
+    state.playing = false;
+    showOffair(false);
+    crt.classList.remove("flicker-on");
+    staticBurst(300, () => els.screenOff.classList.remove("hidden"));
+    if (state.owncastOnline === null) setOnAir(false);
+  }
+});
+
+els.volKnob.addEventListener("click", () => {
+  tv.muted = !tv.muted;
+  els.volKnob.classList.toggle("lit", !tv.muted);
+  els.volLabel.innerHTML = tv.muted ? "VOL&nbsp;·&nbsp;MUTED" : "VOL&nbsp;·&nbsp;ON";
+  flashOSD();
+});
+
+/* ---------------- owncast status ---------------- */
+async function pollStatus() {
+  if (!CONFIG.OWNCAST_BASE) return;
+  try {
+    const r = await fetch(CONFIG.OWNCAST_BASE.replace(/\/$/, "") + "/api/status", { cache: "no-store" });
+    const j = await r.json();
+    state.owncastOnline = !!j.online;
+    setOnAir(state.owncastOnline);
+    if (typeof j.viewerCount === "number") {
+      els.viewerBox.style.display = "";
+      els.viewerCount.textContent = j.viewerCount;
+    }
+  } catch (e) { state.owncastOnline = null; /* lamp falls back to player state */ }
+}
+
+/* ---------------- clock + schedule ---------------- */
+function tick() {
+  const n = new Date();
+  const hh = String(n.getHours()).padStart(2, "0");
+  const mm = String(n.getMinutes()).padStart(2, "0");
+  const ss = String(n.getSeconds()).padStart(2, "0");
+  const sep = n.getSeconds() % 2 ? " " : ":";
+  els.clock.textContent = `${hh}${sep}${mm}${sep}${ss}`;
+}
+
+function minutesOf(t) { const [h, m] = t.split(":").map(Number); return h * 60 + m; }
+
+function currentSlotIndex() {
+  // Broadcast day starts at the first slot; times before it (e.g. 00:00 sign-off)
+  // belong to the *end* of the day, so shift them past midnight before comparing.
+  const dayStart = minutesOf(SCHEDULE[0].t);
+  const adj = (m) => (m < dayStart ? m + 1440 : m);
+  const now = new Date();
+  const nowMin = adj(now.getHours() * 60 + now.getMinutes());
+  let idx = -1;
+  SCHEDULE.forEach((s, i) => { if (adj(minutesOf(s.t)) <= nowMin) idx = i; });
+  return idx === -1 ? SCHEDULE.length - 1 : idx;
+}
+
+function renderSchedule() {
+  const cur = currentSlotIndex();
+  els.pvGrid.innerHTML = "";
+  SCHEDULE.forEach((s, i) => {
+    const row = document.createElement("div");
+    row.className = "pv-row" + (i === cur ? " current" : "") + (s.flagship ? " flagship" : "");
+    const t12h = (() => {
+      let [h, m] = s.t.split(":").map(Number);
+      const ap = h < 12 ? "AM" : "PM"; h = h % 12 || 12;
+      return `${h}:${String(m).padStart(2, "0")} ${ap}`;
+    })();
+    row.innerHTML = `
+      <div class="pv-time">${t12h}</div>
+      <div class="pv-prog">
+        <div class="pv-name">${s.name}${i === cur ? '<span class="now-chip">NOW</span>' : ""}</div>
+        <div class="pv-desc">${s.desc}</div>
+      </div>`;
+    els.pvGrid.appendChild(row);
+  });
+  els.nowShowing.textContent = SCHEDULE[cur].name;
+  els.pvDate.textContent = new Date().toLocaleDateString(undefined,
+    { weekday: "long", month: "long", day: "numeric" }).toUpperCase();
+}
+
+/* ---------------- boot ---------------- */
+els.chatLink.href = CONFIG.CHAT_URL || "#";
+els.adMail.href = "mailto:" + CONFIG.AD_EMAIL +
+  "?subject=" + encodeURIComponent("Channel Z0 — ad submission") +
+  "&body=" + encodeURIComponent("Business/name:\nSpot length (15/30/60s):\nLink to file (or attach):\nI own the rights to all video, audio, and music in this spot: YES\n");
+setInterval(tick, 1000); tick();
+renderSchedule(); setInterval(renderSchedule, 30 * 1000);
+pollStatus(); setInterval(pollStatus, CONFIG.STATUS_POLL_SECONDS * 1000);
+</script>
+</body>
+</html>

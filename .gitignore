@@ -1,0 +1,18 @@
+# secrets — never commit the stream key
+.env
+*.env.local
+
+# media & generated video (lives on the playout machine, not in git)
+media/
+*.mp4
+*.mkv
+*.mov
+*.m2ts
+
+# owncast runtime data (lives on the VPS)
+data/
+
+# dev noise
+node_modules/
+.DS_Store
+*.log
