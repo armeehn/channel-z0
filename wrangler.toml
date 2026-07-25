@@ -3,10 +3,10 @@
 # (and, once purchased, channelz0.tv). The live video still comes from the
 # Owncast tower on the VPS — Cloudflare only carries the page.
 #
-# Deploy from your machine:
-#   npx wrangler pages deploy site --project-name=channel-z0
-# ...or let the GitHub Action do it on push (see
-# .github/workflows/deploy-cloudflare.yml).
+# Primary deploy path is Cloudflare's Git integration (Workers & Pages →
+# Connect to Git, build output directory "site") — it auto-deploys on push and
+# needs no CI file. This wrangler.toml documents the project + lets you deploy
+# by hand if you want:  npx wrangler pages deploy site --project-name=channel-z0
 
 name = "channel-z0"
 compatibility_date = "2026-01-01"

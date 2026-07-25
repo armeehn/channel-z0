@@ -51,10 +51,9 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | [`vps/`](vps/) | The tower: Owncast `docker-compose.yml` + `Caddyfile` |
 | [`playout/`](playout/) | Master control: `compose.yml` (containerized), ErsatzTV launcher, uplink, now-playing bridge |
 | [`tools/`](tools/) | Station scripts — see below |
-| [`wrangler.toml`](wrangler.toml) | Cloudflare Pages project (storefront at `ch0.ripostelabs.xyz`) |
+| [`wrangler.toml`](wrangler.toml) | Cloudflare Pages project config (storefront at `ch0.ripostelabs.xyz`) |
 | [`.env.example`](.env.example) | Domains, stream key, media root, tokens — copy, fill, never commit |
-| [`.github/workflows/deploy-cloudflare.yml`](.github/workflows/deploy-cloudflare.yml) | **Primary:** deploy the storefront to Cloudflare Pages |
-| [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Alternative: host the storefront on GitHub Pages |
+| [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Alternative host: GitHub Pages (Cloudflare is primary, via its Git integration) |
 
 ### Station scripts
 
@@ -89,11 +88,10 @@ The short version — the [build guide](docs/build-guide.md) has every command.
    bare-metal `playout/z0-uplink.service`). Optionally add the now-playing
    bridge: `docker compose --profile nowplaying up -d`. You now run a
    television station.
-5. **Phase 4 — the storefront.** Edit the `CONFIG` block at the top of
-   `site/index.html` (stream URL, ad email), then deploy to Cloudflare Pages —
-   push to `main` and let `.github/workflows/deploy-cloudflare.yml` do it, or
-   `npx wrangler pages deploy site --project-name=channel-z0`. Live at
-   `ch0.ripostelabs.xyz`.
+5. **Phase 4 — the storefront.** Edit the `WATCH_HOST` + `AD_EMAIL` lines at the
+   top of `site/index.html`, then deploy to Cloudflare Pages: connect the repo
+   in Workers & Pages with build output directory `site`, and every push to
+   `main` auto-deploys. Live at `ch0.ripostelabs.xyz`.
 6. **Phase 5 — go live sometimes.** OBS to the same RTMP key for Ground Zero
    remotes and Lab Hour.
 

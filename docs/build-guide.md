@@ -266,7 +266,13 @@ The storefront lives at [`site/index.html`](../site/index.html) — live player,
      CHAT_URL:     "https://watch.ch0.ripostelabs.xyz", // "join the chat" link
    };
    ```
-2. **Deploy to Cloudflare Pages.** Create a Pages project named `channel-z0`, add the custom domain `ch0.ripostelabs.xyz` (instant, since ripostelabs.xyz is on Cloudflare DNS), and either push to `main` — `.github/workflows/deploy-cloudflare.yml` deploys on every change to `site/` — or run `npx wrangler pages deploy site --project-name=channel-z0` from your machine. Full setup notes are in the workflow file's header.
+2. **Deploy to Cloudflare Pages** (using its built-in Git integration — no secrets, no CI file):
+   - Workers & Pages → **Create** → **Pages** → **Connect to Git** → pick your repo, branch `main`.
+   - Build settings: framework preset **None**, build command **empty**, **build output directory `site`**, root directory `/`. Save and Deploy → you get a `*.pages.dev` URL.
+   - Project → **Custom domains** → add `ch0.ripostelabs.xyz` (instant, since ripostelabs.xyz is on Cloudflare DNS).
+   - Every push to `main` now auto-deploys. (Prefer keeping deploys in GitHub instead? `npx wrangler pages deploy site --project-name=channel-z0`, or wire up a wrangler-action workflow.)
+
+   **DNS gotcha for the tower:** add `watch.ch0.ripostelabs.xyz` → VPS IP as **DNS only (grey cloud), not proxied** — Cloudflare's proxy won't pass RTMP (:1935) and shouldn't carry a 24/7 video stream. The page is proxied; the stream host is not.
 3. **Cross-origin note.** The page is on Cloudflare and the stream is on the VPS, so the tower must send permissive CORS — the updated [`vps/Caddyfile`](../vps/Caddyfile) does this. `site/_headers` and `site/_redirects` configure Pages (security headers, and short links like `/watch`). (Alternative host: the GitHub Pages workflow in `.github/workflows/deploy-pages.yml` still works if you'd rather.)
 
 ### When channelz0.tv goes live
