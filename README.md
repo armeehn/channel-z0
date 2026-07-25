@@ -41,6 +41,7 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | Path | What it is |
 |---|---|
 | [`docs/build-guide.md`](docs/build-guide.md) | **Start here.** The full station build, Phase 0 → on-air |
+| [`docs/programming.md`](docs/programming.md) | **The broadcast week.** The full schedule, the show bible, and the ErsatzTV mapping |
 | [`docs/self-hosting.md`](docs/self-hosting.md) | Run master control on a homelab — Proxmox & TrueNAS, GPU passthrough, tips |
 | [`docs/gear-and-costs.md`](docs/gear-and-costs.md) | Hardware picks, VPS comparison, bandwidth math, budgets |
 | [`docs/ad-standards.md`](docs/ad-standards.md) | The one-page rulebook for locally submitted commercials |
