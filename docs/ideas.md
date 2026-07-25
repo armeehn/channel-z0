@@ -41,7 +41,7 @@ These went from idea to implementation and are in the repo now.
   submission and tells you its length, codecs, and true loudness before you
   accept it — the screening step that pairs with `normalize-ad.sh`.
 
-- **On Cloudflare.** The storefront ships to Cloudflare Pages
+- **On Cloudflare.** The storefront ships to Cloudflare (Workers Static Assets)
   (`ch0.ripostelabs.xyz` today, `channelz0.tv` when purchased) with tidy short
   links (`/watch`, `/lab`) and security headers. The tower stays on the VPS.
 
@@ -55,7 +55,7 @@ Sketches worth building next, roughly in order of bang-for-effort.
 - **The Neighborhood Desk, for real.** A `bulletin.json` the storefront renders
   as a scrolling ticker — lost cats, garage sales, the school play. Locals are
   the content; the ticker is the cheapest possible community TV.
-- **Ask the alien.** A submission form (Cloudflare Pages Function → email or R2)
+- **Ask the alien.** A submission form (a Cloudflare Worker → email or R2)
   where locals leave questions for the Ground Zero correspondent to ask the
   neighborhood via baguette. Turns viewers into a writers' room.
 - **The sign-off anthem.** A 60–90s nightly close — a slow pan over the lab, the
