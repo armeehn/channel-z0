@@ -7,5 +7,12 @@
 /live    https://watch.ch0.ripostelabs.xyz/   302
 /lab     https://ripostelabs.xyz/             302
 
-# When channelz0.tv is purchased and pointed here, this keeps old links alive:
-# /*  https://channelz0.tv/:splat  301
+# --- When channelz0.tv goes live ---------------------------------------
+# Add channelz0.tv as a second custom domain on the same Pages project, then
+# uncomment ONE of these to pick the canonical host (Pages applies a rule only
+# on the domain named on the left of a full-URL match):
+#
+#   make channelz0.tv canonical (redirect the old subdomain to it):
+# https://ch0.ripostelabs.xyz/*  https://channelz0.tv/:splat  301
+#
+#   ...or keep both live with no redirect (do nothing).

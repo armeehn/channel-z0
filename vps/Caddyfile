@@ -19,5 +19,14 @@ watch.ch0.ripostelabs.xyz {
     }
 }
 
-# Once channelz0.tv is live you'll likely want watch.channelz0.tv too — copy the
-# block above with the new hostname; Caddy fetches its certificate on first hit.
+# When channelz0.tv goes live, point watch.channelz0.tv at this VPS and
+# uncomment the block below — Caddy fetches the certificate on first hit. You can
+# run both hostnames at once (old links keep working) or retire the old one once
+# the site's WATCH_HOST is switched over.
+#
+# watch.channelz0.tv {
+#     reverse_proxy 127.0.0.1:8080 {
+#         header_down -Access-Control-Allow-Origin
+#         header_down Access-Control-Allow-Origin "*"
+#     }
+# }
