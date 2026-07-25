@@ -1,0 +1,13 @@
+# Channel Z0 — Caddy config (VPS)
+# Automatic HTTPS for the storefront and the Owncast watch page.
+# Replace the domains with yours, place at /etc/caddy/Caddyfile, then:
+#   sudo systemctl reload caddy
+
+channelz0.example {
+    root * /srv/channelz0
+    file_server
+}
+
+watch.channelz0.example {
+    reverse_proxy 127.0.0.1:8080
+}

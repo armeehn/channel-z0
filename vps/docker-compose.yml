@@ -1,0 +1,13 @@
+# Channel Z0 — the tower (VPS)
+# Owncast receives the single RTMP uplink from home and serves HLS to everyone.
+# See docs/build-guide.md, Phase 1.
+services:
+  owncast:
+    image: owncast/owncast:latest
+    container_name: owncast
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"   # web + HLS, kept behind Caddy
+      - "1935:1935"             # RTMP ingest, open to the world (stream-key protected)
+    volumes:
+      - ./data:/app/data

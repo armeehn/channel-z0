@@ -1,0 +1,26 @@
+# Channel Z0 — uplink relay (playout PC)
+# Copies the already-encoded ErsatzTV channel to the tower. No re-encode.
+#
+# Install:
+#   sudo cp playout/z0-uplink.service /etc/systemd/system/
+#   sudo cp .env.example /etc/channel-z0.env   # then fill in real values
+#   sudo systemctl daemon-reload && sudo systemctl enable --now z0-uplink
+#
+# Logs:  journalctl -fu z0-uplink
+
+[Unit]
+Description=Channel Z0 uplink (ErsatzTV -> Owncast)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+EnvironmentFile=/etc/channel-z0.env
+ExecStart=/usr/bin/ffmpeg -hide_banner -loglevel warning \
+  -i ${Z0_CHANNEL_URL} \
+  -c copy \
+  -f flv rtmp://${Z0_WATCH_DOMAIN}:1935/live/${Z0_STREAM_KEY}
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
