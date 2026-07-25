@@ -10,10 +10,11 @@
 # calls to work from a Pages origin.
 name: Deploy storefront to GitHub Pages
 
+# Manual-only: Cloudflare is the primary host (via its Git integration), so this
+# alternative doesn't run on push — that would fail on every change until you
+# actually enable GitHub Pages. Enable Pages (Settings → Pages → Source: GitHub
+# Actions), then run this from the Actions tab if you want GitHub to host instead.
 on:
-  push:
-    branches: [main]
-    paths: ["site/**"]
   workflow_dispatch:
 
 permissions:
