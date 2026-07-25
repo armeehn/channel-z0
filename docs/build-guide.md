@@ -204,7 +204,7 @@ In the ErsatzTV web UI, in order:
    - mornings: cartoons/PSAs · midday: Prelinger theatre + community loop · afternoon: movie
    - **19:00 — GROUND ZERO** (flagship slot, protect it)
    - 20:00: prime movie · 23:00: mellow late block
-   - **00:00 — SIGN-OFF**: a nightly ritual item (anthem, station sign-off card), then `Colour Bars` until the 06:00 sign-on. Deeply on-brand, and it costs nothing.
+   - **00:00 — SIGN-OFF**: a nightly ritual item (anthem, station sign-off card — [`tools/make-signoff.sh`](../tools/make-signoff.sh) generates the card-into-bars close), then `Colour Bars` until the 06:00 sign-on. Deeply on-brand, and it costs nothing.
 7. Sanity-check locally: open `http://playout-pc:8409/iptv/channel/1.ts` in VLC. You should be watching Channel Z0. (ErsatzTV also serves an XMLTV guide at `/iptv/xmltv.xml` — useful later for generating the website's schedule.)
 
 ---
@@ -347,6 +347,22 @@ ffmpeg \
 
 📦 *In this repo:* [`tools/make-colorbars.sh`](../tools/make-colorbars.sh) — pass minutes as an argument; `Z0_SILENT=1` swaps the hum for silence.
 
+**The test card.** Raw colour bars prove the pipe (Phase 1.5), but the thing you
+show *before sign-on* is the card with the station's name on it — geometry grid,
+colour bars, a greyscale step wedge, corner castellations, a centre identity
+panel, and a 1 kHz line-up tone. [`tools/make-testcard.sh`](../tools/make-testcard.sh)
+generates it at 1080p in the station's look; ErsatzTV loops the short clip to fill
+the pre-06:00 slot, and it doubles as a "please stand by" with a picture the tower
+can align to. `Z0_SILENT=1` drops the tone.
+
+**The sign-off.** The end-of-broadcast-day close for the 00:00 SIGN-OFF item:
+the "THIS CONCLUDES OUR BROADCAST DAY / GOODNIGHT, LOCALS" card dissolving into a
+short tail of colour bars, so it hands off cleanly to the `Colour Bars` filler
+that carries the rest of the night. [`tools/make-signoff.sh`](../tools/make-signoff.sh)
+makes the whole close in one file — `tools/make-signoff.sh 25 10` for a 25-second
+card and a 10-second bars tail. Where `make-slate.sh` makes a static sign-off
+*card*, this is the ritual, card into bars.
+
 **Bumpers.** Five to ten seconds, "NOW WATCHING CHANNEL Z0," made in anything (Kdenlive/DaVinci Resolve are free) — or generated on brand in one command with [`tools/make-ident.sh`](../tools/make-ident.sh). Record/generate a few variants; the `Station ID` filler rotates them. This is 80% of what makes a stream feel like a *station*.
 
 **Slates.** The technical-difficulties card, the sign-off card, "please stand by" — [`tools/make-slate.sh`](../tools/make-slate.sh) generates any of them at 1080p in the station's look. Fills the `interstitials/technical-difficulties.mp4` the media tree expects.
@@ -393,6 +409,8 @@ ffmpeg \
 | Owncast logs | VPS | `docker logs -f owncast` |
 | Normalize a submitted ad | anywhere | see *The ad pipeline* §3 |
 | Regenerate sign-off bars | anywhere | see *Broadcast polish* |
+| Generate the test card | anywhere | `tools/make-testcard.sh` |
+| Generate the nightly sign-off | anywhere | `tools/make-signoff.sh` |
 | Test pattern to the tower | anywhere | see *Phase 1.5* |
 
 ---
