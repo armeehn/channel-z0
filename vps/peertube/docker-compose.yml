@@ -1,0 +1,51 @@
+# Channel Z0 — the tower, PeerTube edition (VPS)
+#
+# A DROP-IN ALTERNATIVE to ../docker-compose.yml (Owncast). Same job: take the
+# ONE RTMP uplink from home and serve HLS to everyone — but PeerTube ships
+# peer-to-peer (WebRTC) segment sharing turned ON by default, so the tower's
+# egress falls as the audience grows instead of scaling straight up with it.
+#
+# The trade: this is a real stack (Postgres + Redis + the app), not Owncast's
+# single Go binary. Keep LIVE TRANSCODING OFF in the admin UI to stay as cheap
+# on CPU as Owncast — it then just remuxes the incoming RTMP into HLS.
+#
+# Goes in /opt/peertube/ on the VPS. Full setup, the Caddy block, how to point
+# the existing uplink at it, and the trade-offs vs Owncast: vps/peertube/README.md
+#
+# Don't run this AND ../docker-compose.yml on the same box — they both want :1935.
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: z0-peertube-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${PEERTUBE_DB_USERNAME}
+      POSTGRES_PASSWORD: ${PEERTUBE_DB_PASSWORD}
+      POSTGRES_DB: peertube            # keep PEERTUBE_DB_SUFFIX empty in .env to match
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    shm_size: 256m
+
+  redis:
+    image: redis:7-alpine
+    container_name: z0-peertube-redis
+    restart: unless-stopped
+    volumes:
+      - ./data/redis:/data
+
+  peertube:
+    image: chocobozzz/peertube:production-bookworm
+    container_name: z0-peertube
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    env_file: .env
+    ports:
+      - "127.0.0.1:9000:9000"   # web + HLS, kept behind Caddy (Owncast used 8080)
+      - "1935:1935"             # RTMP ingest, open to the world (stream-key protected)
+      # RTMPS instead? expose 1936 and enable live.rtmps in the admin UI.
+    volumes:
+      - ./data/peertube:/data
+      - ./config:/config
