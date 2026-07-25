@@ -37,6 +37,18 @@ These went from idea to implementation and are in the repo now.
   RL-Z0 designation — so the on-screen channel and the website look like one
   station.
 
+- **The bookends of the broadcast day.** The two pieces of furniture that top
+  and tail a day of television, generated on brand:
+  - [`tools/make-testcard.sh`](../tools/make-testcard.sh) — the station test
+    card. Not raw `smptehdbars` but the card *with the station's name on it*:
+    geometry grid, colour bars, a greyscale step wedge, corner castellations,
+    a centre identity panel, and a 1 kHz line-up tone. The pre-06:00 sign-on
+    fill, and a picture the tower can align to.
+  - [`tools/make-signoff.sh`](../tools/make-signoff.sh) — the nightly sign-off.
+    The "THIS CONCLUDES OUR BROADCAST DAY / GOODNIGHT, LOCALS" card dissolving
+    into a tail of colour bars, one file for the 00:00 SIGN-OFF item. The seed
+    of the sign-off anthem below, close at hand.
+
 - **Pre-flight for spots.** [`tools/check-ad.sh`](../tools/check-ad.sh) reads a
   submission and tells you its length, codecs, and true loudness before you
   accept it — the screening step that pairs with `normalize-ad.sh`.
