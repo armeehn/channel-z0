@@ -120,7 +120,7 @@ Open `https://watch.channelz0.example/admin` (default login is `admin` / `abc123
 
 ### 1.5 Prove the pipe works
 
-From any machine with FFmpeg, send color bars at the tower:
+From any machine with FFmpeg, send colour bars at the tower:
 
 ```bash
 ffmpeg -re \
@@ -193,18 +193,18 @@ In the ErsatzTV web UI, in order:
 
 1. **FFmpeg profile** (Settings → FFmpeg Profiles): one profile, `Z0 Broadcast` — 1920×1080, H.264 hardware encode (VAAPI/QSV), ~4500 kbps video, AAC 128 kbps audio, normalize framerate on. If your uplink is a true 10 *megabits*, make it 1280×720 at 3000–3500 kbps instead and leave headroom for the household. This one profile is the master encode — everything downstream just copies it.
 2. **Libraries** (Media → Libraries): add local libraries pointing at `shows/`, `movies/`, and — as *Other Videos* — `commercials/`, `bumpers/`, `psas/`, `interstitials/`. Set libraries to rescan on an interval, so dropping a new ad in the folder is all it takes.
-3. **Collections**: build collections named `Local Ads`, `Lab Promos`, `Bumpers`, `Vintage PSAs`, `Color Bars`. These are the ammunition for filler.
+3. **Collections**: build collections named `Local Ads`, `Lab Promos`, `Bumpers`, `Vintage PSAs`, `Colour Bars`. These are the ammunition for filler.
 4. **Filler presets** (Media → Filler Presets): this is the old-TV magic.
    - `Ad Break` — mid-roll filler drawing from `Local Ads` + `Lab Promos` + `Vintage PSAs`.
    - `Station ID` — pre/post-roll from `Bumpers`.
    - **Pad to the half hour**: use padded filler mode so every slot fills to :00/:30 with ads. This is the single feature that makes it feel like real television — shows start on the half hour *because the ad break stretched to fit*, exactly like 1994.
-   - `Dead Air` — fallback filler set to `Color Bars`, so if a schedule ever runs dry the station shows bars instead of black.
+   - `Dead Air` — fallback filler set to `Colour Bars`, so if a schedule ever runs dry the station shows bars instead of black.
 5. **Channel** (Channels → Add): number `1`, name **Channel Z0**, streaming mode **MPEG-TS**, your `Z0 Broadcast` profile. Add the **watermark**: your Z0 logo PNG, bottom-right, ~15% opacity, always on. That's the channel bug.
 6. **Schedule** (Schedules): build the broadcast day from schedule items (each item = a collection or show + a filler preset). A starting rhythm:
-   - mornings: cartoons/PSAs · midday: Prelinger theater + community loop · afternoon: movie
+   - mornings: cartoons/PSAs · midday: Prelinger theatre + community loop · afternoon: movie
    - **19:00 — GROUND ZERO** (flagship slot, protect it)
    - 20:00: prime movie · 23:00: mellow late block
-   - **00:00 — SIGN-OFF**: a nightly ritual item (anthem, station sign-off card), then `Color Bars` until the 06:00 sign-on. Deeply on-brand, and it costs nothing.
+   - **00:00 — SIGN-OFF**: a nightly ritual item (anthem, station sign-off card), then `Colour Bars` until the 06:00 sign-on. Deeply on-brand, and it costs nothing.
 7. Sanity-check locally: open `http://playout-pc:8409/iptv/channel/1.ts` in VLC. You should be watching Channel Z0. (ErsatzTV also serves an XMLTV guide at `/iptv/xmltv.xml` — useful later for generating the website's schedule.)
 
 ---
@@ -315,7 +315,7 @@ Field kit notes for Ground Zero — including how to hide a lavalier microphone 
 
 ## The ad pipeline (locals → airwaves)
 
-1. **Intake.** Publish specs on the website (the site file has them built in): 15 / 30 / 60 seconds exactly, MP4 (H.264 + AAC), 1080p or 720p, you must own the rights to everything in it, keep it neighborly. Collect via `ads@channelz0.example` or a free file-drop form (Google Form works fine).
+1. **Intake.** Publish specs on the website (the site file has them built in): 15 / 30 / 60 seconds exactly, MP4 (H.264 + AAC), 1080p or 720p, you must own the rights to everything in it, keep it neighbourly. Collect via `ads@channelz0.example` or a free file-drop form (Google Form works fine).
 2. **Screening.** Watch every submission before it airs. You are the FCC of this operation. The written one-page standard that saves arguments later ships as [`docs/ad-standards.md`](ad-standards.md) — post it, link it, point to it.
 3. **Normalize.** Every accepted spot gets one pass through this — same resolution, same framerate, same *loudness* (the classic sin of TV ads was being louder than the show; you get to fix history):
    ```bash
@@ -334,7 +334,7 @@ Field kit notes for Ground Zero — including how to hide a lavalier microphone 
 
 ## Broadcast polish
 
-**Generate the sign-off color bars** (one hour of SMPTE bars with a polite, quiet hum — swap the sine for `anullsrc=r=48000:cl=stereo` if you want silence):
+**Generate the sign-off colour bars** (one hour of SMPTE bars with a polite, quiet hum — swap the sine for `anullsrc=r=48000:cl=stereo` if you want silence):
 
 ```bash
 ffmpeg \
@@ -397,6 +397,6 @@ ffmpeg \
 
 ---
 
-*Channel Z0. It's always on somewhere in the neighborhood.*
+*Channel Z0. It's always on somewhere in the neighbourhood.*
 
 
