@@ -401,13 +401,18 @@
    Edit CONFIG, upload as index.html, done.
    ========================================================================== */
 const CONFIG = {
+  // Live at ch0.ripostelabs.xyz (hosted on Cloudflare Pages) for now; the
+  // switch to channelz0.tv when it's purchased is just these four lines + DNS.
+  // The tower (Owncast) still lives on the VPS — only its hostname changes.
+  //
   // Your live HLS stream (Owncast serves this at /hls/stream.m3u8):
-  STREAM_URL:   "https://watch.channelz0.example/hls/stream.m3u8",
-  // Owncast base URL — enables the ON AIR chip + receiver count via /api/status.
+  STREAM_URL:   "https://watch.ch0.ripostelabs.xyz/hls/stream.m3u8",
+  // Owncast base URL — enables the ON AIR chip, receiver count, AND the live
+  // "NOW SHOWING" title (fed by playout/nowplaying.py) via /api/status.
   // Leave "" to skip polling (chip then follows the player itself).
-  OWNCAST_BASE: "https://watch.channelz0.example",
-  AD_EMAIL:     "ads@channelz0.example",
-  CHAT_URL:     "https://watch.channelz0.example",
+  OWNCAST_BASE: "https://watch.ch0.ripostelabs.xyz",
+  AD_EMAIL:     "ch0@ripostelabs.xyz",
+  CHAT_URL:     "https://watch.ch0.ripostelabs.xyz",
   LAB_URL:      "https://ripostelabs.xyz",
   STATUS_POLL_SECONDS: 30,
   RETRY_SECONDS: 20,
@@ -443,7 +448,13 @@ const els = {
   chatLink: $("chatLink"), adMail: $("adMail"), labLink: $("labLink"),
 };
 
-const state = { tuned: false, hls: null, retryTimer: null, owncastOnline: null };
+const state = { tuned: false, hls: null, retryTimer: null, owncastOnline: null, streamTitle: "" };
+
+/* The "NOW SHOWING" line prefers the live title from the tower (what ErsatzTV
+   is actually airing, via nowplaying.py) and falls back to the schedule. */
+function updateNowShowing() {
+  els.nowShowing.textContent = state.streamTitle || SCHEDULE[currentSlotIndex()].name;
+}
 
 /* ---------------- hls.js loader (cdnjs → jsdelivr → native) ---------------- */
 function loadScript(src) {
@@ -526,7 +537,9 @@ async function pollStatus() {
     state.owncastOnline = !!j.online;
     setOnAir(state.owncastOnline);
     if (typeof j.viewerCount === "number") els.viewerNote.textContent = "RECEIVERS: " + j.viewerCount;
-  } catch (e) { state.owncastOnline = null; els.viewerNote.textContent = "RECEIVERS: —"; }
+    state.streamTitle = (state.owncastOnline && j.streamTitle) ? String(j.streamTitle) : "";
+    updateNowShowing();
+  } catch (e) { state.owncastOnline = null; els.viewerNote.textContent = "RECEIVERS: —"; state.streamTitle = ""; }
 }
 
 /* ---------------- clock + program grid ---------------- */
@@ -561,7 +574,7 @@ function renderSchedule() {
       </div>`;
     els.pvGrid.appendChild(row);
   });
-  els.nowShowing.textContent = SCHEDULE[cur].name;
+  updateNowShowing();
   els.pvDate.textContent = new Date().toLocaleDateString(undefined,
     { weekday: "long", month: "long", day: "numeric" }).toUpperCase();
 }

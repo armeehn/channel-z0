@@ -1,0 +1,72 @@
+# Channel Z0 — master control, containerized.
+#
+# The whole home side in one file: ErsatzTV (the schedule) + the uplink relay
+# (one ffmpeg stream to the tower) + an optional now-playing bridge. Designed to
+# drop straight onto a homelab — Proxmox LXC/VM, TrueNAS SCALE, an old NUC,
+# whatever runs Docker. See docs/self-hosting.md for the platform-specific bits
+# (the important one is handing the box's iGPU to the container for Quick Sync).
+#
+# Quickstart:
+#   cp ../.env.example .env          # then fill in real values
+#   docker compose up -d             # ersatztv + uplink
+#   docker compose --profile nowplaying up -d   # ...and the now-playing bridge
+#
+# The uplink and now-playing services replace the old systemd unit
+# (playout/z0-uplink.service is still here if you'd rather run bare-metal).
+
+services:
+  # --- ErsatzTV: turns the media library into a linear channel -------------
+  ersatztv:
+    image: docker.io/ersatztv/ersatztv:${ERSATZTV_TAG:-latest-vaapi}
+    container_name: z0-ersatztv
+    restart: unless-stopped
+    ports:
+      - "8409:8409"                 # web UI + the channel at /iptv/channel/1.ts
+    volumes:
+      - ./ersatztv-config:/config
+      - ${Z0_MEDIA_ROOT:-/media/channelz0}:/media:ro
+    devices:
+      - /dev/dri:/dev/dri           # the hardware encoder (Intel Quick Sync / VAAPI)
+    # NVENC boxes: set ERSATZTV_TAG=latest-nvidia and swap the block above for
+    # `runtime: nvidia`; software-only boxes: ERSATZTV_TAG=latest and drop devices.
+
+  # --- Uplink: one ffmpeg -c copy relay, ErsatzTV -> Owncast --------------
+  # No re-encode; pure plumbing. Restarts forever, exactly like the systemd
+  # unit did — home internet blips, ErsatzTV restarts, and it reconnects.
+  uplink:
+    image: lscr.io/linuxserver/ffmpeg:latest
+    container_name: z0-uplink
+    restart: unless-stopped
+    depends_on:
+      - ersatztv
+    env_file: .env
+    network_mode: host            # so ${Z0_CHANNEL_URL} at 127.0.0.1:8409 resolves
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo "z0-uplink: relaying $${Z0_CHANNEL_URL} -> $${Z0_WATCH_DOMAIN}"
+        while true; do
+          ffmpeg -hide_banner -loglevel warning \
+            -i "$${Z0_CHANNEL_URL}" \
+            -c copy \
+            -f flv "rtmp://$${Z0_WATCH_DOMAIN}:1935/live/$${Z0_STREAM_KEY}" || true
+          echo "z0-uplink: stream ended; reconnecting in 5s"; sleep 5
+        done
+
+  # --- Now-playing bridge (optional): the marquee ------------------------
+  # Reads what ErsatzTV is airing right now from its XMLTV guide and writes it
+  # into Owncast's stream title, which the storefront then shows live. Off by
+  # default; turn it on with:  docker compose --profile nowplaying up -d
+  nowplaying:
+    image: docker.io/python:3-alpine
+    container_name: z0-nowplaying
+    restart: unless-stopped
+    profiles: ["nowplaying"]
+    depends_on:
+      - ersatztv
+    env_file: .env
+    network_mode: host
+    volumes:
+      - ./nowplaying.py:/nowplaying.py:ro
+    command: ["python3", "/nowplaying.py"]

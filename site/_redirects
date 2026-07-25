@@ -1,0 +1,11 @@
+# Channel Z0 — Cloudflare Pages redirects (tidy short links).
+# https://developers.cloudflare.com/pages/configuration/redirects/
+# Edit the target hosts to match your tower + sponsor once DNS is settled.
+
+/watch   https://watch.ch0.ripostelabs.xyz/   302
+/chat    https://watch.ch0.ripostelabs.xyz/   302
+/live    https://watch.ch0.ripostelabs.xyz/   302
+/lab     https://ripostelabs.xyz/             302
+
+# When channelz0.tv is purchased and pointed here, this keeps old links alive:
+# /*  https://channelz0.tv/:splat  301
