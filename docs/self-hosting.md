@@ -187,7 +187,7 @@ can live anywhere that can reach both ErsatzTV and the tower.
   the sign-off ritual and the now-playing bridge both trust the wall clock.
 - **Health at a glance.** Point UptimeRobot at the tower's
   `https://watch.<domain>/api/status`; you'll hear about an outage before a
-  neighbor does.
+  neighbour does.
 - **Keep the secret in one place.** The stream key lives in `.env` (or
   `/etc/channel-z0.env`) and nowhere else — not in the compose file, not in a
   snapshot you export, not in a screenshot of your dashboard.

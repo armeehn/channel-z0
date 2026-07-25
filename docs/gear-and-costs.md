@@ -91,7 +91,7 @@ Human skin: talent provides their own. Wardrobe budget: $0.
 | **Standard** (N100 mini + field kit + Oracle free) | ~$220 | ~$3 | Silent dedicated playout, Ground Zero fully equipped. |
 | **Bulletproof** (Standard + paid 20 TB VPS + UPS + .tv domain) | ~$280 | ~$12 | Survives power blips, bigger audience headroom, and the flex of a `.tv`. |
 
-For scale: a "real" low-power TV license, tower, and transmitter runs into six figures. Channel Z0 does the culturally identical thing for less than a pizza per month, on a signal every house already has.
+For scale: a "real" low-power TV licence, tower, and transmitter runs into six figures. Channel Z0 does the culturally identical thing for less than a pizza per month, on a signal every house already has.
 
 ---
 

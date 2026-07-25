@@ -9,7 +9,7 @@ the site, point to it when declining a spot. One page, on purpose.*
 
 Anyone local: your shop, your band, your garage sale, your league, your
 inexplicable hobby. Airtime is free while the station is small. Businesses
-outside the neighborhood get a polite no — this channel's whole premise is
+outside the neighbourhood get a polite no — this channel's whole premise is
 that it's from here.
 
 ## Technical requirements
@@ -29,10 +29,10 @@ station's discretion (`tools/normalize-ad.sh` handles the rest).
 1. **You own everything in it.** Footage, images, and especially music. A
    submission is an attestation that you hold the rights. No exceptions —
    rights problems put the whole station at risk, not just your spot.
-2. **Neighborly.** A kid might be watching; Z0 plays all day in people's
+2. **Neighbourly.** A kid might be watching; Z0 plays all day in people's
    houses. Nothing you wouldn't say across a fence.
 3. **No politics, no feuds.** Campaigns, causes, and grievances with your
-   neighbor's hedge all go somewhere else.
+   neighbour's hedge all go somewhere else.
 4. **No scams, no miracle products, nothing illegal.** Obviously — but it's
    written down now.
 5. **Weirdness is welcome.** Strange is not a violation. Boring is closer to

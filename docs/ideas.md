@@ -52,15 +52,15 @@ These went from idea to implementation and are in the repo now.
 Sketches worth building next, roughly in order of bang-for-effort.
 
 ### Programming
-- **The Neighborhood Desk, for real.** A `bulletin.json` the storefront renders
+- **The Neighbourhood Desk, for real.** A `bulletin.json` the storefront renders
   as a scrolling ticker — lost cats, garage sales, the school play. Locals are
   the content; the ticker is the cheapest possible community TV.
 - **Ask the alien.** A submission form (a Cloudflare Worker → email or R2)
   where locals leave questions for the Ground Zero correspondent to ask the
-  neighborhood via baguette. Turns viewers into a writers' room.
+  neighbourhood via baguette. Turns viewers into a writers' room.
 - **The sign-off anthem.** A 60–90s nightly close — a slow pan over the lab, the
   RL-Z0 card, a bit of music you own — generated once and aired at 00:00 before
-  the color bars. `make-slate.sh` is the seed; this is its cinematic cousin.
+  the colour bars. `make-slate.sh` is the seed; this is its cinematic cousin.
 - **Emergency Broadcast crawl.** A parody EAS: the checker band, the two-tone,
   a crawl of gloriously low-stakes alerts ("A CASSEROLE HAS BEEN LEFT
   UNATTENDED"). Aired rarely, on purpose.
@@ -85,4 +85,4 @@ Sketches worth building next, roughly in order of bang-for-effort.
 ---
 
 *Ideas are cheap; airtime is free while we're small. Build the ones that make
-the neighborhood lean in.*
+the neighbourhood lean in.*
