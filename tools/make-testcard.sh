@@ -77,7 +77,7 @@ drawtext=fontfile='${FONT}':text='GREYSCALE · 0 to 100 IRE':fontcolor=0x8A8A8A:
 drawtext=fontfile='${FONT}':text='TEST CARD':fontcolor=0x8A8A8A:fontsize=34:x=(w-tw)/2:y=568,\
 drawtext=fontfile='${FONT}':text='CHANNEL Z0':fontcolor=${Z0_PAPER}:fontsize=96:x=(w-tw)/2:y=610,\
 drawtext=fontfile='${FONT}':text='A LOCAL CHANNEL, FOR LOCALS':fontcolor=0x8A8A8A:fontsize=28:x=(w-tw)/2:y=760,\
-drawtext=fontfile='${FONT}':text='1 kHz LINE-UP TONE · 1080p / 30 · CH 0 · DESIG RL-Z0 · SIGN-ON 06:00':fontcolor=0x8A8A8A:fontsize=26:x=(w-tw)/2:y=1002\
+drawtext=fontfile='${FONT}':text='1 kHz LINE-UP TONE · 1080p / 30 · CH 0 · DESIG RL-Z0 · SIGN-ON 06\:00':fontcolor=0x8A8A8A:fontsize=26:x=(w-tw)/2:y=1002\
 [base];\
 [base][1:v]overlay=x=10:y=150[v]" \
   -map "[v]" -map 2:a \
