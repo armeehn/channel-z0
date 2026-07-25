@@ -247,23 +247,38 @@ sudo systemctl enable --now z0-uplink
 
 **Uplink budget check:** 4500 kbps video + 128 kbps audio + overhead ≈ 5 Mbps sustained. On an 80 Mbps (10 MB/s) uplink that's 6% utilization; even on a literal 10 Mbps plan it fits with room for the household, at 720p. One stream. Always one stream.
 
+**Containerized alternative.** Instead of the systemd unit, [`playout/compose.yml`](../playout/compose.yml) runs the whole home side — ErsatzTV, the uplink relay, and the optional now-playing bridge — in one `docker compose up -d`. It's the easy path on a homelab; see [`docs/self-hosting.md`](self-hosting.md) for Proxmox and TrueNAS specifics (mostly: how to hand the box's iGPU to the container).
+
+**The live marquee (optional).** Owncast doesn't know what ErsatzTV is airing — [`playout/nowplaying.py`](../playout/nowplaying.py) closes that gap. It reads ErsatzTV's XMLTV guide, works out the current program, and writes it into Owncast's stream title, which the storefront then shows as a live NOW SHOWING line. Create an Owncast access token at `https://watch.<domain>/admin/access-tokens` with the *set stream title* scope, put it in `.env` as `Z0_OWNCAST_TOKEN`, and start it with `docker compose --profile nowplaying up -d` (or run the script under a systemd timer).
+
 ---
 
 ## Phase 4 — The storefront (channelz0.example)
 
-The storefront lives at [`site/index.html`](../site/index.html) — live player, ON AIR light, program grid, and the ad-submission counter, in the Riposte Laboratories design language. (The original CRT version is preserved at [`site/retro/index.html`](../site/retro/index.html).) To deploy:
+The storefront lives at [`site/index.html`](../site/index.html) — live player, ON AIR light, program grid, and the ad-submission counter, in the Riposte Laboratories design language. (The original CRT version is preserved at [`site/retro/index.html`](../site/retro/index.html).) It's hosted on **Cloudflare Pages** — the tower (Owncast) carries only the video, and Cloudflare carries the page. To deploy:
 
 1. Open the file and edit the `CONFIG` block at the top:
    ```js
    const CONFIG = {
-     STREAM_URL:   "https://watch.channelz0.example/hls/stream.m3u8",
-     OWNCAST_BASE: "https://watch.channelz0.example",   // enables the ON AIR light + viewer count
-     AD_EMAIL:     "ads@channelz0.example",
-     CHAT_URL:     "https://watch.channelz0.example",   // "join the chat" link
+     STREAM_URL:   "https://watch.ch0.ripostelabs.xyz/hls/stream.m3u8",
+     OWNCAST_BASE: "https://watch.ch0.ripostelabs.xyz", // ON AIR light + viewer count + live title
+     AD_EMAIL:     "ch0@ripostelabs.xyz",
+     CHAT_URL:     "https://watch.ch0.ripostelabs.xyz", // "join the chat" link
    };
    ```
-2. Copy it to the VPS: `scp site/index.html vps:/srv/channelz0/index.html`
-3. Done. Caddy is already serving that folder. (Alternative: enable the GitHub Pages workflow in `.github/workflows/deploy-pages.yml` and let GitHub host the storefront while the VPS carries only the stream.)
+2. **Deploy to Cloudflare Pages.** Create a Pages project named `channel-z0`, add the custom domain `ch0.ripostelabs.xyz` (instant, since ripostelabs.xyz is on Cloudflare DNS), and either push to `main` — `.github/workflows/deploy-cloudflare.yml` deploys on every change to `site/` — or run `npx wrangler pages deploy site --project-name=channel-z0` from your machine. Full setup notes are in the workflow file's header.
+3. **Cross-origin note.** The page is on Cloudflare and the stream is on the VPS, so the tower must send permissive CORS — the updated [`vps/Caddyfile`](../vps/Caddyfile) does this. `site/_headers` and `site/_redirects` configure Pages (security headers, and short links like `/watch`). (Alternative host: the GitHub Pages workflow in `.github/workflows/deploy-pages.yml` still works if you'd rather.)
+
+### When channelz0.tv goes live
+
+Everything is staged for a one-line flip; do these in order:
+
+1. **Buy it** at any registrar, then add `channelz0.tv` to Cloudflare (Add a site) so its DNS is Cloudflare-managed.
+2. **Pages custom domains.** In the `channel-z0` Pages project → Custom domains, add `channelz0.tv` (and `www` if you want). Both it and `ch0.ripostelabs.xyz` now serve the site.
+3. **The tower.** Add a DNS record `watch.channelz0.tv` → VPS IP, and uncomment the `watch.channelz0.tv { … }` block in [`vps/Caddyfile`](../vps/Caddyfile); `sudo systemctl reload caddy`. Caddy fetches the cert automatically.
+4. **The site.** In [`site/index.html`](../site/index.html), change the two lines at the top of the script — `WATCH_HOST = "watch.channelz0.tv"` and `AD_EMAIL = "ads@channelz0.tv"`. Everything else in `CONFIG` derives from those. Push; the workflow redeploys.
+5. **`.env`** on the playout box: set `Z0_SITE_DOMAIN` / `Z0_WATCH_DOMAIN` to the `channelz0.tv` hostnames (and re-issue the Owncast token against the new host if you moved it).
+6. **Optional — canonicalize.** To make `channelz0.tv` the one true home and redirect the old subdomain, uncomment the 301 in [`site/_redirects`](../site/_redirects).
 
 The player uses hls.js and falls back to native HLS on Safari/iPhones. If the video ever refuses to load cross-subdomain (a CORS grump), the two-line fallback is an iframe of Owncast's built-in player: `<iframe src="https://watch.channelz0.example/embed/video" allowfullscreen></iframe>` — but the direct HLS route is the full retro experience, so try that first. Owncast's own page at `watch.` stays useful regardless: it has the live chat.
 
@@ -331,9 +346,13 @@ ffmpeg \
 
 📦 *In this repo:* [`tools/make-colorbars.sh`](../tools/make-colorbars.sh) — pass minutes as an argument; `Z0_SILENT=1` swaps the hum for silence.
 
-**Bumpers.** Five to ten seconds, "You're watching CHANNEL Z0," made in anything (Kdenlive/DaVinci Resolve are free). Record a few variants; the `Station ID` filler rotates them. This is 80% of what makes a stream feel like a *station*.
+**Bumpers.** Five to ten seconds, "NOW WATCHING CHANNEL Z0," made in anything (Kdenlive/DaVinci Resolve are free) — or generated on brand in one command with [`tools/make-ident.sh`](../tools/make-ident.sh). Record/generate a few variants; the `Station ID` filler rotates them. This is 80% of what makes a stream feel like a *station*.
 
-**The bug.** The watermark you set in Phase 2 runs always. Semi-transparent, bottom-right, never explained. Non-negotiable old-TV physics.
+**Slates.** The technical-difficulties card, the sign-off card, "please stand by" — [`tools/make-slate.sh`](../tools/make-slate.sh) generates any of them at 1080p in the station's look. Fills the `interstitials/technical-difficulties.mp4` the media tree expects.
+
+**The bug.** The watermark you set in Phase 2 runs always. Semi-transparent, bottom-right, never explained. Non-negotiable old-TV physics. [`tools/make-bug.sh`](../tools/make-bug.sh) generates the transparent PNG to point the watermark at.
+
+**Screening spots.** Before you accept a submission, [`tools/check-ad.sh`](../tools/check-ad.sh) reads its length, codecs, and true loudness so you know what you're clearing; `tools/normalize-ad.sh` then files it for air.
 
 **Loudness discipline.** Run *everything* — shows, bumpers, ads — through the same `loudnorm` settings so channel-surfing ears never get blasted. Consistency is the retro luxury.
 

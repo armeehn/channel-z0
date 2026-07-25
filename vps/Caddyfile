@@ -1,13 +1,32 @@
-# Channel Z0 — Caddy config (VPS)
-# Automatic HTTPS for the storefront and the Owncast watch page.
-# Replace the domains with yours, place at /etc/caddy/Caddyfile, then:
+# Channel Z0 — Caddy config (VPS).
+# Automatic HTTPS for the Owncast watch page + HLS.
+#
+# The storefront no longer lives here — it's on Cloudflare Pages
+# (ch0.ripostelabs.xyz, and channelz0.tv once purchased). So Caddy's only job on
+# the VPS is to terminate TLS for the tower and re-serve Owncast, PLUS hand the
+# cross-origin storefront the CORS header it needs to pull the stream + status.
+#
+# Replace the hostname with yours, place at /etc/caddy/Caddyfile, then:
 #   sudo systemctl reload caddy
 
-channelz0.example {
-    root * /srv/channelz0
-    file_server
+watch.ch0.ripostelabs.xyz {
+    reverse_proxy 127.0.0.1:8080 {
+        # The page is served from another origin (Cloudflare), so the HLS player
+        # and the /api/status polling need permissive CORS. Strip any value
+        # Owncast already set, then set our own, so the browser never sees two.
+        header_down -Access-Control-Allow-Origin
+        header_down Access-Control-Allow-Origin "*"
+    }
 }
 
-watch.channelz0.example {
-    reverse_proxy 127.0.0.1:8080
-}
+# When channelz0.tv goes live, point watch.channelz0.tv at this VPS and
+# uncomment the block below — Caddy fetches the certificate on first hit. You can
+# run both hostnames at once (old links keep working) or retire the old one once
+# the site's WATCH_HOST is switched over.
+#
+# watch.channelz0.tv {
+#     reverse_proxy 127.0.0.1:8080 {
+#         header_down -Access-Control-Allow-Origin
+#         header_down Access-Control-Allow-Origin "*"
+#     }
+# }

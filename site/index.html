@@ -400,14 +400,28 @@
    CHANNEL Z0 · RL-Z0 — station logic
    Edit CONFIG, upload as index.html, done.
    ========================================================================== */
+/* ============================ DOMAIN SWITCH ============================
+   The station lives at ch0.ripostelabs.xyz (on Cloudflare Pages) today. When
+   channelz0.tv is purchased, flip these two lines and re-point DNS — the rest
+   of CONFIG derives from them, so there's nothing else to hunt for.
+
+     const WATCH_HOST = "watch.channelz0.tv";
+     const AD_EMAIL   = "ads@channelz0.tv";
+
+   (Full checklist: docs/build-guide.md, Phase 4 → "When channelz0.tv goes live".)
+   ====================================================================== */
+const WATCH_HOST = "watch.ch0.ripostelabs.xyz";   // the Owncast tower on the VPS
+const AD_EMAIL   = "ch0@ripostelabs.xyz";          // where spot submissions land
+
 const CONFIG = {
-  // Your live HLS stream (Owncast serves this at /hls/stream.m3u8):
-  STREAM_URL:   "https://watch.channelz0.example/hls/stream.m3u8",
-  // Owncast base URL — enables the ON AIR chip + receiver count via /api/status.
-  // Leave "" to skip polling (chip then follows the player itself).
-  OWNCAST_BASE: "https://watch.channelz0.example",
-  AD_EMAIL:     "ads@channelz0.example",
-  CHAT_URL:     "https://watch.channelz0.example",
+  // Live HLS stream (Owncast serves this at /hls/stream.m3u8):
+  STREAM_URL:   `https://${WATCH_HOST}/hls/stream.m3u8`,
+  // Owncast base URL — enables the ON AIR chip, receiver count, AND the live
+  // "NOW SHOWING" title (fed by playout/nowplaying.py) via /api/status.
+  // Set WATCH_HOST to "" above to skip polling (chip then follows the player).
+  OWNCAST_BASE: WATCH_HOST ? `https://${WATCH_HOST}` : "",
+  AD_EMAIL,
+  CHAT_URL:     WATCH_HOST ? `https://${WATCH_HOST}` : "",
   LAB_URL:      "https://ripostelabs.xyz",
   STATUS_POLL_SECONDS: 30,
   RETRY_SECONDS: 20,
@@ -443,7 +457,13 @@ const els = {
   chatLink: $("chatLink"), adMail: $("adMail"), labLink: $("labLink"),
 };
 
-const state = { tuned: false, hls: null, retryTimer: null, owncastOnline: null };
+const state = { tuned: false, hls: null, retryTimer: null, owncastOnline: null, streamTitle: "" };
+
+/* The "NOW SHOWING" line prefers the live title from the tower (what ErsatzTV
+   is actually airing, via nowplaying.py) and falls back to the schedule. */
+function updateNowShowing() {
+  els.nowShowing.textContent = state.streamTitle || SCHEDULE[currentSlotIndex()].name;
+}
 
 /* ---------------- hls.js loader (cdnjs → jsdelivr → native) ---------------- */
 function loadScript(src) {
@@ -526,7 +546,9 @@ async function pollStatus() {
     state.owncastOnline = !!j.online;
     setOnAir(state.owncastOnline);
     if (typeof j.viewerCount === "number") els.viewerNote.textContent = "RECEIVERS: " + j.viewerCount;
-  } catch (e) { state.owncastOnline = null; els.viewerNote.textContent = "RECEIVERS: —"; }
+    state.streamTitle = (state.owncastOnline && j.streamTitle) ? String(j.streamTitle) : "";
+    updateNowShowing();
+  } catch (e) { state.owncastOnline = null; els.viewerNote.textContent = "RECEIVERS: —"; state.streamTitle = ""; }
 }
 
 /* ---------------- clock + program grid ---------------- */
@@ -561,7 +583,7 @@ function renderSchedule() {
       </div>`;
     els.pvGrid.appendChild(row);
   });
-  els.nowShowing.textContent = SCHEDULE[cur].name;
+  updateNowShowing();
   els.pvDate.textContent = new Date().toLocaleDateString(undefined,
     { weekday: "long", month: "long", day: "numeric" }).toUpperCase();
 }
