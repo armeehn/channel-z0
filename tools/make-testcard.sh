@@ -13,6 +13,10 @@
 #   tools/make-testcard.sh              # 60s loopable card -> interstitials/
 #   tools/make-testcard.sh 300          # 5 minutes instead
 #   Z0_SILENT=1 tools/make-testcard.sh  # drop the 1 kHz tone (silence)
+#   Z0_SERIAL=4B9F tools/make-testcard.sh  # pin the print serial (else random)
+#
+# Every regenerate is stamped with the build date and a unique serial ("PRINT
+# 2026-07-25 · SER 4B9F"), so no two prints of the card look quite the same.
 #
 # Output: $Z0_MEDIA_ROOT/interstitials/testcard.mp4 (1080p/30, channel profile).
 # ErsatzTV loops a short clip happily, so 60s is plenty to fill a long slot.
@@ -35,6 +39,17 @@ else
 fi
 
 mkdir -p "$OUT_DIR"
+
+# A unique "print" stamp so every regenerate is visibly distinct: the build date
+# and a random serial. Pin it with Z0_SERIAL=XXXX for a reproducible card.
+STAMP_DATE="$(date +%Y-%m-%d)"
+if [[ -n "${Z0_SERIAL:-}" ]]; then
+  SERIAL="$Z0_SERIAL"
+elif [[ -r /dev/urandom ]]; then
+  SERIAL="$(od -An -N2 -tx1 /dev/urandom | tr -d ' \n' | tr '[:lower:]' '[:upper:]')"
+else
+  SERIAL="$(printf '%04X' "$RANDOM")"
+fi
 
 # Build the greyscale step wedge (black -> white in 11 steps) as a row of
 # drawbox fills; the trailing comma splices it into the filter chain.
@@ -77,7 +92,8 @@ drawtext=fontfile='${FONT}':text='GREYSCALE · 0 to 100 IRE':fontcolor=0x8A8A8A:
 drawtext=fontfile='${FONT}':text='TEST CARD':fontcolor=0x8A8A8A:fontsize=34:x=(w-tw)/2:y=568,\
 drawtext=fontfile='${FONT}':text='CHANNEL Z0':fontcolor=${Z0_PAPER}:fontsize=96:x=(w-tw)/2:y=610,\
 drawtext=fontfile='${FONT}':text='A LOCAL CHANNEL, FOR LOCALS':fontcolor=0x8A8A8A:fontsize=28:x=(w-tw)/2:y=760,\
-drawtext=fontfile='${FONT}':text='1 kHz LINE-UP TONE · 1080p / 30 · CH 0 · DESIG RL-Z0 · SIGN-ON 06:00':fontcolor=0x8A8A8A:fontsize=26:x=(w-tw)/2:y=1002\
+drawtext=fontfile='${FONT}':text='PRINT ${STAMP_DATE} · SER ${SERIAL}':fontcolor=0x8A8A8A:fontsize=24:x=(w-tw)/2:y=930,\
+drawtext=fontfile='${FONT}':text='1 kHz LINE-UP TONE · 1080p / 30 · CH 0 · DESIG RL-Z0 · SIGN-ON 06\:00':fontcolor=0x8A8A8A:fontsize=26:x=(w-tw)/2:y=1002\
 [base];\
 [base][1:v]overlay=x=10:y=150[v]" \
   -map "[v]" -map 2:a \
@@ -86,5 +102,5 @@ drawtext=fontfile='${FONT}':text='1 kHz LINE-UP TONE · 1080p / 30 · CH 0 · DE
   "$OUT"
 
 echo ""
-echo "test card ready: $OUT (${SECS}s)"
+echo "test card ready: $OUT (${SECS}s) — PRINT ${STAMP_DATE} · SER ${SERIAL}"
 echo "point ErsatzTV at it for the pre-sign-on fill, or a 'please stand by' with a picture to align to."

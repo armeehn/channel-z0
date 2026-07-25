@@ -60,7 +60,7 @@ drawtext=fontfile='${FONT}':text='THIS CONCLUDES OUR':fontcolor=${Z0_PAPER}:font
 drawtext=fontfile='${FONT}':text='BROADCAST DAY':fontcolor=${Z0_PAPER}:fontsize=76:x=(w-tw)/2:y=430,\
 drawbox=x=(iw-360)/2:y=575:w=360:h=6:color=${Z0_RED}:t=fill,\
 drawtext=fontfile='${FONT}':text='GOODNIGHT, LOCALS':fontcolor=${Z0_RED}:fontsize=56:x=(w-tw)/2:y=625,\
-drawtext=fontfile='${FONT}':text='SIGN-ON AT 06:00':fontcolor=${Z0_PAPER}:fontsize=40:x=(w-tw)/2:y=720,\
+drawtext=fontfile='${FONT}':text='SIGN-ON AT 06\:00':fontcolor=${Z0_PAPER}:fontsize=40:x=(w-tw)/2:y=720,\
 drawtext=fontfile='${FONT}':text='COLOUR BARS UNTIL SUNRISE':fontcolor=0x8A8A8A:fontsize=28:x=(w-tw)/2:y=810,\
 drawtext=fontfile='${FONT}':text='DESIG RL-Z0':fontcolor=0x8A8A8A:fontsize=24:x=60:y=h-th-40,\
 fade=t=in:st=0:d=1,fade=t=out:st=${CARD_FADEOUT}:d=0.6,format=yuv420p,setsar=1,setpts=PTS-STARTPTS[card];\
