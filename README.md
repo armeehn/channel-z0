@@ -41,15 +41,20 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | Path | What it is |
 |---|---|
 | [`docs/build-guide.md`](docs/build-guide.md) | **Start here.** The full station build, Phase 0 → on-air |
+| [`docs/self-hosting.md`](docs/self-hosting.md) | Run master control on a homelab — Proxmox & TrueNAS, GPU passthrough, tips |
 | [`docs/gear-and-costs.md`](docs/gear-and-costs.md) | Hardware picks, VPS comparison, bandwidth math, budgets |
 | [`docs/ad-standards.md`](docs/ad-standards.md) | The one-page rulebook for locally submitted commercials |
+| [`docs/ideas.md`](docs/ideas.md) | The writers' room — what's shipped, what's next |
 | [`site/index.html`](site/index.html) | The storefront — live player, program grid, ad submissions (Riposte Labs design language) |
 | [`site/retro/index.html`](site/retro/index.html) | The original CRT-and-wood-cabinet version, preserved |
+| [`site/_headers`](site/_headers) · [`site/_redirects`](site/_redirects) | Cloudflare Pages headers + short links (`/watch`, `/lab`) |
 | [`vps/`](vps/) | The tower: Owncast `docker-compose.yml` + `Caddyfile` |
-| [`playout/`](playout/) | Master control: ErsatzTV launcher + `z0-uplink.service` |
+| [`playout/`](playout/) | Master control: `compose.yml` (containerized), ErsatzTV launcher, uplink, now-playing bridge |
 | [`tools/`](tools/) | Station scripts — see below |
-| [`.env.example`](.env.example) | Domains, stream key, media root — copy, fill, never commit |
-| [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Optional: host the storefront on GitHub Pages |
+| [`wrangler.toml`](wrangler.toml) | Cloudflare Pages project (storefront at `ch0.ripostelabs.xyz`) |
+| [`.env.example`](.env.example) | Domains, stream key, media root, tokens — copy, fill, never commit |
+| [`.github/workflows/deploy-cloudflare.yml`](.github/workflows/deploy-cloudflare.yml) | **Primary:** deploy the storefront to Cloudflare Pages |
+| [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Alternative: host the storefront on GitHub Pages |
 
 ### Station scripts
 
@@ -57,8 +62,12 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 |---|---|
 | `tools/make-media-tree.sh` | Create the media library layout on the playout PC |
 | `tools/test-broadcast.sh` | Fire a live test pattern at the tower (build guide, Phase 1.5) |
+| `tools/check-ad.sh` | Screen a submitted spot: length, codecs, true loudness (read-only) |
 | `tools/normalize-ad.sh` | Clear a submitted spot for air: 1080p/30, loudness-normalized |
 | `tools/make-colorbars.sh` | Generate the midnight sign-off bars (with optional silence) |
+| `tools/make-ident.sh` | Generate station idents — the "NOW WATCHING CHANNEL Z0" bumpers |
+| `tools/make-slate.sh` | Generate slate cards — technical difficulties, sign-off, please stand by |
+| `tools/make-bug.sh` | Generate the channel bug (watermark PNG) for ErsatzTV |
 
 ## Quickstart
 
@@ -70,29 +79,38 @@ The short version — the [build guide](docs/build-guide.md) has every command.
 2. **Phase 1 — the tower.** On the VPS: `vps/docker-compose.yml` up, Caddy
    configured, then immediately change Owncast's default admin password and
    stream key. Prove the pipe with `tools/test-broadcast.sh`.
-3. **Phase 2 — master control.** On the playout PC:
-   `tools/make-media-tree.sh`, fill the library, `playout/ersatztv.sh`, build
-   the schedule and ad-break filler in the ErsatzTV UI.
-4. **Phase 3 — the uplink.** Install `playout/z0-uplink.service` with your
-   `/etc/channel-z0.env`. It reconnects forever; you now run a television
-   station.
+3. **Phase 2 — master control.** On the playout PC (or a homelab box — see
+   [self-hosting](docs/self-hosting.md)): `tools/make-media-tree.sh`, fill the
+   library, then either `playout/ersatztv.sh` or the whole containerized stack
+   with `cd playout && docker compose up -d`. Build the schedule and ad-break
+   filler in the ErsatzTV UI.
+4. **Phase 3 — the uplink.** The `uplink` service in `playout/compose.yml`
+   carries one stream to the tower and reconnects forever (or install the
+   bare-metal `playout/z0-uplink.service`). Optionally add the now-playing
+   bridge: `docker compose --profile nowplaying up -d`. You now run a
+   television station.
 5. **Phase 4 — the storefront.** Edit the `CONFIG` block at the top of
-   `site/index.html` (stream URL, ad email), then either `scp` it to the VPS
-   or enable the GitHub Pages workflow.
+   `site/index.html` (stream URL, ad email), then deploy to Cloudflare Pages —
+   push to `main` and let `.github/workflows/deploy-cloudflare.yml` do it, or
+   `npx wrangler pages deploy site --project-name=channel-z0`. Live at
+   `ch0.ripostelabs.xyz`.
 6. **Phase 5 — go live sometimes.** OBS to the same RTMP key for Ground Zero
    remotes and Lab Hour.
 
 ## Configuration, all of it
 
 - **`.env`** (from [`.env.example`](.env.example)) — domains, stream key,
-  channel URL, media root. Used by the uplink service and the tools.
+  channel URL, media root, and (optional) the Owncast token for the now-playing
+  bridge. Used by the compose stack, the uplink, and the tools.
 - **`site/index.html` `CONFIG` block** — stream URL, Owncast base (for the
-  ON AIR light and receiver count), ad-submission email, chat and lab links.
+  ON AIR light, receiver count, and the live NOW SHOWING title), ad-submission
+  email, chat and lab links.
 - **Everything else** lives in the ErsatzTV and Owncast admin UIs, documented
   in the build guide.
 
-The stream key is the only secret in the whole station. It belongs in `.env`
-(gitignored) and nowhere else.
+Two secrets, both in `.env` (gitignored) and nowhere else: the **stream key**
+(the world vs. your airwaves) and, if you run the marquee, an **Owncast access
+token**. The Cloudflare deploy token lives only in GitHub Actions secrets.
 
 ## The sponsor
 
