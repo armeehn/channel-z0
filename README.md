@@ -11,7 +11,7 @@
 An old-style TV channel built on new plumbing: one linear channel that runs
 24/7 from a machine in a house, with scheduled shows, locally submitted
 commercials, station bumpers, a nightly flagship (**GROUND ZERO** — alien
-street interviews conducted via baguette), and a midnight sign-off to color
+street interviews conducted via baguette), and a midnight sign-off to colour
 bars, exactly as civilization intended.
 
 This repository is the whole station: the playout configuration, the uplink,
@@ -64,6 +64,8 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | `tools/check-ad.sh` | Screen a submitted spot: length, codecs, true loudness (read-only) |
 | `tools/normalize-ad.sh` | Clear a submitted spot for air: 1080p/30, loudness-normalized |
 | `tools/make-colorbars.sh` | Generate the midnight sign-off bars (with optional silence) |
+| `tools/make-testcard.sh` | Generate the station test card — the branded signal-check pattern with a 1 kHz line-up tone |
+| `tools/make-signoff.sh` | Generate the nightly sign-off — the "broadcast day concludes" card dissolving into colour bars |
 | `tools/make-ident.sh` | Generate station idents — the "NOW WATCHING CHANNEL Z0" bumpers |
 | `tools/make-slate.sh` | Generate slate cards — technical difficulties, sign-off, please stand by |
 | `tools/make-bug.sh` | Generate the channel bug (watermark PNG) for ErsatzTV |
