@@ -53,6 +53,16 @@ These went from idea to implementation and are in the repo now.
   submission and tells you its length, codecs, and true loudness before you
   accept it — the screening step that pairs with `normalize-ad.sh`.
 
+- **The broadcast week, written down.** The build guide gave master control a
+  one-paragraph "starting rhythm" and an empty ErsatzTV; now
+  [`docs/programming.md`](programming.md) is the whole week — five dayparts, a
+  protected 19:00 flagship, themed nights (Atomic Tuesday, Friday Night Feature,
+  the Saturday double bill), the show bible for what's ours, and the exact
+  ErsatzTV mapping (collections, fixed-start anchors, the weekend schedule). The
+  storefront's program grid ([`site/index.html`](../site/index.html)) is now its
+  machine-readable twin: a real seven-day `WEEK` with day tabs, so viewers can
+  flip through the week, not just today. Guide and guide-on-the-wall, in sync.
+
 - **On Cloudflare.** The storefront ships to Cloudflare (Workers Static Assets)
   (`ch0.ripostelabs.xyz` today, `channelz0.tv` when purchased) with tidy short
   links (`/watch`, `/lab`) and security headers. The tower stays on the VPS.

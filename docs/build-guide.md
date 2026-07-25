@@ -204,6 +204,7 @@ In the ErsatzTV web UI, in order:
    - mornings: cartoons/PSAs · midday: Prelinger theatre + community loop · afternoon: movie
    - **19:00 — GROUND ZERO** (flagship slot, protect it)
    - 20:00: prime movie · 23:00: mellow late block
+   - 📦 *In this repo:* [`docs/programming.md`](programming.md) turns that rhythm into the whole week — every block defined, the themed nights, the show bible, and the exact ErsatzTV mapping (collections, fixed-start anchors, weekend schedule). It's the twin of the storefront's program grid; build from it.
    - **00:00 — SIGN-OFF**: a nightly ritual item (anthem, station sign-off card — [`tools/make-signoff.sh`](../tools/make-signoff.sh) generates the card-into-bars close), then `Colour Bars` until the 06:00 sign-on. Deeply on-brand, and it costs nothing.
 7. Sanity-check locally: open `http://playout-pc:8409/iptv/channel/1.ts` in VLC. You should be watching Channel Z0. (ErsatzTV also serves an XMLTV guide at `/iptv/xmltv.xml` — useful later for generating the website's schedule.)
 
