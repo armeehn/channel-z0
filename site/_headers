@@ -17,8 +17,13 @@
   Cache-Control: public, max-age=0, must-revalidate
 
 # NOTE: no Content-Security-Policy is set here on purpose. The player pulls
-# hls.js from a CDN and talks to the Owncast tower on another origin, and both
-# hosts are yours to change. If you want a CSP, allow (at least):
-#   script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net
-#   connect-src 'self' https://watch.<your-domain>
+# hls.js (and the p2p-media-loader library) from a CDN and talks to the Owncast
+# tower on another origin, and both hosts are yours to change. If you want a
+# CSP, allow (at least):
+#   script-src  'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net
+#   connect-src 'self' https://watch.<your-domain> wss://tracker.novage.com.ua wss://tracker.openwebtorrent.com
 #   media-src   'self' https://watch.<your-domain> blob:
+#   frame-src   https://watch.<your-domain>          # only if you set PEERTUBE_EMBED
+# The wss:// hosts are the P2P WebRTC signalling trackers (match your
+# CONFIG.P2P_TRACKERS); peer-to-peer data itself is WebRTC, which browsers
+# don't gate through CSP today. Drop the trackers/frame-src lines if unused.

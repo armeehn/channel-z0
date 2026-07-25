@@ -281,6 +281,7 @@
           <div class="spec-row"><span class="k">ADS</span><span class="v">LOCALLY SOURCED</span></div>
           <div class="spec-row"><span class="k">SPONSOR</span><span class="v">RIPOSTE LABS</span></div>
           <div class="spec-row"><span class="k">STATUS</span><span class="v" id="specStatus"><b>STANDBY</b></span></div>
+          <div class="spec-row"><span class="k">P2P</span><span class="v" id="p2pStat">STANDBY</span></div>
         </div>
       </aside>
     </div>
@@ -426,6 +427,32 @@ const CONFIG = {
   LAB_URL:      "https://ripostelabs.xyz",
   STATUS_POLL_SECONDS: 30,
   RETRY_SECONDS: 20,
+
+  // --- Peer-to-peer offload (progressive enhancement) ------------------------
+  // Viewers trade HLS segments with each other over WebRTC, so the tower serves
+  // each segment far fewer times — a real cut to VPS egress once a handful of
+  // people are watching the same thing (and everyone on a linear channel is).
+  // Pure upside: if the P2P library can't load, the browser lacks WebRTC, or
+  // you're the only viewer, playback is plain hls.js and nothing here matters.
+  P2P_ENABLED: true,
+  // Stable id so every viewer joins ONE swarm. Leave as-is unless you fork the
+  // station. (Owncast serves one shared playlist, so all viewers already line up
+  // on the same segment sequence — exactly what P2P needs.)
+  P2P_SWARM_ID: "channel-z0",
+  // WebRTC signalling trackers. These public ones are fine for a small
+  // neighbourhood signal but are flaky and shared — run your own (wt-tracker or
+  // Aquatic) before you lean on this. Empty array -> the library's own defaults.
+  P2P_TRACKERS: [
+    "wss://tracker.novage.com.ua",
+    "wss://tracker.openwebtorrent.com",
+  ],
+
+  // --- Tower backend: PeerTube (optional) ------------------------------------
+  // Leave blank to use the Owncast + P2P player above. Set it to a PeerTube live
+  // embed URL — https://<instance>/videos/embed/<uuid>?p2p=1&muted=1 — to switch
+  // the Live Feed to PeerTube's own player, which brings its P2P + chat built in.
+  // See vps/peertube/ for the tower half of this.
+  PEERTUBE_EMBED: "",
 };
 
 /* ---- today's programs (edit freely; times are 24h local) ---- */
@@ -458,7 +485,7 @@ const els = {
   chatLink: $("chatLink"), adMail: $("adMail"), labLink: $("labLink"),
 };
 
-const state = { tuned: false, hls: null, retryTimer: null, owncastOnline: null, streamTitle: "" };
+const state = { tuned: false, hls: null, retryTimer: null, owncastOnline: null, streamTitle: "", p2p: null, embed: false };
 
 /* The "NOW SHOWING" line prefers the live title from the tower (what ErsatzTV
    is actually airing, via nowplaying.py) and falls back to the schedule. */
@@ -486,6 +513,100 @@ async function ensureHls() {
   return false;
 }
 
+/* ---------------- p2p offload (progressive enhancement) ----------------
+   Loads p2p-media-loader (v3, the IIFE build with core inlined) and, when it's
+   present, wraps hls.js so viewers share HLS segments over WebRTC instead of
+   each pulling every segment from the tower. Strictly optional: if the script
+   won't load, WebRTC is unavailable, or you're the lone viewer, makeHls() hands
+   back a plain hls.js instance and playback is exactly as before. */
+async function ensureP2P() {
+  if (!CONFIG.P2P_ENABLED) return false;
+  if (window.p2pml && window.p2pml.hlsjs) return true;
+  const cdns = [
+    "https://cdn.jsdelivr.net/npm/p2p-media-loader-hlsjs@3.0.1/dist/p2p-media-loader-hlsjs.iife.min.js",
+    "https://cdn.jsdelivr.net/npm/p2p-media-loader-hlsjs@3/dist/p2p-media-loader-hlsjs.iife.min.js",
+  ];
+  for (const url of cdns) {
+    try { await loadScript(url); if (window.p2pml && window.p2pml.hlsjs) return true; } catch (e) { /* next */ }
+  }
+  return false;
+}
+
+let p2pHlsCtor = null;   // memoized P2P-enhanced Hls constructor
+function makeHls(baseCfg) {
+  if (CONFIG.P2P_ENABLED && window.p2pml && window.p2pml.hlsjs && window.Hls) {
+    try {
+      if (!p2pHlsCtor) p2pHlsCtor = window.p2pml.hlsjs.HlsJsP2PEngine.injectMixin(window.Hls);
+      const trackers = (CONFIG.P2P_TRACKERS && CONFIG.P2P_TRACKERS.length) ? CONFIG.P2P_TRACKERS : undefined;
+      return new p2pHlsCtor(Object.assign({}, baseCfg, {
+        p2p: {
+          core: {
+            swarmId: CONFIG.P2P_SWARM_ID || undefined,
+            announceTrackers: trackers,
+          },
+          onHlsJsCreated: (h) => wireP2PStats(h),
+        },
+      }));
+    } catch (e) { /* library present but wiring failed — fall back to plain hls.js */ }
+  }
+  return new window.Hls(baseCfg);
+}
+
+/* Turn the engine's raw byte events into the SPEC card's "N PEERS · NN% OFFLOAD"
+   readout — and proof, live, that the tower isn't shipping every byte. */
+function wireP2PStats(hls) {
+  const eng = hls && hls.p2pEngine;
+  if (!eng) return;
+  const peers = new Set();
+  const acc = { http: 0, p2p: 0 };
+  const render = () => { state.p2p = { peers: peers.size, http: acc.http, p2p: acc.p2p }; updateP2PReadout(); };
+  eng.addEventListener("onPeerConnect", (d) => { peers.add(d.peerId); render(); });
+  eng.addEventListener("onPeerClose",   (d) => { peers.delete(d.peerId); render(); });
+  eng.addEventListener("onChunkDownloaded", (bytes, source) => {
+    if (source === "p2p") acc.p2p += bytes; else acc.http += bytes;
+    render();
+  });
+  render();
+}
+
+function updateP2PReadout() {
+  const el = document.getElementById("p2pStat");
+  if (!el) return;
+  if (!CONFIG.P2P_ENABLED) { el.textContent = "OFF"; return; }
+  const s = state.p2p;
+  if (!s || (!s.http && !s.p2p)) { el.textContent = "STANDBY"; return; }
+  const total = s.http + s.p2p;
+  const pct = total ? Math.round((s.p2p / total) * 100) : 0;
+  el.innerHTML = `${s.peers} ${s.peers === 1 ? "PEER" : "PEERS"} · <b>${pct}%</b> OFFLOAD`;
+}
+
+/* ---------------- optional: PeerTube tower ----------------
+   If CONFIG.PEERTUBE_EMBED is set, the tower is PeerTube (see vps/peertube/),
+   which ships its own player with P2P built in. Swap the custom hls.js screen
+   for PeerTube's iframe; the schedule, dossier, and the rest of the page are
+   untouched. Called once at boot, before any tuneIn(). */
+function usePeerTubeEmbed(src) {
+  const frame = document.querySelector(".screen-frame");
+  if (!frame) return;
+  state.embed = true;
+  frame.innerHTML = "";
+  const iframe = document.createElement("iframe");
+  iframe.src = src;
+  iframe.title = "Channel Z0 live feed";
+  iframe.allow = "autoplay; fullscreen; picture-in-picture";
+  iframe.setAttribute("allowfullscreen", "");
+  iframe.style.cssText = "display:block;width:100%;aspect-ratio:16/9;border:0;background:#000;";
+  frame.appendChild(iframe);
+  // PeerTube's player owns playback + sound; retire the custom transport controls.
+  if (els.tuneBtn) els.tuneBtn.style.display = "none";
+  if (els.soundBtn) els.soundBtn.style.display = "none";
+  els.airChip.classList.remove("on");
+  els.airLabel.textContent = "VIA PEERTUBE";
+  els.specStatus.innerHTML = "<b>PEERTUBE</b>";
+  const p2pEl = document.getElementById("p2pStat");
+  if (p2pEl) p2pEl.textContent = "IN PLAYER";
+}
+
 /* ---------------- the feed ---------------- */
 function setOnAir(on) {
   els.airChip.classList.toggle("on", on);
@@ -502,8 +623,9 @@ async function tuneIn() {
 
   const hasHls = await ensureHls();
   if (hasHls && window.Hls && Hls.isSupported()) {
+    await ensureP2P();                       // optional; makeHls falls back if absent
     if (state.hls) state.hls.destroy();
-    const hls = new Hls({ liveDurationInfinity: true });
+    const hls = makeHls({ liveDurationInfinity: true });
     state.hls = hls;
     hls.on(Hls.Events.MANIFEST_PARSED, () => {
       tv.play().catch(() => {});
@@ -540,6 +662,7 @@ els.soundBtn.addEventListener("click", () => {
 
 /* ---------------- owncast status ---------------- */
 async function pollStatus() {
+  if (state.embed) return;                   // PeerTube tower: the player reports its own state
   if (!CONFIG.OWNCAST_BASE) return;
   try {
     const r = await fetch(CONFIG.OWNCAST_BASE.replace(/\/$/, "") + "/api/status", { cache: "no-store" });
@@ -592,6 +715,8 @@ function renderSchedule() {
 /* ---------------- boot ---------------- */
 els.chatLink.href = CONFIG.CHAT_URL || "#";
 els.labLink.href = CONFIG.LAB_URL;
+if (CONFIG.PEERTUBE_EMBED) usePeerTubeEmbed(CONFIG.PEERTUBE_EMBED);
+updateP2PReadout();
 els.adMail.addEventListener("click", () => {
   location.href = "mailto:" + CONFIG.AD_EMAIL +
     "?subject=" + encodeURIComponent("Channel Z0 — ad submission") +
