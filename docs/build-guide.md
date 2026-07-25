@@ -267,7 +267,18 @@ The storefront lives at [`site/index.html`](../site/index.html) — live player,
    };
    ```
 2. **Deploy to Cloudflare Pages.** Create a Pages project named `channel-z0`, add the custom domain `ch0.ripostelabs.xyz` (instant, since ripostelabs.xyz is on Cloudflare DNS), and either push to `main` — `.github/workflows/deploy-cloudflare.yml` deploys on every change to `site/` — or run `npx wrangler pages deploy site --project-name=channel-z0` from your machine. Full setup notes are in the workflow file's header.
-3. **Cross-origin note.** The page is on Cloudflare and the stream is on the VPS, so the tower must send permissive CORS — the updated [`vps/Caddyfile`](../vps/Caddyfile) does this. `site/_headers` and `site/_redirects` configure Pages (security headers, and short links like `/watch`). When you buy `channelz0.tv`, add it as a second custom domain on the same Pages project and update the four `CONFIG` lines. (Alternative host: the GitHub Pages workflow in `.github/workflows/deploy-pages.yml` still works if you'd rather.)
+3. **Cross-origin note.** The page is on Cloudflare and the stream is on the VPS, so the tower must send permissive CORS — the updated [`vps/Caddyfile`](../vps/Caddyfile) does this. `site/_headers` and `site/_redirects` configure Pages (security headers, and short links like `/watch`). (Alternative host: the GitHub Pages workflow in `.github/workflows/deploy-pages.yml` still works if you'd rather.)
+
+### When channelz0.tv goes live
+
+Everything is staged for a one-line flip; do these in order:
+
+1. **Buy it** at any registrar, then add `channelz0.tv` to Cloudflare (Add a site) so its DNS is Cloudflare-managed.
+2. **Pages custom domains.** In the `channel-z0` Pages project → Custom domains, add `channelz0.tv` (and `www` if you want). Both it and `ch0.ripostelabs.xyz` now serve the site.
+3. **The tower.** Add a DNS record `watch.channelz0.tv` → VPS IP, and uncomment the `watch.channelz0.tv { … }` block in [`vps/Caddyfile`](../vps/Caddyfile); `sudo systemctl reload caddy`. Caddy fetches the cert automatically.
+4. **The site.** In [`site/index.html`](../site/index.html), change the two lines at the top of the script — `WATCH_HOST = "watch.channelz0.tv"` and `AD_EMAIL = "ads@channelz0.tv"`. Everything else in `CONFIG` derives from those. Push; the workflow redeploys.
+5. **`.env`** on the playout box: set `Z0_SITE_DOMAIN` / `Z0_WATCH_DOMAIN` to the `channelz0.tv` hostnames (and re-issue the Owncast token against the new host if you moved it).
+6. **Optional — canonicalize.** To make `channelz0.tv` the one true home and redirect the old subdomain, uncomment the 301 in [`site/_redirects`](../site/_redirects).
 
 The player uses hls.js and falls back to native HLS on Safari/iPhones. If the video ever refuses to load cross-subdomain (a CORS grump), the two-line fallback is an iframe of Owncast's built-in player: `<iframe src="https://watch.channelz0.example/embed/video" allowfullscreen></iframe>` — but the direct HLS route is the full retro experience, so try that first. Owncast's own page at `watch.` stays useful regardless: it has the live chat.
 
