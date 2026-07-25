@@ -24,8 +24,8 @@ the tower, the storefront website, and the operating manual.
 ┌─────────────────────────┐          ┌──────────────────────┐        ┌──────────────┐
 │  Playout PC (24/7)      │          │  Owncast             │        │ Browsers     │
 │  ┌───────────────────┐  │  ONE     │  ┌────────────────┐  │  HLS   │ Phones       │
-│  │ ErsatzTV          │  │  STREAM  │  │ RTMP in :1935  │──┼───────▶│ Smart TVs    │
-│  │ (schedules, ads,  │──┼─────────▶│  │ HLS out :8080  │  │        │ Someone's    │
+│  │ ErsatzTV          │  │  STREAM  │  │ RTMP in :1935  │──┼──────▶│ Smart TVs    │
+│  │ (schedules, ads,  │──┼────────▶│  │ HLS out :8080  │  │        │ Someone's    │
 │  │  filler, bug)     │  │  RTMP    │  └────────────────┘  │        │ house, all   │
 │  └───────────────────┘  │  ~5 Mbps │  + Caddy (HTTPS)     │        │ day long     │
 │  + OBS for live shows   │          │  + the storefront    │        └──────────────┘
