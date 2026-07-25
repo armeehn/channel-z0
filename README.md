@@ -47,14 +47,13 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | [`docs/ideas.md`](docs/ideas.md) | The writers' room — what's shipped, what's next |
 | [`site/index.html`](site/index.html) | The storefront — live player, program grid, ad submissions (Riposte Labs design language) |
 | [`site/retro/index.html`](site/retro/index.html) | The original CRT-and-wood-cabinet version, preserved |
-| [`site/_headers`](site/_headers) · [`site/_redirects`](site/_redirects) | Cloudflare Pages headers + short links (`/watch`, `/lab`) |
+| [`site/_headers`](site/_headers) · [`site/_redirects`](site/_redirects) | Cloudflare headers + short links (`/watch`, `/lab`) |
 | [`vps/`](vps/) | The tower: Owncast `docker-compose.yml` + `Caddyfile` |
 | [`playout/`](playout/) | Master control: `compose.yml` (containerized), ErsatzTV launcher, uplink, now-playing bridge |
 | [`tools/`](tools/) | Station scripts — see below |
-| [`wrangler.toml`](wrangler.toml) | Cloudflare Pages project (storefront at `ch0.ripostelabs.xyz`) |
+| [`wrangler.jsonc`](wrangler.jsonc) | Cloudflare Worker config (serves `site/` as static assets at `ch0.ripostelabs.xyz`) |
 | [`.env.example`](.env.example) | Domains, stream key, media root, tokens — copy, fill, never commit |
-| [`.github/workflows/deploy-cloudflare.yml`](.github/workflows/deploy-cloudflare.yml) | **Primary:** deploy the storefront to Cloudflare Pages |
-| [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Alternative: host the storefront on GitHub Pages |
+| [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Alternative host: GitHub Pages (Cloudflare is primary, via its Git integration) |
 
 ### Station scripts
 
@@ -89,10 +88,10 @@ The short version — the [build guide](docs/build-guide.md) has every command.
    bare-metal `playout/z0-uplink.service`). Optionally add the now-playing
    bridge: `docker compose --profile nowplaying up -d`. You now run a
    television station.
-5. **Phase 4 — the storefront.** Edit the `CONFIG` block at the top of
-   `site/index.html` (stream URL, ad email), then deploy to Cloudflare Pages —
-   push to `main` and let `.github/workflows/deploy-cloudflare.yml` do it, or
-   `npx wrangler pages deploy site --project-name=channel-z0`. Live at
+5. **Phase 4 — the storefront.** Edit the `WATCH_HOST` + `AD_EMAIL` lines at the
+   top of `site/index.html`. Cloudflare serves it via **Workers Static Assets**,
+   wired to this repo through Cloudflare's Git integration (`wrangler.jsonc`
+   points `assets` at `site/`) — every push to `main` auto-deploys. Live at
    `ch0.ripostelabs.xyz`.
 6. **Phase 5 — go live sometimes.** OBS to the same RTMP key for Ground Zero
    remotes and Lab Hour.
@@ -110,7 +109,8 @@ The short version — the [build guide](docs/build-guide.md) has every command.
 
 Two secrets, both in `.env` (gitignored) and nowhere else: the **stream key**
 (the world vs. your airwaves) and, if you run the marquee, an **Owncast access
-token**. The Cloudflare deploy token lives only in GitHub Actions secrets.
+token**. Cloudflare needs no secret in the repo — its Git integration deploys
+the storefront on every push on its own.
 
 ## The sponsor
 

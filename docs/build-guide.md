@@ -255,28 +255,29 @@ sudo systemctl enable --now z0-uplink
 
 ## Phase 4 — The storefront (channelz0.example)
 
-The storefront lives at [`site/index.html`](../site/index.html) — live player, ON AIR light, program grid, and the ad-submission counter, in the Riposte Laboratories design language. (The original CRT version is preserved at [`site/retro/index.html`](../site/retro/index.html).) It's hosted on **Cloudflare Pages** — the tower (Owncast) carries only the video, and Cloudflare carries the page. To deploy:
+The storefront lives at [`site/index.html`](../site/index.html) — live player, ON AIR light, program grid, and the ad-submission counter, in the Riposte Laboratories design language. (The original CRT version is preserved at [`site/retro/index.html`](../site/retro/index.html).) It's hosted on **Cloudflare** (a Worker serving `site/` as static assets) — the tower (Owncast) carries only the video, and Cloudflare carries the page. To deploy:
 
-1. Open the file and edit the `CONFIG` block at the top:
+1. Open the file and edit the two lines at the top of the `<script>` — everything in `CONFIG` derives from them:
    ```js
-   const CONFIG = {
-     STREAM_URL:   "https://watch.ch0.ripostelabs.xyz/hls/stream.m3u8",
-     OWNCAST_BASE: "https://watch.ch0.ripostelabs.xyz", // ON AIR light + viewer count + live title
-     AD_EMAIL:     "ch0@ripostelabs.xyz",
-     CHAT_URL:     "https://watch.ch0.ripostelabs.xyz", // "join the chat" link
-   };
+   const WATCH_HOST = "watch.ch0.ripostelabs.xyz"; // the Owncast tower on the VPS
+   const AD_EMAIL   = "ch0@ripostelabs.xyz";        // where spot submissions land
    ```
-2. **Deploy to Cloudflare Pages.** Create a Pages project named `channel-z0`, add the custom domain `ch0.ripostelabs.xyz` (instant, since ripostelabs.xyz is on Cloudflare DNS), and either push to `main` — `.github/workflows/deploy-cloudflare.yml` deploys on every change to `site/` — or run `npx wrangler pages deploy site --project-name=channel-z0` from your machine. Full setup notes are in the workflow file's header.
-3. **Cross-origin note.** The page is on Cloudflare and the stream is on the VPS, so the tower must send permissive CORS — the updated [`vps/Caddyfile`](../vps/Caddyfile) does this. `site/_headers` and `site/_redirects` configure Pages (security headers, and short links like `/watch`). (Alternative host: the GitHub Pages workflow in `.github/workflows/deploy-pages.yml` still works if you'd rather.)
+2. **Deploy to Cloudflare** (Workers Static Assets via its Git integration — no CI file, no secrets):
+   - Workers & Pages → **Create** → **Import a repository** → pick your repo. Cloudflare detects the static site, commits a `wrangler.jsonc` (with `assets.directory: "site"`), and deploys. You get a `*.workers.dev` URL.
+   - The Worker → **Settings → Domains & Routes** → add a **Custom Domain** `ch0.ripostelabs.xyz` (instant, since ripostelabs.xyz is on Cloudflare DNS).
+   - Every push to `main` now auto-deploys. (Prefer deploying by hand? `npx wrangler deploy`.)
+
+   **DNS gotcha for the tower:** add `watch.ch0.ripostelabs.xyz` → VPS IP as **DNS only (grey cloud), not proxied** — Cloudflare's proxy won't pass RTMP (:1935) and shouldn't carry a 24/7 video stream. The page is proxied; the stream host is not.
+3. **Cross-origin note.** The page is on Cloudflare and the stream is on the VPS, so the tower must send permissive CORS — the updated [`vps/Caddyfile`](../vps/Caddyfile) does this. `site/_headers` and `site/_redirects` (security headers, and short links like `/watch`) are honoured by Workers Static Assets, same as Pages. (Alternative host: the GitHub Pages workflow in `.github/workflows/deploy-pages.yml` still works if you'd rather.)
 
 ### When channelz0.tv goes live
 
 Everything is staged for a one-line flip; do these in order:
 
 1. **Buy it** at any registrar, then add `channelz0.tv` to Cloudflare (Add a site) so its DNS is Cloudflare-managed.
-2. **Pages custom domains.** In the `channel-z0` Pages project → Custom domains, add `channelz0.tv` (and `www` if you want). Both it and `ch0.ripostelabs.xyz` now serve the site.
+2. **Custom domains.** In the `channel-z0` Worker → Settings → Domains & Routes, add `channelz0.tv` (and `www` if you want) as Custom Domains. Both it and `ch0.ripostelabs.xyz` now serve the site.
 3. **The tower.** Add a DNS record `watch.channelz0.tv` → VPS IP, and uncomment the `watch.channelz0.tv { … }` block in [`vps/Caddyfile`](../vps/Caddyfile); `sudo systemctl reload caddy`. Caddy fetches the cert automatically.
-4. **The site.** In [`site/index.html`](../site/index.html), change the two lines at the top of the script — `WATCH_HOST = "watch.channelz0.tv"` and `AD_EMAIL = "ads@channelz0.tv"`. Everything else in `CONFIG` derives from those. Push; the workflow redeploys.
+4. **The site.** In [`site/index.html`](../site/index.html), change the two lines at the top of the script — `WATCH_HOST = "watch.channelz0.tv"` and `AD_EMAIL = "ads@channelz0.tv"`. Everything else in `CONFIG` derives from those. Push; Cloudflare redeploys on its own.
 5. **`.env`** on the playout box: set `Z0_SITE_DOMAIN` / `Z0_WATCH_DOMAIN` to the `channelz0.tv` hostnames (and re-issue the Owncast token against the new host if you moved it).
 6. **Optional — canonicalize.** To make `channelz0.tv` the one true home and redirect the old subdomain, uncomment the 301 in [`site/_redirects`](../site/_redirects).
 
