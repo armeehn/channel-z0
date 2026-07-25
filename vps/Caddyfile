@@ -1,7 +1,7 @@
 # Channel Z0 — Caddy config (VPS).
 # Automatic HTTPS for the Owncast watch page + HLS.
 #
-# The storefront no longer lives here — it's on Cloudflare Pages
+# The storefront no longer lives here — it's on Cloudflare
 # (ch0.ripostelabs.xyz, and channelz0.tv once purchased). So Caddy's only job on
 # the VPS is to terminate TLS for the tower and re-serve Owncast, PLUS hand the
 # cross-origin storefront the CORS header it needs to pull the stream + status.
