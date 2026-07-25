@@ -127,11 +127,11 @@ spec sheets, and esh's checkers.
 
 Code and configuration are [MIT](LICENSE). The *Channel Z0* and *Ground Zero*
 names, show concepts, and the Riposte Laboratories marks and brand language
-are not granted by the license — build your own station with this plumbing,
+are not granted by the licence — build your own station with this plumbing,
 but make it yours. (The Prelinger Archive material the guide points at is
 public domain; anything you air still has to be yours to air. See
 [`docs/ad-standards.md`](docs/ad-standards.md).)
 
 ---
 
-*This station concludes its broadcast day at midnight. Color bars until sunrise.*
+*This station concludes its broadcast day at midnight. Colour bars until sunrise.*

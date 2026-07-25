@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Channel Z0 — generate the sign-off color bars (SMPTE bars + a quiet hum).
+# Channel Z0 — generate the sign-off colour bars (SMPTE bars + a quiet hum).
 # The station shows these from midnight sign-off to morning sign-on,
 # and ErsatzTV's Dead Air fallback uses them if a schedule ever runs dry.
 #

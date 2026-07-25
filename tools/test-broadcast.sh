@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Channel Z0 — prove the pipe works (build guide, Phase 1.5).
-# Sends live color bars + a quiet tone from this machine straight at the tower.
+# Sends live colour bars + a quiet tone from this machine straight at the tower.
 # If https://$Z0_WATCH_DOMAIN shows bars within ~30 seconds, the tower is good.
 #
 # Usage:
