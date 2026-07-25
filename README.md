@@ -53,7 +53,7 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | [`tools/`](tools/) | Station scripts — see below |
 | [`wrangler.jsonc`](wrangler.jsonc) | Cloudflare Worker config (serves `site/` as static assets at `ch0.ripostelabs.xyz`) |
 | [`.env.example`](.env.example) | Domains, stream key, media root, tokens — copy, fill, never commit |
-| [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Alternative host: GitHub Pages (Cloudflare is primary, via its Git integration) |
+| [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Alternative host: GitHub Pages, run manually (Cloudflare is primary, via its Git integration) |
 
 ### Station scripts
 
