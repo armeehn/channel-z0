@@ -97,4 +97,15 @@ For scale: a "real" low-power TV licence, tower, and transmitter runs into six f
 
 ## 5 · What growth looks like
 
-Nothing in this plan wastes money if Z0 gets popular. The upgrade path is: bigger-traffic VPS (~$10–20/mo, an evening's work) → add one transcoded 480p rung in Owncast for phone viewers (needs ~2 dedicated vCPUs) → someday, a real CDN in front of the HLS. Your house's side never changes: one stream, ~5 Mbps, forever.
+Nothing in this plan wastes money if Z0 gets popular. The upgrade path is: **turn on P2P** (below; free, cuts the traffic in the table above) → bigger-traffic VPS (~$10–20/mo, an evening's work) → add one transcoded 480p rung in Owncast for phone viewers (needs ~2 dedicated vCPUs) → someday, a real CDN in front of the HLS. Your house's side never changes: one stream, ~5 Mbps, forever.
+
+### Free egress relief: peer-to-peer
+
+The traffic table above assumes the tower ships every byte to every viewer. It doesn't have to. Viewers' browsers can trade HLS segments with each other over WebRTC, so the VPS serves each segment far fewer times — and a linear channel is the ideal case, because everyone's watching the same thing at the same playhead, so the swarm is dense. It only helps once a few people watch at once (one lone viewer has no one to swarm with), and it's browser-only (native TV apps don't participate), but where it applies it's pure egress relief for $0.
+
+Two ways to get it, pick one:
+
+- **Keep Owncast, flip it on in the storefront.** The `P2P_*` block in [`site/index.html`](../site/index.html) is on by default — it loads [p2p-media-loader](https://github.com/novage/p2p-media-loader) next to hls.js and shows a live `N PEERS · NN% OFFLOAD` readout on the SPEC card. No tower change; falls back to plain HLS on any browser that can't play along. Before you *rely* on it, run your own WebRTC tracker (the public defaults are flaky) — see the comments on `P2P_TRACKERS`.
+- **Switch the tower to PeerTube.** [`vps/peertube/`](../vps/peertube/) is a drop-in Owncast alternative with P2P and its own player built in. Heavier (Postgres + Redis, ~2 GB RAM) and only worth it at real audience size; the uplink from home doesn't change.
+
+Rough rule of thumb: with a healthy swarm P2P can offload a large share of segment traffic, which is the difference between outgrowing a 10 TB tier and staying comfortably under it. Treat it as headroom, not a guarantee — the HTTP path is always there underneath.
