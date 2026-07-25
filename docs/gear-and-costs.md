@@ -59,7 +59,9 @@ One viewer watching at 4.5 Mbps uses ~2 GB/hour. Monthly totals scale with *aver
 
 **Recommendation:** start on Oracle's free tier (cost: $0, and 10 TB ≈ 6–7 average concurrent viewers). If Z0 outgrows it, that's a wonderful problem, and a 20 TB host is one evening's migration.
 
-Domain: `.org`/`.net` ~$12–15/yr; `channelz0.tv` ~$30–40/yr because the `.tv` registry knows exactly what it's selling.
+Domain: `.org`/`.net` ~$12–15/yr; `channelz0.tv` ~$30–40/yr because the `.tv` registry knows exactly what it's selling. Until that's bought, the storefront rides for free on a subdomain — `ch0.ripostelabs.xyz` — so the station can be on-air before the domain paperwork clears.
+
+**Hosting the page: $0.** The storefront is fully static and lives on **Cloudflare Pages** (free tier, generous bandwidth), which means the VPS carries *only* the video stream — its whole traffic budget goes to viewers, not to serving HTML. When `channelz0.tv` is purchased, point it at the same Pages project as a second custom domain; nothing else moves.
 
 ---
 

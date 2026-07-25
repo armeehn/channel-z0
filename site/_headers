@@ -1,0 +1,24 @@
+# Channel Z0 — Cloudflare Pages headers.
+# https://developers.cloudflare.com/pages/configuration/headers/
+
+# Sensible defaults for every page.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+# The storefront is a living page (schedule + ON AIR light); don't let it go
+# stale in a cache.
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/retro/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# NOTE: no Content-Security-Policy is set here on purpose. The player pulls
+# hls.js from a CDN and talks to the Owncast tower on another origin, and both
+# hosts are yours to change. If you want a CSP, allow (at least):
+#   script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net
+#   connect-src 'self' https://watch.<your-domain>
+#   media-src   'self' https://watch.<your-domain> blob:

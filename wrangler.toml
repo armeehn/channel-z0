@@ -1,0 +1,13 @@
+# Channel Z0 — Cloudflare Pages project.
+# The storefront is fully static; Cloudflare serves it at ch0.ripostelabs.xyz
+# (and, once purchased, channelz0.tv). The live video still comes from the
+# Owncast tower on the VPS — Cloudflare only carries the page.
+#
+# Deploy from your machine:
+#   npx wrangler pages deploy site --project-name=channel-z0
+# ...or let the GitHub Action do it on push (see
+# .github/workflows/deploy-cloudflare.yml).
+
+name = "channel-z0"
+compatibility_date = "2026-01-01"
+pages_build_output_dir = "site"
