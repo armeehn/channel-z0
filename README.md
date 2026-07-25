@@ -48,7 +48,7 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | [`site/index.html`](site/index.html) | The storefront — live player, program grid, ad submissions (Riposte Labs design language) |
 | [`site/retro/index.html`](site/retro/index.html) | The original CRT-and-wood-cabinet version, preserved |
 | [`site/_headers`](site/_headers) · [`site/_redirects`](site/_redirects) | Cloudflare headers + short links (`/watch`, `/lab`) |
-| [`vps/`](vps/) | The tower: Owncast `docker-compose.yml` + `Caddyfile` |
+| [`vps/`](vps/) | The tower: Owncast `docker-compose.yml` + `Caddyfile` (and [`vps/peertube/`](vps/peertube/) — a peer-to-peer alternative tower) |
 | [`playout/`](playout/) | Master control: `compose.yml` (containerized), ErsatzTV launcher, uplink, now-playing bridge |
 | [`tools/`](tools/) | Station scripts — see below |
 | [`wrangler.jsonc`](wrangler.jsonc) | Cloudflare Worker config (serves `site/` as static assets at `ch0.ripostelabs.xyz`) |
@@ -103,7 +103,9 @@ The short version — the [build guide](docs/build-guide.md) has every command.
   bridge. Used by the compose stack, the uplink, and the tools.
 - **`site/index.html` `CONFIG` block** — stream URL, Owncast base (for the
   ON AIR light, receiver count, and the live NOW SHOWING title), ad-submission
-  email, chat and lab links.
+  email, chat and lab links. Also the **`P2P_*` keys** (WebRTC segment sharing,
+  on by default — viewers offload the tower for each other) and `PEERTUBE_EMBED`
+  (set it to run the PeerTube tower's player instead; see [`vps/peertube/`](vps/peertube/)).
 - **Everything else** lives in the ErsatzTV and Owncast admin UIs, documented
   in the build guide.
 
