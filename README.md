@@ -43,6 +43,7 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | [`docs/build-guide.md`](docs/build-guide.md) | **Start here.** The full station build, Phase 0 → on-air |
 | [`docs/programming.md`](docs/programming.md) | **The broadcast week.** The full schedule, the show bible, and the ErsatzTV mapping |
 | [`docs/archive-fetch.md`](docs/archive-fetch.md) | **Stocking the library.** Public-domain intake from the Internet Archive |
+| [`docs/clustering.md`](docs/clustering.md) | **More than one machine.** Node roles, failover, and what can't be load-balanced |
 | [`docs/self-hosting.md`](docs/self-hosting.md) | Run master control on a homelab — Proxmox & TrueNAS, GPU passthrough, tips |
 | [`docs/gear-and-costs.md`](docs/gear-and-costs.md) | Hardware picks, VPS comparison, bandwidth math, budgets |
 | [`docs/ad-standards.md`](docs/ad-standards.md) | The one-page rulebook for locally submitted commercials |
@@ -51,7 +52,7 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | [`site/retro/index.html`](site/retro/index.html) | The original CRT-and-wood-cabinet version, preserved |
 | [`site/_headers`](site/_headers) · [`site/_redirects`](site/_redirects) | Cloudflare headers + short links (`/watch`, `/lab`) |
 | [`vps/`](vps/) | The tower: Owncast `docker-compose.yml` + `Caddyfile` (and [`vps/peertube/`](vps/peertube/) — a peer-to-peer alternative tower) |
-| [`playout/`](playout/) | Master control: `compose.yml` (containerized), ErsatzTV launcher, uplink, now-playing bridge |
+| [`playout/`](playout/) | Master control: `compose.yml` (containerized), ErsatzTV launcher, uplink supervisor, now-playing bridge |
 | [`tools/`](tools/) | Station scripts — see below |
 | [`wrangler.jsonc`](wrangler.jsonc) | Cloudflare Worker config (serves `site/` as static assets at `ch0.ripostelabs.xyz`) |
 | [`.env.example`](.env.example) | Domains, stream key, media root, tokens — copy, fill, never commit |
@@ -61,9 +62,11 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 
 | Script | Job |
 |---|---|
+| `tools/bootstrap-node.sh` | Stand up a node from a bare machine — playout, tower, or worker ([manual](docs/clustering.md)) |
 | `tools/make-media-tree.sh` | Create the media library layout on the playout PC |
 | `tools/fetch-archive.sh` | Stock the library from archive.org — public domain only, resumable ([manual](docs/archive-fetch.md)) |
 | `tools/make-proxies.sh` | Build a test library — tiny stand-ins with identical runtimes, for trying schedules |
+| `tools/test-failover.sh` | Prove the cluster fails over and never double-publishes |
 | `tools/test-broadcast.sh` | Fire a live test pattern at the tower (build guide, Phase 1.5) |
 | `tools/check-ad.sh` | Screen a submitted spot: length, codecs, true loudness (read-only) |
 | `tools/normalize-ad.sh` | Clear a submitted spot for air: 1080p/30, loudness-normalized |
@@ -103,6 +106,11 @@ The short version — the [build guide](docs/build-guide.md) has every command.
    `ch0.ripostelabs.xyz`.
 6. **Phase 5 — go live sometimes.** OBS to the same RTMP key for Ground Zero
    remotes and Lab Hour.
+7. **Phase 6 — more machines (optional).** `tools/bootstrap-node.sh` stands up a
+   node from a bare box in one command, and a second playout node on the same
+   shared media becomes a standby that takes over if the first dies. Note what
+   this does and doesn't buy you — a linear channel can't be load-balanced, only
+   made redundant. See [clustering](docs/clustering.md).
 
 ## Configuration, all of it
 
