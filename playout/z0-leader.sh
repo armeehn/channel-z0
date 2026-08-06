@@ -1,0 +1,287 @@
+#!/usr/bin/env bash
+# Channel Z0 — the uplink supervisor. Decides which playout node is on air.
+#
+# The station's core rule is that exactly ONE stream reaches the tower. Two
+# nodes publishing the same stream key doesn't give you redundancy, it gives
+# you a corrupted channel — Owncast sees interleaved keyframes from two
+# unrelated encodes. So a standby node cannot simply "also run the uplink".
+#
+# This is the thing that makes standby nodes safe: a lease over shared storage.
+# One node holds it and publishes; the others watch, and take over only when
+# the holder has demonstrably stopped.
+#
+# Usage (normally run by playout/compose.yml, not by hand):
+#   Z0_NODE_ID=playout-a playout/z0-leader.sh
+#   playout/z0-leader.sh --status        # who's on air right now
+#   playout/z0-leader.sh --release       # hand off from this node, then exit
+#
+# See docs/clustering.md for the topology and the failover runbook.
+set -uo pipefail
+
+CLUSTER_DIR="${Z0_CLUSTER_DIR:-${Z0_MEDIA_ROOT:-/media/channelz0}/.z0-cluster}"
+
+# Minimal containers often ship without `hostname`, and this runs inside one.
+host_name() {
+  hostname -s 2>/dev/null || hostname 2>/dev/null \
+    || cat /etc/hostname 2>/dev/null || echo "${HOSTNAME:-unknown}"
+}
+NODE_ID="${Z0_NODE_ID:-$(host_name)}"
+CHANNEL_URL="${Z0_CHANNEL_URL:-http://127.0.0.1:8409/iptv/channel/1.ts}"
+
+NODE_ROLE="${Z0_NODE_ROLE:-playout}"
+
+LOCK="${CLUSTER_DIR}/uplink.lock"
+BEAT="${LOCK}/beat"
+HOLDER="${LOCK}/holder"
+PUBDIR="${CLUSTER_DIR}/publishing"
+NODEDIR="${CLUSTER_DIR}/nodes"
+
+# Each node stamps a file every tick. It's how `--status` can show the whole
+# cluster from any machine, and how you notice a standby quietly died months
+# ago and you've been running without redundancy since.
+#
+# Fields are pipe-separated, not tab-separated: tab counts as IFS *whitespace*,
+# so `read` collapses runs of them and one empty field silently shifts every
+# column after it.
+register() { # state
+  mkdir -p "$NODEDIR" 2>/dev/null
+  printf '%s|%s|%s|%s\n' "$NODE_ROLE" "$1" "$(host_name)" "$(date -u +%FT%TZ)" \
+    > "${NODEDIR}/${NODE_ID}" 2>/dev/null
+}
+
+# ── Timing ────────────────────────────────────────────────────────────────────
+# The safety argument, which is the only part of this file that really matters:
+#
+#   RENEW  the leader touches the heartbeat this often
+#   FENCE  if the leader cannot renew for this long, it kills its own uplink
+#   TTL    a standby steals the lease after the heartbeat is this stale
+#
+# TTL > FENCE by a wide margin, so the old leader has stopped publishing before
+# the new one starts. With the defaults the leader is off air by T+12s and the
+# standby comes up at T+20s — an 8s gap where the channel is down, which is the
+# correct trade. Dead air for eight seconds beats two stations at once.
+RENEW="${Z0_LEASE_RENEW:-5}"
+FENCE="${Z0_LEASE_FENCE:-12}"
+TTL="${Z0_LEASE_TTL:-20}"
+
+# Test seam: the failover harness swaps in a fake publisher so the invariant can
+# be checked without a tower. Defaults to the real relay.
+UPLINK_CMD="${Z0_UPLINK_CMD:-}"
+
+log() { printf '%s z0-leader[%s] %s\n' "$(date -u +%H:%M:%S)" "$NODE_ID" "$*" >&2; }
+
+# ── Health ────────────────────────────────────────────────────────────────────
+# A node that can't actually produce a channel must never hold the lease, or
+# it will win the election and air silence. ffprobe rather than an HTTP check:
+# it proves ErsatzTV is emitting a decodable stream, not merely answering.
+health_ok() {
+  [[ -n "$UPLINK_CMD" ]] && return 0        # test mode: no ErsatzTV to probe
+  timeout 12 ffprobe -v error -rw_timeout 8000000 \
+    -select_streams v:0 -show_entries stream=codec_type \
+    -of csv=p=0 "$CHANNEL_URL" 2>/dev/null | grep -q video
+}
+
+# ── The lease ─────────────────────────────────────────────────────────────────
+# mkdir is atomic and fails if the target exists — that's the acquisition. mv is
+# atomic and only one racer can rename a given directory — that's the steal.
+# Between them there is no window where two nodes believe they hold the lease.
+
+lock_holder() { cat "$HOLDER" 2>/dev/null || echo ""; }
+
+# Liveness without trusting clocks. Comparing a heartbeat mtime against the
+# local clock breaks the moment two nodes disagree about the time, which on a
+# homelab is whenever NTP hiccups. Instead each observer watches for the beat to
+# *change*, and times that with its own monotonic-enough elapsed seconds. Skew
+# between nodes becomes irrelevant.
+last_beat=""; last_change=0
+beat_is_stale() {
+  local now beat
+  now=$(date +%s)
+  beat=$(cat "$BEAT" 2>/dev/null || echo "missing")
+  if [[ "$beat" != "$last_beat" ]]; then
+    last_beat="$beat"; last_change="$now"; return 1
+  fi
+  (( now - last_change >= TTL ))
+}
+
+try_acquire() {
+  if mkdir "$LOCK" 2>/dev/null; then
+    printf '%s\n' "$NODE_ID" > "$HOLDER"
+    date +%s%N > "$BEAT"
+    log "acquired the lease — this node is on air"
+    return 0
+  fi
+  [[ "$(lock_holder)" == "$NODE_ID" ]] && return 0
+
+  if beat_is_stale; then
+    # Steal. The rename is the arbiter: if two standbys try at once, exactly one
+    # succeeds and the loser sees ENOENT and backs off to try again next tick.
+    local dead="${LOCK}.dead.${NODE_ID}.$(date +%s)"
+    if mv "$LOCK" "$dead" 2>/dev/null; then
+      local dead_holder; dead_holder=$(cat "${dead}/holder" 2>/dev/null)
+      log "lease was stale (holder '${dead_holder}') — taking over"
+      # A node that died hard never cleaned up its publishing marker. It has
+      # been fenced by now (TTL > FENCE), so clearing it here is safe — and
+      # without this, --status would report two publishers forever.
+      [[ -n "$dead_holder" ]] && rm -f "${PUBDIR}/${dead_holder}" 2>/dev/null
+      rm -rf "$dead"
+      last_beat=""; last_change=0
+      mkdir "$LOCK" 2>/dev/null || return 1
+      printf '%s\n' "$NODE_ID" > "$HOLDER"
+      date +%s%N > "$BEAT"
+      return 0
+    fi
+  fi
+  return 1
+}
+
+renew() {
+  [[ "$(lock_holder)" == "$NODE_ID" ]] || return 1
+  date +%s%N > "$BEAT" 2>/dev/null || return 1
+  return 0
+}
+
+release() {
+  if [[ "$(lock_holder)" == "$NODE_ID" ]]; then
+    rm -rf "$LOCK" 2>/dev/null && log "released the lease"
+  fi
+  rm -f "${PUBDIR}/${NODE_ID}" 2>/dev/null
+}
+
+# ── The uplink child ──────────────────────────────────────────────────────────
+UPLINK_PID=""
+
+start_uplink() {
+  [[ -n "$UPLINK_PID" ]] && kill -0 "$UPLINK_PID" 2>/dev/null && return 0
+  mkdir -p "$PUBDIR"
+  # The marker is how `--status` and tools/test-failover.sh observe who is
+  # actually publishing, as opposed to who merely thinks they hold the lease.
+  printf '%s\n' "$(date -u +%FT%TZ)" > "${PUBDIR}/${NODE_ID}"
+  if [[ -n "$UPLINK_CMD" ]]; then
+    bash -c "$UPLINK_CMD" &
+  else
+    ffmpeg -hide_banner -loglevel warning \
+      -i "$CHANNEL_URL" -c copy \
+      -f flv "rtmp://${Z0_WATCH_DOMAIN}:1935/live/${Z0_STREAM_KEY}" &
+  fi
+  UPLINK_PID=$!
+  log "uplink started (pid ${UPLINK_PID})"
+}
+
+stop_uplink() { # reason
+  if [[ -n "$UPLINK_PID" ]] && kill -0 "$UPLINK_PID" 2>/dev/null; then
+    log "stopping uplink: ${1:-requested}"
+    kill -TERM "$UPLINK_PID" 2>/dev/null
+    # Don't wait politely forever — the whole safety argument depends on this
+    # process being off the air before the fencing deadline.
+    for _ in 1 2 3 4 5 6 7 8 9 10; do
+      kill -0 "$UPLINK_PID" 2>/dev/null || break
+      sleep 0.2
+    done
+    kill -KILL "$UPLINK_PID" 2>/dev/null
+  fi
+  wait "$UPLINK_PID" 2>/dev/null
+  UPLINK_PID=""
+  rm -f "${PUBDIR}/${NODE_ID}" 2>/dev/null
+}
+
+# ── Subcommands ───────────────────────────────────────────────────────────────
+case "${1:-}" in
+  --status)
+    echo "cluster dir: ${CLUSTER_DIR}"
+    if [[ -d "$LOCK" ]]; then
+      echo "lease holder: $(lock_holder)"
+    else
+      echo "lease holder: (none — no node is on air)"
+    fi
+    if [[ -d "$PUBDIR" ]] && compgen -G "${PUBDIR}/*" >/dev/null; then
+      echo "publishing:"
+      for f in "${PUBDIR}"/*; do echo "  $(basename "$f")  since $(cat "$f")"; done
+      n=$(find "$PUBDIR" -type f | wc -l)
+      (( n > 1 )) && echo "  ** ${n} PUBLISHERS — the tower is receiving two streams **" >&2
+    else
+      echo "publishing: nobody"
+    fi
+    echo ""
+    if [[ -d "$NODEDIR" ]] && compgen -G "${NODEDIR}/*" >/dev/null; then
+      printf '%-16s %-9s %-9s %-22s %s\n' NODE ROLE STATE LAST-SEEN HOST
+      for f in "${NODEDIR}"/*; do
+        IFS='|' read -r role state host seen < "$f"
+        age=$(( $(date +%s) - $(stat -c %Y "$f" 2>/dev/null || echo 0) ))
+        (( age > TTL * 3 )) && state="stale(${age}s)"
+        printf '%-16s %-9s %-9s %-22s %s\n' "$(basename "$f")" "$role" "$state" "$seen" "$host"
+      done
+    else
+      echo "nodes: none registered yet"
+    fi
+    exit 0 ;;
+  --release) release; exit 0 ;;
+  -h|--help) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+esac
+
+if [[ -z "$UPLINK_CMD" ]]; then
+  : "${Z0_WATCH_DOMAIN:?set Z0_WATCH_DOMAIN}"; : "${Z0_STREAM_KEY:?set Z0_STREAM_KEY}"
+fi
+
+mkdir -p "$CLUSTER_DIR" "$PUBDIR" || { echo "cannot write cluster dir: $CLUSTER_DIR" >&2; exit 1; }
+
+# A clean shutdown is a clean handover: drop the uplink, drop the lease, and a
+# standby picks it up on its next tick instead of waiting out the full TTL.
+shutting_down=0
+on_term() { shutting_down=1; log "shutting down"; stop_uplink "shutdown"; release; exit 0; }
+trap on_term TERM INT
+
+log "watching (cluster=${CLUSTER_DIR} renew=${RENEW}s fence=${FENCE}s ttl=${TTL}s)"
+
+leader=0
+last_renew=$(date +%s)
+unhealthy_since=0
+
+while (( ! shutting_down )); do
+  now=$(date +%s)
+
+  if (( leader )); then
+    if renew; then
+      last_renew="$now"
+    elif (( now - last_renew >= FENCE )); then
+      # Either the shared storage went away or someone else holds the lease.
+      # Either way this node must get off the air before TTL elapses.
+      stop_uplink "cannot renew lease (fencing)"
+      leader=0
+      log "demoted — lost the lease"
+    fi
+
+    if (( leader )); then
+      if health_ok; then
+        unhealthy_since=0
+        start_uplink
+      else
+        (( unhealthy_since == 0 )) && unhealthy_since="$now"
+        if (( now - unhealthy_since >= FENCE )); then
+          log "channel unhealthy for $(( now - unhealthy_since ))s — standing down so a standby can take it"
+          stop_uplink "unhealthy"
+          release
+          leader=0
+          unhealthy_since=0
+        fi
+      fi
+      # The uplink can also just die (tower restart, network blip). Let the next
+      # tick restart it; that's the same reconnect-forever behaviour as before.
+      if [[ -n "$UPLINK_PID" ]] && ! kill -0 "$UPLINK_PID" 2>/dev/null; then
+        log "uplink exited; will restart"
+        UPLINK_PID=""; rm -f "${PUBDIR}/${NODE_ID}" 2>/dev/null
+      fi
+    fi
+  else
+    # Only healthy nodes stand for election.
+    if health_ok && try_acquire; then
+      leader=1; last_renew=$(date +%s); unhealthy_since=0
+      start_uplink
+    fi
+  fi
+
+  # Registered at the end of the tick, once this node's state for this round is
+  # settled — registering first would advertise last tick's state.
+  register "$( (( leader )) && echo leader || echo standby )"
+  sleep "$RENEW"
+done
