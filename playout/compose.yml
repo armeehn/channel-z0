@@ -41,18 +41,23 @@ services:
       - ersatztv
     env_file: .env
     network_mode: host            # so ${Z0_CHANNEL_URL} at 127.0.0.1:8409 resolves
-    entrypoint:
-      - /bin/sh
-      - -c
-      - |
-        echo "z0-uplink: relaying $${Z0_CHANNEL_URL} -> $${Z0_WATCH_DOMAIN}"
-        while true; do
-          ffmpeg -hide_banner -loglevel warning \
-            -i "$${Z0_CHANNEL_URL}" \
-            -c copy \
-            -f flv "rtmp://$${Z0_WATCH_DOMAIN}:1935/live/$${Z0_STREAM_KEY}" || true
-          echo "z0-uplink: stream ended; reconnecting in 5s"; sleep 5
-        done
+    # It runs behind z0-leader.sh, which decides whether THIS node is on air.
+    # On a single-node station that's a formality — the node takes the lease at
+    # boot and keeps it. On a multi-node station it is the thing that stops two
+    # machines publishing the same stream key and corrupting the channel.
+    # See docs/clustering.md.
+    environment:
+      Z0_NODE_ID: ${Z0_NODE_ID:-}
+      Z0_NODE_ROLE: playout
+      Z0_CLUSTER_DIR: /cluster
+    volumes:
+      - ./z0-leader.sh:/z0-leader.sh:ro
+      # The lease lives on storage every playout node can write. On one node any
+      # local path works; on a cluster this MUST be the shared mount. Flat
+      # default on purpose — nested ${A:-${B:-c}} interpolation is not reliably
+      # supported across compose versions.
+      - ${Z0_CLUSTER_DIR_HOST:-/media/channelz0/.z0-cluster}:/cluster
+    entrypoint: ["/bin/bash", "/z0-leader.sh"]
 
   # --- Now-playing bridge (optional): the marquee ------------------------
   # Reads what ErsatzTV is airing right now from its XMLTV guide and writes it
