@@ -42,6 +42,7 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 |---|---|
 | [`docs/build-guide.md`](docs/build-guide.md) | **Start here.** The full station build, Phase 0 → on-air |
 | [`docs/programming.md`](docs/programming.md) | **The broadcast week.** The full schedule, the show bible, and the ErsatzTV mapping |
+| [`docs/archive-fetch.md`](docs/archive-fetch.md) | **Stocking the library.** Public-domain intake from the Internet Archive |
 | [`docs/self-hosting.md`](docs/self-hosting.md) | Run master control on a homelab — Proxmox & TrueNAS, GPU passthrough, tips |
 | [`docs/gear-and-costs.md`](docs/gear-and-costs.md) | Hardware picks, VPS comparison, bandwidth math, budgets |
 | [`docs/ad-standards.md`](docs/ad-standards.md) | The one-page rulebook for locally submitted commercials |
@@ -61,6 +62,7 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | Script | Job |
 |---|---|
 | `tools/make-media-tree.sh` | Create the media library layout on the playout PC |
+| `tools/fetch-archive.sh` | Stock the library from archive.org — public domain only, resumable ([manual](docs/archive-fetch.md)) |
 | `tools/test-broadcast.sh` | Fire a live test pattern at the tower (build guide, Phase 1.5) |
 | `tools/check-ad.sh` | Screen a submitted spot: length, codecs, true loudness (read-only) |
 | `tools/normalize-ad.sh` | Clear a submitted spot for air: 1080p/30, loudness-normalized |
@@ -83,7 +85,9 @@ The short version — the [build guide](docs/build-guide.md) has every command.
    stream key. Prove the pipe with `tools/test-broadcast.sh`.
 3. **Phase 2 — master control.** On the playout PC (or a homelab box — see
    [self-hosting](docs/self-hosting.md)): `tools/make-media-tree.sh`, fill the
-   library, then either `playout/ersatztv.sh` or the whole containerized stack
+   library (`tools/fetch-archive.sh --all` stocks the public-domain half —
+   see [archive-fetch](docs/archive-fetch.md)), then either
+   `playout/ersatztv.sh` or the whole containerized stack
    with `cd playout && docker compose up -d`. Build the schedule and ad-break
    filler in the ErsatzTV UI.
 4. **Phase 3 — the uplink.** The `uplink` service in `playout/compose.yml`
