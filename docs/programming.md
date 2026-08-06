@@ -172,6 +172,11 @@ ErsatzTV collection the schedule item points at.
 
 ### The acquired — public domain, curated
 
+> 📦 *In this repo:* [`tools/fetch-archive.sh`](../tools/fetch-archive.sh) fetches
+> every block below straight into the folders ErsatzTV watches — one slot per
+> collection named here, public-domain-marked items only. See
+> [`docs/archive-fetch.md`](archive-fetch.md) for the recipes and the manifest.
+
 - **CARTOON BLOCK / BLOCK II / CARNIVAL** *(mornings, afternoons, weekend long-form)*
   Public-domain animation — the pre-1964 well is deep (early theatrical shorts,
   the ones whose copyrights lapsed). The Carnival is just the Block, scheduled

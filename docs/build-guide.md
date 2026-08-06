@@ -171,6 +171,10 @@ Shows use Plex-style naming (`Show - s01e01 - Title.ext`) so the library scanner
 
 **Free period-correct filler:** the Internet Archive's [Prelinger collection](https://archive.org/details/prelinger) — thousands of public-domain educational films, PSAs, and vintage ads. Exactly the texture an old-style channel needs between local spots, and legally spotless.
 
+📦 *In this repo:* [`tools/fetch-archive.sh`](../tools/fetch-archive.sh) does the fetching — Prelinger shorts, cartoons, and the themed feature nights, filtered to public-domain-marked items and verified with ffprobe on the way in. It is resumable, so run it overnight against the colour bars: `tools/fetch-archive.sh --all`. Full manual in [`docs/archive-fetch.md`](archive-fetch.md).
+
+> ⚠ Don't point a fetcher at archive.org's `classic_tv_commercials` collection wholesale — it mixes genuine vintage spots with material still very much in copyright (there's a 2007 FedEx ad in there). Filter on the licence mark, which is what the tool does.
+
 ### 2.2 Install ErsatzTV (Docker)
 
 ```bash
