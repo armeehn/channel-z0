@@ -231,6 +231,53 @@ The next operator should run `tools/make-media-tree.sh` then
 
 ---
 
+## Testing without the bytes
+
+A stocked library is tens of gigabytes and one feature is a few hundred
+megabytes, which makes *"does my schedule actually work"* an expensive question —
+especially on a playout PC that is also the thing on air.
+
+[`tools/make-proxies.sh`](../tools/make-proxies.sh) mirrors the library into
+stand-ins: same tree, same filenames, **same durations**, a fraction of a percent
+of the bytes.
+
+```bash
+tools/make-proxies.sh                    # low-res transcodes of everything
+tools/make-proxies.sh --placeholder      # labelled cards instead of video
+tools/make-proxies.sh psas/ movies/noir/ # just these
+tools/make-proxies.sh --dry-run
+```
+
+Output goes to `$Z0_MEDIA_ROOT-test` (override with `--out` or `Z0_PROXY_ROOT`).
+Point a throwaway ErsatzTV channel at it and the broadcast day behaves exactly as
+it will on air — it just looks like a webcam from 1998.
+
+**Duration is the whole point.** Schedules, pad-to-the-half-hour, and the
+protected 19:00 anchor are arithmetic on runtimes, so proxies keep runtimes exact.
+`--seconds N` trims for a fast smoke test and deliberately breaks that property;
+the script says so when you use it.
+
+| Mode | What you get | Measured |
+|---|---|---|
+| transcode *(default)* | 320px, crf 40, mono audio — the actual content | **6.9%** of source bytes |
+| `--placeholder` | a Z0 card naming the title and the runtime it stands in for | **0.6%** of source bytes |
+
+Useful options: `--width`, `--crf`, `--jobs N` (default 4), `--force`, `--dry-run`.
+Re-runs skip anything already built, so it resumes like the fetcher does.
+
+Two things worth knowing if you touch the placeholder path:
+
+- **The cost is the audio, not the video.** A static frame is nearly free to
+  x264; AAC-encoding 90 minutes of *silence* at 48k stereo measured 38 s against
+  6 s for the video. The silence is 22050 mono for that reason, which takes a
+  feature-length card from ~43 s to ~24 s. Framerate barely matters.
+- **`drawtext` and colons.** A runtime like `1:30:00` reads as the next filter
+  option and kills the filtergraph — the same landmine already fixed in
+  [`make-testcard.sh`](../tools/make-testcard.sh). Titles are flattened to a safe
+  charset and everything is escaped through `dt_escape`.
+
+---
+
 ## Editing the recipes
 
 The `RECIPES` array near the top of the script is the whole configuration:
