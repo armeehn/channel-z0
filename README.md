@@ -153,3 +153,18 @@ public domain; anything you air still has to be yours to air. See
 ---
 
 *This station concludes its broadcast day at midnight. Colour bars until sunrise.*
+
+---
+
+## Brand
+
+This project follows the [Riposte Laboratories design system](https://github.com/armeehn/riposte-brand) — published at
+[ripostelabs.xyz/brand](https://ripostelabs.xyz/brand/). See [`BRAND.md`](BRAND.md) for what
+conforms, what deliberately diverges, and why.
+
+<table>
+<tr>
+<td><b>DOC NO. RL-Z0-A</b><br>REV. A &middot; EST. 2026</td>
+<td align="right"><b>PARRY &#9851; RIPOSTE &#9851; RECYCLE &#9851; REPEAT</b><br>Riposte Laboratories Inc.</td>
+</tr>
+</table>
