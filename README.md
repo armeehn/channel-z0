@@ -67,6 +67,7 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | `tools/fetch-archive.sh` | Stock the library from archive.org — public domain only, resumable ([manual](docs/archive-fetch.md)) |
 | `tools/make-proxies.sh` | Build a test library — tiny stand-ins with identical runtimes, for trying schedules |
 | `tools/test-failover.sh` | Prove the cluster fails over and never double-publishes |
+| `tools/test-generators.sh` | Prove the card generators still make cards — arguments, text, 1080p/30 conformance |
 | `tools/test-broadcast.sh` | Fire a live test pattern at the tower (build guide, Phase 1.5) |
 | `tools/check-ad.sh` | Screen a submitted spot: length, codecs, true loudness (read-only) |
 | `tools/normalize-ad.sh` | Clear a submitted spot for air: 1080p/30, loudness-normalized |
