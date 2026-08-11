@@ -142,7 +142,7 @@ passes `/dev/dri` when you declare the device:
 ```yaml
 services:
   ersatztv:
-    image: docker.io/ersatztv/ersatztv:latest-vaapi
+    image: ghcr.io/ersatztv/ersatztv:latest-vaapi
     restart: unless-stopped
     ports: ["8409:8409"]
     volumes:

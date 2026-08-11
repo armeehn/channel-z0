@@ -184,7 +184,7 @@ docker run -d --name ersatztv \
   -v /media/channelz0:/media:ro \
   --device /dev/dri:/dev/dri \
   --restart unless-stopped \
-  docker.io/ersatztv/ersatztv:latest-vaapi
+  ghcr.io/ersatztv/ersatztv:latest-vaapi
 ```
 
 📦 *In this repo:* [`playout/ersatztv.sh`](../playout/ersatztv.sh) wraps this, with the tag configurable via `ERSATZTV_TAG`.
@@ -385,7 +385,7 @@ card and a 10-second bars tail. Where `make-slate.sh` makes a static sign-off
 - **When home internet drops:** uplink dies → Owncast flips to your offline message → uplink service reconnects automatically when the line returns. Viewers refresh and they're back. No action required at 3am.
 - **When the power blinks:** a small UPS (~$60) on the modem + router + playout PC rides through the flickers. Everything is set to `--restart unless-stopped` / `Restart=always`, so even a full outage self-heals on power-up.
 - **Monitoring:** Owncast's admin shows live viewer counts and stream health. Point free [UptimeRobot](https://uptimerobot.com) at `https://watch.channelz0.example/api/status` and it emails you when the tower itself goes dark.
-- **Updates:** monthly-ish, `docker compose pull && docker compose up -d` on the VPS, `docker pull docker.io/ersatztv/ersatztv:latest-vaapi` + recreate at home. Don't update on a Friday before a Ground Zero premiere.
+- **Updates:** monthly-ish, `docker compose pull && docker compose up -d` on the VPS, `docker pull ghcr.io/ersatztv/ersatztv:latest-vaapi` + recreate at home. Don't update on a Friday before a Ground Zero premiere.
 - **Legal footing:** submitted ads (with a rights attestation), your own shows, and public-domain material keep you clean. Copyrighted music and TV shows are the one real wrinkle — a "local channel for locals" is exactly the kind of thing that stays charming by staying legitimate.
 
 ---
