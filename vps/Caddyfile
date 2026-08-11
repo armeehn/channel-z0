@@ -12,9 +12,13 @@
 watch.ch0.ripostelabs.xyz {
     reverse_proxy 127.0.0.1:8080 {
         # The page is served from another origin (Cloudflare), so the HLS player
-        # and the /api/status polling need permissive CORS. Strip any value
-        # Owncast already set, then set our own, so the browser never sees two.
-        header_down -Access-Control-Allow-Origin
+        # and the /api/status polling need permissive CORS.
+        #
+        # Do NOT add `header_down -Access-Control-Allow-Origin` above this line to
+        # "strip whatever Owncast set first". Caddy applies header DELETIONS AFTER
+        # SETS, so the delete removes the header the next line just wrote and the
+        # response carries no CORS at all - the storefront player goes blank, with
+        # nothing in any log to say why. `set` already replaces an upstream value.
         header_down Access-Control-Allow-Origin "*"
     }
 }
@@ -26,7 +30,6 @@ watch.ch0.ripostelabs.xyz {
 #
 # watch.channelz0.tv {
 #     reverse_proxy 127.0.0.1:8080 {
-#         header_down -Access-Control-Allow-Origin
 #         header_down Access-Control-Allow-Origin "*"
 #     }
 # }
