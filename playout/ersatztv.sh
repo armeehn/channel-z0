@@ -13,7 +13,7 @@ docker run -d --name ersatztv \
   -v "${MEDIA_ROOT}:/media:ro" \
   --device /dev/dri:/dev/dri \
   --restart unless-stopped \
-  "docker.io/ersatztv/ersatztv:${TAG}"
+  "ghcr.io/ersatztv/ersatztv:${TAG}"
 
 echo "ErsatzTV starting → http://localhost:8409"
 echo "Sanity check the channel with:  vlc http://localhost:8409/iptv/channel/1.ts"
