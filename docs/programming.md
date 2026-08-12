@@ -262,6 +262,49 @@ reads to tell the storefront what's on.
 
 ---
 
+## The playout file
+
+The mapping above describes the schedule the way you would *build* it in the
+ErsatzTV UI — collections, schedule items, fixed start times. It is still the
+clearest way to think about the week, but it is no longer the only way to get
+there: [`playout/channel-z0.yml`](../playout/channel-z0.yml) is the same week
+expressed as an **ErsatzTV YAML playout**, which means the schedule is a file in
+this repo rather than an afternoon of clicking.
+
+Point a playout at it: *Playouts → Add*, choose the Channel Z0 channel, playout
+type **YAML**, and select the file. ErsatzTV stores the path, so editing the file
+and rebuilding the playout is how you change what airs.
+
+It needs no collections at all. The `/media` tree is added as a single **Other
+Videos** library path, and ErsatzTV tags Other Videos with the folder names above
+them — so a file in `movies/noir/` carries the tag `noir`, and the playout asks
+for it with `tag:noir`. Adding a film to a themed night is dropping it in a folder
+and rescanning.
+
+Three things about that file are worth knowing before you edit it:
+
+- **The week is a seven-day cycle, not a calendar.** YAML playouts have no
+  day-of-week primitive. The seven day blocks run in order and `repeat: true`
+  returns to Monday, so which block lands on which weekday is decided entirely by
+  the day the playout is first built or reset. **Build or reset it on a Monday**
+  and the themed nights match the grid on the storefront; do it on a Thursday and
+  the channel is three days out of phase with its own guide, silently.
+
+- **Overnight *is* scheduled here**, which contradicts point 6 above. Leaving
+  00:00–06:00 empty relies on the channel's fallback filler, and this station has
+  no filler preset configured — an unscheduled gap would be dead air rather than
+  colour bars. The overnight block is the one place items are allowed to be cut
+  mid-way (`trim: true`), because a static test pattern can be, and that is what
+  makes the next sign-on land exactly on 06:00 instead of drifting later each day.
+
+- **The `(STANDBY)` slots are placeholders.** Ground Zero, Lab Hour and the
+  Neighbourhood Desk have no footage yet, so their slots keep the right times but
+  play vintage shorts. Never point a slot at a content key that resolves to zero
+  media items: an empty enumerator has nothing to schedule, and the build stalls
+  on it rather than skipping it.
+
+---
+
 ## Keeping the guide and the air in sync
 
 Three places describe the schedule; keep them saying the same thing:
