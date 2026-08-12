@@ -79,10 +79,11 @@ part of the recipe, not a post-filter.
 | `psas` | `psas/` | 20–300 s | `Vintage PSAs` (ad-break filler) | Prelinger |
 | `prelinger` | `prelinger/` | 5–40 min | `Prelinger` (Prelinger Theatre) | Prelinger |
 | `cartoons` | `cartoons/` | 1–20 min | `Cartoons` (Cartoon Block) | `animationandcartoons` |
+| `slowtv` | `slowtv/` | 15 min–3 h | `Slow TV` (Stretch & Coffee, Night Pattern) | subject + year bound |
 | `noir` | `movies/noir/` | 40 min–3 h | `Features · Noir` | `feature_films` + subject |
 | `scifi` | `movies/scifi/` | 40 min–3 h | `Features · SciFi` | `feature_films` + subject |
 | `docs` | `movies/docs/` | 40 min–3 h | `Features · Docs` | `feature_films` + subject |
-| `serials` | `movies/serials/` | 10–60 min | `Features · Serials` | `feature_films` + subject |
+| `serials` | `movies/serials/` | 10–60 min | `Features · Serials` | subject + year bound |
 | `classics` | `movies/classics/` | 40 min–3 h | `Features · Classics` | `feature_films` + subject |
 | `cult` | `movies/cult/` | 40 min–3 h | `Features · Cult` | `feature_films` + subject |
 
@@ -93,14 +94,33 @@ prelinger  1875      animationandcartoons  719
 noir  137   scifi  424   docs  45   serials  12   classics  1210   cult  36
 ```
 
-`serials` (12) and `cult` (36) are **thin** — the script will report
-`pool exhausted` rather than silently under-delivering. Widen those queries if the
-themed nights need more; see *Editing the recipes* below.
+`cult` (36) is **thin** — the script will report `pool exhausted` rather than
+silently under-delivering. Widen that query if the themed night needs more; see
+*Editing the recipes* below.
 
-Two blocks in `programming.md` are deliberately **not** fetched: `Slow TV` and
-`Music Loops`. Those want rights-owned music or your own long takes, and there is
-no honest query for that. `slowtv/` is created empty; fill it yourself.
-`bumpers/` likewise — those come from [`make-ident.sh`](../tools/make-ident.sh).
+`serials` used to be thin for a different reason: the recipe asked
+`collection:(feature_films)` for `subject:(serial)`, and the whole of archive.org
+only answers that with **12** items, which is why SERIAL NIGHT could never be
+stocked more than five chapters deep. Dropping the collection filter and accepting
+`serials`/`cliffhanger`/`chapter play` as well takes the pool to **404**.
+
+**On the year bound.** `serials` and `slowtv` both end in `year:[1900 TO 1985]`.
+The public-domain licence mark is also worn by present-day CC0 uploads, so an
+undated subject query returns 2020s explainer videos next to the mid-century
+material — legally fine, tonally wrong for a channel that is pretending to be
+older than streaming. The other slots don't need it: their collections are already
+vintage by construction.
+
+One block in `programming.md` is still deliberately **not** fetched: `Music Loops`
+wants rights-owned music, and there is no honest query for that.
+
+`slowtv` **is** fetched, but read this before trusting it. What Stretch & Coffee
+and Sunday Service actually want is *your own* long takes of the neighbourhood,
+and no query returns those. The recipe fetches vintage scenic, travelogue and
+railroad film instead — the same texture, the same era, and public-domain-marked,
+but it is a **stand-in**, not the real thing. Replace it with your own footage when
+you have some. `bumpers/` is not fetched either — those come from
+[`make-ident.sh`](../tools/make-ident.sh).
 
 ---
 
