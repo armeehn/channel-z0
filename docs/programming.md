@@ -286,9 +286,13 @@ Three things about that file are worth knowing before you edit it:
 - **The week is a seven-day cycle, not a calendar.** YAML playouts have no
   day-of-week primitive. The seven day blocks run in order and `repeat: true`
   returns to Monday, so which block lands on which weekday is decided entirely by
-  the day the playout is first built or reset. **Build or reset it on a Monday**
-  and the themed nights match the grid on the storefront; do it on a Thursday and
-  the channel is three days out of phase with its own guide, silently.
+  the day the playout is first built or reset. **Build or reset it early on a
+  Monday, before 06:00** and the themed nights match the grid on the storefront;
+  do it on a Thursday and the channel is three days out of phase with its own
+  guide, silently. The hour matters as well as the day: a playout built mid
+  afternoon starts at instruction one with every morning `pad_until` already in
+  the past, so they collapse to nothing and the evening stretches to fill the
+  day. It rights itself at the next sign-on.
 
 - **Overnight *is* scheduled here**, which contradicts point 6 above. Leaving
   00:00–06:00 empty relies on the channel's fallback filler, and this station has
