@@ -384,7 +384,7 @@ card and a 10-second bars tail. Where `make-slate.sh` makes a static sign-off
 
 - **When home internet drops:** uplink dies → Owncast flips to your offline message → uplink service reconnects automatically when the line returns. Viewers refresh and they're back. No action required at 3am.
 - **When the power blinks:** a small UPS (~$60) on the modem + router + playout PC rides through the flickers. Everything is set to `--restart unless-stopped` / `Restart=always`, so even a full outage self-heals on power-up.
-- **Monitoring:** Owncast's admin shows live viewer counts and stream health. Point free [UptimeRobot](https://uptimerobot.com) at `https://watch.channelz0.example/api/status` and it emails you when the tower itself goes dark.
+- **Monitoring:** Owncast's admin shows live viewer counts and stream health. Point free [UptimeRobot](https://uptimerobot.com) at `https://watch.channelz0.example/api/status` — but make it a **keyword** monitor on `"online":true`, not a plain up/down check. A plain check watches the *tower*, and the tower is almost never the thing that breaks: Owncast, Caddy and the VPS stay perfectly healthy and keep answering `200` while the house has stopped sending anything at all. Ask it whether the station is *broadcasting*, not whether the server is *answering*. We learned this the expensive way — the channel sat dark for twenty hours behind a completely green endpoint.
 - **Updates:** monthly-ish, `docker compose pull && docker compose up -d` on the VPS, `docker pull ghcr.io/ersatztv/ersatztv:latest-vaapi` + recreate at home. Don't update on a Friday before a Ground Zero premiere.
 - **Legal footing:** submitted ads (with a rights attestation), your own shows, and public-domain material keep you clean. Copyrighted music and TV shows are the one real wrinkle — a "local channel for locals" is exactly the kind of thing that stays charming by staying legitimate.
 
@@ -401,6 +401,9 @@ card and a 10-second bars tail. Where `make-slate.sh` makes a static sign-off
 | Website player black, but Owncast page works | `STREAM_URL` typo or CORS: test the m3u8 in VLC, or fall back to the iframe embed |
 | Ads much louder/quieter than shows | A spot skipped the `loudnorm` normalize pass — re-run it |
 | "It's 25 seconds behind real time!" | Yes. It's television. Latency is the cost of infinite viewers on one home connection |
+| Tower says `"online": false`, but the VPS and Owncast are fine | Nothing is arriving. Check the uplink's channel URL: `/iptv/channel/N.ts` takes the channel's **number**, not its id, so renumbering a channel in ErsatzTV silently breaks the relay — the URL starts returning `400`, the leader sees an unhealthy channel and stands down. Confirm with `curl -o /dev/null -w '%{http_code}' http://127.0.0.1:8409/iptv/channel/N.ts` and compare against `/iptv/channels.m3u` |
+| A block is missing from the guide entirely | Its content pool resolved to zero items, which is silent — the fill loop is guarded on the enumerator having a current item, so an empty pool schedules nothing and leaves a hole. Either the folder is empty, or the library was scanned but the search index was not (see Phase 2) |
+| A block is short and hands off to filler early | `pad_until` only schedules an item that FITS the remaining time, and gives up on the first one that doesn't. Add `discard_attempts` so it looks further down the pool — essential when the pool's runtimes are longer than the slot |
 
 ---
 
