@@ -1,0 +1,28 @@
+# Channel Z0 — the corner weather card.
+#
+# The PNG behind this is rewritten every 15 minutes by tools/z0-weather.sh.
+# ErsatzTV re-reads the file once per programme, when that programme's ffmpeg
+# process starts — not per frame and not per segment. So the card is as fresh
+# as the last programme boundary, which is why it carries its own "AS OF"
+# stamp rather than implying it is live to the minute.
+#
+# That same read is why the generator installs via rename(2). If ErsatzTV
+# catches a half-written PNG, ImageElement logs "Failed to initialize image
+# element; will disable for this content" and the card is gone for the whole
+# programme — a silent failure that looks like a config mistake.
+name: "Z0 WEATHER CARD"
+
+image: "/media/branding/z0-weather-card.png"
+
+opacity_percent: 92
+
+location: "TopRight"
+horizontal_margin_percent: 4
+vertical_margin_percent: 5
+
+# Rendered at 920x300 and scaled down here, so the card stays sharp and stays
+# correct if the channel is ever re-profiled to 720p.
+scale: true
+scale_width_percent: 22
+
+z_index: 12
