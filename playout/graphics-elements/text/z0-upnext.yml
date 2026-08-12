@@ -1,0 +1,57 @@
+# Channel Z0 — the "next up" lower third.
+#
+# Reads ErsatzTV's own guide rather than anything the station generates, so it
+# cannot disagree with the EPG. Epg[0] is the programme now on air; Epg[1] is
+# what follows it.
+#
+# It shows itself for about twenty seconds after each programme starts and
+# then gets out of the way — a station tells you what's coming, it doesn't nag.
+# The fade is driven by content_seconds (elapsed seconds within the current
+# item), so it lands correctly whatever the programme's length.
+name: "Z0 UP NEXT"
+
+epg_entries: 2
+
+# LinearFadePoints(time, start, peakStart, peakEnd, end): transparent until
+# 10s, fully up 12s-28s, gone by 30s.
+opacity_expression: "LinearFadePoints(content_seconds, 10, 12, 28, 30)"
+
+location: "BottomLeft"
+horizontal_margin_percent: 4
+vertical_margin_percent: 9
+
+width_percent: 55
+text_fit: scale
+text_align: left
+
+z_index: 20
+
+# One style, deliberately. Per-line styling isn't a thing here — base_style
+# applies to the whole block — so the label rides on the same line as the
+# title rather than being set as a heading that would render just as large.
+styles:
+  - name: "lower-third"
+    font_family: "Noto Sans Mono"
+    font_size: 42
+    font_weight: 700
+    text_color: "#F2F0E9"
+    halo_color: "#141414"
+    halo_width: 6
+    halo_blur: 3
+
+base_style: "lower-third"
+
+# The graphics engine renders text with SkiaSharp/RichTextKit, which does NOT
+# consult fontconfig — so `fc-list` and `fc-match` finding a face inside the
+# container proves nothing about whether this will resolve. Without this the
+# log says "Could not find font Noto Sans Mono; using default" and the lower
+# third quietly renders in some other face.
+#
+# The folder holds only the two faces this needs, rather than pointing at the
+# 300-font system directory, so startup does not walk the lot.
+include_fonts_from: "/media/branding/fonts"
+
+# Guard on size: during the last item of a build there is no Epg[1], and an
+# unguarded index would render the literal template or drop the element.
+text: |
+  {{ if Epg.size > 1 }}NEXT · {{ Epg[1].Title }}{{ end }}
