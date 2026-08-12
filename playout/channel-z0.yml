@@ -152,6 +152,7 @@ content:
 
 playout:
   # ══ WEDNESDAY ══════════════════════════════════════════════════════════════
+  - epg_group: true
   - count: 1
     content: testcard
     custom_title: 'SIGN-ON · MORNING PATTERN'
@@ -159,33 +160,53 @@ playout:
     content: bumpers
   - pad_until: '06:30'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '07:00'
     content: slowtv
     discard_attempts: 4
     custom_title: 'STRETCH & COFFEE'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '09:00'
     content: cartoons
     custom_title: 'CARTOON BLOCK'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '11:00'
     content: prelinger
     custom_title: 'PRELINGER THEATRE'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '12:00'
     content: psas
     custom_title: 'LAB HOUR (STANDBY)'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '14:00'
     content: prelinger
     custom_title: 'LUNCH LOOPS'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: classics
     custom_title: 'AFTERNOON PICTURE SHOW'
   - pad_until: '16:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '18:00'
     content: cartoons
     custom_title: 'CARTOON BLOCK II'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '19:00'
     content: psas
     custom_title: 'NEIGHBOURHOOD DESK (STANDBY)'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '19:30'
     content: psas
     custom_title: 'GROUND ZERO (STANDBY)'
@@ -193,11 +214,17 @@ playout:
     content: bumpers
   - pad_until: '20:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: docs
     custom_title: 'WORKBENCH THEATRE'
   - pad_until: '22:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '22:30'
     content: psas
     custom_title: 'GROUND ZERO — ENCORE (STANDBY)'
@@ -205,21 +232,30 @@ playout:
     content: bumpers
   - pad_until: '23:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '00:00'
     tomorrow: true
     content: slowtv
     discard_attempts: 4
     custom_title: 'NIGHT PATTERN'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: signoff
     custom_title: 'SIGN-OFF'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '06:00'
     tomorrow: true
     trim: true
     content: colorbars
     custom_title: 'COLOUR BARS'
+  - epg_group: false
 
   # ══ THURSDAY ═══════════════════════════════════════════════════════════════
+  - epg_group: true
   - count: 1
     content: testcard
     custom_title: 'SIGN-ON · MORNING PATTERN'
@@ -227,33 +263,53 @@ playout:
     content: bumpers
   - pad_until: '06:30'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '07:00'
     content: slowtv
     discard_attempts: 4
     custom_title: 'STRETCH & COFFEE'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '09:00'
     content: cartoons
     custom_title: 'CARTOON BLOCK'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '11:00'
     content: prelinger
     custom_title: 'PRELINGER THEATRE'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '12:00'
     content: psas
     custom_title: 'LAB HOUR (STANDBY)'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '14:00'
     content: prelinger
     custom_title: 'LUNCH LOOPS'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: classics
     custom_title: 'AFTERNOON PICTURE SHOW'
   - pad_until: '16:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '18:00'
     content: cartoons
     custom_title: 'CARTOON BLOCK II'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '19:00'
     content: psas
     custom_title: 'NEIGHBOURHOOD DESK (STANDBY)'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '19:30'
     content: psas
     custom_title: 'GROUND ZERO (STANDBY)'
@@ -261,12 +317,18 @@ playout:
     content: bumpers
   - pad_until: '20:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
   # Serial night runs chapters rather than one feature, so it asks for two.
+  - epg_group: true
   - count: 2
     content: serials
     custom_title: 'SERIAL NIGHT'
   - pad_until: '22:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '22:30'
     content: psas
     custom_title: 'GROUND ZERO — ENCORE (STANDBY)'
@@ -274,20 +336,29 @@ playout:
     content: bumpers
   - pad_until: '23:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '00:00'
     tomorrow: true
     content: psas
     custom_title: "CHAPTER'S END"
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: signoff
     custom_title: 'SIGN-OFF'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '06:00'
     tomorrow: true
     trim: true
     content: colorbars
     custom_title: 'COLOUR BARS'
+  - epg_group: false
 
   # ══ FRIDAY ═════════════════════════════════════════════════════════════════
+  - epg_group: true
   - count: 1
     content: testcard
     custom_title: 'SIGN-ON · MORNING PATTERN'
@@ -295,33 +366,53 @@ playout:
     content: bumpers
   - pad_until: '06:30'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '07:00'
     content: slowtv
     discard_attempts: 4
     custom_title: 'STRETCH & COFFEE'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '09:00'
     content: cartoons
     custom_title: 'CARTOON BLOCK'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '11:00'
     content: prelinger
     custom_title: 'PRELINGER THEATRE'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '12:00'
     content: psas
     custom_title: 'LAB HOUR (STANDBY)'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '14:00'
     content: prelinger
     custom_title: 'LUNCH LOOPS'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: classics
     custom_title: 'AFTERNOON PICTURE SHOW'
   - pad_until: '16:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '18:00'
     content: cartoons
     custom_title: 'CARTOON BLOCK II'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '19:00'
     content: psas
     custom_title: 'NEIGHBOURHOOD DESK (STANDBY)'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '19:30'
     content: psas
     custom_title: 'GROUND ZERO (STANDBY)'
@@ -329,11 +420,17 @@ playout:
     content: bumpers
   - pad_until: '20:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: classics
     custom_title: 'FRIDAY NIGHT FEATURE'
   - pad_until: '22:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '22:30'
     content: psas
     custom_title: 'GROUND ZERO — ENCORE (STANDBY)'
@@ -341,22 +438,31 @@ playout:
     content: bumpers
   - pad_until: '23:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '00:00'
     tomorrow: true
     content: cult
     custom_title: 'THE LATE LATE SHOW'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: signoff
     custom_title: 'SIGN-OFF'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '06:00'
     tomorrow: true
     trim: true
     content: colorbars
     custom_title: 'COLOUR BARS'
+  - epg_group: false
 
   # ══ SATURDAY — the big night ═══════════════════════════════════════════════
   # Cartoons come forward and run long; a double bill, and the one sign-off
   # that is allowed to be late.
+  - epg_group: true
   - count: 1
     content: testcard
     custom_title: 'SIGN-ON · MORNING PATTERN'
@@ -364,29 +470,47 @@ playout:
     content: bumpers
   - pad_until: '07:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '10:00'
     content: cartoons
     custom_title: 'CARTOON CARNIVAL'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '11:00'
     content: prelinger
     custom_title: 'PRELINGER THEATRE'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '12:00'
     content: psas
     custom_title: 'LAB HOUR (STANDBY)'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '13:00'
     content: prelinger
     custom_title: 'LUNCH LOOPS'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: classics
     custom_title: 'MATINEE DOUBLE'
   - pad_until: '16:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '18:00'
     content: cartoons
     custom_title: 'CARTOON BLOCK II'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '19:00'
     content: psas
     custom_title: 'NEIGHBOURHOOD DESK (STANDBY)'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '19:30'
     content: psas
     custom_title: 'GROUND ZERO (STANDBY)'
@@ -394,27 +518,40 @@ playout:
     content: bumpers
   - pad_until: '20:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: cult
     custom_title: 'SATURDAY DOUBLE BILL'
   - pad_until: '22:30'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: scifi
     custom_title: 'DOUBLE BILL — FEATURE TWO'
   - pad_until: '00:30'
     tomorrow: true
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: signoff
     custom_title: 'SIGN-OFF'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '06:00'
     tomorrow: true
     trim: true
     content: colorbars
     custom_title: 'COLOUR BARS'
+  - epg_group: false
 
   # ══ SUNDAY — the quiet one ═════════════════════════════════════════════════
+  - epg_group: true
   - count: 1
     content: testcard
     custom_title: 'SIGN-ON · MORNING PATTERN'
@@ -422,30 +559,48 @@ playout:
     content: bumpers
   - pad_until: '06:30'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '09:00'
     content: slowtv
     discard_attempts: 4
     custom_title: 'SUNDAY SERVICE'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '11:00'
     content: cartoons
     custom_title: 'CARTOON CARNIVAL'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '12:00'
     content: prelinger
     custom_title: 'PRELINGER THEATRE'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '14:00'
     content: prelinger
     custom_title: 'LUNCH LOOPS'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: classics
     custom_title: 'AFTERNOON PICTURE SHOW'
   - pad_until: '16:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '18:00'
     content: cartoons
     custom_title: 'CARTOON BLOCK II'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '19:00'
     content: psas
     custom_title: 'NEIGHBOURHOOD DESK (STANDBY)'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '19:30'
     content: psas
     custom_title: 'GROUND ZERO (STANDBY)'
@@ -453,26 +608,38 @@ playout:
     content: bumpers
   - pad_until: '20:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: classics
     custom_title: 'SUNDAY CINEMA'
   - pad_until: '22:30'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '00:00'
     tomorrow: true
     content: slowtv
     discard_attempts: 4
     custom_title: 'NIGHT PATTERN'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: signoff
     custom_title: 'SIGN-OFF'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '06:00'
     tomorrow: true
     trim: true
     content: colorbars
     custom_title: 'COLOUR BARS'
+  - epg_group: false
 
   # ══ MONDAY ═════════════════════════════════════════════════════════════════
+  - epg_group: true
   - count: 1
     content: testcard
     custom_title: 'SIGN-ON · MORNING PATTERN'
@@ -480,33 +647,53 @@ playout:
     content: bumpers
   - pad_until: '06:30'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '07:00'
     content: slowtv
     discard_attempts: 4
     custom_title: 'STRETCH & COFFEE'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '09:00'
     content: cartoons
     custom_title: 'CARTOON BLOCK'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '11:00'
     content: prelinger
     custom_title: 'PRELINGER THEATRE'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '12:00'
     content: psas
     custom_title: 'LAB HOUR (STANDBY)'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '14:00'
     content: prelinger
     custom_title: 'LUNCH LOOPS'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: classics
     custom_title: 'AFTERNOON PICTURE SHOW'
   - pad_until: '16:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '18:00'
     content: cartoons
     custom_title: 'CARTOON BLOCK II'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '19:00'
     content: psas
     custom_title: 'NEIGHBOURHOOD DESK (STANDBY)'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '19:30'
     content: psas
     custom_title: 'GROUND ZERO (STANDBY)'
@@ -514,11 +701,17 @@ playout:
     content: bumpers
   - pad_until: '20:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: noir
     custom_title: 'MONDAY NIGHT NOIR'
   - pad_until: '22:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '22:30'
     content: psas
     custom_title: 'GROUND ZERO — ENCORE (STANDBY)'
@@ -526,23 +719,32 @@ playout:
     content: bumpers
   - pad_until: '23:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '00:00'
     tomorrow: true
     content: prelinger
     custom_title: 'AFTER HOURS'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: signoff
     custom_title: 'SIGN-OFF'
+  - epg_group: false
   # Colour bars until sunrise. This is the only block that may be cut
   # mid-item — it is a static pattern, and trimming it is what makes the next
   # sign-on land exactly on 06:00 instead of drifting later every day.
+  - epg_group: true
   - pad_until: '06:00'
     tomorrow: true
     trim: true
     content: colorbars
     custom_title: 'COLOUR BARS'
+  - epg_group: false
 
   # ══ TUESDAY ════════════════════════════════════════════════════════════════
+  - epg_group: true
   - count: 1
     content: testcard
     custom_title: 'SIGN-ON · MORNING PATTERN'
@@ -550,33 +752,53 @@ playout:
     content: bumpers
   - pad_until: '06:30'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '07:00'
     content: slowtv
     discard_attempts: 4
     custom_title: 'STRETCH & COFFEE'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '09:00'
     content: cartoons
     custom_title: 'CARTOON BLOCK'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '11:00'
     content: prelinger
     custom_title: 'PRELINGER THEATRE'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '12:00'
     content: psas
     custom_title: 'LAB HOUR (STANDBY)'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '14:00'
     content: prelinger
     custom_title: 'LUNCH LOOPS'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: classics
     custom_title: 'AFTERNOON PICTURE SHOW'
   - pad_until: '16:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '18:00'
     content: cartoons
     custom_title: 'CARTOON BLOCK II'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '19:00'
     content: psas
     custom_title: 'NEIGHBOURHOOD DESK (STANDBY)'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '19:30'
     content: psas
     custom_title: 'GROUND ZERO (STANDBY)'
@@ -584,11 +806,17 @@ playout:
     content: bumpers
   - pad_until: '20:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: scifi
     custom_title: 'ATOMIC TUESDAY'
   - pad_until: '22:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '22:30'
     content: psas
     custom_title: 'GROUND ZERO — ENCORE (STANDBY)'
@@ -596,18 +824,26 @@ playout:
     content: bumpers
   - pad_until: '23:00'
     content: psas
+    custom_title: 'SHORT SUBJECTS'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '00:00'
     tomorrow: true
     content: psas
     custom_title: 'THE LATE TRANSMISSION'
+  - epg_group: false
+  - epg_group: true
   - count: 1
     content: signoff
     custom_title: 'SIGN-OFF'
+  - epg_group: false
+  - epg_group: true
   - pad_until: '06:00'
     tomorrow: true
     trim: true
     content: colorbars
     custom_title: 'COLOUR BARS'
+  - epg_group: false
 
   # Back to the top of the cycle (Wednesday).
   - repeat: true
