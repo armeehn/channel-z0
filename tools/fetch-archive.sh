@@ -45,11 +45,12 @@ PD='licenseurl:(*publicdomain*)'
 RECIPES=(
   "psas|psas|20|300|40|collection:(prelinger) AND mediatype:(movies) AND ${PD}"
   "prelinger|prelinger|300|2400|30|collection:(prelinger) AND mediatype:(movies) AND ${PD}"
+  "slowtv|slowtv|900|10800|8|mediatype:(movies) AND ${PD} AND (subject:(nature) OR subject:(scenic) OR subject:(travelogue) OR subject:(landscape) OR subject:(train) OR subject:(railroad)) AND year:[1900 TO 1985]"
   "cartoons|cartoons|60|1200|30|collection:(animationandcartoons) AND mediatype:(movies) AND ${PD}"
   "noir|movies/noir|2400|10800|10|collection:(feature_films) AND mediatype:(movies) AND ${PD} AND (subject:(film noir) OR subject:(noir))"
   "scifi|movies/scifi|2400|10800|10|collection:(feature_films) AND mediatype:(movies) AND ${PD} AND (subject:(science fiction) OR subject:(sci-fi) OR subject:(horror))"
   "docs|movies/docs|2400|10800|10|collection:(feature_films) AND mediatype:(movies) AND ${PD} AND subject:(documentary)"
-  "serials|movies/serials|600|3600|10|collection:(feature_films) AND mediatype:(movies) AND ${PD} AND subject:(serial)"
+  "serials|movies/serials|600|3600|10|mediatype:(movies) AND ${PD} AND (subject:(serial) OR subject:(serials) OR subject:(cliffhanger) OR subject:(chapter play)) AND year:[1900 TO 1985]"
   "classics|movies/classics|2400|10800|10|collection:(feature_films) AND mediatype:(movies) AND ${PD} AND (subject:(comedy) OR subject:(drama) OR subject:(western))"
   "cult|movies/cult|2400|10800|10|collection:(feature_films) AND mediatype:(movies) AND ${PD} AND (subject:(exploitation) OR subject:(cult))"
 )
