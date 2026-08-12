@@ -20,6 +20,13 @@
 #    week is three days out of phase with the storefront. There is no way to
 #    detect or correct this from inside the file.
 #
+#    Build it EARLY ON THAT MONDAY, before 06:00, for a clean first day. A
+#    playout built at three in the afternoon starts at instruction one, so every
+#    morning `pad_until` has already passed and collapses to nothing — the day
+#    falls through to the first target still in the future and the evening gets
+#    stretched to fill. It rights itself at the next sign-on, but the first day
+#    on air will not look like the guide.
+#
 # 2. SLOTS MARKED "(STANDBY)" ARE PLACEHOLDERS.
 #    GROUND ZERO, LAB HOUR and the NEIGHBOURHOOD DESK are the station's own
 #    programmes and no footage exists yet — shows/Ground Zero, shows/Lab Hour
