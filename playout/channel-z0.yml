@@ -11,21 +11,27 @@
 #
 # ── Two things to know before you edit ──────────────────────────────────────
 #
-# 1. THE WEEK IS A SEVEN-DAY CYCLE, NOT A CALENDAR.
+# 1. THE WEEK IS A SEVEN-DAY CYCLE, NOT A CALENDAR — AND IT STARTS ON WEDNESDAY.
 #    ErsatzTV's YAML playout has no day-of-week primitive. The seven day blocks
-#    below run in order and `repeat: true` sends it back to Monday. Alignment
-#    with real weekdays therefore depends entirely on WHICH DAY THE PLAYOUT IS
-#    FIRST BUILT OR RESET ON. Build or reset this playout on a MONDAY and the
-#    themed nights match the published guide; do it on a Thursday and the whole
-#    week is three days out of phase with the storefront. There is no way to
-#    detect or correct this from inside the file.
+#    below just run in order, and `repeat: true` returns to the first one; which
+#    block lands on which weekday is decided entirely by the day the playout is
+#    built or reset.
 #
-#    Build it EARLY ON THAT MONDAY, before 06:00, for a clean first day. A
-#    playout built at three in the afternoon starts at instruction one, so every
-#    morning `pad_until` has already passed and collapses to nothing — the day
-#    falls through to the first target still in the future and the evening gets
-#    stretched to fill. It rights itself at the next sign-on, but the first day
-#    on air will not look like the guide.
+#    So the blocks are rotated to Wed → Thu → Fri → Sat → Sun → Mon → Tue.
+#    That is deliberate, and it is why this file does not read Monday-first: the
+#    playout was built on Wednesday 2026-08-12, and rotating the file was the
+#    way to keep the air and the programme grid on the storefront agreeing with
+#    each other from the first day.
+#
+#    IF YOU EVER RESET OR REBUILD THIS PLAYOUT, DO IT ON A WEDNESDAY — or rotate
+#    the day blocks again so the first block is the day you reset on. Nothing
+#    detects this and nothing reports it. The channel simply airs Monday Night
+#    Noir on a Wednesday while the site promises Workbench Theatre.
+#
+#    The hour matters too. A playout built mid-afternoon starts at instruction
+#    one with every morning `pad_until` already in the past, so they collapse to
+#    nothing and the evening stretches to cover the day. It rights itself at the
+#    next sign-on.
 #
 # 2. SLOTS MARKED "(STANDBY)" ARE PLACEHOLDERS.
 #    GROUND ZERO, LAB HOUR and the NEIGHBOURHOOD DESK are the station's own
@@ -38,8 +44,12 @@
 #    commented out, waiting.
 #
 #    Do NOT point a slot at a content key that resolves to zero media items.
-#    An empty enumerator has nothing to schedule and the playout build will
-#    stall on it rather than skip it.
+#    Nothing errors and nothing warns. The scheduler's fill loop is guarded on
+#    the enumerator having a current item, so an empty pool schedules NOTHING
+#    and the slot becomes a hole in the playout — which, with no fallback filler
+#    configured on the channel, is dead air. `fallback:` does not save you
+#    either: it is consulted when an item will not FIT, not when the pool is
+#    empty. The only symptom is a gap in the guide.
 # ─────────────────────────────────────────────────────────────────────────────
 
 content:
@@ -102,6 +112,12 @@ content:
 
   # ── Station identity. The idents are the connective tissue between blocks;
   #    the cards bracket the day.
+  #
+  #    Idents are ~6 seconds each, so they are only ever scheduled with
+  #    `count: 1` — one sting between blocks. Never `pad_until` them: padding a
+  #    half-hour gap with a six-second file schedules ~300 items and airs the
+  #    same four idents on a loop until the next block. The shorts pool does the
+  #    filling; the idents just mark the seam.
   - key: bumpers
     search: Station idents
     query: 'type:other_video AND tag:bumpers'
@@ -119,7 +135,7 @@ content:
 
   - key: colorbars
     search: Colour bars
-    query: 'type:other_video AND tag:interstitials AND title:colorbars'
+    query: 'type:other_video AND tag:interstitials AND title:"colorbars-60m"'
     order: chronological
 
   # ── The originals. Uncomment once there is footage in these folders, then
@@ -135,137 +151,17 @@ content:
   #   order: chronological
 
 playout:
-  # ══ MONDAY ═════════════════════════════════════════════════════════════════
-  - count: 1
-    content: testcard
-    custom_title: 'SIGN-ON · MORNING PATTERN'
-  - pad_until: '06:30'
-    content: bumpers
-  - pad_until: '07:00'
-    content: slowtv
-    custom_title: 'STRETCH & COFFEE'
-  - pad_until: '09:00'
-    content: cartoons
-    custom_title: 'CARTOON BLOCK'
-  - pad_until: '11:00'
-    content: prelinger
-    custom_title: 'PRELINGER THEATRE'
-  - pad_until: '12:00'
-    content: psas
-    custom_title: 'LAB HOUR (STANDBY)'
-  - pad_until: '14:00'
-    content: prelinger
-    custom_title: 'LUNCH LOOPS'
-  - count: 1
-    content: classics
-    custom_title: 'AFTERNOON PICTURE SHOW'
-  - pad_until: '16:00'
-    content: psas
-  - pad_until: '18:00'
-    content: cartoons
-    custom_title: 'CARTOON BLOCK II'
-  - pad_until: '19:00'
-    content: psas
-    custom_title: 'NEIGHBOURHOOD DESK (STANDBY)'
-  - pad_until: '19:30'
-    content: psas
-    custom_title: 'GROUND ZERO (STANDBY)'
-  - pad_until: '20:00'
-    content: bumpers
-  - count: 1
-    content: noir
-    custom_title: 'MONDAY NIGHT NOIR'
-  - pad_until: '22:00'
-    content: psas
-  - pad_until: '22:30'
-    content: psas
-    custom_title: 'GROUND ZERO — ENCORE (STANDBY)'
-  - pad_until: '23:00'
-    content: bumpers
-  - pad_until: '00:00'
-    tomorrow: true
-    content: prelinger
-    custom_title: 'AFTER HOURS'
-  - count: 1
-    content: signoff
-    custom_title: 'SIGN-OFF'
-  # Colour bars until sunrise. This is the only block that may be cut
-  # mid-item — it is a static pattern, and trimming it is what makes the next
-  # sign-on land exactly on 06:00 instead of drifting later every day.
-  - pad_until: '06:00'
-    tomorrow: true
-    trim: true
-    content: colorbars
-    custom_title: 'COLOUR BARS'
-
-  # ══ TUESDAY ════════════════════════════════════════════════════════════════
-  - count: 1
-    content: testcard
-    custom_title: 'SIGN-ON · MORNING PATTERN'
-  - pad_until: '06:30'
-    content: bumpers
-  - pad_until: '07:00'
-    content: slowtv
-    custom_title: 'STRETCH & COFFEE'
-  - pad_until: '09:00'
-    content: cartoons
-    custom_title: 'CARTOON BLOCK'
-  - pad_until: '11:00'
-    content: prelinger
-    custom_title: 'PRELINGER THEATRE'
-  - pad_until: '12:00'
-    content: psas
-    custom_title: 'LAB HOUR (STANDBY)'
-  - pad_until: '14:00'
-    content: prelinger
-    custom_title: 'LUNCH LOOPS'
-  - count: 1
-    content: classics
-    custom_title: 'AFTERNOON PICTURE SHOW'
-  - pad_until: '16:00'
-    content: psas
-  - pad_until: '18:00'
-    content: cartoons
-    custom_title: 'CARTOON BLOCK II'
-  - pad_until: '19:00'
-    content: psas
-    custom_title: 'NEIGHBOURHOOD DESK (STANDBY)'
-  - pad_until: '19:30'
-    content: psas
-    custom_title: 'GROUND ZERO (STANDBY)'
-  - pad_until: '20:00'
-    content: bumpers
-  - count: 1
-    content: scifi
-    custom_title: 'ATOMIC TUESDAY'
-  - pad_until: '22:00'
-    content: psas
-  - pad_until: '22:30'
-    content: psas
-    custom_title: 'GROUND ZERO — ENCORE (STANDBY)'
-  - pad_until: '23:00'
-    content: bumpers
-  - pad_until: '00:00'
-    tomorrow: true
-    content: psas
-    custom_title: 'THE LATE TRANSMISSION'
-  - count: 1
-    content: signoff
-    custom_title: 'SIGN-OFF'
-  - pad_until: '06:00'
-    tomorrow: true
-    trim: true
-    content: colorbars
-    custom_title: 'COLOUR BARS'
-
   # ══ WEDNESDAY ══════════════════════════════════════════════════════════════
   - count: 1
     content: testcard
     custom_title: 'SIGN-ON · MORNING PATTERN'
-  - pad_until: '06:30'
+  - count: 1
     content: bumpers
+  - pad_until: '06:30'
+    content: psas
   - pad_until: '07:00'
     content: slowtv
+    discard_attempts: 4
     custom_title: 'STRETCH & COFFEE'
   - pad_until: '09:00'
     content: cartoons
@@ -293,8 +189,10 @@ playout:
   - pad_until: '19:30'
     content: psas
     custom_title: 'GROUND ZERO (STANDBY)'
-  - pad_until: '20:00'
+  - count: 1
     content: bumpers
+  - pad_until: '20:00'
+    content: psas
   - count: 1
     content: docs
     custom_title: 'WORKBENCH THEATRE'
@@ -303,11 +201,14 @@ playout:
   - pad_until: '22:30'
     content: psas
     custom_title: 'GROUND ZERO — ENCORE (STANDBY)'
-  - pad_until: '23:00'
+  - count: 1
     content: bumpers
+  - pad_until: '23:00'
+    content: psas
   - pad_until: '00:00'
     tomorrow: true
     content: slowtv
+    discard_attempts: 4
     custom_title: 'NIGHT PATTERN'
   - count: 1
     content: signoff
@@ -322,10 +223,13 @@ playout:
   - count: 1
     content: testcard
     custom_title: 'SIGN-ON · MORNING PATTERN'
-  - pad_until: '06:30'
+  - count: 1
     content: bumpers
+  - pad_until: '06:30'
+    content: psas
   - pad_until: '07:00'
     content: slowtv
+    discard_attempts: 4
     custom_title: 'STRETCH & COFFEE'
   - pad_until: '09:00'
     content: cartoons
@@ -353,8 +257,10 @@ playout:
   - pad_until: '19:30'
     content: psas
     custom_title: 'GROUND ZERO (STANDBY)'
-  - pad_until: '20:00'
+  - count: 1
     content: bumpers
+  - pad_until: '20:00'
+    content: psas
   # Serial night runs chapters rather than one feature, so it asks for two.
   - count: 2
     content: serials
@@ -364,8 +270,10 @@ playout:
   - pad_until: '22:30'
     content: psas
     custom_title: 'GROUND ZERO — ENCORE (STANDBY)'
-  - pad_until: '23:00'
+  - count: 1
     content: bumpers
+  - pad_until: '23:00'
+    content: psas
   - pad_until: '00:00'
     tomorrow: true
     content: psas
@@ -383,10 +291,13 @@ playout:
   - count: 1
     content: testcard
     custom_title: 'SIGN-ON · MORNING PATTERN'
-  - pad_until: '06:30'
+  - count: 1
     content: bumpers
+  - pad_until: '06:30'
+    content: psas
   - pad_until: '07:00'
     content: slowtv
+    discard_attempts: 4
     custom_title: 'STRETCH & COFFEE'
   - pad_until: '09:00'
     content: cartoons
@@ -414,8 +325,10 @@ playout:
   - pad_until: '19:30'
     content: psas
     custom_title: 'GROUND ZERO (STANDBY)'
-  - pad_until: '20:00'
+  - count: 1
     content: bumpers
+  - pad_until: '20:00'
+    content: psas
   - count: 1
     content: classics
     custom_title: 'FRIDAY NIGHT FEATURE'
@@ -424,8 +337,10 @@ playout:
   - pad_until: '22:30'
     content: psas
     custom_title: 'GROUND ZERO — ENCORE (STANDBY)'
-  - pad_until: '23:00'
+  - count: 1
     content: bumpers
+  - pad_until: '23:00'
+    content: psas
   - pad_until: '00:00'
     tomorrow: true
     content: cult
@@ -445,8 +360,10 @@ playout:
   - count: 1
     content: testcard
     custom_title: 'SIGN-ON · MORNING PATTERN'
-  - pad_until: '07:00'
+  - count: 1
     content: bumpers
+  - pad_until: '07:00'
+    content: psas
   - pad_until: '10:00'
     content: cartoons
     custom_title: 'CARTOON CARNIVAL'
@@ -473,8 +390,10 @@ playout:
   - pad_until: '19:30'
     content: psas
     custom_title: 'GROUND ZERO (STANDBY)'
-  - pad_until: '20:00'
+  - count: 1
     content: bumpers
+  - pad_until: '20:00'
+    content: psas
   - count: 1
     content: cult
     custom_title: 'SATURDAY DOUBLE BILL'
@@ -499,10 +418,13 @@ playout:
   - count: 1
     content: testcard
     custom_title: 'SIGN-ON · MORNING PATTERN'
-  - pad_until: '06:30'
+  - count: 1
     content: bumpers
+  - pad_until: '06:30'
+    content: psas
   - pad_until: '09:00'
     content: slowtv
+    discard_attempts: 4
     custom_title: 'SUNDAY SERVICE'
   - pad_until: '11:00'
     content: cartoons
@@ -527,8 +449,10 @@ playout:
   - pad_until: '19:30'
     content: psas
     custom_title: 'GROUND ZERO (STANDBY)'
-  - pad_until: '20:00'
+  - count: 1
     content: bumpers
+  - pad_until: '20:00'
+    content: psas
   - count: 1
     content: classics
     custom_title: 'SUNDAY CINEMA'
@@ -537,6 +461,7 @@ playout:
   - pad_until: '00:00'
     tomorrow: true
     content: slowtv
+    discard_attempts: 4
     custom_title: 'NIGHT PATTERN'
   - count: 1
     content: signoff
@@ -547,5 +472,142 @@ playout:
     content: colorbars
     custom_title: 'COLOUR BARS'
 
-  # Back to Monday.
+  # ══ MONDAY ═════════════════════════════════════════════════════════════════
+  - count: 1
+    content: testcard
+    custom_title: 'SIGN-ON · MORNING PATTERN'
+  - count: 1
+    content: bumpers
+  - pad_until: '06:30'
+    content: psas
+  - pad_until: '07:00'
+    content: slowtv
+    discard_attempts: 4
+    custom_title: 'STRETCH & COFFEE'
+  - pad_until: '09:00'
+    content: cartoons
+    custom_title: 'CARTOON BLOCK'
+  - pad_until: '11:00'
+    content: prelinger
+    custom_title: 'PRELINGER THEATRE'
+  - pad_until: '12:00'
+    content: psas
+    custom_title: 'LAB HOUR (STANDBY)'
+  - pad_until: '14:00'
+    content: prelinger
+    custom_title: 'LUNCH LOOPS'
+  - count: 1
+    content: classics
+    custom_title: 'AFTERNOON PICTURE SHOW'
+  - pad_until: '16:00'
+    content: psas
+  - pad_until: '18:00'
+    content: cartoons
+    custom_title: 'CARTOON BLOCK II'
+  - pad_until: '19:00'
+    content: psas
+    custom_title: 'NEIGHBOURHOOD DESK (STANDBY)'
+  - pad_until: '19:30'
+    content: psas
+    custom_title: 'GROUND ZERO (STANDBY)'
+  - count: 1
+    content: bumpers
+  - pad_until: '20:00'
+    content: psas
+  - count: 1
+    content: noir
+    custom_title: 'MONDAY NIGHT NOIR'
+  - pad_until: '22:00'
+    content: psas
+  - pad_until: '22:30'
+    content: psas
+    custom_title: 'GROUND ZERO — ENCORE (STANDBY)'
+  - count: 1
+    content: bumpers
+  - pad_until: '23:00'
+    content: psas
+  - pad_until: '00:00'
+    tomorrow: true
+    content: prelinger
+    custom_title: 'AFTER HOURS'
+  - count: 1
+    content: signoff
+    custom_title: 'SIGN-OFF'
+  # Colour bars until sunrise. This is the only block that may be cut
+  # mid-item — it is a static pattern, and trimming it is what makes the next
+  # sign-on land exactly on 06:00 instead of drifting later every day.
+  - pad_until: '06:00'
+    tomorrow: true
+    trim: true
+    content: colorbars
+    custom_title: 'COLOUR BARS'
+
+  # ══ TUESDAY ════════════════════════════════════════════════════════════════
+  - count: 1
+    content: testcard
+    custom_title: 'SIGN-ON · MORNING PATTERN'
+  - count: 1
+    content: bumpers
+  - pad_until: '06:30'
+    content: psas
+  - pad_until: '07:00'
+    content: slowtv
+    discard_attempts: 4
+    custom_title: 'STRETCH & COFFEE'
+  - pad_until: '09:00'
+    content: cartoons
+    custom_title: 'CARTOON BLOCK'
+  - pad_until: '11:00'
+    content: prelinger
+    custom_title: 'PRELINGER THEATRE'
+  - pad_until: '12:00'
+    content: psas
+    custom_title: 'LAB HOUR (STANDBY)'
+  - pad_until: '14:00'
+    content: prelinger
+    custom_title: 'LUNCH LOOPS'
+  - count: 1
+    content: classics
+    custom_title: 'AFTERNOON PICTURE SHOW'
+  - pad_until: '16:00'
+    content: psas
+  - pad_until: '18:00'
+    content: cartoons
+    custom_title: 'CARTOON BLOCK II'
+  - pad_until: '19:00'
+    content: psas
+    custom_title: 'NEIGHBOURHOOD DESK (STANDBY)'
+  - pad_until: '19:30'
+    content: psas
+    custom_title: 'GROUND ZERO (STANDBY)'
+  - count: 1
+    content: bumpers
+  - pad_until: '20:00'
+    content: psas
+  - count: 1
+    content: scifi
+    custom_title: 'ATOMIC TUESDAY'
+  - pad_until: '22:00'
+    content: psas
+  - pad_until: '22:30'
+    content: psas
+    custom_title: 'GROUND ZERO — ENCORE (STANDBY)'
+  - count: 1
+    content: bumpers
+  - pad_until: '23:00'
+    content: psas
+  - pad_until: '00:00'
+    tomorrow: true
+    content: psas
+    custom_title: 'THE LATE TRANSMISSION'
+  - count: 1
+    content: signoff
+    custom_title: 'SIGN-OFF'
+  - pad_until: '06:00'
+    tomorrow: true
+    trim: true
+    content: colorbars
+    custom_title: 'COLOUR BARS'
+
+  # Back to the top of the cycle (Wednesday).
   - repeat: true
