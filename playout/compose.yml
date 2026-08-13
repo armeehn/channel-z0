@@ -17,7 +17,7 @@
 services:
   # --- ErsatzTV: turns the media library into a linear channel -------------
   ersatztv:
-    image: ghcr.io/ersatztv/ersatztv:${ERSATZTV_TAG:-latest-vaapi}
+    image: ghcr.io/ersatztv/legacy:${ERSATZTV_TAG:-v26.7.1}
     container_name: z0-ersatztv
     restart: unless-stopped
     ports:
