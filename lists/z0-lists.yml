@@ -140,6 +140,29 @@ smart_collections:
   - name: Z0 Prairie Music Waltzes
     query: 'type:other_video AND tag:waltz NOT tag:nfb'
 
+  # The only BC-MADE narrative features in the library: Central Films'
+  # quota quickies, shot at Willows Park in Victoria 1935-37. Everything else
+  # Canadian here is archive or documentary footage, so these carry a feature
+  # slot in a way the archive reels cannot.
+  - name: Z0 BC Made Features
+    query: 'type:other_video AND tag:bc-made NOT tag:nfb'
+
+  - name: Z0 BC Province
+    query: 'type:other_video AND tag:bc AND tag:province NOT tag:nfb'
+
+  # There is no Victoria pool. The only title filed under bc/victoria was a
+  # 1907 streetcar ride that turned out to be a 2160x2160 AI upscale by its
+  # uploader rather than an archival transfer — deleted 2026-08-13, on the
+  # principle that this channel does not air AI-generated or AI-"restored"
+  # material. If genuinely archival Victoria footage is ever sourced, add the
+  # pool back; the folder tag would be `victoria`.
+
+  - name: Z0 Canada Features
+    query: 'type:other_video AND tag:canada AND tag:features NOT tag:bc NOT tag:nfb'
+
+  - name: Z0 Canada Shorts
+    query: 'type:other_video AND tag:canada AND tag:shorts NOT tag:nfb'
+
   - name: Z0 Canadian Content
     query: 'type:other_video AND tag:canada NOT tag:nfb'
 
@@ -226,17 +249,21 @@ smart_collections:
   - name: Z0 Silent and No Audio
     query: 'type:other_video AND tag:no-audio'
 
-  - name: Z0 Contested Licence NFB
-    query: 'type:other_video AND tag:nfb'
-    note: >
-      NOT SCHEDULED ANYWHERE, deliberately. Five National Film Board shorts.
-      As a federal agency, Crown copyright (s.12, 50 years) should make
-      everything the NFB published before 1976 public domain in Canada — but no
-      court has ruled on it and the NFB actively asserts and licenses this exact
-      catalogue. The question was put to the user and is UNDECIDED, so every
-      Canadian pool above carries `NOT tag:nfb` and tools/z0-nfo.py rates
-      anything under an `nfb` folder Z0-REVIEW as a second line of defence.
-      Remove both only on an explicit decision.
+  # ── There is deliberately no "contested licence" pool here ─────────────────
+  # Five National Film Board shorts (Neighbours, How to Build an Igloo, The
+  # Impossible Map, Dots, Fiddle-de-dee) were sourced and then DROPPED on an
+  # explicit decision, 2026-08-13. As a federal agency, Crown copyright (s.12,
+  # 50 years) should make everything the NFB published before 1976 public
+  # domain in Canada — but no court has ruled, and the NFB actively asserts and
+  # licenses that exact catalogue. They were never scanned into the library.
+  #
+  # A smart collection for them would now match nothing, and an empty pool is
+  # a `--check` failure, so there isn't one. Two defences remain and both are
+  # deliberate dead conditions kept for the next person:
+  #   * every Canadian pool above carries `NOT tag:nfb`
+  #   * tools/z0-nfo.py rates anything under an `nfb` folder Z0-REVIEW
+  # Neither costs anything, and together they mean re-adding that folder
+  # without knowing this history cannot put the material on air by accident.
 
   - name: Z0 Needs Licence Review
     query: 'type:other_video AND tag:review-nonpd'

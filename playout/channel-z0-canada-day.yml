@@ -68,10 +68,18 @@ playout:
   - epg_group: false
 
   - epg_group: true
+  - pad_until: '16:00'
+    tomorrow: false
+    content: 'bc_province'
+    custom_title: 'BRITISH COLUMBIA ON FILM'
+    discard_attempts: 8
+  - epg_group: false
+
+  - epg_group: true
   - pad_until: '17:00'
     tomorrow: false
     content: 'bc'
-    custom_title: 'BRITISH COLUMBIA ON FILM'
+    custom_title: 'THE PROVINCIAL ARCHIVE'
     discard_attempts: 8
   - epg_group: false
 
@@ -98,14 +106,25 @@ playout:
     sequence: 'feature_break'
   - post_roll: true
     sequence: 'feature_break'
+  # A BC-made feature, not an imported one. Central Films shot twelve of these
+  # at Willows Park in Victoria for Columbia between 1935 and 1937; three are
+  # here, roughly 56 minutes each, which fits a feature slot cleanly.
   - epg_group: true
   - count: 1
-    content: 'classics'
-    custom_title: 'DOMINION DAY FEATURE'
+    content: 'bc_made'
+    custom_title: 'DOMINION DAY FEATURE — MADE IN BRITISH COLUMBIA'
   - epg_group: false
   - pre_roll: false
   - post_roll: false
   - sequence: 'strip_up'
+
+  - epg_group: true
+  - pad_until: '22:00'
+    tomorrow: false
+    content: 'canada_features'
+    custom_title: 'THE CANADIAN PICTURE'
+    discard_attempts: 8
+  - epg_group: false
 
   - epg_group: true
   - pad_until: '23:00'

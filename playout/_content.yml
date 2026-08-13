@@ -210,6 +210,25 @@ content:
     key: vancouver_reel
     order: chronological
 
+  # The three Central Films quota quickies shot in Victoria, 1935-37 — the only
+  # BC-made narrative features here, and the only Canadian material that can
+  # carry a feature slot on its own.
+  - smart_collection: Z0 BC Made Features
+    key: bc_made
+    order: shuffle
+
+  - smart_collection: Z0 BC Province
+    key: bc_province
+    order: shuffle
+
+  - smart_collection: Z0 Canada Features
+    key: canada_features
+    order: shuffle
+
+  - smart_collection: Z0 Canada Shorts
+    key: canada_shorts
+    order: shuffle
+
   - smart_collection: Z0 Prairie Music
     key: prairie
     order: shuffle
