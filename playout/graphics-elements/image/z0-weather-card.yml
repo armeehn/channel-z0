@@ -21,8 +21,13 @@ horizontal_margin_percent: 4
 vertical_margin_percent: 5
 
 # Rendered at 920x300 and scaled down here, so the card stays sharp and stays
-# correct if the channel is ever re-profiled to 720p.
+# correct if the channel is ever re-profiled.
+#
+# 29%, raised from 22% when the channel went 854x480 -> 640x480: this is a
+# percentage of frame WIDTH, which shrank, while frame height did not. At 22%
+# the card would have lost a quarter of its size and its small print stops
+# being readable at SD. See the note in z0-bug.yml.
 scale: true
-scale_width_percent: 22
+scale_width_percent: 29
 
 z_index: 12
