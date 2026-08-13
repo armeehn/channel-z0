@@ -11,6 +11,7 @@
 set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${DIR}/z0-lib.sh"
+z0_help_check "$@"
 
 MEDIA_ROOT="${Z0_MEDIA_ROOT:-/media/channelz0}"
 OUT="${1:-${MEDIA_ROOT}/branding/z0-bug.png}"
@@ -25,7 +26,7 @@ ffmpeg -hide_banner -y \
 drawtext=fontfile='${FONT}':text='Z0':fontcolor=white:fontsize=104:x=(w-tw)/2:y=6,\
 drawbox=x=(iw-140)/2:y=118:w=140:h=6:color=${Z0_RED}:t=fill,\
 drawtext=fontfile='${FONT}':text='CH\\·0':fontcolor=white@0.85:fontsize=22:x=(w-tw)/2:y=124" \
-  -frames:v 1 "$OUT"
+  -frames:v 1 -update 1 "$OUT"
 
 echo ""
 echo "channel bug ready: $OUT"

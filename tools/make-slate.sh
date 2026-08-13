@@ -13,11 +13,14 @@
 set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${DIR}/z0-lib.sh"
+z0_help_check "$@"
 
 HEAD="${1:-TECHNICAL DIFFICULTIES}"
 SUB="${2:-DO NOT ADJUST YOUR SET}"
 SECS="${3:-30}"
+z0_require_int "seconds" "$SECS"
 SLUG="${4:-$(echo "$HEAD" | tr '[:upper:] ' '[:lower:]-' | tr -cd 'a-z0-9-' | cut -c1-28)}"
+SLUG="${SLUG:-slate}"   # a headline of pure punctuation must not become ".mp4"
 MEDIA_ROOT="${Z0_MEDIA_ROOT:-/media/channelz0}"
 OUT_DIR="${MEDIA_ROOT}/interstitials"
 OUT="${OUT_DIR}/${SLUG}.mp4"
@@ -40,8 +43,8 @@ ffmpeg -hide_banner -y \
 drawbox=x=0:y=120:w=iw:h=10:color=${Z0_RED}:t=fill,\
 drawbox=x=0:y=950:w=iw:h=10:color=${Z0_RED}:t=fill,\
 drawtext=fontfile='${FONT}':text='CHANNEL Z0':fontcolor=0x8A8A8A:fontsize=30:x=(w-tw)/2:y=200,\
-drawtext=fontfile='${FONT}':text='${HEAD}':fontcolor=${Z0_PAPER}:fontsize=108:x=(w-tw)/2:y=(h-th)/2-40,\
-drawtext=fontfile='${FONT}':text='${SUB}':fontcolor=${Z0_PAPER}@0.85:fontsize=40:x=(w-tw)/2:y=(h/2)+90,\
+drawtext=fontfile='${FONT}':$(z0_text "${HEAD}"):fontcolor=${Z0_PAPER}:fontsize=108:x=(w-tw)/2:y=(h-th)/2-40,\
+drawtext=fontfile='${FONT}':$(z0_text "${SUB}"):fontcolor=${Z0_PAPER}@0.85:fontsize=40:x=(w-tw)/2:y=(h/2)+90,\
 drawtext=fontfile='${FONT}':text='DESIG RL-Z0':fontcolor=0x8A8A8A:fontsize=24:x=60:y=h-th-40" \
   -map 0:v -map 1:a \
   -c:v libx264 -preset veryfast -b:v 3000k -pix_fmt yuv420p -r 30 \
