@@ -20,7 +20,11 @@ location: "BottomLeft"
 horizontal_margin_percent: 4
 vertical_margin_percent: 9
 
-width_percent: 55
+# 73%, raised from 55% when the channel went 854x480 -> 640x480. With
+# text_fit: scale the rendered text is sized to this fraction of frame WIDTH,
+# and the frame got narrower while its height did not, so holding 55% would
+# have shrunk the lower third by a quarter. See the note in z0-bug.yml.
+width_percent: 73
 text_fit: scale
 text_align: left
 
