@@ -1,0 +1,152 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CHANNEL Z0 — MARATHON DAY.
+#
+# One series, start to finish, then the next. This is what `all:` is for: it
+# schedules the ENTIRE pool in one instruction rather than a count or a clock
+# target, so the block is as long as the material is.
+#
+# ── Why this is not ErsatzTV's `marathon:` content type ─────────────────────
+# There is a `marathon:` content key, and it is the obvious thing to reach for.
+# It does not work here. A marathon groups its items with `group_by`, and the
+# schema allows only show / season / artist / album — all of which are fields
+# that Movies, Episodes and Music Videos have and Other Videos do not. Channel
+# Z0's library is one Other Videos library path, so every item would land in a
+# single degenerate group and the marathon would be an ordinary shuffle wearing
+# a hat. (The C# enum also has a Director option that the YAML schema does not
+# expose, which would have worked for the Harman-Ising shorts.)
+#
+# The honest version is `all:` over an ordered collection, which is what this
+# file does.
+#
+# ── One caution about `all:` ────────────────────────────────────────────────
+# `all:` has no clock target, so it cannot overrun into the next block — the
+# next block simply starts late. The `pad_until` after each marathon mops up
+# the remainder of the slot; if a marathon runs long, its pad collapses to
+# nothing and the day slides. That is intended here and would not be in the
+# main week.
+# ─────────────────────────────────────────────────────────────────────────────
+
+import:
+  - _content.yml
+  - _sequences.yml
+
+playout:
+  - sequence: 'sign_on'
+
+  # ── Betty Boop, all fourteen ──────────────────────────────────────────────
+  - sequence: 'strip_down'
+  - pre_roll: true
+    sequence: 'advert_break'
+  - epg_group: true
+  - all: null
+    content: 'pl_betty_marathon'
+    custom_title: 'THE BETTY BOOP MARATHON'
+  - epg_group: false
+  - pre_roll: false
+  - sequence: 'strip_up'
+
+  - epg_group: true
+  - pad_until: '10:00'
+    tomorrow: false
+    content: 'pad_short'
+    custom_title: 'SHORT SUBJECTS'
+    discard_attempts: 6
+  - epg_group: false
+
+  # ── The Fleischer Superman set ────────────────────────────────────────────
+  - sequence: 'strip_down'
+  - epg_group: true
+  - all: null
+    content: 'superman'
+    custom_title: 'SUPERMAN — THE COMPLETE SET'
+  - epg_group: false
+  - sequence: 'strip_up'
+
+  - epg_group: true
+  - pad_until: '12:00'
+    tomorrow: false
+    content: 'cartoons'
+    custom_title: 'CARTOON BLOCK'
+    discard_attempts: 6
+  - epg_group: false
+
+  - sequence: 'weather_break'
+
+  # ── Bosko and the Harman-Ising shorts ─────────────────────────────────────
+  - sequence: 'strip_down'
+  - epg_group: true
+  - all: null
+    content: 'harman_ising'
+    custom_title: 'HARMAN AND ISING — THE EARLY SOUND CARTOONS'
+  - epg_group: false
+  - sequence: 'strip_up'
+
+  - epg_group: true
+  - pad_until: '15:00'
+    tomorrow: false
+    content: 'felix'
+    custom_title: 'FELIX THE CAT'
+    discard_attempts: 6
+  - epg_group: false
+
+  # ── Every serial chapter in the library, in chapter order ─────────────────
+  # The sidecars put a zero-padded chapter number in each file's sort title, so
+  # `order: chronological` on this pool plays Chapter 3 before Chapter 10
+  # rather than after it.
+  - sequence: 'strip_down'
+  - epg_group: true
+  - all: null
+    content: 'serials'
+    custom_title: 'THE CHAPTER PLAY MARATHON'
+  - epg_group: false
+  - sequence: 'strip_up'
+
+  - epg_group: true
+  - pad_until: '19:00'
+    tomorrow: false
+    content: 'pad_short'
+    custom_title: 'SHORT SUBJECTS'
+    discard_attempts: 6
+  - epg_group: false
+
+  - sequence: 'weather_break'
+
+  # ── Why We Fight, in order ────────────────────────────────────────────────
+  - sequence: 'strip_down'
+  - pre_roll: true
+    sequence: 'feature_break'
+  - epg_group: true
+  - all: null
+    content: 'pl_why_we_fight'
+    custom_title: 'WHY WE FIGHT'
+  - epg_group: false
+  - pre_roll: false
+  - sequence: 'strip_up'
+
+  - epg_group: true
+  - pad_until: '00:00'
+    tomorrow: true
+    content: 'wartime'
+    custom_title: 'THE WAR YEARS'
+    discard_attempts: 8
+  - epg_group: false
+
+  - sequence: 'sign_off'
+  - sequence: 'strip_down'
+  - epg_group: true
+  - pad_until: '05:30'
+    tomorrow: true
+    content: 'overnight'
+    custom_title: 'THE ALL-NIGHT SHOW'
+    discard_attempts: 8
+  - epg_group: false
+  - epg_group: true
+  - pad_until: '06:00'
+    tomorrow: true
+    trim: true
+    content: 'colorbars'
+    custom_title: 'COLOUR BARS'
+  - epg_group: false
+  - sequence: 'strip_up'
+
+  - repeat: true

@@ -28,8 +28,8 @@ for the one rule that keeps it that way: *air only what's yours to air.*
 ## The shape of a broadcast day
 
 Old television had a *shape* — you could tell the time by what was on. Z0 keeps
-it. Five dayparts, a protected flagship, a hard midnight sign-off, and colour
-bars overnight so the signal never goes to black.
+it. Five dayparts, a protected flagship, a hard midnight sign-off, and an
+overnight strand so the signal never goes to black.
 
 | Daypart | Hours | Mood | Fed mostly by |
 |---|---|---|---|
@@ -38,7 +38,8 @@ bars overnight so the signal never goes to black.
 | **Afternoon** | 14:00 – 18:00 | Matinee and the after-school return | A feature, then cartoons again |
 | **Prime** | 18:00 – 22:00 | Lean in; the neighbourhood is home | The Desk, **Ground Zero**, the night's feature |
 | **Late & sign-off** | 22:00 – 00:00 | Wind down; last ones awake | Encore, a mellow block, the sign-off ritual |
-| *(overnight)* | 00:00 – 06:00 | Dark | **Colour bars** (`Dead Air` filler) |
+| *(overnight)* | 00:00 – 05:30 | Dark, but not empty | **THE ALL-NIGHT SHOW** — rail, civic and industrial film |
+| *(bars)* | 05:30 – 06:00 | Dark | **Colour bars**, trimmed, into sign-on |
 
 The two fixed points that never move: **19:00 GROUND ZERO** (the flagship —
 protect the slot) and **00:00 SIGN-OFF** (the ritual close). Everything else can
@@ -62,10 +63,10 @@ people who are home, and add a second feature.
 | 07:00 | **CARTOON BLOCK** | Public-domain toons, drawn before your grandparents met |
 | 09:00 | **PRELINGER THEATRE** | Vintage PSAs & educational shorts; trust the narrator |
 | 11:00 | **LAB HOUR** | What Riposte Labs is building this week, sometimes live |
-| 12:00 | **LUNCH LOOPS** | Music + the community bulletin board |
+| 12:00 | **LUNCH LOOPS** | Music + the community bulletin board — the `Lunch Loops` playlist, prairie dance-band records interleaved with one 10–30 min film per cycle |
 | 14:00 | **AFTERNOON PICTURE SHOW** | A matinee feature older than streaming |
 | 16:00 | **CARTOON BLOCK II** | The toons return, as toons do |
-| 18:00 | **NEIGHBOURHOOD DESK** | Notices, events, found cats, lost causes |
+| 18:00 | **NEIGHBOURHOOD DESK** | Notices, events, found cats, lost causes — the `The Neighbourhood Desk` playlist: BC archive film + prairie records |
 | **19:00** | **▸ GROUND ZERO** | Alien street interviews via baguette — the flagship |
 | 20:00 | **PRIME FEATURE** *(themed, below)* | The big picture, local ad breaks as nature intended |
 | 22:00 | **GROUND ZERO — ENCORE** | Tonight's contact, retransmitted for the late crowd |
@@ -271,13 +272,26 @@ there: [`playout/channel-z0.yml`](../playout/channel-z0.yml) is the same week
 expressed as an **ErsatzTV YAML playout**, which means the schedule is a file in
 this repo rather than an afternoon of clicking.
 
+**That file is now GENERATED** — by `tools/z0-build-schedule.py`, from a seven
+day plan, importing `playout/_content.yml` and `playout/_sequences.yml`. Do not
+edit it by hand; edit the generator and re-run, or your change is lost the next
+time the week is rotated. Rotation itself is a flag now (`--start-day thursday`),
+which is what stops the channel airing Monday's programming on a Wednesday.
+
+The full picture — metadata sidecars, the named pools, the seasonal schedules,
+and the deploy sequence — is in
+[`docs/programming-library.md`](programming-library.md).
+
 Point a playout at it: *Playouts → Add*, choose the Channel Z0 channel, playout
 type **YAML**, and select the file. ErsatzTV stores the path, so editing the file
 and rebuilding the playout is how you change what airs.
 
-It needs no collections at all. The `/media` tree is added as a single **Other
-Videos** library path, and ErsatzTV tags Other Videos with the folder names above
-them — so a file in `movies/noir/` carries the tag `noir`, and the playout asks
+It originally needed no collections at all: the `/media` tree is a single
+**Other Videos** library path, and ErsatzTV tags Other Videos with the folder
+names above them — so a file in `movies/noir/` carries the tag `noir`. That still
+works, but the schedule now names pools (`Z0 Features Noir`) rather than raw
+queries, so a pool is defined once and is visible in the UI. See
+`lists/z0-lists.yml`. The original mechanism, for reference — the playout asks
 for it with `tag:noir`. Adding a film to a themed night is dropping it in a folder
 and rescanning.
 

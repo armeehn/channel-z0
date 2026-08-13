@@ -1,0 +1,728 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CHANNEL Z0 — the programming library.
+#
+# Everything ErsatzTV can hold that is a *list of things to play*: smart
+# collections (saved searches), hand-picked collections, multi-collections,
+# playlists, filler presets, watermarks and decos.
+#
+# ErsatzTV has no management API, so `tools/z0-lists.py` applies this file
+# straight to the ErsatzTV SQLite database. It is idempotent: it matches on
+# name, updates in place, and only ever touches rows whose name starts with the
+# `Z0 ` prefix. Re-running it is safe; deleting an entry here and re-running
+# does NOT delete the row (use --prune for that).
+#
+# ── Things that will bite you ────────────────────────────────────────────────
+#
+# * Names are `varchar(50)`. Longer names are a silent truncation in some
+#   paths and an error in others. Everything here is kept under 50.
+#
+# * A smart collection's `query` is Lucene, evaluated against ErsatzTV's search
+#   index at PLAYOUT BUILD time, not now. A query that matches nothing produces
+#   an empty pool, and an empty pool is skipped in silence — a hole in the
+#   schedule, not an error. `z0-lists.py --check` counts every query against
+#   the database so an empty one is caught here instead of on air.
+#
+# * The title analyser does not split on hyphens: `title:colorbars` will never
+#   match `colorbars-60m`. Quote the whole title.
+#
+# * `minutes` / `seconds` / `chapters` / `height` / `width` are numeric fields
+#   and only work in range syntax — `minutes:[10 TO 30]`. Written bare they are
+#   parsed as terms and match nothing.
+#
+# * Year, genre, studio and content_rating only exist because `tools/z0-nfo.py`
+#   wrote NFO sidecars. Delete the sidecars and every query below that mentions
+#   them silently empties.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ═══ SMART COLLECTIONS ═══════════════════════════════════════════════════════
+# Saved searches. These are the pools the schedule actually draws from.
+smart_collections:
+
+  # ── House pools ────────────────────────────────────────────────────────────
+  # `review-nonpd` is the ~22 modern fan-animation files that arrived in a bulk
+  # download and are not public domain. Every general pool excludes them.
+  - name: Z0 Cartoons
+    query: 'type:other_video AND tag:cartoons NOT tag:review-nonpd'
+    note: The whole animation pool, minus the files nobody has cleared.
+
+  - name: Z0 Cartoons Pre-1940
+    query: 'type:other_video AND tag:cartoons NOT tag:review-nonpd AND (tag:era-1910s OR tag:era-1920s OR tag:era-1930s)'
+
+  - name: Z0 Cartoons Wartime
+    query: 'type:other_video AND tag:cartoons AND tag:subject-wwii'
+
+  - name: Z0 Cartoons Betty Boop
+    query: 'type:other_video AND tag:series-betty-boop'
+
+  - name: Z0 Cartoons Bosko and Harman-Ising
+    query: 'type:other_video AND tag:harman-ising'
+
+  - name: Z0 Cartoons Felix the Cat
+    query: 'type:other_video AND tag:series-felix-the-cat'
+
+  - name: Z0 Cartoons Popeye
+    query: 'type:other_video AND tag:series-popeye'
+
+  - name: Z0 Cartoons Superman
+    query: 'type:other_video AND tag:series-superman'
+
+  - name: Z0 Cartoons Merrie Melodies
+    query: 'type:other_video AND tag:series-merrie-melodies'
+
+  - name: Z0 Cartoons Ub Iwerks
+    query: 'type:other_video AND tag:series-ub-iwerks'
+
+  # ── Short subjects ─────────────────────────────────────────────────────────
+  - name: Z0 Short Subjects
+    query: 'type:other_video AND tag:psas NOT tag:daypart-late'
+    note: Daytime-safe short pool. The burlesque reels are excluded by rating.
+
+  - name: Z0 Vintage Commercials
+    query: 'type:other_video AND tag:psas AND (title:commercial OR genre:Advertising)'
+
+  - name: Z0 Soundies and Musical Shorts
+    query: 'type:other_video AND genre:"Musical Short"'
+
+  - name: Z0 Newsreels
+    query: 'type:other_video AND tag:newsreel'
+
+  - name: Z0 Prelinger Theatre
+    query: 'type:other_video AND tag:prelinger'
+
+  - name: Z0 Schoolroom Films
+    query: 'type:other_video AND tag:subject-schoolroom'
+
+  - name: Z0 Industrial and Sponsored
+    query: 'type:other_video AND (genre:Industrial OR genre:Educational)'
+
+  # ── Features ───────────────────────────────────────────────────────────────
+  - name: Z0 Features Noir
+    query: 'type:other_video AND tag:noir'
+
+  - name: Z0 Features SciFi and Horror
+    query: 'type:other_video AND tag:scifi'
+
+  - name: Z0 Features Documentary
+    query: 'type:other_video AND tag:docs'
+
+  - name: Z0 Features Classics
+    query: 'type:other_video AND tag:classics'
+
+  - name: Z0 Features Cult
+    query: 'type:other_video AND tag:cult'
+
+  - name: Z0 Features Daytime Safe
+    query: 'type:other_video AND genre:Feature NOT mpaa:Z0-LATE NOT tag:review-nonpd'
+    note: Anything feature-length that is not gated to late night.
+
+  - name: Z0 Late Night Only
+    query: 'type:other_video AND mpaa:Z0-LATE'
+    note: >
+      Burlesque reels and the exploitation "square-up" pictures. Before the
+      sidecars existed these were indistinguishable from any other short and
+      were airing inside the 06:30 and 16:00 daytime blocks.
+
+  - name: Z0 Serial Chapters
+    query: 'type:other_video AND tag:serials'
+
+  # ── Canadian content ───────────────────────────────────────────────────────
+  # Neither of these had ever been on air: both folders were in the library
+  # path but had never been scanned in, so nothing could reference them.
+  - name: Z0 BC and Vancouver
+    query: 'type:other_video AND tag:bc NOT tag:nfb'
+
+  - name: Z0 Prairie Music
+    query: 'type:other_video AND tag:canada AND genre:Music NOT tag:nfb'
+
+  - name: Z0 Prairie Music Polkas
+    query: 'type:other_video AND tag:polka NOT tag:nfb'
+
+  - name: Z0 Prairie Music Waltzes
+    query: 'type:other_video AND tag:waltz NOT tag:nfb'
+
+  - name: Z0 Canadian Content
+    query: 'type:other_video AND tag:canada NOT tag:nfb'
+
+  # ── Duration bands ─────────────────────────────────────────────────────────
+  # `pad_until` only ever schedules an item that FITS in the remaining gap, and
+  # with no discard_attempts it gives up on the first one that does not rather
+  # than trying the next. Padding from a pool whose items are all the right
+  # size is the difference between a filled half-hour and an empty one.
+  - name: Z0 Pad Tiny under 3 min
+    query: 'type:other_video AND minutes:[0 TO 3] NOT tag:station-furniture NOT tag:review-nonpd NOT mpaa:Z0-LATE'
+
+  - name: Z0 Pad Short 3 to 10 min
+    query: 'type:other_video AND minutes:[3 TO 10] NOT tag:station-furniture NOT tag:review-nonpd NOT mpaa:Z0-LATE'
+
+  - name: Z0 Pad Medium 10 to 30 min
+    query: 'type:other_video AND minutes:[10 TO 30] NOT tag:station-furniture NOT tag:review-nonpd NOT mpaa:Z0-LATE'
+
+  - name: Z0 Features 45 to 75 min
+    query: 'type:other_video AND minutes:[45 TO 75] AND genre:Feature NOT mpaa:Z0-LATE'
+
+  - name: Z0 Features over 75 min
+    query: 'type:other_video AND minutes:[75 TO 400] AND genre:Feature NOT mpaa:Z0-LATE'
+
+  # ── Subjects and seasons ───────────────────────────────────────────────────
+  - name: Z0 Rail and Transport
+    query: 'type:other_video AND tag:subject-rail'
+
+  - name: Z0 Aviation and Space
+    query: 'type:other_video AND tag:subject-flight'
+
+  - name: Z0 Wartime
+    query: 'type:other_video AND tag:subject-wwii'
+
+  - name: Z0 Science and the Atom
+    query: 'type:other_video AND tag:subject-science'
+
+  - name: Z0 Cities and Civic Film
+    query: 'type:other_video AND tag:subject-cities'
+
+  - name: Z0 Halloween
+    query: 'type:other_video AND tag:seasonal-halloween NOT tag:review-nonpd'
+
+  - name: Z0 Christmas
+    query: 'type:other_video AND tag:seasonal-christmas NOT tag:review-nonpd'
+
+  # ── Eras ───────────────────────────────────────────────────────────────────
+  - name: Z0 The 1920s
+    query: 'type:other_video AND tag:era-1920s NOT tag:station-furniture'
+
+  - name: Z0 The 1930s
+    query: 'type:other_video AND tag:era-1930s NOT tag:station-furniture'
+
+  - name: Z0 The 1940s
+    query: 'type:other_video AND tag:era-1940s NOT tag:station-furniture'
+
+  - name: Z0 The 1950s
+    query: 'type:other_video AND tag:era-1950s NOT tag:station-furniture'
+
+  # ── Studios ────────────────────────────────────────────────────────────────
+  - name: Z0 Fleischer Studios
+    query: 'type:other_video AND studio:"Fleischer Studios"'
+
+  - name: Z0 Warner Bros
+    query: 'type:other_video AND studio:"Warner Bros."'
+
+  - name: Z0 City of Vancouver Archives
+    query: 'type:other_video AND studio:"City of Vancouver Archives"'
+
+  # ── Station furniture and housekeeping ─────────────────────────────────────
+  - name: Z0 Station Idents
+    query: 'type:other_video AND tag:bumpers'
+
+  - name: Z0 Weather Desk
+    query: 'type:other_video AND tag:weather'
+    note: >
+      One file, rewritten in place every 15 minutes by tools/z0-weather.sh and
+      always exactly the same length, so the library row stays valid. Matched on
+      the folder tag rather than the title because the title analyser does not
+      split on hyphens and `z0-local-forecast` is a single token to it.
+
+  - name: Z0 Slow TV
+    query: 'type:other_video AND tag:slowtv'
+
+  - name: Z0 Silent and No Audio
+    query: 'type:other_video AND tag:no-audio'
+
+  - name: Z0 Contested Licence NFB
+    query: 'type:other_video AND tag:nfb'
+    note: >
+      NOT SCHEDULED ANYWHERE, deliberately. Five National Film Board shorts.
+      As a federal agency, Crown copyright (s.12, 50 years) should make
+      everything the NFB published before 1976 public domain in Canada — but no
+      court has ruled on it and the NFB actively asserts and licenses this exact
+      catalogue. The question was put to the user and is UNDECIDED, so every
+      Canadian pool above carries `NOT tag:nfb` and tools/z0-nfo.py rates
+      anything under an `nfb` folder Z0-REVIEW as a second line of defence.
+      Remove both only on an explicit decision.
+
+  - name: Z0 Needs Licence Review
+    query: 'type:other_video AND tag:review-nonpd'
+    note: >
+      Not scheduled anywhere. This is the queue for a human decision, and the
+      reason every general pool carries `NOT tag:review-nonpd`.
+
+  # ── Composed ───────────────────────────────────────────────────────────────
+  # Smart collections can reference each other: the parser substitutes
+  # smart_collection:"Name" before handing the query to Lucene, with cycle
+  # detection. Quotes are required — without them the substitution silently
+  # does not happen and the query means something else entirely.
+  - name: Z0 Morning Safe Pool
+    query: 'smart_collection:"Z0 Cartoons" OR smart_collection:"Z0 Schoolroom Films"'
+    note: Demonstrates smart-collection composition; used by the breakfast block.
+
+  - name: Z0 Overnight Pool
+    query: 'smart_collection:"Z0 Prelinger Theatre" OR smart_collection:"Z0 Rail and Transport"'
+
+
+# ═══ COLLECTIONS ═════════════════════════════════════════════════════════════
+# Hand-picked and, where it matters, hand-ordered. `custom_order: true` sets
+# UseCustomPlaybackOrder so the items play in the order written here — that is
+# what makes a sign-on package a package rather than a shuffle.
+#
+# Items are selected by regex against the media file path so this file stays
+# readable and survives a re-scan changing item ids.
+collections:
+
+  - name: Z0 Sign-On Package
+    custom_order: true
+    items:
+      - match: 'interstitials/testcard\.mp4$'
+      - match: 'bumpers/z0-ident-one-signal-always-on\.mp4$'
+
+  - name: Z0 Sign-Off Package
+    custom_order: true
+    items:
+      - match: 'bumpers/z0-ident-always-on-somewhere-in-t\.mp4$'
+      - match: 'interstitials/signoff\.mp4$'
+
+  - name: Z0 Idents
+    items:
+      - match: 'bumpers/.*\.mp4$'
+
+  - name: Z0 Please Stand By
+    custom_order: true
+    note: >
+      Short dead-air cover. The channel's only fallback was colorbars-60m — a
+      full hour — and a stream session that starts during a playout gap latches
+      onto the fallback and holds it for its whole duration. Twenty seconds of
+      standby recovers in twenty seconds; an hour of colour bars does not.
+    items:
+      - match: 'interstitials/standby\.mp4$'
+      - match: 'interstitials/technical-difficulties\.mp4$'
+
+  - name: Z0 Serial The Green Hornet
+    custom_order: true
+    items:
+      - match: 'Green_?Hornet.*Chapter.?10'
+      - match: 'Green.?Hornet.*Chapter.?11'
+
+  - name: Z0 Serial Clipper Island
+    custom_order: true
+    items:
+      - match: 'Clipper Island Chapter 3'
+      - match: 'Clipper Island Chapter 14'
+
+  - name: Z0 Fleischer Superman
+    items:
+      - match: 'superman_mechanical_monsters|arctic_giant|japoteurs|jungle_drums|superman-terror-on-the-midway'
+
+  - name: Z0 Betty Boop
+    items:
+      - match: 'cartoons/.*[Bb]etty.?[Bb]oop'
+
+  - name: Z0 Why We Fight
+    custom_order: true
+    items:
+      - match: 'wwf_prelude_to_war'
+      - match: 'wwf_the_battle_of_russia_pt2'
+      - match: 'war_comes_to_america'
+
+  - name: Z0 Vancouver Archives
+    custom_order: true
+    note: Chronological, so the reel plays as a short history of the city.
+    items:
+      - match: 'Polo for the BC Challenge Trophy'
+      - match: "Chinese Exhibit at Vancouver's Golden Jubilee"
+      - match: 'Royal Visit of King George VI'
+      - match: 'British Empire Games Opening Ceremonies'
+      - match: 'British Empire Games Swimming Pool'
+      - match: 'Grey Cup Parade'
+      - match: 'PNE Parade'
+      - match: 'Stanley Park Highlights'
+      - match: 'Stanley Park Railway'
+
+  - name: Z0 Prairie Music Sampler
+    items:
+      - match: 'music/(Mickey & Bunny|King Ganam|Peter Picklyk|The Ivan Romanoff)'
+
+  - name: Z0 Test Card
+    items:
+      - match: 'interstitials/testcard\.mp4$'
+
+  - name: Z0 Colour Bars
+    note: >
+      The hour-long bars file. Only ever scheduled with `trim: true`, and only
+      to close out the last gap before sign-on — see the overnight block in the
+      schedule for why six hours of this is no longer the default.
+    items:
+      - match: 'interstitials/colorbars-60m\.mp4$'
+
+
+# ═══ MULTI COLLECTIONS ═══════════════════════════════════════════════════════
+# A multi-collection is a bag of collections. `schedule_as_group: true` keeps a
+# member's items together instead of interleaving them, which is what makes a
+# cartoon block play three Betty Boops in a row rather than one of each series.
+multi_collections:
+
+  # ── A GROUPED MEMBER MUST BE CHRONOLOGICAL ─────────────────────────────────
+  # When `group: true`, ErsatzTV builds a MultiCollectionGroup, whose
+  # constructor handles only Chronological and SeasonEpisode and throws
+  # NotSupportedException on anything else:
+  #
+  #   Unable to build playout 1: Unsupported MultiCollection PlaybackOrder:
+  #   Shuffle
+  #
+  # and, like every build failure here, it takes the WHOLE playout with it.
+  # `group: false` members never construct a group, so their order is free.
+  #
+  # Chronological is the right answer anyway: the shuffle that matters is the
+  # order of the GROUPS, which comes from `order: shuffle` on the
+  # multi_collection content key in _content.yml. So the block plays a random
+  # series, in year order, then a different random series — which is how a
+  # cartoon block was actually assembled.
+  - name: Z0 All Animation
+    smart:
+      - {name: Z0 Cartoons Betty Boop, group: true, order: chronological}
+      - {name: Z0 Cartoons Bosko and Harman-Ising, group: true, order: chronological}
+      - {name: Z0 Cartoons Felix the Cat, group: true, order: chronological}
+      - {name: Z0 Cartoons Popeye, group: true, order: chronological}
+      - {name: Z0 Cartoons Superman, group: true, order: chronological}
+      - {name: Z0 Cartoons Merrie Melodies, group: true, order: chronological}
+
+  - name: Z0 All Features
+    smart:
+      - {name: Z0 Features Noir, group: false, order: shuffle}
+      - {name: Z0 Features SciFi and Horror, group: false, order: shuffle}
+      - {name: Z0 Features Documentary, group: false, order: shuffle}
+      - {name: Z0 Features Classics, group: false, order: shuffle}
+      - {name: Z0 Features Cult, group: false, order: shuffle}
+
+  - name: Z0 All Short Subjects
+    smart:
+      - {name: Z0 Vintage Commercials, group: false, order: shuffle}
+      - {name: Z0 Soundies and Musical Shorts, group: false, order: shuffle}
+      - {name: Z0 Newsreels, group: false, order: shuffle}
+
+  - name: Z0 Canada Night
+    smart:
+      - {name: Z0 BC and Vancouver, group: true, order: chronological}
+      - {name: Z0 Prairie Music, group: false, order: shuffle}
+
+  - name: Z0 Break Material
+    manual:
+      - {name: Z0 Idents, group: false, order: shuffle}
+    smart:
+      - {name: Z0 Vintage Commercials, group: false, order: shuffle}
+
+
+# ═══ PLAYLISTS ═══════════════════════════════════════════════════════════════
+# An ordered run. Unlike a collection, a playlist item carries its own count,
+# order and guide flag, so a playlist is really a small schedule that any
+# channel, filler preset or YAML `playlist:` content key can point at.
+#
+# `guide: false` keeps an item out of the programme guide — use it for idents
+# and commercials so the guide lists programmes, not station furniture.
+playlist_groups:
+  - Channel Z0
+  - Z0 Marathons
+  - Z0 Seasonal
+
+playlists:
+
+  # ── A PLAYLIST MAY NOT NAME THE SAME SOURCE TWICE ──────────────────────────
+  # PlaylistEnumerator keys its internal map on (ContentKey, CollectionKey), so
+  # two items pointing at one collection collide:
+  #
+  #   Unable to build playout 1: An item with the same key has already been
+  #   added. Key: PlaylistKey { ContentKey = pl_cartoon_hour,
+  #   CollectionKey = CollectionKey(SmartCollection, ...) }
+  #
+  # and the ENTIRE playout fails to build — not just this playlist. The channel
+  # keeps airing until it runs off the end of the old playout and then falls
+  # back. This one cost a rebuild: Cartoon Hour originally had two `Z0 Cartoons`
+  # slots either side of the advert break.
+  #
+  # The fix is also better programming: use a different pool each time.
+  # `z0-lists.py` now refuses to apply a playlist with a repeated source.
+  - name: Cartoon Hour
+    group: Channel Z0
+    items:
+      - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
+      - {smart: Z0 Cartoons, count: 3, order: shuffle, guide: true}
+      - {smart: Z0 Vintage Commercials, count: 1, order: shuffle, guide: false}
+      - {smart: Z0 Cartoons Pre-1940, count: 2, order: shuffle, guide: true}
+      - {smart: Z0 Soundies and Musical Shorts, count: 1, order: shuffle, guide: true}
+
+  # ── Noon ───────────────────────────────────────────────────────────────────
+  # docs/programming.md defines the 12:00 slot as "Music + the community
+  # bulletin board", but the deployed schedule had it padding from `prelinger`.
+  # That mismatch is the bug behind the report "there isn't music even though
+  # it's noon — it's still showing old clips".
+  #
+  # Music alone does not work here either: the tracks are 2–3 minutes, and
+  # padding a two-hour slot from a pool that short schedules ~40 items and
+  # makes the guide unreadable. So this playlist interleaves them with a
+  # medium-length short, giving roughly 12 minutes of music per quarter hour
+  # against one 10–30 minute film.
+  #
+  # The community bulletin board is the bottom crawl (z0-crawl.ass), which is
+  # up throughout this block — it is only taken down for features.
+  - name: Lunch Loops
+    group: Channel Z0
+    items:
+      - {smart: Z0 Prairie Music, count: 4, order: shuffle, guide: true}
+      - {smart: Z0 Pad Medium 10 to 30 min, count: 1, order: shuffle, guide: true}
+      - {smart: Z0 Prairie Music Polkas, count: 2, order: shuffle, guide: true}
+      - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
+      - {smart: Z0 Prairie Music Waltzes, count: 2, order: shuffle, guide: true}
+
+  - name: Saturday Morning
+    group: Channel Z0
+    items:
+      - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
+      - {multi: Z0 All Animation, count: 4, order: shuffle, guide: true}
+      - {smart: Z0 Vintage Commercials, count: 2, order: shuffle, guide: false}
+      - {smart: Z0 Cartoons Superman, count: 1, order: shuffle, guide: true}
+      - {smart: Z0 Serial Chapters, count: 1, order: chronological, guide: true}
+
+  - name: Serial Matinee
+    group: Channel Z0
+    items:
+      - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
+      - {smart: Z0 Serial Chapters, count: 1, order: chronological, guide: true}
+      - {smart: Z0 Cartoons, count: 1, order: shuffle, guide: true}
+      - {smart: Z0 Newsreels, count: 1, order: shuffle, guide: true}
+
+  - name: The Neighbourhood Desk
+    group: Channel Z0
+    note: Local-interest half hour built entirely from Canadian material.
+    items:
+      - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
+      - {smart: Z0 BC and Vancouver, count: 2, order: chronological, guide: true}
+      - {smart: Z0 Prairie Music, count: 2, order: shuffle, guide: true}
+
+  - name: Polka Party
+    group: Channel Z0
+    items:
+      - {smart: Z0 Prairie Music Polkas, count: 4, order: shuffle, guide: true}
+      - {smart: Z0 Prairie Music Waltzes, count: 2, order: shuffle, guide: true}
+
+  - name: Station Break
+    group: Channel Z0
+    note: The standard break. Pointed at by the pre-roll and post-roll presets.
+    items:
+      - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
+      - {smart: Z0 Vintage Commercials, count: 1, order: shuffle, guide: false}
+
+  - name: Betty Boop Marathon
+    group: Z0 Marathons
+    items:
+      - {collection: Z0 Betty Boop, play_all: true, order: shuffle, guide: true}
+
+  - name: Vancouver Night
+    group: Z0 Marathons
+    items:
+      - {collection: Z0 Vancouver Archives, play_all: true, order: chronological, guide: true}
+
+  - name: Why We Fight
+    group: Z0 Marathons
+    items:
+      - {collection: Z0 Why We Fight, play_all: true, order: chronological, guide: true}
+
+  - name: Halloween Night
+    group: Z0 Seasonal
+    items:
+      - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
+      - {smart: Z0 Halloween, count: 3, order: shuffle, guide: true}
+
+  - name: Christmas Morning
+    group: Z0 Seasonal
+    items:
+      - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
+      - {smart: Z0 Christmas, count: 2, order: shuffle, guide: true}
+      - {smart: Z0 Cartoons Pre-1940, count: 2, order: shuffle, guide: true}
+
+
+# ═══ FILLER PRESETS ══════════════════════════════════════════════════════════
+# kind: preroll | midroll | postroll | tail | fallback
+# mode: count | duration | pad | random_count  (fallback ignores mode)
+#
+# Filler is invisible to the programme guide by design: ErsatzTV drops any
+# playout item whose FillerKind is not None from the XMLTV output. That is the
+# point — it is how a break between programmes stops being thirty guide rows.
+filler_presets:
+
+  - name: Z0 Pre-roll Ident
+    kind: preroll
+    mode: count
+    count: 1
+    collection: Z0 Idents
+    allow_watermarks: true
+
+  - name: Z0 Pre-roll Station Break
+    kind: preroll
+    mode: count
+    count: 1
+    playlist: Station Break
+
+  - name: Z0 Post-roll Ident
+    kind: postroll
+    mode: count
+    count: 1
+    collection: Z0 Idents
+    allow_watermarks: true
+
+  - name: Z0 Mid-roll Commercials
+    kind: midroll
+    mode: count
+    count: 2
+    smart: Z0 Vintage Commercials
+
+  - name: Z0 Mid-roll Single Advert
+    kind: midroll
+    mode: count
+    count: 1
+    smart: Z0 Vintage Commercials
+
+  - name: Z0 Tail Shorts
+    kind: tail
+    mode: pad
+    pad_to_nearest_minute: 30
+    smart: Z0 Pad Short 3 to 10 min
+
+  - name: Z0 Tail Music
+    kind: tail
+    mode: pad
+    pad_to_nearest_minute: 15
+    smart: Z0 Prairie Music
+
+  - name: Z0 Tail Five Minutes
+    kind: tail
+    mode: duration
+    duration: '00:05:00'
+    smart: Z0 Pad Tiny under 3 min
+
+  - name: Z0 Fallback Please Stand By
+    kind: fallback
+    collection: Z0 Please Stand By
+
+  - name: Z0 Fallback Test Card
+    kind: fallback
+    collection: Z0 Test Card
+
+  - name: Z0 Mid-roll Every Ten Minutes
+    kind: midroll
+    mode: count
+    count: 1
+    smart: Z0 Vintage Commercials
+    expression: 'last_mid_filler >= 600'
+    note: >
+      A mid-roll expression filters an item's CHAPTER MARKERS. Only 7 files in
+      this library have two or more chapters, so this preset is real but very
+      nearly inert — it is here so the pattern is written down, not because it
+      will fire often.
+
+
+# ═══ WATERMARKS ══════════════════════════════════════════════════════════════
+# NOT attached to the channel. Channel Z0's bug is a graphics ELEMENT
+# (playout/graphics-elements/image/z0-bug.yml), and attaching a watermark as
+# well would render two bugs on top of each other. These exist so the YAML
+# `watermark:` instruction can turn one on for a specific block, and so a deco
+# has something to point at.
+#
+# width_percent is a fraction of frame WIDTH. The channel is 640x480, so these
+# are sized for a 4:3 frame; they will look a quarter too small if the channel
+# ever goes back to 16:9.
+watermarks:
+
+  - name: Z0 Bug Permanent
+    mode: permanent
+    image: /media/branding/z0-bug.png
+    location: bottom_right
+    width_percent: 12
+    horizontal_margin: 3
+    vertical_margin: 4
+    opacity: 80
+
+  - name: Z0 Bug Intermittent
+    mode: intermittent
+    image: /media/branding/z0-bug.png
+    location: bottom_right
+    width_percent: 12
+    horizontal_margin: 3
+    vertical_margin: 4
+    opacity: 80
+    frequency_minutes: 12
+    duration_seconds: 20
+
+  - name: Z0 Bug Late Night
+    mode: permanent
+    image: /media/branding/z0-bug.png
+    location: bottom_left
+    width_percent: 10
+    horizontal_margin: 3
+    vertical_margin: 4
+    opacity: 45
+
+
+# ═══ DECOS ═══════════════════════════════════════════════════════════════════
+# A deco is a set of overrides selected at STREAM time, not build time. It is
+# the only mechanism here that can change what a running channel does without
+# rebuilding the playout.
+#
+#   watermark_mode / graphics_mode: inherit | disable | override | merge
+#
+# ── Both graphics and watermark stay on `inherit` on purpose ────────────────
+# Channel Z0's four overlays are attached to playout items by the YAML
+# schedule, and one of them (the bottom strip) is a subtitle element that costs
+# roughly 4x realtime at 1080p — it is the reason the channel runs at 640x480
+# at all. A deco set to `override` would replace that carefully-sized stack at
+# stream time with no rebuild and no warning, and the first symptom would be
+# the channel dropping to colour bars.
+#
+# What the deco IS used for here is dead air: replacing an hour of colour bars
+# with twenty seconds of standby.
+deco_groups:
+  - Channel Z0
+
+decos:
+  - name: Z0 House Deco
+    group: Channel Z0
+    watermark_mode: inherit
+    graphics_mode: inherit
+    dead_air_fallback_mode: override
+    dead_air_fallback_collection: Z0 Please Stand By
+    default_filler_mode: inherit
+    attach_to_playout: true
+
+  - name: Z0 Overnight Deco
+    group: Channel Z0
+    watermark_mode: inherit
+    graphics_mode: inherit
+    dead_air_fallback_mode: override
+    dead_air_fallback_collection: Z0 Test Card
+    default_filler_mode: override
+    default_filler_smart: Z0 Overnight Pool
+    default_filler_trim_to_fit: true
+    attach_to_playout: false
+
+  - name: Z0 Late Night Deco
+    group: Channel Z0
+    watermark_mode: inherit
+    graphics_mode: inherit
+    dead_air_fallback_mode: override
+    dead_air_fallback_collection: Z0 Please Stand By
+    default_filler_mode: inherit
+    break_content_mode: override
+    break_content:
+      - {smart: Z0 Vintage Commercials, placement: between_block_items}
+    attach_to_playout: false
+
+# A deco template is a day's worth of decos on a clock. It is only selected via
+# a PlayoutTemplate, which is part of BLOCK scheduling — Channel Z0 runs a
+# sequential (YAML) playout, so this is built and ready but not wired in. It is
+# the piece that would give the channel real day-of-week and seasonal switching,
+# which the YAML scheduler has no primitive for.
+deco_template_groups:
+  - Channel Z0
+
+deco_templates:
+  - name: Z0 Standard Day
+    group: Channel Z0
+    items:
+      - {deco: Z0 House Deco, start: '06:00:00', end: '23:00:00'}
+      - {deco: Z0 Late Night Deco, start: '23:00:00', end: '02:00:00'}
+      - {deco: Z0 Overnight Deco, start: '02:00:00', end: '06:00:00'}

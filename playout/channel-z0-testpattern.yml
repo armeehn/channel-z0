@@ -1,0 +1,56 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CHANNEL Z0 — ENGINEERING / MAINTENANCE.
+#
+# Point the playout here when you are working on the library, the graphics or
+# the encoder and you want the channel to stay UP without airing programmes
+# into a half-finished state.
+#
+# It is deliberately the cheapest thing this channel can transmit:
+#
+#   * No subtitle element. The bottom strip re-renders every frame and costs
+#     roughly 4x realtime at 1080p; it is the single most expensive thing on
+#     air and the reason the channel runs at 640x480. If you are debugging
+#     transcode speed, this file removes that variable entirely.
+#   * No pre-roll, no post-roll, no playlists, no shuffles — one small pool and
+#     the bars, so what you see is what the encoder did, not what the scheduler
+#     chose.
+#   * `wait_until` rather than `pad_until` for the top of the hour, so the
+#     clock advances without scheduling anything. Note that a gap is NOT dead
+#     air here: the deco's dead-air fallback covers it with the standby card.
+#     Without a fallback configured, a gap is genuinely black.
+#
+# Switch back by pointing ScheduleFile at channel-z0.yml, resetting the playout
+# and restarting BOTH z0-ersatztv and z0-uplink — the uplink holds a frozen
+# RTMP session across an ErsatzTV restart and will keep transmitting the last
+# frame it saw while everything else looks healthy.
+# ─────────────────────────────────────────────────────────────────────────────
+
+import:
+  - _content.yml
+  - _sequences.yml
+
+playout:
+  # Bug only. No weather card, no up-next, no crawl.
+  - graphics_on: 'image/z0-bug.yml'
+
+  - epg_group: true
+  - count: 1
+    content: 'testcard'
+    custom_title: 'TEST CARD'
+  - epg_group: false
+
+  - epg_group: true
+  - count: 1
+    content: 'standby'
+    custom_title: 'PLEASE STAND BY'
+  - epg_group: false
+
+  - epg_group: true
+  - duration: '00:30:00'
+    content: 'colorbars'
+    trim: true
+    custom_title: 'COLOUR BARS'
+    offline_tail: true
+  - epg_group: false
+
+  - repeat: true

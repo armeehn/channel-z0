@@ -1,0 +1,146 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CHANNEL Z0 — CANADA DAY / BC DAY.
+#
+# Built entirely from Canadian material: the City of Vancouver Archives films
+# and the prairie dance-band records. Both of those folders sat in the library
+# path unscanned until 2026-08-13, so until then this schedule could not have
+# existed — there was nothing for it to point at.
+#
+# The tower is in Toronto, so Canadian copyright governs what may air:
+#   * Crown copyright is 50 years from publication — government film published
+#     1975 or earlier is public domain in Canada now. This is the widest door.
+#   * Non-dramatic film is 75 years — 1950 or earlier. A 1955 travelogue is NOT
+#     public domain unless it is Crown.
+# The Vancouver Archives material is the newer CVAN transfers, uploaded by the
+# Archives' own staff accounts; the older reels carry no licence tag and are
+# the loose end. See the canadian-bc-public-domain-content notes before adding
+# anything to `bc/`.
+# ─────────────────────────────────────────────────────────────────────────────
+
+import:
+  - _content.yml
+  - _sequences.yml
+
+playout:
+  - sequence: 'sign_on'
+
+  - epg_group: true
+  - pad_until: '08:00'
+    tomorrow: false
+    content: 'prairie'
+    custom_title: 'MORNING ON THE PRAIRIE'
+    discard_attempts: 8
+  - epg_group: false
+
+  - epg_group: true
+  - pad_until: '10:00'
+    tomorrow: false
+    content: 'pl_cartoon_hour'
+    custom_title: 'CARTOON BLOCK'
+    discard_attempts: 6
+  - epg_group: false
+
+  # The whole Vancouver reel, in order, as one guide entry.
+  - sequence: 'strip_down'
+  - epg_group: true
+  - all: null
+    content: 'vancouver_reel'
+    custom_title: 'THE VANCOUVER REEL'
+  - epg_group: false
+  - sequence: 'strip_up'
+
+  - epg_group: true
+  - pad_until: '12:00'
+    tomorrow: false
+    content: 'cities'
+    custom_title: 'THE CIVIC FILM'
+    discard_attempts: 6
+  - epg_group: false
+
+  - sequence: 'weather_break'
+
+  - epg_group: true
+  - pad_until: '14:00'
+    tomorrow: false
+    content: 'polkas'
+    custom_title: 'THE POLKA HOUR'
+    discard_attempts: 8
+  - epg_group: false
+
+  - epg_group: true
+  - pad_until: '17:00'
+    tomorrow: false
+    content: 'bc'
+    custom_title: 'BRITISH COLUMBIA ON FILM'
+    discard_attempts: 8
+  - epg_group: false
+
+  - epg_group: true
+  - pad_until: '18:00'
+    tomorrow: false
+    content: 'rail'
+    custom_title: 'THE RAILWAY HOUR'
+    discard_attempts: 6
+  - epg_group: false
+
+  - sequence: 'weather_break'
+
+  - epg_group: true
+  - pad_until: '20:00'
+    tomorrow: false
+    content: 'pl_neighbourhood'
+    custom_title: 'THE NEIGHBOURHOOD DESK'
+    discard_attempts: 6
+  - epg_group: false
+
+  - sequence: 'strip_down'
+  - pre_roll: true
+    sequence: 'feature_break'
+  - post_roll: true
+    sequence: 'feature_break'
+  - epg_group: true
+  - count: 1
+    content: 'classics'
+    custom_title: 'DOMINION DAY FEATURE'
+  - epg_group: false
+  - pre_roll: false
+  - post_roll: false
+  - sequence: 'strip_up'
+
+  - epg_group: true
+  - pad_until: '23:00'
+    tomorrow: false
+    content: 'waltzes'
+    custom_title: 'THE LAST WALTZ'
+    discard_attempts: 8
+  - epg_group: false
+
+  - epg_group: true
+  - pad_until: '00:00'
+    tomorrow: true
+    content: 'prairie'
+    custom_title: 'POLKA PARTY'
+    discard_attempts: 8
+  - epg_group: false
+
+  - sequence: 'weather_break'
+  - sequence: 'sign_off'
+  - sequence: 'strip_down'
+
+  - epg_group: true
+  - pad_until: '05:30'
+    tomorrow: true
+    content: 'overnight'
+    custom_title: 'THE ALL-NIGHT SHOW'
+    discard_attempts: 8
+  - epg_group: false
+  - epg_group: true
+  - pad_until: '06:00'
+    tomorrow: true
+    trim: true
+    content: 'colorbars'
+    custom_title: 'COLOUR BARS'
+  - epg_group: false
+  - sequence: 'strip_up'
+
+  - repeat: true

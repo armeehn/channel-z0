@@ -1,0 +1,130 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CHANNEL Z0 — CHRISTMAS.
+#
+# Note the shape of this one. Only two files in the library are actually
+# Christmas material ("The Snowman", 1933, and a storyboarded mini-map that is
+# in the review queue and therefore excluded). Padding three hours from a pool
+# of two items would loop those two items all morning.
+#
+# So the seasonal pool is never padded from directly: it is used through the
+# `Christmas Morning` PLAYLIST, which interleaves it with pre-1940 cartoons at
+# a ratio the playlist controls. That is the general fix for a thin pool —
+# a playlist mixes it with a deep one; `pad_until` on the pool alone does not.
+# ─────────────────────────────────────────────────────────────────────────────
+
+import:
+  - _content.yml
+  - _sequences.yml
+
+playout:
+  - sequence: 'sign_on'
+
+  - epg_group: true
+  - pad_until: '07:00'
+    tomorrow: false
+    content: 'pad_short'
+    custom_title: 'CHRISTMAS MORNING — SHORT SUBJECTS'
+    discard_attempts: 6
+  - epg_group: false
+
+  - epg_group: true
+  - pad_until: '11:00'
+    tomorrow: false
+    content: 'pl_christmas'
+    custom_title: 'CHRISTMAS MORNING CARTOONS'
+    discard_attempts: 8
+  - epg_group: false
+
+  - epg_group: true
+  - pad_until: '12:00'
+    tomorrow: false
+    content: 'soundies'
+    custom_title: 'CHRISTMAS RECORDS'
+    discard_attempts: 6
+  - epg_group: false
+
+  - sequence: 'weather_break'
+
+  - sequence: 'strip_down'
+  - pre_roll: true
+    sequence: 'feature_break'
+  - post_roll: true
+    sequence: 'feature_break'
+  - epg_group: true
+  - count: 1
+    content: 'classics'
+    custom_title: 'THE CHRISTMAS MATINEE'
+  - epg_group: false
+  - pre_roll: false
+  - post_roll: false
+  - sequence: 'strip_up'
+
+  - epg_group: true
+  - pad_until: '17:00'
+    tomorrow: false
+    content: 'cartoons_early'
+    custom_title: 'CARTOON BLOCK'
+    discard_attempts: 6
+  - epg_group: false
+
+  - epg_group: true
+  - pad_until: '18:00'
+    tomorrow: false
+    content: 'prairie'
+    custom_title: 'AT HOME — PRAIRIE RECORDS'
+    discard_attempts: 8
+  - epg_group: false
+
+  - sequence: 'weather_break'
+
+  - epg_group: true
+  - pad_until: '20:00'
+    tomorrow: false
+    content: 'pl_neighbourhood'
+    custom_title: 'THE NEIGHBOURHOOD DESK'
+    discard_attempts: 6
+  - epg_group: false
+
+  - sequence: 'strip_down'
+  - pre_roll: true
+    sequence: 'feature_break'
+  - post_roll: true
+    sequence: 'feature_break'
+  - epg_group: true
+  - count: 1
+    content: 'classics'
+    custom_title: 'THE CHRISTMAS FEATURE'
+  - epg_group: false
+  - pre_roll: false
+  - post_roll: false
+  - sequence: 'strip_up'
+
+  - epg_group: true
+  - pad_until: '00:00'
+    tomorrow: true
+    content: 'era_1930s'
+    custom_title: 'CHRISTMAS NIGHT'
+    discard_attempts: 8
+  - epg_group: false
+
+  - sequence: 'weather_break'
+  - sequence: 'sign_off'
+  - sequence: 'strip_down'
+
+  - epg_group: true
+  - pad_until: '05:30'
+    tomorrow: true
+    content: 'overnight'
+    custom_title: 'THE ALL-NIGHT SHOW'
+    discard_attempts: 8
+  - epg_group: false
+  - epg_group: true
+  - pad_until: '06:00'
+    tomorrow: true
+    trim: true
+    content: 'colorbars'
+    custom_title: 'COLOUR BARS'
+  - epg_group: false
+  - sequence: 'strip_up'
+
+  - repeat: true
