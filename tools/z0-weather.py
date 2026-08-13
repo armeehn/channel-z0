@@ -37,6 +37,12 @@ INK = "0x141414"
 PAPER = "0xF2F0E9"
 RED = "0xE02A1B"
 GREY = "0x8A8A8A"
+# Bottom information strip. CRAWL_Y is the top edge of the text box; the bug
+# sits above it (vertical_margin_percent 8 in z0-bug.yml) and must stay clear.
+MARGIN_X = 48
+CRAWL_Y = 1012
+DWELL = 9.0  # seconds a page holds before the next one replaces it
+
 FONT = "/usr/share/fonts/truetype/noto/NotoSansMono-Bold.ttf"
 FONT_R = "/usr/share/fonts/truetype/noto/NotoSansMono-Regular.ttf"
 
@@ -323,12 +329,32 @@ def ass_escape(s):
 
 
 def build_crawl(wx, upcoming, path):
-    """The bottom-of-screen crawl, as a libass subtitle track.
+    """The bottom-of-screen information strip, as a libass subtitle track.
 
     Timing is relative to the start of whatever programme is on, because that
-    is the only clock a subtitle element has. Every programme therefore starts
-    the crawl from the top, which is what a station crawl looks like anyway.
-    Events are laid down for six hours so a long feature never runs out.
+    is the only clock a subtitle element has. Events are laid down for six
+    hours so a long feature never runs out.
+
+    This element is EXPENSIVE and it has taken the channel off air. ErsatzTV
+    composites graphics in-process and pipes one full-frame RGBA stream to
+    ffmpeg; image and text elements are rasterised once and reused, but a
+    subtitle element is re-rendered every single frame whether or not anything
+    changed. On vile that costs ~4x realtime at 1080p, so items carrying this
+    strip transcoded at 0.25x, and ErsatzTV logs [FTL] "not fast enough to
+    support playback", abandons the item and cuts to fallback colour bars —
+    which carry no graphics at all.
+
+    Measured, so it is not guesswork: it is not libass (ffmpeg renders this
+    exact file at 635 fps) and it is not the box (12 cores at load 2.2, no CPU
+    limit). It is also NOT animation — rewriting a scrolling \\move crawl into
+    the static paged form below changed nothing, still 0.254x. There is no
+    static-content fast path in ErsatzTV to exploit.
+
+    What made it affordable is the channel dropping to 854x480: the per-frame
+    cost is proportional to pixel count. Paging is kept because it reads far
+    better than a scroll at SD, not because it is cheaper.
+
+    If the channel ever goes back to 720p/1080p, this strip has to be removed.
     """
     cur = wx["current"]
     bits = [
@@ -347,15 +373,25 @@ def build_crawl(wx, upcoming, path):
         bits.append(f"{local.strftime('%-I:%M %p').upper()}  {title.upper()}")
     bits.append("ONE SIGNAL, ALWAYS ON")
 
-    message = "   ·   ".join(ass_escape(b) for b in bits) + "   ·   "
+    bits = [ass_escape(b) for b in bits]
 
-    # Monospace makes the run width computable, which is what the \move needs:
-    # NotoSansMono advances 0.6 em, so a 34px face is ~20.4px per glyph.
+    # Monospace makes the run width computable: NotoSansMono advances 0.6 em,
+    # so a 34px face is ~20.4px per glyph. Pack bits into pages that fit the
+    # frame with the left margin, rather than one bit per page (too sparse).
     size = 34
-    width = int(len(message) * size * 0.6)
-    travel = 1920 + width
-    speed = 110  # px/sec — slow enough to read at a glance
-    dur = travel / speed
+    sep = "   ·   "
+    max_chars = int((1920 - 2 * MARGIN_X) / (size * 0.6))
+
+    pages, cur_page = [], []
+    for b in bits:
+        trial = sep.join(cur_page + [b])
+        if cur_page and len(trial) > max_chars:
+            pages.append(sep.join(cur_page))
+            cur_page = [b]
+        else:
+            cur_page.append(b)
+    if cur_page:
+        pages.append(sep.join(cur_page))
 
     header = f"""[Script Info]
 ScriptType: v4.00+
@@ -379,15 +415,19 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         return f"{h:d}:{m:02d}:{s:05.2f}"
 
     lines = []
-    t = 8.0  # let the programme breathe before the first pass
+    t = 8.0  # let the programme breathe before the first page
     limit = 6 * 3600
+    i = 0
     while t < limit:
-        end = t + dur
+        end = min(t + DWELL, limit)
         lines.append(
             f"Dialogue: 0,{ts(t)},{ts(end)},Crawl,,0,0,0,,"
-            f"{{\\move(1920,1012,{-width},1012)}}{message}"
+            f"{{\\pos({MARGIN_X},{CRAWL_Y})}}{pages[i % len(pages)]}"
         )
-        t = end + 25  # a beat of clean screen between passes
+        # A short blank beat between pages so a changed page is noticeable
+        # and never looks like a smear.
+        t = end + 0.5
+        i += 1
     body = "\n".join(lines) + "\n"
 
     tmp = path + ".tmp"
@@ -417,7 +457,7 @@ def main():
     n = build_crawl(wx, upcoming, os.path.join(OUT, "z0-crawl.ass"))
 
     log(f"forecast {'live' if live else 'CACHED'}; "
-        f"{len(upcoming)} guide entries; {n} crawl passes")
+        f"{len(upcoming)} guide entries; {n} strip pages")
     return 0
 
 
