@@ -98,6 +98,48 @@
   .feed-grid { display: grid; grid-template-columns: minmax(0, 1fr) 236px; gap: 22px; align-items: start; }
   .screen-frame { border: 2px solid var(--ink); background: #000; position: relative; }
   .screen-frame video { display: block; width: 100%; aspect-ratio: 16/9; object-fit: contain; background: #000; }
+
+  /* Full screen: the whole frame goes up, not just the <video>, so the OFF AIR
+     bars and anything else painted over the picture come with it. The letterbox
+     is object-fit's job — the source is SD and the frame is whatever shape the
+     viewer's screen is. Each vendor pseudo-element needs its OWN rule: one
+     unrecognised selector invalidates a whole comma-separated list, which would
+     silently take the standard :fullscreen rule down with it. */
+  .screen-frame:fullscreen { border: 0; width: 100%; height: 100%; }
+  .screen-frame:-webkit-full-screen { border: 0; width: 100%; height: 100%; }
+  .screen-frame:fullscreen video { height: 100%; aspect-ratio: auto; }
+  .screen-frame:-webkit-full-screen video { height: 100%; aspect-ratio: auto; }
+
+  /* In full screen the transport moves INTO the frame — otherwise the picture
+     covers the page and pause/volume become unreachable, which would make the
+     three controls useless together. The .fs class is set from JS rather than
+     relying on :fullscreen so one selector drives every browser. It fades out
+     when the pointer goes still, the way a player is expected to.
+     The palette flips here: ink-on-paper buttons are invisible over a picture. */
+  .screen-frame.fs .feed-controls {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 40;
+    margin: 0; padding: 20px 22px 18px;
+    background: linear-gradient(to top, rgba(10,10,10,.88), rgba(10,10,10,.55) 60%, rgba(10,10,10,0));
+    transition: opacity .18s ease;
+  }
+  .screen-frame.fs .ctl-break { display: none; }   /* screen-wide: one line is plenty */
+  .screen-frame.fs.idle .feed-controls { opacity: 0; pointer-events: none; }
+  .screen-frame.fs.idle { cursor: none; }
+  .screen-frame.fs .btn { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+  .screen-frame.fs .btn.ghost { background: transparent; color: var(--paper); border-color: var(--paper); }
+  .screen-frame.fs .btn:hover,
+  .screen-frame.fs .btn.ghost:hover { background: var(--red); border-color: var(--red); color: #fff; }
+  .screen-frame.fs .btn:disabled:hover { background: var(--paper); border-color: var(--paper); color: var(--ink); }
+  .screen-frame.fs .vol { border-color: var(--paper); color: var(--paper); }
+  .screen-frame.fs .vol .val { color: #cfcabc; }
+  .screen-frame.fs .vol input[type="range"]::-webkit-slider-runnable-track { background: var(--paper); }
+  .screen-frame.fs .vol input[type="range"]::-moz-range-track { background: var(--paper); }
+  .screen-frame.fs .vol input[type="range"]::-webkit-slider-thumb { background: var(--paper); }
+  .screen-frame.fs .vol input[type="range"]::-moz-range-thumb { background: var(--paper); }
+  .screen-frame.fs .live-status { color: var(--paper); }
+  .screen-frame.fs .live-status a { color: var(--paper); }
+  .screen-frame.fs .onair-chip { border-color: var(--paper); }
+  @media (prefers-reduced-motion: reduce) { .screen-frame.fs .feed-controls { transition: none; } }
   .offair {
     position: absolute; inset: 0; display: none; flex-direction: column;
     align-items: center; justify-content: center; gap: 10px;
@@ -115,6 +157,8 @@
   .feed-controls {
     display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; align-items: center;
   }
+  /* Zero-height full-width flex item: forces the line break wherever it sits. */
+  .ctl-break { flex-basis: 100%; height: 0; margin: 0; }
   .btn {
     font-family: var(--mono); font-size: 12px; letter-spacing: .14em; font-weight: 700;
     background: var(--ink); color: var(--paper);
@@ -125,6 +169,54 @@
   .btn:active { transform: translateY(2px); }
   .btn.ghost { background: transparent; color: var(--ink); }
   .btn.ghost:hover { color: var(--red); border-color: var(--red); background: transparent; }
+  .btn:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+  /* Nothing is playing yet, so PAUSE has nothing to act on. Dimmed rather than
+     hidden: the control shouldn't appear out of nowhere on the first TUNE IN. */
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn:disabled:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .btn.ghost:disabled:hover { background: transparent; color: var(--ink); border-color: var(--ink); }
+  .btn:disabled:active { transform: none; }
+
+  /* ---------- volume ---------- */
+  .vol {
+    display: flex; align-items: center; gap: 10px;
+    border: 2px solid var(--ink); padding: 8px 12px;
+    font-size: 12px; letter-spacing: .14em; font-weight: 700;
+  }
+  .vol .val { min-width: 3ch; text-align: right; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .vol.muted .val { color: #b9b4a6; }
+  .vol:focus-within { border-color: var(--red); }
+
+  /* A slider in the house style: a hairline track with a solid ink block on it.
+     appearance:none strips the OS control, which means BOTH vendor thumb rules
+     are load-bearing — and they can't be merged into one selector list. */
+  .vol input[type="range"] {
+    -webkit-appearance: none; appearance: none;
+    width: 104px; height: 18px; background: transparent; cursor: pointer;
+    margin: 0; padding: 0;
+  }
+  .vol input[type="range"]::-webkit-slider-runnable-track {
+    height: 2px; background: var(--ink);
+  }
+  .vol input[type="range"]::-moz-range-track {
+    height: 2px; background: var(--ink);
+  }
+  .vol input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 11px; height: 16px; margin-top: -7px;   /* centre the block on the 2px track */
+    background: var(--ink); border: 0; border-radius: 0;
+  }
+  .vol input[type="range"]::-moz-range-thumb {
+    width: 11px; height: 16px;
+    background: var(--ink); border: 0; border-radius: 0;
+  }
+  .vol input[type="range"]:hover::-webkit-slider-thumb { background: var(--red); }
+  .vol input[type="range"]:hover::-moz-range-thumb { background: var(--red); }
+  .vol input[type="range"]:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+  /* Muted: the slider keeps its position but stops claiming to be doing anything. */
+  .vol.muted input[type="range"]::-webkit-slider-thumb { background: #b9b4a6; }
+  .vol.muted input[type="range"]::-moz-range-thumb { background: #b9b4a6; }
+
   .live-status { margin-left: auto; display: flex; gap: 18px; align-items: center; font-size: 12px; letter-spacing: .1em; }
   .onair-chip {
     display: inline-flex; align-items: center; gap: 8px;
@@ -309,9 +401,27 @@
             <span class="sub" id="offairSub">TRANSMISSION RESUMES SHORTLY — STAY TUNED</span>
           </div>
         </div>
+        <!-- Transport. No aria-label on these: the visible text IS the state
+             ("SOUND: OFF"), and an aria-label would override it for a screen
+             reader and announce only the verb. -->
         <div class="feed-controls">
           <button class="btn" id="tuneBtn">TUNE IN ▸</button>
-          <button class="btn ghost" id="soundBtn" aria-label="Toggle sound">SOUND: OFF</button>
+          <button class="btn ghost" id="pauseBtn" disabled
+                  title="Hold the picture. Resuming rejoins the broadcast live — this is a channel, not a recording.">
+            <span aria-hidden="true">❚❚</span> PAUSE
+          </button>
+          <button class="btn ghost" id="fsBtn"><span aria-hidden="true">⛶</span> FULL SCREEN</button>
+          <!-- Six controls need ~970px and this column is ~660px, so the row
+               wraps no matter what. Break it on purpose instead: handling the
+               picture above, handling the sound below. Suppressed in full
+               screen, where the bar is screen-wide and fits on one line. -->
+          <span class="ctl-break" aria-hidden="true"></span>
+          <button class="btn ghost" id="soundBtn">SOUND: OFF</button>
+          <span class="vol muted" id="volGroup">
+            <label for="volSlider">VOL</label>
+            <input type="range" id="volSlider" min="0" max="100" step="1" value="100" aria-label="Volume">
+            <span class="val" id="volVal">100</span>
+          </span>
           <span class="live-status">
             <span class="onair-chip" id="airChip"><span class="b" aria-hidden="true"></span><span id="airLabel">OFF AIR</span></span>
             <a id="chatLink" href="#" target="_blank" rel="noopener">LIVE CHAT →</a>
@@ -628,7 +738,8 @@ const els = {
   airChip: $("airChip"), airLabel: $("airLabel"),
   clock: $("clock"), nowShowing: $("nowShowing"), specStatus: $("specStatus"),
   viewerNote: $("viewerNote"), pvGrid: $("pvGrid"), pvDate: $("pvDate"), dayTabs: $("dayTabs"),
-  tuneBtn: $("tuneBtn"), soundBtn: $("soundBtn"),
+  tuneBtn: $("tuneBtn"), soundBtn: $("soundBtn"), pauseBtn: $("pauseBtn"), fsBtn: $("fsBtn"),
+  volGroup: $("volGroup"), volSlider: $("volSlider"), volVal: $("volVal"),
   chatLink: $("chatLink"), adMail: $("adMail"), labLink: $("labLink"),
 };
 
@@ -746,9 +857,11 @@ function usePeerTubeEmbed(src) {
   iframe.setAttribute("allowfullscreen", "");
   iframe.style.cssText = "display:block;width:100%;aspect-ratio:16/9;border:0;background:#000;";
   frame.appendChild(iframe);
-  // PeerTube's player owns playback + sound; retire the custom transport controls.
-  if (els.tuneBtn) els.tuneBtn.style.display = "none";
-  if (els.soundBtn) els.soundBtn.style.display = "none";
+  // PeerTube's player owns playback, sound and full screen; retire ALL of the
+  // custom transport — including the pause/volume/full-screen controls, whose
+  // <video> this function has just replaced with an iframe.
+  [els.tuneBtn, els.soundBtn, els.pauseBtn, els.volGroup, els.fsBtn]
+    .forEach((el) => { if (el) el.style.display = "none"; });
   els.airChip.classList.remove("on");
   els.airLabel.textContent = "VIA PEERTUBE";
   els.specStatus.innerHTML = "<b>PEERTUBE</b>";
@@ -768,6 +881,7 @@ async function tuneIn() {
   clearTimeout(state.retryTimer);
   state.tuned = true;
   els.tuneBtn.textContent = "RE-TUNE ▸";
+  syncPauseBtn();                    // there is something to hold now
   const url = CONFIG.STREAM_URL;
 
   const hasHls = await ensureHls();
@@ -801,13 +915,182 @@ function signalLost(noRetry) {
   if (!noRetry) state.retryTimer = setTimeout(tuneIn, CONFIG.RETRY_SECONDS * 1000);
 }
 
-/* ---------------- controls ---------------- */
+/* ---------------- controls ----------------
+   Three surfaces over one <video>: hold it (pause), set how loud it is (mute +
+   volume), and make it big (full screen). Every label is rendered from the
+   media element's own events rather than a local flag, so OS media keys,
+   picture-in-picture and iOS's native player can't drift the buttons out of
+   step with what is actually happening. */
+
 els.tuneBtn.addEventListener("click", tuneIn);
+
+/* ---- pause / resume ----
+   Resuming does NOT continue from where you stopped. hls.js holds only a few
+   segments of live buffer, so any pause longer than that leaves the element
+   parked in a window the tower has already dropped — it stalls instead of
+   resuming. Jumping to the live edge is the only thing that reliably plays,
+   and it is the honest behaviour for a channel: you rejoin, you don't catch up. */
+function liveEdge() {
+  const h = state.hls;
+  if (h && typeof h.liveSyncPosition === "number" && isFinite(h.liveSyncPosition)) return h.liveSyncPosition;
+  if (tv.seekable && tv.seekable.length) return tv.seekable.end(tv.seekable.length - 1);
+  return null;   // native HLS before metadata — just play and let it find its own edge
+}
+function togglePause() {
+  if (!state.tuned) return;
+  if (tv.paused) {
+    const edge = liveEdge();
+    if (edge !== null) { try { tv.currentTime = edge; } catch (e) { /* not seekable yet */ } }
+    // Re-label off the settled promise, not optimistically: a rejected play()
+    // (autoplay policy, a dead stream) must leave the button saying RESUME LIVE
+    // rather than claiming a picture that never arrived.
+    tv.play().catch(() => {}).then(syncPauseBtn);
+  } else {
+    tv.pause();
+    syncPauseBtn();          // paused is true synchronously; don't wait for the event
+  }
+}
+function syncPauseBtn() {
+  els.pauseBtn.disabled = !state.tuned;
+  els.pauseBtn.innerHTML = (state.tuned && tv.paused)
+    ? '<span aria-hidden="true">▸</span> RESUME LIVE'
+    : '<span aria-hidden="true">❚❚</span> PAUSE';
+}
+els.pauseBtn.addEventListener("click", togglePause);
+tv.addEventListener("play", syncPauseBtn);
+tv.addEventListener("pause", syncPauseBtn);
+
+/* ---- sound: the mute switch and the volume it returns to ----
+   The element boots muted (autoplay policy), so a remembered level is restored
+   as a *level*, never as an unmuted state. lastAudible is what SOUND: ON comes
+   back to when the slider was dragged all the way down. */
+const VOL_KEY = "z0.volume";
+let lastAudible = 1;
+
+function applyVolumeUI() {
+  const pct = Math.round(tv.volume * 100);
+  els.volSlider.value = String(pct);
+  els.volVal.textContent = String(pct);
+  const silent = tv.muted || pct === 0;
+  els.volGroup.classList.toggle("muted", silent);
+  els.soundBtn.textContent = silent ? "SOUND: OFF" : "SOUND: ON";
+}
+tv.addEventListener("volumechange", applyVolumeUI);   // covers media keys and the iOS player too
+
 els.soundBtn.addEventListener("click", () => {
-  tv.muted = !tv.muted;
-  els.soundBtn.textContent = tv.muted ? "SOUND: OFF" : "SOUND: ON";
+  if (tv.muted || tv.volume === 0) {
+    // Unmuting into a zero slider reads as a dead button — give it something to play.
+    if (tv.volume === 0) tv.volume = lastAudible > 0 ? lastAudible : 1;
+    tv.muted = false;
+  } else {
+    tv.muted = true;
+  }
   if (!state.tuned) tuneIn();
 });
+
+els.volSlider.addEventListener("input", () => {
+  const pct = Math.min(100, Math.max(0, Number(els.volSlider.value) || 0));
+  tv.volume = pct / 100;
+  tv.muted = pct === 0;          // the mute flag follows the slider, in both directions
+  if (pct > 0) lastAudible = tv.volume;
+  try { localStorage.setItem(VOL_KEY, String(pct)); } catch (e) { /* private mode; not worth a fuss */ }
+  if (!state.tuned && pct > 0) tuneIn();   // same bargain as the SOUND button
+});
+
+(function restoreVolume() {
+  let pct = 100;
+  try {
+    const n = Number(localStorage.getItem(VOL_KEY));
+    if (Number.isFinite(n)) pct = Math.min(100, Math.max(0, n));
+  } catch (e) { /* no storage */ }
+  tv.volume = pct / 100;
+  if (pct > 0) lastAudible = tv.volume;
+  applyVolumeUI();
+})();
+
+/* ---- full screen ----
+   The whole .screen-frame goes up, not the bare <video>, so the OFF AIR bars
+   ride along with the picture. iPhone Safari has no element full screen at all,
+   only the native video player — handled as a last resort below. */
+const fsFrame = document.querySelector(".screen-frame");
+const fsRequest = fsFrame && (fsFrame.requestFullscreen || fsFrame.webkitRequestFullscreen);
+const fsNativeIOS = typeof tv.webkitEnterFullscreen === "function";
+
+function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+function toggleFullscreen() {
+  if (fsElement()) {
+    const exit = document.exitFullscreen || document.webkitExitFullscreen;
+    if (exit) { const r = exit.call(document); if (r && r.catch) r.catch(() => {}); }
+    return;
+  }
+  if (fsRequest) {
+    const r = fsRequest.call(fsFrame);
+    if (r && r.catch) r.catch(() => {});
+    return;
+  }
+  if (fsNativeIOS) {
+    // Throws on an element with nothing loaded, so tune in first and let the
+    // viewer press again once there's a picture to blow up.
+    if (!state.tuned) { tuneIn(); return; }
+    try { tv.webkitEnterFullscreen(); } catch (e) { /* not ready yet */ }
+  }
+}
+function syncFsBtn() {
+  els.fsBtn.innerHTML = fsElement()
+    ? '<span aria-hidden="true">⛶</span> EXIT FULL SCREEN'
+    : '<span aria-hidden="true">⛶</span> FULL SCREEN';
+}
+/* Full screen swallows the page, so the transport has to travel with the
+   picture — otherwise pause and volume are unreachable for as long as the
+   viewer is watching properly, which is exactly when they're wanted. It's
+   parked back in its original slot on the way out. */
+const controlsBar = document.querySelector(".feed-controls");
+const controlsHome = controlsBar ? { parent: controlsBar.parentNode, next: controlsBar.nextSibling } : null;
+let idleTimer = null;
+
+function showControls() {
+  if (!fsFrame) return;
+  fsFrame.classList.remove("idle");
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => {
+    if (fsFrame.classList.contains("fs")) fsFrame.classList.add("idle");
+  }, 3000);
+}
+function holdControls() { clearTimeout(idleTimer); if (fsFrame) fsFrame.classList.remove("idle"); }
+
+function onFsChange() {
+  syncFsBtn();
+  if (!fsFrame || !controlsBar) return;
+  const on = fsElement() === fsFrame;
+  fsFrame.classList.toggle("fs", on);
+  if (on) {
+    fsFrame.appendChild(controlsBar);
+    showControls();
+  } else {
+    holdControls();
+    controlsHome.parent.insertBefore(controlsBar, controlsHome.next);
+  }
+}
+
+if (!fsRequest && !fsNativeIOS) els.fsBtn.style.display = "none";
+els.fsBtn.addEventListener("click", toggleFullscreen);
+document.addEventListener("fullscreenchange", onFsChange);
+document.addEventListener("webkitfullscreenchange", onFsChange);
+if (fsFrame) {
+  fsFrame.addEventListener("mousemove", () => { if (fsFrame.classList.contains("fs")) showControls(); });
+  fsFrame.addEventListener("dblclick", (e) => {
+    // Double-tapping a button is not a request to resize the television.
+    if (e.target.closest && e.target.closest(".feed-controls")) return;
+    toggleFullscreen();
+  });
+}
+if (controlsBar) {
+  // Keep the bar up while it's being used, by pointer or by keyboard.
+  controlsBar.addEventListener("mouseenter", holdControls);
+  controlsBar.addEventListener("mouseleave", showControls);
+  controlsBar.addEventListener("focusin", holdControls);
+  controlsBar.addEventListener("focusout", showControls);
+}
 
 /* ---------------- owncast status ---------------- */
 async function pollStatus() {
@@ -884,6 +1167,7 @@ function renderSchedule() {
 els.chatLink.href = CONFIG.CHAT_URL || "#";
 els.labLink.href = CONFIG.LAB_URL;
 if (CONFIG.PEERTUBE_EMBED) usePeerTubeEmbed(CONFIG.PEERTUBE_EMBED);
+syncPauseBtn(); onFsChange();
 updateP2PReadout();
 els.adMail.addEventListener("click", () => {
   location.href = "mailto:" + CONFIG.AD_EMAIL +
