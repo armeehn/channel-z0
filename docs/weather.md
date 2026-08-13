@@ -144,14 +144,21 @@ If you ever put the channel back up to 720p or 1080p, **the bottom strip has to
 go**, or the channel will sit on colour bars.
 
 854x480 killed the 0.25x failures but left almost no margin — the Prelinger
-block still logged the odd `[FTL]` at **0.996x** (without ever interrupting the
-stream). 640x480 buys another 1.33x on top of that.
+block still logged the odd `[FTL]` at **0.996x**. 640x480 took the same content
+to **1.33x**.
 
-Judge health by whether **fallback filler actually starts**, not by `[FTL]`
-count. `grep -ci colorbars` over `/config/logs/ersatztv<date>.log` is the honest
-signal; a bare `[FTL]` near 1.0x is usually jitter against the `-readrate 1.0`
-cap ErsatzTV applies to playout items, where anything keeping up measures
-*exactly* 1.0x and noise straddles the threshold.
+That number is worth keeping, because it is exactly the pixel ratio
+(854x480 / 640x480 = 1.334). **The reported speed tracks real capability, and
+this pipeline is purely pixel-throughput-bound.** I had first written those
+0.996x fatals off as jitter against the `-readrate 1.0` cap ErsatzTV applies to
+playout items; the clean 1.33x scaling disproves that, since a hard cap at 1.0
+could not be exceeded. They were real, and the margin at 854x480 really was
+about zero.
+
+So: speed reports mean what they say. Treat anything under ~1.2x as a channel
+that will fall over eventually, and confirm with whether **fallback filler
+actually starts** — `grep -ci colorbars` over
+`/config/logs/ersatztv<date>.log`.
 
 ## Changing the channel's resolution
 
