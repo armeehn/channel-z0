@@ -1,0 +1,344 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CHANNEL Z0 — content keys, shared by every schedule.
+#
+# This file is an IMPORT fragment. It is never scheduled on its own: it defines
+# the names a schedule can say, and `channel-z0.yml` (and the seasonal
+# variants) pull it in with
+#
+#     import:
+#       - _content.yml
+#
+# Imports are resolved relative to the directory of the schedule file that
+# names them, and the importing file WINS on any key collision — so a seasonal
+# schedule can redefine `feature_evening` without touching this file.
+#
+# ── Why these are mostly collections and smart collections, not searches ─────
+# A `search:` key hard-codes a Lucene query inside the schedule, which means
+# the same pool gets defined slightly differently in five places and drifts.
+# These point at the named lists in lists/z0-lists.yml instead, so the pool is
+# defined once, is visible and editable in the ErsatzTV UI, and the schedule
+# reads like a rundown rather than a query language.
+#
+# ── The rule that governs every key below ────────────────────────────────────
+# NEVER point a slot at a key that resolves to zero media items. Nothing errors
+# and nothing warns: the scheduler's fill loop is guarded on the enumerator
+# having a current item, so an empty pool schedules NOTHING and the slot
+# becomes a hole. `fallback:` does not save you either — it is consulted when
+# an item will not FIT, not when the pool is empty.
+#
+# `tools/z0-lists.py --check` counts every pool against the database. Run it
+# after any change here.
+# ─────────────────────────────────────────────────────────────────────────────
+
+content:
+
+  # ══ Station furniture ══════════════════════════════════════════════════════
+  # Ordered collections, so a "package" plays in the order it was written
+  # rather than shuffled into nonsense.
+  - collection: Z0 Sign-On Package
+    key: signon
+    order: chronological
+
+  - collection: Z0 Sign-Off Package
+    key: signoff
+    order: chronological
+
+  - collection: Z0 Idents
+    key: idents
+    order: shuffle
+
+  - collection: Z0 Test Card
+    key: testcard
+    order: chronological
+
+  - collection: Z0 Colour Bars
+    key: colorbars
+    order: chronological
+
+  - collection: Z0 Please Stand By
+    key: standby
+    order: chronological
+
+  - smart_collection: Z0 Weather Desk
+    key: weather
+    order: chronological
+
+  # ══ Animation ══════════════════════════════════════════════════════════════
+  - smart_collection: Z0 Cartoons
+    key: cartoons
+    order: shuffle
+
+  - smart_collection: Z0 Cartoons Pre-1940
+    key: cartoons_early
+    order: shuffle
+
+  - smart_collection: Z0 Cartoons Betty Boop
+    key: betty_boop
+    order: shuffle
+
+  - smart_collection: Z0 Cartoons Bosko and Harman-Ising
+    key: harman_ising
+    order: shuffle
+
+  - smart_collection: Z0 Cartoons Felix the Cat
+    key: felix
+    order: shuffle
+
+  - smart_collection: Z0 Cartoons Popeye
+    key: popeye
+    order: shuffle
+
+  - smart_collection: Z0 Cartoons Superman
+    key: superman
+    order: shuffle
+
+  - smart_collection: Z0 Cartoons Merrie Melodies
+    key: merrie_melodies
+    order: shuffle
+
+  # A multi-collection with `schedule_as_group` on each member, so a block runs
+  # three Betty Boops together and then three Boskos, the way a real cartoon
+  # block was assembled — rather than interleaving one of each.
+  - multi_collection: Z0 All Animation
+    key: animation_blocks
+    order: shuffle
+
+  # ══ Short subjects ═════════════════════════════════════════════════════════
+  - smart_collection: Z0 Short Subjects
+    key: shorts
+    order: shuffle
+
+  - smart_collection: Z0 Vintage Commercials
+    key: commercials
+    order: shuffle
+
+  - smart_collection: Z0 Soundies and Musical Shorts
+    key: soundies
+    order: shuffle
+
+  - smart_collection: Z0 Newsreels
+    key: newsreels
+    order: shuffle
+
+  - smart_collection: Z0 Prelinger Theatre
+    key: prelinger
+    order: shuffle
+
+  - smart_collection: Z0 Schoolroom Films
+    key: schoolroom
+    order: shuffle
+
+  - smart_collection: Z0 Industrial and Sponsored
+    key: industrial
+    order: shuffle
+
+  - smart_collection: Z0 Slow TV
+    key: slowtv
+    order: shuffle
+
+  # ══ Padding pools, banded by length ════════════════════════════════════════
+  # `pad_until` only schedules an item that FITS the remaining gap, and without
+  # `discard_attempts` it gives up on the first one that does not rather than
+  # trying the next — one unlucky shuffle empties a whole block. Padding from a
+  # pool that is already the right size is the fix; discard_attempts is the
+  # belt to that pair of braces.
+  #
+  # And never pad with the tiny pool: filling half an hour from six-second
+  # idents schedules ~300 items and loops the same four stings.
+  - smart_collection: Z0 Pad Tiny under 3 min
+    key: pad_tiny
+    order: shuffle
+
+  - smart_collection: Z0 Pad Short 3 to 10 min
+    key: pad_short
+    order: shuffle
+
+  - smart_collection: Z0 Pad Medium 10 to 30 min
+    key: pad_medium
+    order: shuffle
+
+  # ══ Features ═══════════════════════════════════════════════════════════════
+  - smart_collection: Z0 Features Noir
+    key: noir
+    order: shuffle
+
+  - smart_collection: Z0 Features SciFi and Horror
+    key: scifi
+    order: shuffle
+
+  - smart_collection: Z0 Features Documentary
+    key: docs
+    order: shuffle
+
+  - smart_collection: Z0 Features Classics
+    key: classics
+    order: shuffle
+
+  - smart_collection: Z0 Features Cult
+    key: cult
+    order: shuffle
+
+  - smart_collection: Z0 Features Daytime Safe
+    key: features_day
+    order: shuffle
+
+  - smart_collection: Z0 Features 45 to 75 min
+    key: features_short
+    order: shuffle
+
+  - smart_collection: Z0 Serial Chapters
+    key: serials
+    order: chronological
+
+  # Gated to 23:00 and later. Before the NFO sidecars gave these a content
+  # rating there was no way to express "not in the morning", and four burlesque
+  # reels and the exploitation features were turning up inside the 06:30 and
+  # 16:00 daytime short-subject blocks.
+  - smart_collection: Z0 Late Night Only
+    key: late_show
+    order: shuffle
+
+  # ══ Canadian content ═══════════════════════════════════════════════════════
+  # Neither of these folders had ever been on air. They were sitting in the
+  # library path unscanned, so no query could reach them and no slot could name
+  # them.
+  - smart_collection: Z0 BC and Vancouver
+    key: bc
+    order: chronological
+
+  - collection: Z0 Vancouver Archives
+    key: vancouver_reel
+    order: chronological
+
+  - smart_collection: Z0 Prairie Music
+    key: prairie
+    order: shuffle
+
+  - smart_collection: Z0 Prairie Music Polkas
+    key: polkas
+    order: shuffle
+
+  - smart_collection: Z0 Prairie Music Waltzes
+    key: waltzes
+    order: shuffle
+
+  # ══ Subject strands ════════════════════════════════════════════════════════
+  - smart_collection: Z0 Rail and Transport
+    key: rail
+    order: shuffle
+
+  - smart_collection: Z0 Aviation and Space
+    key: flight
+    order: shuffle
+
+  - smart_collection: Z0 Wartime
+    key: wartime
+    order: shuffle
+
+  - smart_collection: Z0 Science and the Atom
+    key: science
+    order: shuffle
+
+  - smart_collection: Z0 Cities and Civic Film
+    key: cities
+    order: shuffle
+
+  - smart_collection: Z0 Overnight Pool
+    key: overnight
+    order: shuffle
+
+  - smart_collection: Z0 Halloween
+    key: halloween
+    order: shuffle
+
+  - smart_collection: Z0 Christmas
+    key: christmas
+    order: shuffle
+
+  # ══ Eras ═══════════════════════════════════════════════════════════════════
+  - smart_collection: Z0 The 1920s
+    key: era_1920s
+    order: shuffle
+
+  - smart_collection: Z0 The 1930s
+    key: era_1930s
+    order: shuffle
+
+  - smart_collection: Z0 The 1940s
+    key: era_1940s
+    order: shuffle
+
+  - smart_collection: Z0 The 1950s
+    key: era_1950s
+    order: shuffle
+
+  # ══ Playlists ══════════════════════════════════════════════════════════════
+  # A playlist carries its own per-item counts, ordering and guide flags, so
+  # these are small rundowns rather than pools. `playlist_group` is required
+  # alongside `playlist` — the pair is the lookup key, and a playlist named in
+  # the wrong group resolves to nothing at all.
+  - playlist: Cartoon Hour
+    playlist_group: Channel Z0
+    key: pl_cartoon_hour
+
+  - playlist: Saturday Morning
+    playlist_group: Channel Z0
+    key: pl_saturday_morning
+
+  - playlist: Serial Matinee
+    playlist_group: Channel Z0
+    key: pl_serial_matinee
+
+  - playlist: The Neighbourhood Desk
+    playlist_group: Channel Z0
+    key: pl_neighbourhood
+
+  - playlist: Lunch Loops
+    playlist_group: Channel Z0
+    key: pl_lunch_loops
+
+  - playlist: Polka Party
+    playlist_group: Channel Z0
+    key: pl_polka_party
+
+  - playlist: Station Break
+    playlist_group: Channel Z0
+    key: pl_station_break
+
+  - playlist: Betty Boop Marathon
+    playlist_group: Z0 Marathons
+    key: pl_betty_marathon
+
+  - playlist: Vancouver Night
+    playlist_group: Z0 Marathons
+    key: pl_vancouver_night
+
+  - playlist: Why We Fight
+    playlist_group: Z0 Marathons
+    key: pl_why_we_fight
+
+  - playlist: Halloween Night
+    playlist_group: Z0 Seasonal
+    key: pl_halloween
+
+  - playlist: Christmas Morning
+    playlist_group: Z0 Seasonal
+    key: pl_christmas
+
+  # ══ Slots with no footage yet ══════════════════════════════════════════════
+  # GROUND ZERO and LAB HOUR are the station's own programmes and no footage
+  # exists. Their slots are kept at the right times — the shape of the day is
+  # the point — but pointed at real pools so nothing goes to black. When the
+  # episodes land, drop them in shows/Ground Zero or shows/Lab Hour, rescan,
+  # and change the slot's `content:` to the key below.
+  #
+  # Both are commented out because an empty pool is a silent hole, and these
+  # folders are empty today.
+  #
+  # - smart_collection: Z0 Ground Zero
+  #   key: ground_zero
+  #   order: chronological
+  #
+  # - smart_collection: Z0 Lab Hour
+  #   key: lab_hour
+  #   order: chronological

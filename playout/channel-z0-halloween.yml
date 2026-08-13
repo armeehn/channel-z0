@@ -1,0 +1,125 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CHANNEL Z0 — HALLOWEEN.
+#
+# A one-day schedule that repeats. Swap it in by pointing the playout at it and
+# resetting:
+#
+#   sqlite3 ersatztv.sqlite3 \
+#     "update Playout set ScheduleFile='/config/channel-z0-halloween.yml' where Id=1;"
+#   delete from PlayoutItem / PlayoutAnchor / PlayoutHistory   -- see docs
+#   docker restart z0-ersatztv && docker restart z0-uplink
+#
+# and swap it back the same way the next morning. There is no calendar in the
+# sequential scheduler — a date-driven switch would need PlayoutTemplate rows,
+# which only block playouts read.
+#
+# It imports the same content and sequences as the main week, so the station
+# furniture, the weather desk and the graphics stack are identical and there is
+# only one copy of them.
+# ─────────────────────────────────────────────────────────────────────────────
+
+import:
+  - _content.yml
+  - _sequences.yml
+
+playout:
+  - sequence: 'sign_on'
+
+  # Morning is normal — this is a family channel until the sun goes down.
+  - epg_group: true
+  - pad_until: '09:00'
+    tomorrow: false
+    content: 'pad_short'
+    custom_title: 'SHORT SUBJECTS'
+    discard_attempts: 6
+  - epg_group: false
+
+  - epg_group: true
+  - pad_until: '12:00'
+    tomorrow: false
+    content: 'pl_halloween'
+    custom_title: 'SPOOKY CARTOON BLOCK'
+    discard_attempts: 6
+  - epg_group: false
+
+  - sequence: 'weather_break'
+
+  - epg_group: true
+  - pad_until: '15:00'
+    tomorrow: false
+    content: 'halloween'
+    custom_title: 'THE HAUNTED MATINEE'
+    discard_attempts: 8
+  - epg_group: false
+
+  - epg_group: true
+  - pad_until: '17:00'
+    tomorrow: false
+    content: 'cartoons_early'
+    custom_title: 'CARTOON BLOCK'
+    discard_attempts: 6
+  - epg_group: false
+
+  - sequence: 'weather_break'
+
+  - epg_group: true
+  - pad_until: '19:00'
+    tomorrow: false
+    content: 'pad_short'
+    custom_title: 'TRICK OR TREAT — SHORT SUBJECTS'
+    discard_attempts: 6
+  - epg_group: false
+
+  # ── Prime: the double bill ────────────────────────────────────────────────
+  # Strip down for both features. The bottom strip is a subtitle element and
+  # re-renders every frame; two back-to-back features is exactly when the
+  # channel has the least headroom to spare.
+  - sequence: 'strip_down'
+  - pre_roll: true
+    sequence: 'feature_break'
+  - post_roll: true
+    sequence: 'feature_break'
+  - epg_group: true
+  - count: 1
+    content: 'scifi'
+    custom_title: 'SHOCK THEATRE — FIRST FEATURE'
+  - epg_group: false
+  - epg_group: true
+  - count: 1
+    content: 'cult'
+    custom_title: 'SHOCK THEATRE — SECOND FEATURE'
+  - epg_group: false
+  - pre_roll: false
+  - post_roll: false
+
+  - epg_group: true
+  - pad_until: '00:00'
+    tomorrow: true
+    content: 'halloween'
+    custom_title: 'THE WITCHING HOUR'
+    discard_attempts: 8
+  - epg_group: false
+
+  # ── After midnight ────────────────────────────────────────────────────────
+  - watermark: true
+    name: 'Z0 Bug Late Night'
+  - epg_group: true
+  - pad_until: '03:00'
+    tomorrow: true
+    content: 'late_show'
+    custom_title: 'THE LATE LATE SHOW'
+    discard_attempts: 8
+  - epg_group: false
+  - watermark: false
+
+  - sequence: 'sign_off'
+  - epg_group: true
+  - pad_until: '06:00'
+    tomorrow: true
+    trim: true
+    content: 'colorbars'
+    custom_title: 'COLOUR BARS'
+  - epg_group: false
+  - sequence: 'strip_up'
+
+  - repeat: true

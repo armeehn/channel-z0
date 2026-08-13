@@ -1,0 +1,346 @@
+#!/usr/bin/env python3
+"""
+z0-build-schedule.py — emit playout/schedule/channel-z0.yml.
+
+  ── WHY THIS IS GENERATED AND NOT HAND-WRITTEN ─────────────────────────────
+  ErsatzTV's sequential scheduler has NO day-of-week primitive. The seven day
+  blocks in the schedule simply run in order and `repeat: true` returns to the
+  first; which block lands on which weekday is decided entirely by the day the
+  playout is built or reset on. (Day-of-week and seasonal switching do exist in
+  ErsatzTV — as PlayoutTemplate rows — but only for BLOCK playouts, not
+  sequential ones.)
+
+  So the file has to be rotated by hand every time the playout is reset on a
+  different weekday, and nothing detects it and nothing reports it: the channel
+  simply airs Monday Night Noir on a Wednesday while the storefront promises
+  Workbench Theatre. That rotation is now a flag:
+
+      z0-build-schedule.py --start-day thursday
+
+  Build it for the day you are going to reset on. Build EARLY in that day, too:
+  a playout built mid-afternoon starts at instruction one with every morning
+  `pad_until` already in the past, so they collapse to nothing and the evening
+  stretches to cover the day.
+  ───────────────────────────────────────────────────────────────────────────
+
+Usage:
+    z0-build-schedule.py --start-day wednesday --out channel-z0.yml
+    z0-build-schedule.py --start-day today --out channel-z0.yml
+"""
+
+import argparse
+import datetime
+import sys
+
+WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday",
+            "saturday", "sunday"]
+
+# ── The week ─────────────────────────────────────────────────────────────────
+# One entry per weekday, Monday first. `matinee` is the 14:00 picture, `evening`
+# the 20:00 one, `second` the 22:00 strand. Everything else is common to every
+# day and lives in day_plan() below.
+#
+# Keys refer to _content.yml. A key that resolves to an empty pool is a silent
+# hole, so never add one here without running z0-lists.py --check first.
+# The 20:00 and 23:00 identities are the ONLY things that change between days.
+# That is the whole trick: it is the cheapest possible way to make seven
+# identical loops feel like seven different evenings, and it is what the
+# storefront grid and docs/programming.md both promise. Titles and themes here
+# are taken from docs/programming.md — if you change one, change all three or
+# the guide-on-the-wall and the guide disagree.
+WEEK = {
+    "monday": dict(
+        matinee=("THE AFTERNOON PICTURE SHOW", "docs"),
+        prime=("MONDAY NIGHT NOIR", "noir"),
+        late=("AFTER HOURS", "soundies"),
+    ),
+    "tuesday": dict(
+        matinee=("THE AFTERNOON PICTURE SHOW", "features_short"),
+        prime=("ATOMIC TUESDAY", "scifi"),
+        late=("THE LATE TRANSMISSION", "science"),
+    ),
+    "wednesday": dict(
+        matinee=("THE AFTERNOON PICTURE SHOW", "classics"),
+        prime=("WORKBENCH THEATRE", "docs"),
+        late=("NIGHT PATTERN", "industrial"),
+    ),
+    "thursday": dict(
+        matinee=("CHAPTER PLAY MATINEE", "serials"),
+        prime=("SERIAL NIGHT", "serials"),
+        late=("CHAPTER'S END", "cult"),
+    ),
+    "friday": dict(
+        matinee=("THE AFTERNOON PICTURE SHOW", "classics"),
+        prime=("FRIDAY NIGHT FEATURE", "cult"),
+        # The one slot the Z0-LATE material is scheduled into. Everything rated
+        # Z0-LATE by tools/z0-nfo.py — the burlesque reels and the exploitation
+        # "square-up" features — reaches air here and nowhere else. Every
+        # daytime pool carries `NOT mpaa:Z0-LATE`.
+        late=("THE LATE LATE SHOW", "late_show"),
+    ),
+    "saturday": dict(
+        morning="pl_saturday_morning",
+        matinee=("SERIAL MATINEE", "pl_serial_matinee"),
+        prime=("SATURDAY DOUBLE BILL", "classics"),
+        # Saturday takes a second feature instead of the encore, per the bible.
+        second_feature=("SATURDAY DOUBLE BILL — SECOND FEATURE", "scifi"),
+        late=("THE LATE LATE SHOW", "late_show"),
+    ),
+    "sunday": dict(
+        matinee=("THE VANCOUVER REEL", "vancouver_reel"),
+        prime=("SUNDAY CINEMA", "classics"),
+        late=("NIGHT PATTERN", "slowtv"),
+        neighbourhood=("CANADA NIGHT", "pl_vancouver_night"),
+    ),
+}
+
+
+def programme(title, content, count=1, strip=True, rolls=True):
+    """A single scheduled programme, bracketed the way a broadcast day
+    brackets one: strip down for the duration, an ident and two adverts either
+    side, strip back up.
+
+    The bottom strip is a subtitle element and costs roughly 4x realtime at
+    1080p — it is why this channel runs at 640x480 at all. Dropping it for
+    features buys back headroom on exactly the items that need it most.
+
+    pre_roll / post_roll are only emitted by the `all`, `count` and `duration`
+    handlers, which is why this uses `count:` and not `pad_until:`."""
+    out = []
+    if strip:
+        out.append({"sequence": "strip_down"})
+    if rolls:
+        out.append({"pre_roll": True, "sequence": "feature_break"})
+        out.append({"post_roll": True, "sequence": "feature_break"})
+    out.append({"epg_group": True})
+    out.append({"count": count, "content": content, "custom_title": title})
+    out.append({"epg_group": False})
+    if rolls:
+        # Clear them again, or every later count/duration block in the day
+        # picks up the same pre-roll and the guide fills with idents.
+        out.append({"pre_roll": False})
+        out.append({"post_roll": False})
+    if strip:
+        out.append({"sequence": "strip_up"})
+    return out
+
+
+def strand(title, content, until, tomorrow=False, discard=6, trim=False):
+    """A block padded out to a clock time. `discard_attempts` matters: without
+    it, `pad_until` gives up on the first item that does not FIT the remaining
+    gap rather than trying the next one, and a single unlucky shuffle empties
+    the whole block."""
+    item = {
+        "pad_until": until,
+        "tomorrow": tomorrow,
+        "content": content,
+        "custom_title": title,
+        "discard_attempts": discard,
+    }
+    if trim:
+        item["trim"] = True
+    return [{"epg_group": True}, item, {"epg_group": False}]
+
+
+def day_plan(name, spec):
+    """The common shape of a Z0 day, with the themed slots filled in."""
+    P = []
+
+    # ── Sign-on ───────────────────────────────────────────────────────────────
+    P.append({"sequence": "sign_on"})
+    P += strand("SHORT SUBJECTS", "pad_short", "06:30")
+    P += strand("STRETCH AND COFFEE", "slowtv", "07:00", discard=4)
+
+    # ── Morning ───────────────────────────────────────────────────────────────
+    morning = spec.get("morning", "pl_cartoon_hour")
+    P += strand("CARTOON BLOCK", morning, "09:00")
+    P += strand("PRELINGER THEATRE", "prelinger", "11:00")
+    P += strand("LAB HOUR (STANDBY)", "schoolroom", "12:00")
+
+    # ── Midday ────────────────────────────────────────────────────────────────
+    P.append({"sequence": "weather_break"})
+    # docs/programming.md has always defined noon as "Music + the community
+    # bulletin board", but the deployed schedule padded it from `prelinger` —
+    # which is the bug behind "there isn't music even though it's noon, it's
+    # still showing old clips".
+    #
+    # It pads from the Lunch Loops PLAYLIST rather than from the music pool
+    # directly: the tracks are 2–3 minutes, and padding two hours from a pool
+    # that short schedules ~40 items and buries the guide. The playlist
+    # interleaves music with one 10–30 minute film per cycle.
+    #
+    # The community bulletin board is the bottom crawl, which is up for the
+    # whole block — this is one of the few places it is deliberately NOT taken
+    # down, so the strip's cost is real here. It is affordable because the
+    # music cards are 640x480 and cheap to decode.
+    P += strand("LUNCH LOOPS", "pl_lunch_loops", "14:00")
+
+    # ── Afternoon ─────────────────────────────────────────────────────────────
+    P += programme(*spec["matinee"])
+    P += strand("SHORT SUBJECTS", "pad_short", "16:00")
+    P += strand("CARTOON BLOCK II", "animation_blocks", "18:00")
+
+    # ── Early evening ─────────────────────────────────────────────────────────
+    # 19:00 GROUND ZERO and 00:00 SIGN-OFF are the two fixed points that never
+    # move — the station's heartbeat. GROUND ZERO has no footage yet, so the
+    # slot is held at the right time and filled from the newsreel pool; the
+    # shape of the day is the point.
+    P.append({"sequence": "weather_break"})
+    nb_title, nb_content = spec.get(
+        "neighbourhood", ("THE NEIGHBOURHOOD DESK", "pl_neighbourhood"))
+    P += strand(nb_title, nb_content, "19:00")
+    P += strand("GROUND ZERO (STANDBY)", "newsreels", "20:00")
+
+    # ── Prime ─────────────────────────────────────────────────────────────────
+    P += programme(*spec["prime"])
+    P += strand("SHORT SUBJECTS", "pad_short", "22:00")
+
+    # 22:00 is the encore on six nights and the second feature on Saturday.
+    if "second_feature" in spec:
+        P += programme(*spec["second_feature"])
+    else:
+        P += strand("GROUND ZERO — ENCORE (STANDBY)", "newsreels", "23:00")
+    P.append({"sequence": "station_break"})
+    P += strand("SHORT SUBJECTS", "pad_short", "23:00")
+
+    # ── The late block ────────────────────────────────────────────────────────
+    # Themed per night. A dimmer bug goes up for the duration — the only place
+    # the channel uses a ChannelWatermark rather than a graphics element,
+    # because a watermark is the thing that can be switched per block.
+    P.append({"watermark": True, "name": "Z0 Bug Late Night"})
+    P += strand(spec["late"][0], spec["late"][1], "00:00",
+                tomorrow=True, discard=8)
+    P.append({"watermark": False})
+
+    # ── Sign-off ──────────────────────────────────────────────────────────────
+    P.append({"sequence": "weather_break"})
+    P.append({"sequence": "sign_off"})
+    P.append({"sequence": "strip_down"})
+
+    # ── Overnight ─────────────────────────────────────────────────────────────
+    # This used to be `pad_until 06:00 trim: true content: colorbars` — one
+    # hour-long file, trimmed, covering roughly six hours of every night. The
+    # sign-off ritual is kept, but the six hours are now programmed. Put the
+    # colorbars line back here if you want the old behaviour.
+    #
+    # `offline_tail` marks the block as the tail of the broadcast day so the
+    # guide does not advertise it as a programme strand.
+    P.append({"sequence": "overnight_variety"})
+    P.append({"shuffle_sequence": "overnight_variety"})
+    P += strand("THE ALL-NIGHT SHOW", "overnight", "05:30",
+                tomorrow=True, discard=8)
+    P += strand("COLOUR BARS", "colorbars", "06:00", tomorrow=True, trim=True)
+    P.append({"sequence": "strip_up"})
+    return P
+
+
+BANNER = "  # {} {}"
+
+
+def emit(days, start_day):
+    """Render to YAML by hand rather than through yaml.dump, so the day banners
+    and the running commentary survive. A generated schedule nobody can read is
+    not an improvement on a hand-written one."""
+    i = WEEKDAYS.index(start_day)
+    order = WEEKDAYS[i:] + WEEKDAYS[:i]
+
+    L = []
+    L.append("# " + "─" * 77)
+    L.append("# CHANNEL Z0 — the broadcast week.")
+    L.append("#")
+    L.append("# GENERATED by tools/z0-build-schedule.py. Do not edit by hand;")
+    L.append("# edit the generator and re-run, or your change is lost the next")
+    L.append("# time the week is rotated.")
+    L.append("#")
+    L.append(f"# Rotated to start on {start_day.upper()}.")
+    L.append("#")
+    L.append("# The seven day blocks below run in order and `repeat: true`")
+    L.append("# returns to the first. There is no day-of-week primitive: which")
+    L.append("# block lands on which weekday is decided entirely by the day the")
+    L.append("# playout is built or RESET on. If you reset this playout on any")
+    L.append("# day other than " + start_day.upper() + ", re-run the generator")
+    L.append("# with --start-day for that day first, or the channel airs the")
+    L.append("# wrong day's programming and nothing reports it.")
+    L.append("#")
+    L.append("# Content keys come from _content.yml, sequences from")
+    L.append("# _sequences.yml. Both are imported below; the importing file")
+    L.append("# wins on any key collision, which is how the seasonal variants")
+    L.append("# override a single strand without copying the week.")
+    L.append("# " + "─" * 77)
+    L.append("")
+    L.append("import:")
+    L.append("  - _content.yml")
+    L.append("  - _sequences.yml")
+    L.append("")
+    L.append("playout:")
+
+    for n, day in enumerate(order):
+        L.append("")
+        L.append("  # " + "═" * 73)
+        L.append(f"  # {day.upper()}  (block {n + 1} of 7)")
+        L.append("  # " + "═" * 73)
+        for instr in days[day]:
+            L += render(instr)
+
+    L.append("")
+    L.append("  # Back to block 1. Without this the playout runs out of")
+    L.append("  # instructions and the channel stops after seven days.")
+    L.append("  - repeat: true")
+    L.append("")
+    return "\n".join(L)
+
+
+def render(instr):
+    """One instruction as YAML lines."""
+    keys = list(instr)
+    first = keys[0]
+    out = [f"  - {first}: {fmt(instr[first])}"]
+    for k in keys[1:]:
+        out.append(f"    {k}: {fmt(instr[k])}")
+    return out
+
+
+def fmt(v):
+    if isinstance(v, bool):
+        return "true" if v else "false"
+    if isinstance(v, int):
+        return str(v)
+    if v is None:
+        return "null"
+    # Everything is single-quoted, so times ('06:30'), bare numbers and
+    # true/false/null read as strings rather than as their YAML types. In
+    # single-quoted YAML the ONLY escape is a doubled quote — miss it and a
+    # title like "CHAPTER'S END" terminates the scalar early and the file will
+    # not parse at all.
+    return "'" + str(v).replace("'", "''") + "'"
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--start-day", default="today",
+                    help="weekday the first block should land on, or 'today'")
+    ap.add_argument("--out", default="-")
+    args = ap.parse_args()
+
+    start = args.start_day.lower()
+    if start == "today":
+        start = WEEKDAYS[datetime.date.today().weekday()]
+    if start not in WEEKDAYS:
+        raise SystemExit(f"--start-day must be one of {WEEKDAYS} or 'today'")
+
+    days = {name: day_plan(name, spec) for name, spec in WEEK.items()}
+    text = emit(days, start)
+
+    if args.out == "-":
+        sys.stdout.write(text)
+    else:
+        with open(args.out, "w") as fh:
+            fh.write(text)
+        n = sum(len(d) for d in days.values())
+        print(f"wrote {args.out}: 7 days, {n} instructions, "
+              f"starting {start}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
