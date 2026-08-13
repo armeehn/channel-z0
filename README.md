@@ -49,7 +49,7 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | [`docs/weather.md`](docs/weather.md) | **On-air graphics.** The bug, the weather desk, the crawl, and the traps in ErsatzTV’s graphics engine |
 | [`docs/ad-standards.md`](docs/ad-standards.md) | The one-page rulebook for locally submitted commercials |
 | [`docs/ideas.md`](docs/ideas.md) | The writers' room — what's shipped, what's next |
-| [`site/index.html`](site/index.html) | The storefront — live player, program grid, ad submissions (Riposte Labs design language) |
+| [`site/index.html`](site/index.html) | The storefront — live player (pause, volume, full screen), program grid, ad submissions (Riposte Labs design language) |
 | [`site/retro/index.html`](site/retro/index.html) | The original CRT-and-wood-cabinet version, preserved |
 | [`site/_headers`](site/_headers) · [`site/_redirects`](site/_redirects) | Cloudflare headers + short links (`/watch`, `/lab`) |
 | [`vps/`](vps/) | The tower: Owncast `docker-compose.yml` + `Caddyfile` (and [`vps/peertube/`](vps/peertube/) — a peer-to-peer alternative tower) |
@@ -72,6 +72,7 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | `tools/test-failover.sh` | Prove the cluster fails over and never double-publishes |
 | `tools/test-generators.sh` | Prove the card generators still make cards — arguments, text, 1080p/30 conformance |
 | `tools/test-broadcast.sh` | Fire a live test pattern at the tower (build guide, Phase 1.5) |
+| `tools/test-player-controls.mjs` | Drive the storefront player in a real browser — pause/resume-at-live, mute + volume, full screen (needs the channel on air) |
 | `tools/check-ad.sh` | Screen a submitted spot: length, codecs, true loudness (read-only) |
 | `tools/normalize-ad.sh` | Clear a submitted spot for air: 1080p/30, loudness-normalized |
 | `tools/make-colorbars.sh` | Generate the midnight sign-off bars (with optional silence) |
