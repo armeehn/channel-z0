@@ -19,9 +19,12 @@
 set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${DIR}/z0-lib.sh"
+z0_help_check "$@"
 
 CARD_SECS="${1:-25}"
+z0_require_int "card seconds" "$CARD_SECS"
 BARS_SECS="${2:-10}"
+z0_require_int "bars-tail seconds" "$BARS_SECS"
 TOTAL=$(( CARD_SECS + BARS_SECS ))
 MEDIA_ROOT="${Z0_MEDIA_ROOT:-/media/channelz0}"
 OUT_DIR="${MEDIA_ROOT}/interstitials"

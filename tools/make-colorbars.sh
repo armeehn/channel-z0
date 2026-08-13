@@ -8,8 +8,12 @@
 #   tools/make-colorbars.sh 30         # 30 minutes instead
 #   Z0_SILENT=1 tools/make-colorbars.sh  # bars with silence instead of the hum
 set -euo pipefail
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${DIR}/z0-lib.sh"
+z0_help_check "$@"
 
 MINUTES="${1:-60}"
+z0_require_int "minutes" "$MINUTES"
 MEDIA_ROOT="${Z0_MEDIA_ROOT:-/media/channelz0}"
 OUT_DIR="${MEDIA_ROOT}/interstitials"
 OUT="${OUT_DIR}/colorbars-${MINUTES}m.mp4"
