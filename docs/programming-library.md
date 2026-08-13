@@ -100,6 +100,40 @@ being airable:
 
 Neither is deleted. The decision stays the operator's.
 
+### No AI-generated or AI-"restored" material
+
+This channel does not air AI upscales, AI colourisations or AI-generated
+footage. Two files were deleted on 2026-08-13 under this rule:
+
+- `bc/victoria/Victoria Streetcar Ride (1907) restored.mp4` — 2160x2160 VP9, a
+  square AI upscale by its uploader rather than an archival transfer. It was
+  going to be the oldest title in the library, and it still went.
+- `movies/noir/He Walked by Night (restored, colorized) …` — an AI
+  colourisation of a 1948 black-and-white noir, and the worst of the three
+  copies of that film already present (854x480 against a clean 1472x1072
+  transfer).
+
+**Two more are unresolved and still in the library**, both the only copy of
+their title, both carrying the same "restored / quality upgrade / 720p-hd /
+imdb score in the filename" signature of a re-upload rather than a transfer:
+
+- `movies/noir/Trapped (restored) (1949 …) [trapped-1949-restored-movie-720p-hd]`
+- `movies/cult/THE GIANT GILA MONSTER widescreen & quality upgrade` — 720x406,
+  i.e. cropped to fake widescreen from a 1959 film shot 4:3.
+
+Deleting either loses the title outright, so they are flagged here rather than
+removed. The filename signature is the thing to grep for when new material
+arrives:
+
+```sh
+find /mnt/main-data/channelz0 -type f ! -name '*.nfo' \
+  \( -iname '*coloriz*' -o -iname '*restored*' -o -iname '*upscal*' \
+     -o -iname '*remaster*' -o -iname '*quality upgrade*' -o -iname '*720p-hd*' \)
+```
+
+A resolution far above the source era is the other tell — a 1907 actuality does
+not survive at 2160x2160, and a 1959 second feature is not natively widescreen.
+
 ---
 
 ## 2. Lists — `lists/z0-lists.yml`

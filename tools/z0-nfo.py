@@ -424,12 +424,23 @@ def build(item, media_root):
     if "nfb" in folders:
         tags.append("nfb")
 
-    if "bc" in folders:
+    if "canada" in folders or "bc" in folders:
         genres += ["Regional", "Archival"]
-        tags += ["canada", "bc"]
+        tags.append("canada")
+
+    if "bc" in folders:
+        tags.append("bc")
         if "vancouver" in folders:
             studios.append("City of Vancouver Archives")
             tags.append("vancouver")
+        # Kenneth J. Bishop's Central Films made twelve "quota quickie"
+        # features for Columbia at Willows Park, Victoria, 1935-37. Three are
+        # here, and they are the only BC-MADE narrative features in the
+        # library — everything else Canadian is archive or documentary footage.
+        if "features" in folders:
+            studios.append("Central Films")
+            genres += ["Feature"]
+            tags.append("bc-made")
         for pat, tag in [(r"stanley\s+park", "subject-stanley-park"),
                          (r"parade|grey\s+cup|pne", "subject-parade"),
                          (r"empire\s+games|polo|swimming", "subject-sport"),
@@ -599,6 +610,22 @@ def main():
                 })
 
     recs = [build(i, args.media_root) for i in items]
+
+    # The inventory is a snapshot of the DATABASE, which still lists items whose
+    # files have been deleted (the scanner only flags them missing on its next
+    # pass). Writing a sidecar for one of those would resurrect metadata for a
+    # file that is deliberately gone — and, worse, leave an orphan .nfo that
+    # looks authoritative. Only ever write beside media that is actually there.
+    missing = [r for r in recs
+               if not os.path.exists(os.path.join(
+                   args.media_root, r["rel"]))]
+    if missing:
+        print(f"skipping {len(missing)} record(s) whose media file no longer "
+              f"exists:")
+        for r in missing[:10]:
+            print(f"  {r['rel']}")
+    recs = [r for r in recs
+            if os.path.exists(os.path.join(args.media_root, r["rel"]))]
 
     # Guard: every tag the database currently holds must survive into the NFO.
     # A dropped tag is a silently empty content pool, so this is fatal, not a
