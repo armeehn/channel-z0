@@ -20,6 +20,11 @@ horizontal_margin_percent: 4
 vertical_margin_percent: 8
 
 scale: true
-scale_width_percent: 9
+# 12%, raised from 9% when the channel went 854x480 -> 640x480. These
+# percentages are of frame WIDTH, but the strip's ASS is keyed to frame HEIGHT
+# (PlayResY), and the height did not change. Left at 9% the bug would have
+# shrunk by a quarter while the strip stayed put, and the set would stop
+# looking like one design. Rule: keep everything sized against frame height.
+scale_width_percent: 12
 
 z_index: 10

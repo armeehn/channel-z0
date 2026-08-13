@@ -131,27 +131,52 @@ Three things it is *not*, each measured rather than assumed:
   static-content fast path to exploit.
 
 What actually fixes it is **resolution**, because the per-frame cost is
-proportional to pixel count. The channel moved from 1920x1080 to **854x480**
-(5.06x fewer pixels) and the strip became affordable. That is the whole reason
-this is an SD channel — near enough everything in the library is a 480p or
-640x480 print anyway, so the picture loses nothing.
+proportional to pixel count. The channel went 1920x1080 → 854x480 → **640x480**
+(6.75x fewer pixels than 1080p) and the strip became affordable. That is the
+whole reason this is an SD channel.
+
+640x480 is also the honest shape for this library: the cartoons and the
+Prelinger reels are natively 4:3, so they now fill the frame and the ffmpeg
+command carries **no `pad=` filter at all**. The cost is that genuine 16:9
+items get letterboxed instead.
 
 If you ever put the channel back up to 720p or 1080p, **the bottom strip has to
 go**, or the channel will sit on colour bars.
 
-**The margin at 854x480 is real but not generous.** The 0.25x class of failure
-is gone, and in the 20 minutes after the switch there were no fallback-filler
-sessions at all. But the Prelinger block — 640x480 interlaced prints carrying
-all four elements — still logs the occasional `[FTL]` at **0.996x**, without
-interrupting the stream. Read those as jitter at the `-readrate 1.0` cap that
-ErsatzTV applies to playout items: something that keeps up measures *exactly*
-1.0x, so noise straddles the threshold either way.
+854x480 killed the 0.25x failures but left almost no margin — the Prelinger
+block still logged the odd `[FTL]` at **0.996x** (without ever interrupting the
+stream). 640x480 buys another 1.33x on top of that.
 
-If the channel starts flapping again, the next levers in order are **640x480**
-output (another 1.33x of headroom, at the cost of 16:9) or removing the strip.
-Judge by whether **fallback filler actually starts**, not by `[FTL]` count —
-`grep -ci colorbars` over `/config/logs/ersatztv<date>.log` is the honest
-signal.
+Judge health by whether **fallback filler actually starts**, not by `[FTL]`
+count. `grep -ci colorbars` over `/config/logs/ersatztv<date>.log` is the honest
+signal; a bare `[FTL]` near 1.0x is usually jitter against the `-readrate 1.0`
+cap ErsatzTV applies to playout items, where anything keeping up measures
+*exactly* 1.0x and noise straddles the threshold.
+
+## Changing the channel's resolution
+
+Three things have to move together, and missing any one of them looks like a
+rendering bug rather than a config mistake:
+
+1. **`FFmpegProfile` 1** — `ResolutionId` and `VideoBitrate`. There was no
+   16:9 480p row, so `854x480` was added as `Resolution` id 5; `640x480` is
+   the stock id 0.
+2. **`PlayResX`/`PlayResY` in the strip's ASS** (`Z0_PLAYRES_X`/`Z0_PLAYRES_Y`,
+   default `1440x1080`). libass scales x by `frame_width/PlayResX` and y by
+   `frame_height/PlayResY`, so **a 16:9 script rendered into the 4:3 channel
+   squashes every glyph horizontally by a third**. Keep PlayResY at 1080 and
+   change only PlayResX with the aspect, and the font sizes and `CRAWL_Y` in
+   the generator stay meaningful.
+3. **The width-based percentages** in `z0-bug.yml` (`scale_width_percent`),
+   `z0-weather-card.yml` (`scale_width_percent`) and `z0-upnext.yml`
+   (`width_percent`). These are fractions of frame **width**, while the strip
+   is keyed to frame **height**. Going 854->640 wide at the same height, the
+   percentages had to rise by 854/640 (9->12, 22->29, 55->73) or those three
+   would have shrunk by a quarter while the strip stayed put.
+
+Then restart `z0-ersatztv`, **then** `z0-uplink` — Owncast is single-quality
+passthrough and cannot carry a mid-stream resolution change, so the tower drops
+for ~15 s and the uplink reconnects itself.
 
 ## Wiring it into the schedule
 
@@ -209,6 +234,6 @@ strip was on. That cost sits in ErsatzTV's own compositor, upstream of the
 encoder, so no encoder setting touches it. See "A subtitle element costs a
 full-frame composite on every frame" above.
 
-The channel therefore runs at **854x480 / 1500k** rather than 1920x1080 /
+The channel therefore runs at **640x480 / 1200k** rather than 1920x1080 /
 2000k. Rule of thumb: image and text elements are free, a subtitle element
 costs about 4x realtime at 1080p, and that price scales with pixel count.
