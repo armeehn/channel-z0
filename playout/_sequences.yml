@@ -1,0 +1,174 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CHANNEL Z0 — reusable sequences.
+#
+# An import fragment, like _content.yml. Before this existed, the seven day
+# blocks in channel-z0.yml repeated the same twenty instructions of on-air
+# furniture seven times over — 1452 lines to describe one week, and a fix to
+# the weather break had to be made seven times or the days quietly diverged.
+#
+# A sequence is invoked with
+#
+#     - sequence: weather_break
+#       repeat: 2            # optional
+#
+# ── What a sequence is NOT ───────────────────────────────────────────────────
+# It is not a scope. `graphics_on` inside a sequence stays on after the
+# sequence returns, and a `pre_roll` set inside one stays set. Sequences that
+# change state clean up after themselves; the ones below are written so that
+# calling them leaves the channel exactly as it found it.
+#
+# ── pre_roll / post_roll only wrap SOME instructions ─────────────────────────
+# The handlers are invoked from the `all`, `count` and `duration` handlers
+# only. `pad_until` and `pad_to_next` do NOT emit pre-roll or post-roll — so an
+# ident set as pre-roll will bracket a scheduled feature but will never appear
+# around a padded block. That is why the day still calls `sequence:
+# station_break` explicitly in a few places.
+#
+# ── mid_roll needs chapters ──────────────────────────────────────────────────
+# A mid-roll sequence is inserted at an item's CHAPTER MARKERS. Exactly 7 files
+# in this library have two or more chapters, so mid_roll is wired up and
+# correct but will almost never fire. It is here so the shape is recorded.
+# ─────────────────────────────────────────────────────────────────────────────
+
+sequence:
+
+  # ══ Graphics ═══════════════════════════════════════════════════════════════
+  # Turned up at the top of EVERY day, not once at the top of the file. The
+  # elements are attached to playout ITEMS as they are built, so an element
+  # switched on only at instruction 1 would not reach air again until the
+  # seven-day cycle came back around — a week of a bare screen after any
+  # partial rebuild.
+  - key: graphics_up
+    items:
+      - graphics_on: 'image/z0-bug.yml'
+      - graphics_on: 'image/z0-weather-card.yml'
+      - graphics_on: 'text/z0-upnext.yml'
+      - graphics_on: 'subtitle/z0-crawl.yml'
+
+  # The bottom strip is a SUBTITLE element, and a subtitle element is
+  # re-rendered every single frame whether or not its content changed. It is
+  # the single most expensive thing this channel does and the reason the
+  # channel runs at 640x480. Drop it for anything long or hard to decode.
+  - key: strip_down
+    items:
+      - graphics_off: 'subtitle/z0-crawl.yml'
+
+  - key: strip_up
+    items:
+      - graphics_on: 'subtitle/z0-crawl.yml'
+
+  # ══ Station breaks ═════════════════════════════════════════════════════════
+  # Idents are 5–8 seconds. They are only ever scheduled with `count: 1`.
+  # Never pad with them: filling a half-hour gap from a six-second file
+  # schedules ~300 items and airs the same four stings on a loop.
+  # `filler_kind` is what keeps these out of the programme guide. ErsatzTV
+  # drops any playout item whose FillerKind is not None from the XMLTV output,
+  # and a sequence invoked DIRECTLY (rather than as a pre_roll/post_roll, which
+  # push a FillerKind themselves) is plain content — so without this line the
+  # guide lists "z0-ident-a-local-channel-for-loca" between programmes.
+  - key: station_break
+    items:
+      - count: 1
+        content: idents
+        filler_kind: preroll
+
+  - key: station_break_long
+    items:
+      - count: 1
+        content: idents
+        filler_kind: preroll
+      - count: 1
+        content: commercials
+        filler_kind: preroll
+
+  # Used as the pre-roll and post-roll around features. Because the roll
+  # handlers push a FillerKind, everything in here is automatically dropped
+  # from the programme guide — which is the point: the guide should list
+  # programmes, not station furniture.
+  - key: feature_break
+    items:
+      - count: 1
+        content: idents
+      - count: 2
+        content: commercials
+
+  - key: advert_break
+    items:
+      - count: 1
+        content: commercials
+
+  # ══ The weather desk ═══════════════════════════════════════════════════════
+  # One file, rewritten in place every 15 minutes and always exactly the same
+  # length, so the library row stays valid and this never needs a rescan.
+  #
+  # The corner card stands down for these two minutes: it repeats what the
+  # segment is already saying, and at a 5% top margin it lands on top of the
+  # segment's own header and rule.
+  - key: weather_break
+    items:
+      - graphics_off: 'image/z0-weather-card.yml'
+      - epg_group: true
+      - count: 1
+        content: weather
+        custom_title: 'THE WEATHER DESK'
+      - epg_group: false
+      - graphics_on: 'image/z0-weather-card.yml'
+
+  # ══ Sign-on and sign-off ═══════════════════════════════════════════════════
+  - key: sign_on
+    items:
+      - sequence: graphics_up
+      - epg_group: true
+      - count: 1
+        content: signon
+        custom_title: 'SIGN-ON'
+      - epg_group: false
+      - sequence: weather_break
+
+  - key: sign_off
+    items:
+      - epg_group: true
+      - count: 1
+        content: signoff
+        custom_title: 'SIGN-OFF'
+      - epg_group: false
+
+  # ══ Strands ════════════════════════════════════════════════════════════════
+  # A named half-hour of short subjects with a break in the middle. Invoked
+  # from several places in the day, which is exactly what sequences are for.
+  - key: short_subjects
+    items:
+      - epg_group: true
+      - count: 2
+        content: pad_short
+        custom_title: 'SHORT SUBJECTS'
+      - epg_group: false
+      - sequence: advert_break
+
+  # `shuffle_sequence` re-orders the items of an already-emitted sequence in
+  # place, so the overnight variety block is not the same running order every
+  # night. It operates on instructions that have ALREADY been emitted into the
+  # current instruction list — so it goes after the sequence it shuffles, not
+  # before it.
+  - key: overnight_variety
+    items:
+      - epg_group: true
+      - count: 1
+        content: rail
+        custom_title: 'THE ALL-NIGHT SHOW'
+      - epg_group: false
+      - epg_group: true
+      - count: 1
+        content: cities
+        custom_title: 'THE ALL-NIGHT SHOW'
+      - epg_group: false
+      - epg_group: true
+      - count: 1
+        content: science
+        custom_title: 'THE ALL-NIGHT SHOW'
+      - epg_group: false
+      - epg_group: true
+      - count: 1
+        content: industrial
+        custom_title: 'THE ALL-NIGHT SHOW'
+      - epg_group: false
