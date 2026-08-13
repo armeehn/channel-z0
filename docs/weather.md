@@ -139,6 +139,20 @@ this is an SD channel — near enough everything in the library is a 480p or
 If you ever put the channel back up to 720p or 1080p, **the bottom strip has to
 go**, or the channel will sit on colour bars.
 
+**The margin at 854x480 is real but not generous.** The 0.25x class of failure
+is gone, and in the 20 minutes after the switch there were no fallback-filler
+sessions at all. But the Prelinger block — 640x480 interlaced prints carrying
+all four elements — still logs the occasional `[FTL]` at **0.996x**, without
+interrupting the stream. Read those as jitter at the `-readrate 1.0` cap that
+ErsatzTV applies to playout items: something that keeps up measures *exactly*
+1.0x, so noise straddles the threshold either way.
+
+If the channel starts flapping again, the next levers in order are **640x480**
+output (another 1.33x of headroom, at the cost of 16:9) or removing the strip.
+Judge by whether **fallback filler actually starts**, not by `[FTL]` count —
+`grep -ci colorbars` over `/config/logs/ersatztv<date>.log` is the honest
+signal.
+
 ## Wiring it into the schedule
 
 `tools/wire-graphics.py` rewrites `playout/channel-z0.yml`, inserting the
