@@ -8,7 +8,7 @@ human once it is running.
 |---|---|---|
 | Channel bug (bottom right) | `branding/z0-bug.png`, made by `tools/make-bug.sh` | static |
 | Weather card (top right) | `branding/z0-weather-card.png` | every 15 min |
-| Crawl (bottom strip) | `branding/z0-crawl.ass` — forecast + the next programmes off the EPG | every 15 min |
+| Info strip (bottom) | `branding/z0-crawl.ass` — forecast + the next programmes off the EPG, paged not scrolled | every 15 min |
 | "NEXT ·" lower third | ErsatzTV's own guide, via `epg_entries` | per programme |
 | The Weather Desk (full screen) | `weather/z0-local-forecast.mp4`, 2 min, 4×/day | hourly |
 
@@ -89,9 +89,55 @@ image was built without it despite advertising freetype and fontconfig, so the
 `make-*.sh` generators could not run against it. The 26.7.1 image has it.
 
 **A crawl over a feature film is what makes people switch off.** The schedule
-turns the crawl off around each feature and overnight during colour bars, and
+turns the strip off around each feature and overnight during colour bars, and
 turns the weather card off during the weather segment itself (it repeats the
 segment and collides with its header).
+
+**A subtitle element costs a full-frame composite on every frame, and the price
+is the channel's resolution.** This is the big one: it took the channel off air
+25 times in one morning.
+
+ErsatzTV composites graphics itself, in-process, and pipes one full-frame RGBA
+stream into ffmpeg as input `[1:0]`. Image and text elements are rasterised
+once and reused, so they are nearly free — the heaviest item on the channel ran
+**1.28x** with the bug, card and up-next all on. Add the subtitle element and
+the same class of item drops to **0.25x**, whatever the source: a 640x480
+cartoon and a 1080p feature both landed there. ErsatzTV then logs
+
+```
+[FTL] Media item [N] on channel 0 transcoded at 0.254x (NOT throttled)
+      which is NOT fast enough to support playback
+```
+
+abandons the item and cuts to **fallback colour bars, which carry no graphics
+at all** — so the symptom is "the overlays vanished", not "the channel is
+slow", and the guide, the DB and `/api/status` all still look perfect.
+
+The clean natural experiment: item 2513 carried `{up-next, bug, strip}` and ran
+0.258x; item 2291 carried `{up-next, card, bug}` and ran 1.28x. **Same number of
+elements** — so it is the subtitle element specifically, not the overlay count.
+
+Three things it is *not*, each measured rather than assumed:
+
+- **Not libass.** ffmpeg renders the exact same `.ass` at **635 fps** (21x
+  realtime). The subtitle rasteriser was never the bottleneck.
+- **Not the box.** 12 cores at load 2.2, no cgroup CPU limit, ErsatzTV pinned
+  at ~238% — it had headroom and still underran. The cost is serialised inside
+  one process, so more cores will not fix it.
+- **Not animation.** The strip was rewritten from a scrolling `\move` crawl to
+  static paged text, so every frame within a page is byte-identical. It made
+  **no difference at all** — still 0.254x. ErsatzTV re-renders a subtitle
+  element every frame whether or not anything changed, so there is no
+  static-content fast path to exploit.
+
+What actually fixes it is **resolution**, because the per-frame cost is
+proportional to pixel count. The channel moved from 1920x1080 to **854x480**
+(5.06x fewer pixels) and the strip became affordable. That is the whole reason
+this is an SD channel — near enough everything in the library is a 480p or
+640x480 print anyway, so the picture loses nothing.
+
+If you ever put the channel back up to 720p or 1080p, **the bottom strip has to
+go**, or the channel will sit on colour bars.
 
 ## Wiring it into the schedule
 
@@ -142,3 +188,13 @@ the GTX 1650 was sitting completely idle while the CPU did all of it.
 
 One title still runs near the line: an interlaced 480p print that gets
 deinterlaced and upscaled 3× (~1.26x). That is the source, not the overlays.
+
+NVENC was necessary but **not sufficient** — it fixed the encode, not the
+overlay generation, and the channel still fell to colour bars once the bottom
+strip was on. That cost sits in ErsatzTV's own compositor, upstream of the
+encoder, so no encoder setting touches it. See "A subtitle element costs a
+full-frame composite on every frame" above.
+
+The channel therefore runs at **854x480 / 1500k** rather than 1920x1080 /
+2000k. Rule of thumb: image and text elements are free, a subtitle element
+costs about 4x realtime at 1080p, and that price scales with pixel count.
