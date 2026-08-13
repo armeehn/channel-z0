@@ -37,8 +37,19 @@ INK = "0x141414"
 PAPER = "0xF2F0E9"
 RED = "0xE02A1B"
 GREY = "0x8A8A8A"
-# Bottom information strip. CRAWL_Y is the top edge of the text box; the bug
-# sits above it (vertical_margin_percent 8 in z0-bug.yml) and must stay clear.
+# Bottom information strip.
+#
+# PLAYRES is the ASS coordinate space, and its ASPECT MUST MATCH THE CHANNEL'S.
+# libass scales x by frame_width/PlayResX and y by frame_height/PlayResY, so a
+# 16:9 script rendered into the 4:3 channel squashes every glyph horizontally
+# by a third. Keeping PlayResY at 1080 means font sizes and CRAWL_Y below stay
+# meaningful whatever the output resolution; only PlayResX changes with aspect.
+# 1440x1080 is 4:3; use 1920x1080 if the channel ever goes back to 16:9.
+PLAYRES_X = int(os.environ.get("Z0_PLAYRES_X", "1440"))
+PLAYRES_Y = int(os.environ.get("Z0_PLAYRES_Y", "1080"))
+
+# CRAWL_Y is the top edge of the text box; the bug sits above it
+# (vertical_margin_percent 8 in z0-bug.yml) and must stay clear.
 MARGIN_X = 48
 CRAWL_Y = 1012
 DWELL = 9.0  # seconds a page holds before the next one replaces it
@@ -380,7 +391,7 @@ def build_crawl(wx, upcoming, path):
     # frame with the left margin, rather than one bit per page (too sparse).
     size = 34
     sep = "   ·   "
-    max_chars = int((1920 - 2 * MARGIN_X) / (size * 0.6))
+    max_chars = int((PLAYRES_X - 2 * MARGIN_X) / (size * 0.6))
 
     pages, cur_page = [], []
     for b in bits:
@@ -395,8 +406,8 @@ def build_crawl(wx, upcoming, path):
 
     header = f"""[Script Info]
 ScriptType: v4.00+
-PlayResX: 1920
-PlayResY: 1080
+PlayResX: {PLAYRES_X}
+PlayResY: {PLAYRES_Y}
 WrapStyle: 2
 ScaledBorderAndShadow: yes
 
