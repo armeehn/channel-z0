@@ -46,6 +46,7 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | [`docs/clustering.md`](docs/clustering.md) | **More than one machine.** Node roles, failover, and what can't be load-balanced |
 | [`docs/self-hosting.md`](docs/self-hosting.md) | Run master control on a homelab — Proxmox & TrueNAS, GPU passthrough, tips |
 | [`docs/gear-and-costs.md`](docs/gear-and-costs.md) | Hardware picks, VPS comparison, bandwidth math, budgets |
+| [`docs/weather.md`](docs/weather.md) | **On-air graphics.** The bug, the weather desk, the crawl, and the traps in ErsatzTV’s graphics engine |
 | [`docs/ad-standards.md`](docs/ad-standards.md) | The one-page rulebook for locally submitted commercials |
 | [`docs/ideas.md`](docs/ideas.md) | The writers' room — what's shipped, what's next |
 | [`site/index.html`](site/index.html) | The storefront — live player, program grid, ad submissions (Riposte Labs design language) |
@@ -64,6 +65,8 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 |---|---|
 | `tools/bootstrap-node.sh` | Stand up a node from a bare machine — playout, tower, or worker ([manual](docs/clustering.md)) |
 | `tools/make-media-tree.sh` | Create the media library layout on the playout PC |
+| `tools/z0-weather.sh` | The weather desk — renders the corner card, the crawl and the forecast segment ([manual](docs/weather.md)) |
+| `tools/wire-graphics.py` | Wires the graphics elements and forecast slots into the broadcast week ([manual](docs/weather.md)) |
 | `tools/fetch-archive.sh` | Stock the library from archive.org — public domain only, resumable ([manual](docs/archive-fetch.md)) |
 | `tools/make-proxies.sh` | Build a test library — tiny stand-ins with identical runtimes, for trying schedules |
 | `tools/test-failover.sh` | Prove the cluster fails over and never double-publishes |
