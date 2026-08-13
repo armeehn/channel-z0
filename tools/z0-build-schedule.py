@@ -32,6 +32,8 @@ import argparse
 import datetime
 import sys
 
+import z0_intervals
+
 WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday",
             "saturday", "sunday"]
 
@@ -320,6 +322,8 @@ def main():
     ap.add_argument("--start-day", default="today",
                     help="weekday the first block should land on, or 'today'")
     ap.add_argument("--out", default="-")
+    ap.add_argument("--no-intervals", action="store_true",
+                    help="omit the generative-art station intervals")
     args = ap.parse_args()
 
     start = args.start_day.lower()
@@ -329,6 +333,12 @@ def main():
         raise SystemExit(f"--start-day must be one of {WEEKDAYS} or 'today'")
 
     days = {name: day_plan(name, spec) for name, spec in WEEK.items()}
+    if not args.no_intervals:
+        # Intervals are spliced into the finished instruction list rather than
+        # emitted inline by day_plan, because an interval's length depends on
+        # BOTH segments it sits between — which is only knowable once the day
+        # is complete. See tools/z0_intervals.py and docs/intervals.md.
+        days = {name: z0_intervals.splice(P) for name, P in days.items()}
     text = emit(days, start)
 
     if args.out == "-":
