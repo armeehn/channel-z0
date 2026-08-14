@@ -1,0 +1,90 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Z0 MUSIC CARD</title>
+<style>
+  /* Channel Z0 — LUNCH LOOPS music card.
+     Replaces 73 videos that were a bare dark gradient with no text at all: the
+     background rendered and the drawtext step silently did not, so a fifth of
+     the broadcast week aired a near-black frame with audio under it and the
+     viewer never learned what the track was.
+
+     SAFE AREA is tighter here than on the show cards. LUNCH LOOPS is one of the
+     few blocks where the bottom crawl is deliberately left UP for the whole two
+     hours (it is the community bulletin board), and the weather card sits top
+     right. So: nothing below y 375, and nothing right of x 420 above y 90. */
+  :root{
+    --ink:#0b0f14; --bone:#f6f1e7; --line:#5c554c;
+    --pink:#f0477d; --orange:#fe9a0d; --teal:#12b795;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;border-radius:0}
+  html,body{width:640px;height:480px;overflow:hidden}
+  body{
+    /* the original card's radial field, kept so the block still looks like
+       itself — only now there is something on top of it */
+    background:radial-gradient(circle at 50% 42%, #1b2733 0%, #0d141b 55%, #05080b 100%);
+    color:var(--bone); font-family:"JetBrains Mono",monospace;
+    -webkit-font-smoothing:antialiased; position:relative;
+  }
+  .triband{height:8px;
+    background:linear-gradient(105deg,var(--pink) 0 36%,var(--orange) 36% 64%,var(--teal) 64% 100%)}
+
+  .corner{position:absolute;width:13px;height:13px;border:2px solid var(--bone);opacity:.45}
+  .corner.tl{top:20px;left:18px;border-right:0;border-bottom:0}
+  .corner.bl{bottom:112px;left:18px;border-right:0;border-top:0}
+
+  .frame{padding:20px 40px 0 40px;width:440px}
+
+  .kickerrow{border-bottom:2px solid var(--bone);padding-bottom:8px}
+  .kicker{font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase}
+  .kicker .slash{color:var(--orange)}
+
+  /* the "now playing" mark — a hard-edged equaliser, no blur, brand accents */
+  .bars{position:absolute;top:120px;right:56px;display:flex;align-items:flex-end;
+    gap:7px;height:120px}
+  .bars i{display:block;width:15px;background:var(--line)}
+  .bars i:nth-child(1){height:44px}
+  .bars i:nth-child(2){height:96px;background:var(--orange)}
+  .bars i:nth-child(3){height:66px}
+  .bars i:nth-child(4){height:120px}
+  .bars i:nth-child(5){height:34px;background:var(--teal)}
+
+  .label{margin-top:26px;font-size:10px;font-weight:700;letter-spacing:.34em;
+    text-transform:uppercase;color:var(--line)}
+
+  #title{margin-top:10px;font-size:34px;font-weight:800;line-height:1.02;
+    letter-spacing:.01em;text-transform:uppercase;
+    /* long titles must not run into the equaliser or off the safe area */
+    overflow-wrap:anywhere}
+  .rule{height:2px;background:var(--bone);margin-top:14px;width:300px}
+  #artist{margin-top:12px;font-size:16px;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--orange)}
+
+  .foot{position:absolute;left:0;right:0;bottom:105px}
+  .datum{display:flex;justify-content:space-between;gap:18px;
+    background:#141b22;border-top:2px solid var(--bone);padding:6px 40px;
+    font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    white-space:nowrap}
+  .datum span{opacity:.82}
+</style>
+
+<div class="triband"></div>
+<span class="corner tl"></span><span class="corner bl"></span>
+
+<div class="bars"><i></i><i></i><i></i><i></i><i></i></div>
+
+<div class="frame">
+  <div class="kickerrow">
+    <div class="kicker">Channel Z0 <span class="slash">//</span> Lunch Loops</div>
+  </div>
+  <div class="label">Now playing</div>
+  <div id="title">TRACK TITLE</div>
+  <div class="rule"></div>
+  <div id="artist">ARTIST</div>
+</div>
+
+<div class="foot">
+  <div class="datum">
+    <span>Prairie Ukrainian-Canadian 78s</span>
+    <span>Public Domain</span>
+  </div>
+</div>
