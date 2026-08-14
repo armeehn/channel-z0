@@ -144,28 +144,49 @@ def strand(title, content, until, tomorrow=False, discard=6, trim=False):
     return [{"epg_group": True}, item, {"epg_group": False}]
 
 
-def coming_soon(title, card, filler, until, discard=6):
-    """A slot that is reserved but has no programme yet: open on the show's own
-    COMING SOON card, then pad the rest of the block from a themed pool.
+def coming_soon(title, card, until, discard=6):
+    """A slot that is reserved but has no programme yet: the card HOLDS the
+    whole block. Nothing else airs in it.
 
-    The card and the filler sit inside ONE guide group on purpose. Emitting
-    them as two groups puts two rows in the EPG with the same name — a
-    one-minute card followed by an hour of something else — which reads as a
-    scheduling fault rather than a held slot.
+    This is the second attempt and the history matters, because the first one
+    looked more sophisticated and was wrong. It played the card ONCE and then
+    padded the rest of the hour from a themed pool (schoolroom / newsreels),
+    with both under one guide title. The reasoning was that an hour of static
+    slate is dead air and a themed pool is better television.
 
-    No `pre_roll`/`post_roll` and no strip: this is a slate, and bracketing it
-    with idents and adverts would advertise a programme that does not exist
-    yet. `count:` is what plays exactly one card; `pad_until` alone could not,
-    and would also re-shuffle the card in among the filler."""
+    What that actually produced: you tuned to LAB HOUR at 11:00 and saw a
+    Prelinger classroom film, because the card was 60 seconds of a 60-minute
+    hour — and the guide labelled the whole hour COMING SOON, so the films were
+    also mislabelled. The instruction was to *block off* the slot. A slot that
+    still airs an hour of other programming is not blocked off; it is a slot
+    with a 60-second caption in front of it.
+
+    So the card now fills the block:
+
+    - `pad_until` FROM THE CARD POOL, not from content. The pool holds one
+      5-minute card, so an hour tiles in ~12 plays — the same order as an
+      ordinary SHORT SUBJECTS block. A 60-second card would have been booked
+      ~60 times, which is the documented "never pad_until with short items"
+      trap.
+    - `trim: true` cuts the last play so the block lands exactly on the clock
+      instead of stopping early and dropping into fallback filler.
+    - One `epg_group`, so the hour is a single honest guide entry that says
+      COMING SOON and means it.
+    - Still no `pre_roll`/`post_roll` and no strip: bracketing a slate with
+      idents and adverts would advertise a programme that does not exist yet.
+
+    The card carries a slow sliding accent marker for exactly one reason: an
+    hour of a genuinely static frame reads as a frozen channel rather than a
+    held slot."""
     return [
         {"epg_group": True},
-        {"count": 1, "content": card, "custom_title": title},
         {
             "pad_until": until,
             "tomorrow": False,
-            "content": filler,
+            "content": card,
             "custom_title": title,
             "discard_attempts": discard,
+            "trim": True,
         },
         {"epg_group": False},
     ]
@@ -184,8 +205,7 @@ def day_plan(name, spec):
     morning = spec.get("morning", "pl_cartoon_hour")
     P += strand("CARTOON BLOCK", morning, "09:00")
     P += strand("PRELINGER THEATRE", "prelinger", "11:00")
-    P += coming_soon("LAB HOUR — COMING SOON", "coming_soon_lab",
-                     "schoolroom", "12:00")
+    P += coming_soon("LAB HOUR — COMING SOON", "coming_soon_lab", "12:00")
 
     # ── Midday ────────────────────────────────────────────────────────────────
     P.append({"sequence": "weather_break"})
@@ -221,8 +241,7 @@ def day_plan(name, spec):
     nb_title, nb_content = spec.get(
         "neighbourhood", ("THE NEIGHBOURHOOD DESK", "pl_neighbourhood"))
     P += strand(nb_title, nb_content, "19:00")
-    P += coming_soon("GROUND ZERO — COMING SOON", "coming_soon_gnd",
-                     "newsreels", "20:00")
+    P += coming_soon("GROUND ZERO — COMING SOON", "coming_soon_gnd", "20:00")
 
     # ── Prime ─────────────────────────────────────────────────────────────────
     P += programme(*spec["prime"])
@@ -232,8 +251,8 @@ def day_plan(name, spec):
     if "second_feature" in spec:
         P += programme(*spec["second_feature"])
     else:
-        P += coming_soon("GROUND ZERO ENCORE — COMING SOON", "coming_soon_gnd",
-                         "newsreels", "23:00")
+        P += coming_soon("GROUND ZERO ENCORE — COMING SOON",
+                         "coming_soon_gnd", "23:00")
     P.append({"sequence": "station_break"})
     P += strand("SHORT SUBJECTS", "pad_short", "23:00")
 
