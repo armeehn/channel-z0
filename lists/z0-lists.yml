@@ -163,6 +163,21 @@ smart_collections:
   - name: Z0 Canada Shorts
     query: 'type:other_video AND tag:canada AND tag:shorts NOT tag:nfb'
 
+  # Added 2026-08-14 with the second Canadian sourcing pass. Pre-1950 scenic and
+  # travel reels — Niagara, the Rockies, Lake Louise, cross-country motor trips.
+  # A new pool rather than more `canada_shorts`, because a travelogue and a
+  # two-minute actuality pad very differently and the schedule can now ask for
+  # the one it wants.
+  - name: Z0 Canada Travelogues
+    query: 'type:other_video AND tag:canada AND tag:travelogue NOT tag:nfb'
+
+  # The Canadian newsreels from that pass deliberately carry the folder tag
+  # `newsreel` (singular) so they join Z0 Newsreels, which had exactly TWO items
+  # in it — GROUND ZERO has been padding a full hour from those two. This pool
+  # is the Canadian subset, for when the slot should be Canadian specifically.
+  - name: Z0 Canada Newsreels
+    query: 'type:other_video AND tag:canada AND tag:newsreel NOT tag:nfb'
+
   - name: Z0 Canadian Content
     query: 'type:other_video AND tag:canada NOT tag:nfb'
 
