@@ -361,3 +361,17 @@ content:
   # - smart_collection: Z0 Lab Hour
   #   key: lab_hour
   #   order: chronological
+
+  # ── Station intervals. Generative art rendered by tools/z0-generative.py:
+  #    Glitchsheet chains — a numpy source, a palette, and about half the time
+  #    an ffglitch codec pass — assembled into ~55 s pieces. Shuffled, and
+  #    trimmed to the exact length of whatever junction they are filling, so one
+  #    pool serves a four-minute interval and a four-second one.
+  #
+  #    A search rather than a collection, deliberately: the pool is meant to be
+  #    topped up by dropping more files in /media/generative and rescanning, with
+  #    no schedule change and nothing to add to a list by hand.
+  - search:
+    key: generative
+    query: 'type:other_video AND tag:generative'
+    order: shuffle
