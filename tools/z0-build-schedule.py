@@ -144,6 +144,33 @@ def strand(title, content, until, tomorrow=False, discard=6, trim=False):
     return [{"epg_group": True}, item, {"epg_group": False}]
 
 
+def coming_soon(title, card, filler, until, discard=6):
+    """A slot that is reserved but has no programme yet: open on the show's own
+    COMING SOON card, then pad the rest of the block from a themed pool.
+
+    The card and the filler sit inside ONE guide group on purpose. Emitting
+    them as two groups puts two rows in the EPG with the same name — a
+    one-minute card followed by an hour of something else — which reads as a
+    scheduling fault rather than a held slot.
+
+    No `pre_roll`/`post_roll` and no strip: this is a slate, and bracketing it
+    with idents and adverts would advertise a programme that does not exist
+    yet. `count:` is what plays exactly one card; `pad_until` alone could not,
+    and would also re-shuffle the card in among the filler."""
+    return [
+        {"epg_group": True},
+        {"count": 1, "content": card, "custom_title": title},
+        {
+            "pad_until": until,
+            "tomorrow": False,
+            "content": filler,
+            "custom_title": title,
+            "discard_attempts": discard,
+        },
+        {"epg_group": False},
+    ]
+
+
 def day_plan(name, spec):
     """The common shape of a Z0 day, with the themed slots filled in."""
     P = []
@@ -157,7 +184,8 @@ def day_plan(name, spec):
     morning = spec.get("morning", "pl_cartoon_hour")
     P += strand("CARTOON BLOCK", morning, "09:00")
     P += strand("PRELINGER THEATRE", "prelinger", "11:00")
-    P += strand("LAB HOUR (STANDBY)", "schoolroom", "12:00")
+    P += coming_soon("LAB HOUR — COMING SOON", "coming_soon_lab",
+                     "schoolroom", "12:00")
 
     # ── Midday ────────────────────────────────────────────────────────────────
     P.append({"sequence": "weather_break"})
@@ -185,13 +213,16 @@ def day_plan(name, spec):
     # ── Early evening ─────────────────────────────────────────────────────────
     # 19:00 GROUND ZERO and 00:00 SIGN-OFF are the two fixed points that never
     # move — the station's heartbeat. GROUND ZERO has no footage yet, so the
-    # slot is held at the right time and filled from the newsreel pool; the
-    # shape of the day is the point.
+    # slot is held at the right time: it opens on the programme's COMING SOON
+    # card and is then filled from the newsreel pool. The shape of the day is
+    # the point, and the card is what tells a viewer the slot is reserved
+    # rather than broken.
     P.append({"sequence": "weather_break"})
     nb_title, nb_content = spec.get(
         "neighbourhood", ("THE NEIGHBOURHOOD DESK", "pl_neighbourhood"))
     P += strand(nb_title, nb_content, "19:00")
-    P += strand("GROUND ZERO (STANDBY)", "newsreels", "20:00")
+    P += coming_soon("GROUND ZERO — COMING SOON", "coming_soon_gnd",
+                     "newsreels", "20:00")
 
     # ── Prime ─────────────────────────────────────────────────────────────────
     P += programme(*spec["prime"])
@@ -201,7 +232,8 @@ def day_plan(name, spec):
     if "second_feature" in spec:
         P += programme(*spec["second_feature"])
     else:
-        P += strand("GROUND ZERO — ENCORE (STANDBY)", "newsreels", "23:00")
+        P += coming_soon("GROUND ZERO ENCORE — COMING SOON", "coming_soon_gnd",
+                         "newsreels", "23:00")
     P.append({"sequence": "station_break"})
     P += strand("SHORT SUBJECTS", "pad_short", "23:00")
 

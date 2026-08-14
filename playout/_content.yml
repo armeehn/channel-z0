@@ -229,6 +229,14 @@ content:
     key: canada_shorts
     order: shuffle
 
+  - smart_collection: Z0 Canada Travelogues
+    key: canada_travelogues
+    order: shuffle
+
+  - smart_collection: Z0 Canada Newsreels
+    key: canada_newsreels
+    order: shuffle
+
   - smart_collection: Z0 Prairie Music
     key: prairie
     order: shuffle
@@ -361,6 +369,29 @@ content:
   # - smart_collection: Z0 Lab Hour
   #   key: lab_hour
   #   order: chronological
+
+  # ── The COMING SOON cards for those two slots.
+  #    Each slot now OPENS on its programme's own card and then pads from a
+  #    themed pool, so a viewer sees the slot is reserved rather than finding
+  #    an unexplained hour of schoolroom films under a name with "(STANDBY)"
+  #    after it. See coming_soon() in tools/z0-build-schedule.py.
+  #
+  #    Deliberately NOT in shows/Ground Zero or shows/Lab Hour: when real
+  #    episodes land in those folders they must not have to share a pool with
+  #    a placeholder slate. Switching a slot from card to programme then stays
+  #    a one-line `content:` change, which is what the note above promises.
+  #
+  #    Folder tags are single words (cards/labhour, cards/groundzero) because
+  #    the analyzer does not split on hyphens — `tag:lab-hour` would not match.
+  - search:
+    key: coming_soon_lab
+    query: 'type:other_video AND tag:cards AND tag:labhour'
+    order: shuffle
+
+  - search:
+    key: coming_soon_gnd
+    query: 'type:other_video AND tag:cards AND tag:groundzero'
+    order: shuffle
 
   # ── Station intervals. Generative art rendered by tools/z0-generative.py:
   #    Glitchsheet chains — a numpy source, a palette, and about half the time
