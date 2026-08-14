@@ -30,35 +30,83 @@ playout:
   # ═════════════════════════════════════════════════════════════════════════
   # THURSDAY  (block 1 of 7)
   # ═════════════════════════════════════════════════════════════════════════
-  - sequence: 'sign_on'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '06:30'
+  - duration: '00:00:08'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'sign_on'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:08'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '06:26'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '07:00'
+  - duration: '00:03:37'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '06:56'
     tomorrow: false
     content: 'slowtv'
     custom_title: 'STRETCH AND COFFEE'
     discard_attempts: 4
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '09:00'
+  - duration: '00:03:45'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '08:56'
     tomorrow: false
     content: 'pl_cartoon_hour'
     custom_title: 'CARTOON BLOCK'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '11:00'
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '10:56'
     tomorrow: false
     content: 'prelinger'
     custom_title: 'PRELINGER THEATRE'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '12:00'
     tomorrow: false
@@ -66,14 +114,38 @@ playout:
     custom_title: 'LAB HOUR (STANDBY)'
     discard_attempts: 6
   - epg_group: false
-  - sequence: 'weather_break'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '14:00'
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '13:58'
     tomorrow: false
     content: 'pl_lunch_loops'
     custom_title: 'LUNCH LOOPS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
@@ -87,13 +159,29 @@ playout:
   - pre_roll: false
   - post_roll: false
   - sequence: 'strip_up'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '16:00'
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '15:56'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '18:00'
     tomorrow: false
@@ -101,21 +189,53 @@ playout:
     custom_title: 'CARTOON BLOCK II'
     discard_attempts: 6
   - epg_group: false
-  - sequence: 'weather_break'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '19:00'
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '18:56'
     tomorrow: false
     content: 'pl_neighbourhood'
     custom_title: 'THE NEIGHBOURHOOD DESK'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '20:00'
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '19:58'
     tomorrow: false
     content: 'newsreels'
     custom_title: 'GROUND ZERO (STANDBY)'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
@@ -129,13 +249,29 @@ playout:
   - pre_roll: false
   - post_roll: false
   - sequence: 'strip_up'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '22:00'
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '21:56'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '23:00'
     tomorrow: false
@@ -144,6 +280,14 @@ playout:
     discard_attempts: 6
   - epg_group: false
   - sequence: 'station_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '23:00'
     tomorrow: false
@@ -151,28 +295,76 @@ playout:
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - watermark: true
     name: 'Z0 Bug Late Night'
   - epg_group: true
-  - pad_until: '00:00'
+  - pad_until: '23:58'
     tomorrow: true
     content: 'cult'
     custom_title: 'CHAPTER''S END'
     discard_attempts: 8
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - watermark: false
   - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'sign_off'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - sequence: 'overnight_variety'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:52'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - shuffle_sequence: 'overnight_variety'
   - epg_group: true
-  - pad_until: '05:30'
+  - pad_until: '05:26'
     tomorrow: true
     content: 'overnight'
     custom_title: 'THE ALL-NIGHT SHOW'
     discard_attempts: 8
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:03:45'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '06:00'
     tomorrow: true
@@ -186,35 +378,83 @@ playout:
   # ═════════════════════════════════════════════════════════════════════════
   # FRIDAY  (block 2 of 7)
   # ═════════════════════════════════════════════════════════════════════════
-  - sequence: 'sign_on'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '06:30'
+  - duration: '00:00:08'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'sign_on'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:08'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '06:26'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '07:00'
+  - duration: '00:03:37'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '06:56'
     tomorrow: false
     content: 'slowtv'
     custom_title: 'STRETCH AND COFFEE'
     discard_attempts: 4
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '09:00'
+  - duration: '00:03:45'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '08:56'
     tomorrow: false
     content: 'pl_cartoon_hour'
     custom_title: 'CARTOON BLOCK'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '11:00'
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '10:56'
     tomorrow: false
     content: 'prelinger'
     custom_title: 'PRELINGER THEATRE'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '12:00'
     tomorrow: false
@@ -222,14 +462,38 @@ playout:
     custom_title: 'LAB HOUR (STANDBY)'
     discard_attempts: 6
   - epg_group: false
-  - sequence: 'weather_break'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '14:00'
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '13:58'
     tomorrow: false
     content: 'pl_lunch_loops'
     custom_title: 'LUNCH LOOPS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
@@ -243,13 +507,29 @@ playout:
   - pre_roll: false
   - post_roll: false
   - sequence: 'strip_up'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '16:00'
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '15:56'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '18:00'
     tomorrow: false
@@ -257,21 +537,53 @@ playout:
     custom_title: 'CARTOON BLOCK II'
     discard_attempts: 6
   - epg_group: false
-  - sequence: 'weather_break'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '19:00'
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '18:56'
     tomorrow: false
     content: 'pl_neighbourhood'
     custom_title: 'THE NEIGHBOURHOOD DESK'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '20:00'
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '19:58'
     tomorrow: false
     content: 'newsreels'
     custom_title: 'GROUND ZERO (STANDBY)'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
@@ -285,13 +597,29 @@ playout:
   - pre_roll: false
   - post_roll: false
   - sequence: 'strip_up'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '22:00'
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '21:56'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '23:00'
     tomorrow: false
@@ -300,6 +628,14 @@ playout:
     discard_attempts: 6
   - epg_group: false
   - sequence: 'station_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '23:00'
     tomorrow: false
@@ -307,28 +643,76 @@ playout:
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - watermark: true
     name: 'Z0 Bug Late Night'
   - epg_group: true
-  - pad_until: '00:00'
+  - pad_until: '23:58'
     tomorrow: true
     content: 'late_show'
     custom_title: 'THE LATE LATE SHOW'
     discard_attempts: 8
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - watermark: false
   - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'sign_off'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - sequence: 'overnight_variety'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:52'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - shuffle_sequence: 'overnight_variety'
   - epg_group: true
-  - pad_until: '05:30'
+  - pad_until: '05:26'
     tomorrow: true
     content: 'overnight'
     custom_title: 'THE ALL-NIGHT SHOW'
     discard_attempts: 8
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:03:45'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '06:00'
     tomorrow: true
@@ -342,35 +726,83 @@ playout:
   # ═════════════════════════════════════════════════════════════════════════
   # SATURDAY  (block 3 of 7)
   # ═════════════════════════════════════════════════════════════════════════
-  - sequence: 'sign_on'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '06:30'
+  - duration: '00:00:08'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'sign_on'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:08'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '06:26'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '07:00'
+  - duration: '00:03:37'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '06:56'
     tomorrow: false
     content: 'slowtv'
     custom_title: 'STRETCH AND COFFEE'
     discard_attempts: 4
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '09:00'
+  - duration: '00:03:45'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '08:56'
     tomorrow: false
     content: 'pl_saturday_morning'
     custom_title: 'CARTOON BLOCK'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '11:00'
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '10:56'
     tomorrow: false
     content: 'prelinger'
     custom_title: 'PRELINGER THEATRE'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '12:00'
     tomorrow: false
@@ -378,14 +810,38 @@ playout:
     custom_title: 'LAB HOUR (STANDBY)'
     discard_attempts: 6
   - epg_group: false
-  - sequence: 'weather_break'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '14:00'
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '13:58'
     tomorrow: false
     content: 'pl_lunch_loops'
     custom_title: 'LUNCH LOOPS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
@@ -399,13 +855,29 @@ playout:
   - pre_roll: false
   - post_roll: false
   - sequence: 'strip_up'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '16:00'
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '15:56'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '18:00'
     tomorrow: false
@@ -413,21 +885,53 @@ playout:
     custom_title: 'CARTOON BLOCK II'
     discard_attempts: 6
   - epg_group: false
-  - sequence: 'weather_break'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '19:00'
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '18:56'
     tomorrow: false
     content: 'pl_neighbourhood'
     custom_title: 'THE NEIGHBOURHOOD DESK'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '20:00'
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '19:58'
     tomorrow: false
     content: 'newsreels'
     custom_title: 'GROUND ZERO (STANDBY)'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
@@ -441,13 +945,29 @@ playout:
   - pre_roll: false
   - post_roll: false
   - sequence: 'strip_up'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '22:00'
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '21:58'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
@@ -462,35 +982,91 @@ playout:
   - post_roll: false
   - sequence: 'strip_up'
   - sequence: 'station_break'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '23:00'
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '22:56'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - watermark: true
     name: 'Z0 Bug Late Night'
   - epg_group: true
-  - pad_until: '00:00'
+  - pad_until: '23:58'
     tomorrow: true
     content: 'late_show'
     custom_title: 'THE LATE LATE SHOW'
     discard_attempts: 8
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - watermark: false
   - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'sign_off'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - sequence: 'overnight_variety'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:52'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - shuffle_sequence: 'overnight_variety'
   - epg_group: true
-  - pad_until: '05:30'
+  - pad_until: '05:26'
     tomorrow: true
     content: 'overnight'
     custom_title: 'THE ALL-NIGHT SHOW'
     discard_attempts: 8
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:03:45'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '06:00'
     tomorrow: true
@@ -504,35 +1080,83 @@ playout:
   # ═════════════════════════════════════════════════════════════════════════
   # SUNDAY  (block 4 of 7)
   # ═════════════════════════════════════════════════════════════════════════
-  - sequence: 'sign_on'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '06:30'
+  - duration: '00:00:08'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'sign_on'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:08'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '06:26'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '07:00'
+  - duration: '00:03:37'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '06:56'
     tomorrow: false
     content: 'slowtv'
     custom_title: 'STRETCH AND COFFEE'
     discard_attempts: 4
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '09:00'
+  - duration: '00:03:45'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '08:56'
     tomorrow: false
     content: 'pl_cartoon_hour'
     custom_title: 'CARTOON BLOCK'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '11:00'
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '10:56'
     tomorrow: false
     content: 'prelinger'
     custom_title: 'PRELINGER THEATRE'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '12:00'
     tomorrow: false
@@ -540,14 +1164,38 @@ playout:
     custom_title: 'LAB HOUR (STANDBY)'
     discard_attempts: 6
   - epg_group: false
-  - sequence: 'weather_break'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '14:00'
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '13:58'
     tomorrow: false
     content: 'pl_lunch_loops'
     custom_title: 'LUNCH LOOPS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
@@ -561,13 +1209,29 @@ playout:
   - pre_roll: false
   - post_roll: false
   - sequence: 'strip_up'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '16:00'
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '15:56'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '18:00'
     tomorrow: false
@@ -575,21 +1239,53 @@ playout:
     custom_title: 'CARTOON BLOCK II'
     discard_attempts: 6
   - epg_group: false
-  - sequence: 'weather_break'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '19:00'
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '18:56'
     tomorrow: false
     content: 'pl_vancouver_night'
     custom_title: 'CANADA NIGHT'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '20:00'
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '19:58'
     tomorrow: false
     content: 'newsreels'
     custom_title: 'GROUND ZERO (STANDBY)'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
@@ -603,13 +1299,29 @@ playout:
   - pre_roll: false
   - post_roll: false
   - sequence: 'strip_up'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '22:00'
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '21:56'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '23:00'
     tomorrow: false
@@ -618,6 +1330,14 @@ playout:
     discard_attempts: 6
   - epg_group: false
   - sequence: 'station_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '23:00'
     tomorrow: false
@@ -625,28 +1345,76 @@ playout:
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - watermark: true
     name: 'Z0 Bug Late Night'
   - epg_group: true
-  - pad_until: '00:00'
+  - pad_until: '23:58'
     tomorrow: true
     content: 'slowtv'
     custom_title: 'NIGHT PATTERN'
     discard_attempts: 8
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - watermark: false
   - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'sign_off'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - sequence: 'overnight_variety'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:52'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - shuffle_sequence: 'overnight_variety'
   - epg_group: true
-  - pad_until: '05:30'
+  - pad_until: '05:26'
     tomorrow: true
     content: 'overnight'
     custom_title: 'THE ALL-NIGHT SHOW'
     discard_attempts: 8
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:03:45'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '06:00'
     tomorrow: true
@@ -660,35 +1428,83 @@ playout:
   # ═════════════════════════════════════════════════════════════════════════
   # MONDAY  (block 5 of 7)
   # ═════════════════════════════════════════════════════════════════════════
-  - sequence: 'sign_on'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '06:30'
+  - duration: '00:00:08'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'sign_on'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:08'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '06:26'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '07:00'
+  - duration: '00:03:37'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '06:56'
     tomorrow: false
     content: 'slowtv'
     custom_title: 'STRETCH AND COFFEE'
     discard_attempts: 4
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '09:00'
+  - duration: '00:03:45'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '08:56'
     tomorrow: false
     content: 'pl_cartoon_hour'
     custom_title: 'CARTOON BLOCK'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '11:00'
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '10:56'
     tomorrow: false
     content: 'prelinger'
     custom_title: 'PRELINGER THEATRE'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '12:00'
     tomorrow: false
@@ -696,14 +1512,38 @@ playout:
     custom_title: 'LAB HOUR (STANDBY)'
     discard_attempts: 6
   - epg_group: false
-  - sequence: 'weather_break'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '14:00'
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '13:58'
     tomorrow: false
     content: 'pl_lunch_loops'
     custom_title: 'LUNCH LOOPS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
@@ -717,13 +1557,29 @@ playout:
   - pre_roll: false
   - post_roll: false
   - sequence: 'strip_up'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '16:00'
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '15:56'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '18:00'
     tomorrow: false
@@ -731,21 +1587,53 @@ playout:
     custom_title: 'CARTOON BLOCK II'
     discard_attempts: 6
   - epg_group: false
-  - sequence: 'weather_break'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '19:00'
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '18:56'
     tomorrow: false
     content: 'pl_neighbourhood'
     custom_title: 'THE NEIGHBOURHOOD DESK'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '20:00'
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '19:58'
     tomorrow: false
     content: 'newsreels'
     custom_title: 'GROUND ZERO (STANDBY)'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
@@ -759,13 +1647,29 @@ playout:
   - pre_roll: false
   - post_roll: false
   - sequence: 'strip_up'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '22:00'
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '21:56'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '23:00'
     tomorrow: false
@@ -774,6 +1678,14 @@ playout:
     discard_attempts: 6
   - epg_group: false
   - sequence: 'station_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '23:00'
     tomorrow: false
@@ -781,28 +1693,76 @@ playout:
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - watermark: true
     name: 'Z0 Bug Late Night'
   - epg_group: true
-  - pad_until: '00:00'
+  - pad_until: '23:58'
     tomorrow: true
     content: 'soundies'
     custom_title: 'AFTER HOURS'
     discard_attempts: 8
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - watermark: false
   - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'sign_off'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - sequence: 'overnight_variety'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:52'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - shuffle_sequence: 'overnight_variety'
   - epg_group: true
-  - pad_until: '05:30'
+  - pad_until: '05:26'
     tomorrow: true
     content: 'overnight'
     custom_title: 'THE ALL-NIGHT SHOW'
     discard_attempts: 8
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:03:45'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '06:00'
     tomorrow: true
@@ -816,35 +1776,83 @@ playout:
   # ═════════════════════════════════════════════════════════════════════════
   # TUESDAY  (block 6 of 7)
   # ═════════════════════════════════════════════════════════════════════════
-  - sequence: 'sign_on'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '06:30'
+  - duration: '00:00:08'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'sign_on'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:08'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '06:26'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '07:00'
+  - duration: '00:03:37'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '06:56'
     tomorrow: false
     content: 'slowtv'
     custom_title: 'STRETCH AND COFFEE'
     discard_attempts: 4
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '09:00'
+  - duration: '00:03:45'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '08:56'
     tomorrow: false
     content: 'pl_cartoon_hour'
     custom_title: 'CARTOON BLOCK'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '11:00'
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '10:56'
     tomorrow: false
     content: 'prelinger'
     custom_title: 'PRELINGER THEATRE'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '12:00'
     tomorrow: false
@@ -852,14 +1860,38 @@ playout:
     custom_title: 'LAB HOUR (STANDBY)'
     discard_attempts: 6
   - epg_group: false
-  - sequence: 'weather_break'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '14:00'
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '13:58'
     tomorrow: false
     content: 'pl_lunch_loops'
     custom_title: 'LUNCH LOOPS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
@@ -873,13 +1905,29 @@ playout:
   - pre_roll: false
   - post_roll: false
   - sequence: 'strip_up'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '16:00'
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '15:56'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '18:00'
     tomorrow: false
@@ -887,21 +1935,53 @@ playout:
     custom_title: 'CARTOON BLOCK II'
     discard_attempts: 6
   - epg_group: false
-  - sequence: 'weather_break'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '19:00'
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '18:56'
     tomorrow: false
     content: 'pl_neighbourhood'
     custom_title: 'THE NEIGHBOURHOOD DESK'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '20:00'
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '19:58'
     tomorrow: false
     content: 'newsreels'
     custom_title: 'GROUND ZERO (STANDBY)'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
@@ -915,13 +1995,29 @@ playout:
   - pre_roll: false
   - post_roll: false
   - sequence: 'strip_up'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '22:00'
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '21:56'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '23:00'
     tomorrow: false
@@ -930,6 +2026,14 @@ playout:
     discard_attempts: 6
   - epg_group: false
   - sequence: 'station_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '23:00'
     tomorrow: false
@@ -937,28 +2041,76 @@ playout:
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - watermark: true
     name: 'Z0 Bug Late Night'
   - epg_group: true
-  - pad_until: '00:00'
+  - pad_until: '23:58'
     tomorrow: true
     content: 'science'
     custom_title: 'THE LATE TRANSMISSION'
     discard_attempts: 8
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - watermark: false
   - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'sign_off'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - sequence: 'overnight_variety'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:52'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - shuffle_sequence: 'overnight_variety'
   - epg_group: true
-  - pad_until: '05:30'
+  - pad_until: '05:26'
     tomorrow: true
     content: 'overnight'
     custom_title: 'THE ALL-NIGHT SHOW'
     discard_attempts: 8
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:03:45'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '06:00'
     tomorrow: true
@@ -972,35 +2124,83 @@ playout:
   # ═════════════════════════════════════════════════════════════════════════
   # WEDNESDAY  (block 7 of 7)
   # ═════════════════════════════════════════════════════════════════════════
-  - sequence: 'sign_on'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '06:30'
+  - duration: '00:00:08'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'sign_on'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:08'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '06:26'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '07:00'
+  - duration: '00:03:37'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '06:56'
     tomorrow: false
     content: 'slowtv'
     custom_title: 'STRETCH AND COFFEE'
     discard_attempts: 4
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '09:00'
+  - duration: '00:03:45'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '08:56'
     tomorrow: false
     content: 'pl_cartoon_hour'
     custom_title: 'CARTOON BLOCK'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '11:00'
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '10:56'
     tomorrow: false
     content: 'prelinger'
     custom_title: 'PRELINGER THEATRE'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '12:00'
     tomorrow: false
@@ -1008,14 +2208,38 @@ playout:
     custom_title: 'LAB HOUR (STANDBY)'
     discard_attempts: 6
   - epg_group: false
-  - sequence: 'weather_break'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '14:00'
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '13:58'
     tomorrow: false
     content: 'pl_lunch_loops'
     custom_title: 'LUNCH LOOPS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
@@ -1029,13 +2253,29 @@ playout:
   - pre_roll: false
   - post_roll: false
   - sequence: 'strip_up'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '16:00'
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '15:56'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '18:00'
     tomorrow: false
@@ -1043,21 +2283,53 @@ playout:
     custom_title: 'CARTOON BLOCK II'
     discard_attempts: 6
   - epg_group: false
-  - sequence: 'weather_break'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '19:00'
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '18:56'
     tomorrow: false
     content: 'pl_neighbourhood'
     custom_title: 'THE NEIGHBOURHOOD DESK'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '20:00'
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '19:58'
     tomorrow: false
     content: 'newsreels'
     custom_title: 'GROUND ZERO (STANDBY)'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
@@ -1071,13 +2343,29 @@ playout:
   - pre_roll: false
   - post_roll: false
   - sequence: 'strip_up'
+  - graphics_off: null
   - epg_group: true
-  - pad_until: '22:00'
+  - duration: '00:01:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
+  - epg_group: true
+  - pad_until: '21:56'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:04:00'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '23:00'
     tomorrow: false
@@ -1086,6 +2374,14 @@ playout:
     discard_attempts: 6
   - epg_group: false
   - sequence: 'station_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '23:00'
     tomorrow: false
@@ -1093,28 +2389,76 @@ playout:
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - watermark: true
     name: 'Z0 Bug Late Night'
   - epg_group: true
-  - pad_until: '00:00'
+  - pad_until: '23:58'
     tomorrow: true
     content: 'industrial'
     custom_title: 'NIGHT PATTERN'
     discard_attempts: 8
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:15'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - watermark: false
   - sequence: 'weather_break'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'sign_off'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:00:04'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - sequence: 'strip_down'
   - sequence: 'overnight_variety'
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:01:52'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - shuffle_sequence: 'overnight_variety'
   - epg_group: true
-  - pad_until: '05:30'
+  - pad_until: '05:26'
     tomorrow: true
     content: 'overnight'
     custom_title: 'THE ALL-NIGHT SHOW'
     discard_attempts: 8
   - epg_group: false
+  - graphics_off: null
+  - epg_group: true
+  - duration: '00:03:45'
+    content: 'generative'
+    trim: true
+    custom_title: 'STATION INTERVAL'
+  - epg_group: false
+  - sequence: 'graphics_up'
   - epg_group: true
   - pad_until: '06:00'
     tomorrow: true
