@@ -114,14 +114,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_lab'
-    custom_title: 'LAB HOUR — COMING SOON'
   - pad_until: '12:00'
     tomorrow: false
-    content: 'schoolroom'
+    content: 'coming_soon_lab'
     custom_title: 'LAB HOUR — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - graphics_off: null
   - epg_group: true
@@ -239,14 +237,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_gnd'
-    custom_title: 'GROUND ZERO — COMING SOON'
   - pad_until: '19:58'
     tomorrow: false
-    content: 'newsreels'
+    content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - graphics_off: null
   - epg_group: true
@@ -296,14 +292,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_gnd'
-    custom_title: 'GROUND ZERO ENCORE — COMING SOON'
   - pad_until: '23:00'
     tomorrow: false
-    content: 'newsreels'
+    content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO ENCORE — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - sequence: 'station_break'
   - graphics_off: null
@@ -495,14 +489,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_lab'
-    custom_title: 'LAB HOUR — COMING SOON'
   - pad_until: '12:00'
     tomorrow: false
-    content: 'schoolroom'
+    content: 'coming_soon_lab'
     custom_title: 'LAB HOUR — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - graphics_off: null
   - epg_group: true
@@ -620,14 +612,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_gnd'
-    custom_title: 'GROUND ZERO — COMING SOON'
   - pad_until: '19:58'
     tomorrow: false
-    content: 'newsreels'
+    content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - graphics_off: null
   - epg_group: true
@@ -677,14 +667,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_gnd'
-    custom_title: 'GROUND ZERO ENCORE — COMING SOON'
   - pad_until: '23:00'
     tomorrow: false
-    content: 'newsreels'
+    content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO ENCORE — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - sequence: 'station_break'
   - graphics_off: null
@@ -812,7 +800,7 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - pad_until: '06:26'
+  - pad_until: '06:56'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
@@ -820,7 +808,7 @@ playout:
   - epg_group: false
   - graphics_off: null
   - epg_group: true
-  - duration: '00:03:37'
+  - duration: '00:04:00'
     content: 'generative'
     trim: true
     filler_kind: 'preroll'
@@ -828,26 +816,10 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - pad_until: '06:56'
-    tomorrow: false
-    content: 'slowtv'
-    custom_title: 'STRETCH AND COFFEE'
-    discard_attempts: 4
-  - epg_group: false
-  - graphics_off: null
-  - epg_group: true
-  - duration: '00:03:45'
-    content: 'generative'
-    trim: true
-    filler_kind: 'preroll'
-    custom_title: 'STATION INTERVAL'
-  - epg_group: false
-  - sequence: 'graphics_up'
-  - epg_group: true
-  - pad_until: '08:56'
+  - pad_until: '09:56'
     tomorrow: false
     content: 'pl_saturday_morning'
-    custom_title: 'CARTOON BLOCK'
+    custom_title: 'CARTOON CARNIVAL'
     discard_attempts: 6
   - epg_group: false
   - graphics_off: null
@@ -876,14 +848,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_lab'
-    custom_title: 'LAB HOUR — COMING SOON'
   - pad_until: '12:00'
     tomorrow: false
-    content: 'schoolroom'
+    content: 'coming_soon_lab'
     custom_title: 'LAB HOUR — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - graphics_off: null
   - epg_group: true
@@ -905,7 +875,7 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - pad_until: '13:58'
+  - pad_until: '12:58'
     tomorrow: false
     content: 'pl_lunch_loops'
     custom_title: 'LUNCH LOOPS'
@@ -1001,14 +971,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_gnd'
-    custom_title: 'GROUND ZERO — COMING SOON'
   - pad_until: '19:58'
     tomorrow: false
-    content: 'newsreels'
+    content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - graphics_off: null
   - epg_group: true
@@ -1042,7 +1010,7 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - pad_until: '21:58'
+  - pad_until: '22:28'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
@@ -1081,7 +1049,7 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - pad_until: '22:56'
+  - pad_until: '22:58'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
@@ -1089,7 +1057,7 @@ playout:
   - epg_group: false
   - graphics_off: null
   - epg_group: true
-  - duration: '00:04:00'
+  - duration: '00:02:30'
     content: 'generative'
     trim: true
     filler_kind: 'preroll'
@@ -1212,27 +1180,11 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - pad_until: '06:56'
-    tomorrow: false
-    content: 'slowtv'
-    custom_title: 'STRETCH AND COFFEE'
-    discard_attempts: 4
-  - epg_group: false
-  - graphics_off: null
-  - epg_group: true
-  - duration: '00:03:45'
-    content: 'generative'
-    trim: true
-    filler_kind: 'preroll'
-    custom_title: 'STATION INTERVAL'
-  - epg_group: false
-  - sequence: 'graphics_up'
-  - epg_group: true
   - pad_until: '08:56'
     tomorrow: false
-    content: 'pl_cartoon_hour'
-    custom_title: 'CARTOON BLOCK'
-    discard_attempts: 6
+    content: 'slowtv'
+    custom_title: 'SUNDAY SERVICE'
+    discard_attempts: 4
   - epg_group: false
   - graphics_off: null
   - epg_group: true
@@ -1246,8 +1198,8 @@ playout:
   - epg_group: true
   - pad_until: '10:56'
     tomorrow: false
-    content: 'prelinger'
-    custom_title: 'PRELINGER THEATRE'
+    content: 'pl_cartoon_hour'
+    custom_title: 'CARTOON CARNIVAL'
     discard_attempts: 6
   - epg_group: false
   - graphics_off: null
@@ -1260,13 +1212,10 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_lab'
-    custom_title: 'LAB HOUR — COMING SOON'
   - pad_until: '12:00'
     tomorrow: false
-    content: 'schoolroom'
-    custom_title: 'LAB HOUR — COMING SOON'
+    content: 'prelinger'
+    custom_title: 'PRELINGER THEATRE'
     discard_attempts: 6
   - epg_group: false
   - graphics_off: null
@@ -1385,14 +1334,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_gnd'
-    custom_title: 'GROUND ZERO — COMING SOON'
   - pad_until: '19:58'
     tomorrow: false
-    content: 'newsreels'
+    content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - graphics_off: null
   - epg_group: true
@@ -1426,51 +1373,16 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - pad_until: '21:56'
+  - pad_until: '22:26'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
-    discard_attempts: 6
-  - epg_group: false
-  - graphics_off: null
-  - epg_group: true
-  - duration: '00:04:00'
-    content: 'generative'
-    trim: true
-    filler_kind: 'preroll'
-    custom_title: 'STATION INTERVAL'
-  - epg_group: false
-  - sequence: 'graphics_up'
-  - epg_group: true
-  - count: 1
-    content: 'coming_soon_gnd'
-    custom_title: 'GROUND ZERO ENCORE — COMING SOON'
-  - pad_until: '23:00'
-    tomorrow: false
-    content: 'newsreels'
-    custom_title: 'GROUND ZERO ENCORE — COMING SOON'
     discard_attempts: 6
   - epg_group: false
   - sequence: 'station_break'
   - graphics_off: null
   - epg_group: true
-  - duration: '00:00:04'
-    content: 'generative'
-    trim: true
-    filler_kind: 'preroll'
-    custom_title: 'STATION INTERVAL'
-  - epg_group: false
-  - sequence: 'graphics_up'
-  - epg_group: true
-  - pad_until: '23:00'
-    tomorrow: false
-    content: 'pad_short'
-    custom_title: 'SHORT SUBJECTS'
-    discard_attempts: 6
-  - epg_group: false
-  - graphics_off: null
-  - epg_group: true
-  - duration: '00:00:04'
+  - duration: '00:04:00'
     content: 'generative'
     trim: true
     filler_kind: 'preroll'
@@ -1641,14 +1553,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_lab'
-    custom_title: 'LAB HOUR — COMING SOON'
   - pad_until: '12:00'
     tomorrow: false
-    content: 'schoolroom'
+    content: 'coming_soon_lab'
     custom_title: 'LAB HOUR — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - graphics_off: null
   - epg_group: true
@@ -1766,14 +1676,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_gnd'
-    custom_title: 'GROUND ZERO — COMING SOON'
   - pad_until: '19:58'
     tomorrow: false
-    content: 'newsreels'
+    content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - graphics_off: null
   - epg_group: true
@@ -1823,14 +1731,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_gnd'
-    custom_title: 'GROUND ZERO ENCORE — COMING SOON'
   - pad_until: '23:00'
     tomorrow: false
-    content: 'newsreels'
+    content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO ENCORE — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - sequence: 'station_break'
   - graphics_off: null
@@ -2022,14 +1928,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_lab'
-    custom_title: 'LAB HOUR — COMING SOON'
   - pad_until: '12:00'
     tomorrow: false
-    content: 'schoolroom'
+    content: 'coming_soon_lab'
     custom_title: 'LAB HOUR — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - graphics_off: null
   - epg_group: true
@@ -2147,14 +2051,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_gnd'
-    custom_title: 'GROUND ZERO — COMING SOON'
   - pad_until: '19:58'
     tomorrow: false
-    content: 'newsreels'
+    content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - graphics_off: null
   - epg_group: true
@@ -2204,14 +2106,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_gnd'
-    custom_title: 'GROUND ZERO ENCORE — COMING SOON'
   - pad_until: '23:00'
     tomorrow: false
-    content: 'newsreels'
+    content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO ENCORE — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - sequence: 'station_break'
   - graphics_off: null
@@ -2403,14 +2303,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_lab'
-    custom_title: 'LAB HOUR — COMING SOON'
   - pad_until: '12:00'
     tomorrow: false
-    content: 'schoolroom'
+    content: 'coming_soon_lab'
     custom_title: 'LAB HOUR — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - graphics_off: null
   - epg_group: true
@@ -2528,14 +2426,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_gnd'
-    custom_title: 'GROUND ZERO — COMING SOON'
   - pad_until: '19:58'
     tomorrow: false
-    content: 'newsreels'
+    content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - graphics_off: null
   - epg_group: true
@@ -2585,14 +2481,12 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - count: 1
-    content: 'coming_soon_gnd'
-    custom_title: 'GROUND ZERO ENCORE — COMING SOON'
   - pad_until: '23:00'
     tomorrow: false
-    content: 'newsreels'
+    content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO ENCORE — COMING SOON'
     discard_attempts: 6
+    trim: true
   - epg_group: false
   - sequence: 'station_break'
   - graphics_off: null
