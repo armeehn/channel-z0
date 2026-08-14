@@ -103,7 +103,7 @@ forward and run long (the **Cartoon Carnival**); the afternoon opens up.
 | 10:00 | PRELINGER THEATRE |
 | 11:00 | LAB HOUR |
 | 12:00 | LUNCH LOOPS |
-| 13:00 | **MATINEE DOUBLE** — an afternoon feature |
+| 13:00 | **SERIAL MATINEE** — a chapter play and an afternoon feature |
 | 16:00 | CARTOON BLOCK II |
 | 18:00 | NEIGHBOURHOOD DESK — the weekend edition |
 | **19:00** | **▸ GROUND ZERO** |
@@ -120,9 +120,9 @@ forward and run long (the **Cartoon Carnival**); the afternoon opens up.
 | 09:00 | CARTOON CARNIVAL |
 | 11:00 | PRELINGER THEATRE |
 | 12:00 | LUNCH LOOPS |
-| 14:00 | AFTERNOON PICTURE SHOW |
+| 14:00 | **THE VANCOUVER REEL** — archive film from the city |
 | 16:00 | CARTOON BLOCK II |
-| 18:00 | NEIGHBOURHOOD DESK |
+| 18:00 | **CANADA NIGHT** — Canadian archive programming |
 | **19:00** | **▸ GROUND ZERO** — the week-in-review contact |
 | 20:00 | **SUNDAY CINEMA** — the unhurried classic |
 | 22:30 | NIGHT PATTERN — the early wind-down |

@@ -1,0 +1,139 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>LAB HOUR — COMING SOON</title>
+<style>
+  /* Channel Z0 — LAB HOUR show card.
+     Riposte Laboratories house style: ink on bone, JetBrains Mono, radius 0,
+     no blur, 2px rules, dashed dividers, spec-sheet chrome, tri-band head.
+     Drawn at 640x480 (the channel's own raster) and screenshotted at 2x. */
+  :root{
+    --ink:#1d1a17; --ink-line:#5c554c;
+    --bone:#f6f1e7; --bone-dim:#eae4d6;
+    --pink:#f0477d; --orange:#fe9a0d; --teal:#12b795;
+    --pink-deep:#d81150;
+  }
+  /* ── SAFE AREA ────────────────────────────────────────────────────────────
+     The station's own furniture is composited over this card at playout, and
+     it wins. Measured from the deployed graphics elements at 640x480:
+
+       weather card   TopRight,    4% h-margin, 5% v-margin, 29% wide
+                      -> occupies roughly x 429-614, y 24-84
+       up-next        BottomLeft,  4% h-margin, 9% v-margin, 73% wide
+       channel bug    BottomRight, 4% h-margin, 8% v-margin, 12% wide
+                      -> together they own everything below about y 385
+       bottom strip   full width, keyed to frame height, at the very bottom
+
+     v1 put the SEC.11 chip top-right and the colophon along the bottom, so the
+     weather card clipped the chip and the up-next strip sat on top of
+     "DOC NO. / REV. A / PARRY. RIPOSTE." Nobody noticed while the card was on
+     screen for 60 seconds; it is obvious when it holds the hour.
+
+     So: nothing above y 90 to the right of x 420, and nothing below y 375.
+     The empty band at the bottom is deliberate — it is where the furniture
+     goes, and clean bone behind it reads as intentional rather than crowded. */
+  *{margin:0;padding:0;box-sizing:border-box;border-radius:0}
+  html,body{width:640px;height:480px;overflow:hidden}
+  body{
+    background:var(--bone); color:var(--ink);
+    font-family:"JetBrains Mono",monospace; font-weight:400;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+
+  /* tri-band page head — the station's signature gradient */
+  .triband{height:10px;
+    background:linear-gradient(105deg,var(--pink) 0 36%,var(--orange) 36% 64%,var(--teal) 64% 100%)}
+
+  .frame{padding:18px 40px 0 40px}
+
+  /* corner marks */
+  .corner{position:absolute;width:14px;height:14px;border:2px solid var(--ink)}
+  .corner.tl{top:20px;left:18px;border-right:0;border-bottom:0}
+  .corner.tr{top:20px;right:18px;border-left:0;border-bottom:0}
+  .corner.bl{bottom:112px;left:18px;border-right:0;border-top:0}
+  .corner.br{bottom:112px;right:18px;border-left:0;border-top:0}
+
+  /* top row: station kicker + section chip */
+  .kickerrow{display:flex;justify-content:space-between;align-items:center;
+    border-bottom:2px solid var(--ink);padding-bottom:8px}
+  .kicker{font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase}
+  .kicker .slash{color:var(--pink-deep)}
+  .chip{background:var(--ink);color:var(--bone);font-size:11px;font-weight:700;
+    letter-spacing:.12em;padding:3px 8px;text-transform:uppercase}
+
+  /* headline */
+  .head{margin-top:18px}
+  .desig{font-size:11px;font-weight:700;letter-spacing:.26em;color:var(--ink);
+    text-transform:uppercase;margin-bottom:9px;display:flex;align-items:center}
+  h1{font-size:62px;font-weight:800;letter-spacing:.02em;line-height:.94;
+    text-transform:uppercase}
+  .rule{height:2px;background:var(--ink);margin-top:11px}
+
+  /* status band — bone on pink is legal for large uppercase display only */
+  .status{margin-top:13px;display:flex;align-items:stretch}
+  .status .fill{background:var(--pink);color:var(--bone);
+    font-size:23px;font-weight:800;letter-spacing:.15em;padding:8px 15px;
+    text-transform:uppercase}
+  .status .meta{flex:1;border:2px solid var(--ink);border-left:0;
+    display:flex;flex-direction:column;justify-content:center;padding:0 12px}
+  .status .meta div{font-size:10px;font-weight:700;letter-spacing:.1em;
+    text-transform:uppercase;line-height:1.5}
+  .status .meta span{color:var(--ink);opacity:.62}
+
+  /* spec rows */
+  .spec{margin-top:13px}
+  .row{display:flex;justify-content:space-between;font-size:12px;
+    padding:4px 0;border-bottom:1px dashed var(--ink-line)}
+  .row .k{font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.72}
+  .row .v{font-weight:700;letter-spacing:.04em}
+
+  /* footer: checker band + colophon */
+  .foot{position:absolute;left:0;right:0;bottom:105px}
+  .checker{height:12px;
+    background:
+      repeating-linear-gradient(90deg,var(--ink) 0 11px,transparent 11px 22px),
+      var(--bone-dim);
+    border-top:2px solid var(--ink)}
+  .colophon{display:flex;justify-content:space-between;
+    padding:5px 40px 6px;font-size:10px;font-weight:700;
+    letter-spacing:.14em;text-transform:uppercase;opacity:.78}
+</style>
+
+<div class="triband"></div>
+<span class="corner tl"></span><span class="corner tr"></span>
+<span class="corner bl"></span><span class="corner br"></span>
+
+<div class="frame">
+  <div class="kickerrow">
+    <div class="kicker">Channel Z0 <span class="slash">//</span> Riposte Laboratories</div>
+  </div>
+
+  <div class="head">
+    <div class="desig"><span class="chip">SEC.11</span>&nbsp;&nbsp;Scheduled Programme &nbsp;·&nbsp; Desig. RL-Z0-LAB</div>
+    <h1>Lab&nbsp;Hour</h1>
+    <div class="rule"></div>
+  </div>
+
+  <div class="status">
+    <div class="fill">Coming Soon</div>
+    <div class="meta">
+      <div>In production at the bench</div>
+      <div><span>Slot reserved &middot; no transmission</span></div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="row"><span class="k">Transmission</span><span class="v">Weekdays 11:00</span></div>
+    <div class="row"><span class="k">Format</span><span class="v">60 MIN · 4:3 · SD</span></div>
+    <div class="row"><span class="k">Status</span><span class="v">▸ Standby</span></div>
+  </div>
+</div>
+
+<div class="foot">
+  <div class="checker"></div>
+  <div class="colophon">
+    <span>Doc No. RL-Z0-LAB-A</span>
+    <span>Rev. A</span>
+    <span>Parry. Riposte.</span>
+  </div>
+</div>

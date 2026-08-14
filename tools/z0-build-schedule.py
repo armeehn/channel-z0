@@ -144,28 +144,49 @@ def strand(title, content, until, tomorrow=False, discard=6, trim=False):
     return [{"epg_group": True}, item, {"epg_group": False}]
 
 
-def coming_soon(title, card, filler, until, discard=6):
-    """A slot that is reserved but has no programme yet: open on the show's own
-    COMING SOON card, then pad the rest of the block from a themed pool.
+def coming_soon(title, card, until, discard=6):
+    """A slot that is reserved but has no programme yet: the card HOLDS the
+    whole block. Nothing else airs in it.
 
-    The card and the filler sit inside ONE guide group on purpose. Emitting
-    them as two groups puts two rows in the EPG with the same name — a
-    one-minute card followed by an hour of something else — which reads as a
-    scheduling fault rather than a held slot.
+    This is the second attempt and the history matters, because the first one
+    looked more sophisticated and was wrong. It played the card ONCE and then
+    padded the rest of the hour from a themed pool (schoolroom / newsreels),
+    with both under one guide title. The reasoning was that an hour of static
+    slate is dead air and a themed pool is better television.
 
-    No `pre_roll`/`post_roll` and no strip: this is a slate, and bracketing it
-    with idents and adverts would advertise a programme that does not exist
-    yet. `count:` is what plays exactly one card; `pad_until` alone could not,
-    and would also re-shuffle the card in among the filler."""
+    What that actually produced: you tuned to LAB HOUR at 11:00 and saw a
+    Prelinger classroom film, because the card was 60 seconds of a 60-minute
+    hour — and the guide labelled the whole hour COMING SOON, so the films were
+    also mislabelled. The instruction was to *block off* the slot. A slot that
+    still airs an hour of other programming is not blocked off; it is a slot
+    with a 60-second caption in front of it.
+
+    So the card now fills the block:
+
+    - `pad_until` FROM THE CARD POOL, not from content. The pool holds one
+      5-minute card, so an hour tiles in ~12 plays — the same order as an
+      ordinary SHORT SUBJECTS block. A 60-second card would have been booked
+      ~60 times, which is the documented "never pad_until with short items"
+      trap.
+    - `trim: true` cuts the last play so the block lands exactly on the clock
+      instead of stopping early and dropping into fallback filler.
+    - One `epg_group`, so the hour is a single honest guide entry that says
+      COMING SOON and means it.
+    - Still no `pre_roll`/`post_roll` and no strip: bracketing a slate with
+      idents and adverts would advertise a programme that does not exist yet.
+
+    The card carries a slow sliding accent marker for exactly one reason: an
+    hour of a genuinely static frame reads as a frozen channel rather than a
+    held slot."""
     return [
         {"epg_group": True},
-        {"count": 1, "content": card, "custom_title": title},
         {
             "pad_until": until,
             "tomorrow": False,
-            "content": filler,
+            "content": card,
             "custom_title": title,
             "discard_attempts": discard,
+            "trim": True,
         },
         {"epg_group": False},
     ]
@@ -175,17 +196,37 @@ def day_plan(name, spec):
     """The common shape of a Z0 day, with the themed slots filled in."""
     P = []
 
-    # ── Sign-on ───────────────────────────────────────────────────────────────
+    # ── Sign-on and morning ───────────────────────────────────────────────────
+    # The weekends are NOT the weekday spine with different films in it — they
+    # restructure the morning, and both docs/programming.md and the storefront
+    # grid say so in the same words. The generator used to apply the weekday
+    # shape to all seven days, which put LAB HOUR on Sunday (the guide promises
+    # PRELINGER THEATRE) and pushed Saturday's matinee an hour late.
+    #
+    # Keep these three branches in step with docs/programming.md § Weekends and
+    # `WEEK` in site/index.html, or the guide and the guide-on-the-wall disagree.
     P.append({"sequence": "sign_on"})
-    P += strand("SHORT SUBJECTS", "pad_short", "06:30")
-    P += strand("STRETCH AND COFFEE", "slowtv", "07:00", discard=4)
-
-    # ── Morning ───────────────────────────────────────────────────────────────
     morning = spec.get("morning", "pl_cartoon_hour")
-    P += strand("CARTOON BLOCK", morning, "09:00")
-    P += strand("PRELINGER THEATRE", "prelinger", "11:00")
-    P += coming_soon("LAB HOUR — COMING SOON", "coming_soon_lab",
-                     "schoolroom", "12:00")
+
+    if name == "saturday":
+        # Cartoons come forward and run long; no STRETCH AND COFFEE.
+        P += strand("SHORT SUBJECTS", "pad_short", "07:00")
+        P += strand("CARTOON CARNIVAL", morning, "10:00")
+        P += strand("PRELINGER THEATRE", "prelinger", "11:00")
+        P += coming_soon("LAB HOUR — COMING SOON", "coming_soon_lab", "12:00")
+    elif name == "sunday":
+        # The quiet one: a slower morning, and NO LAB HOUR — 11:00 is
+        # PRELINGER THEATRE, which is why this branch has no card at all.
+        P += strand("SHORT SUBJECTS", "pad_short", "06:30")
+        P += strand("SUNDAY SERVICE", "slowtv", "09:00", discard=4)
+        P += strand("CARTOON CARNIVAL", morning, "11:00")
+        P += strand("PRELINGER THEATRE", "prelinger", "12:00")
+    else:
+        P += strand("SHORT SUBJECTS", "pad_short", "06:30")
+        P += strand("STRETCH AND COFFEE", "slowtv", "07:00", discard=4)
+        P += strand("CARTOON BLOCK", morning, "09:00")
+        P += strand("PRELINGER THEATRE", "prelinger", "11:00")
+        P += coming_soon("LAB HOUR — COMING SOON", "coming_soon_lab", "12:00")
 
     # ── Midday ────────────────────────────────────────────────────────────────
     P.append({"sequence": "weather_break"})
@@ -203,7 +244,10 @@ def day_plan(name, spec):
     # whole block — this is one of the few places it is deliberately NOT taken
     # down, so the strip's cost is real here. It is affordable because the
     # music cards are 640x480 and cheap to decode.
-    P += strand("LUNCH LOOPS", "pl_lunch_loops", "14:00")
+    # Saturday's matinee is an hour earlier (13:00 MATINEE DOUBLE), so lunch is
+    # an hour shorter. Every other day runs 12:00-14:00.
+    P += strand("LUNCH LOOPS", "pl_lunch_loops",
+                "13:00" if name == "saturday" else "14:00")
 
     # ── Afternoon ─────────────────────────────────────────────────────────────
     P += programme(*spec["matinee"])
@@ -221,21 +265,33 @@ def day_plan(name, spec):
     nb_title, nb_content = spec.get(
         "neighbourhood", ("THE NEIGHBOURHOOD DESK", "pl_neighbourhood"))
     P += strand(nb_title, nb_content, "19:00")
-    P += coming_soon("GROUND ZERO — COMING SOON", "coming_soon_gnd",
-                     "newsreels", "20:00")
+    P += coming_soon("GROUND ZERO — COMING SOON", "coming_soon_gnd", "20:00")
 
     # ── Prime ─────────────────────────────────────────────────────────────────
     P += programme(*spec["prime"])
-    P += strand("SHORT SUBJECTS", "pad_short", "22:00")
 
-    # 22:00 is the encore on six nights and the second feature on Saturday.
-    if "second_feature" in spec:
+    # What follows prime is the third place the weekends diverge, and the
+    # published grid is specific about it:
+    #   Mon-Fri  22:00 GROUND ZERO — ENCORE, 23:00 the late block
+    #   Saturday 22:30 the second feature (no encore — it takes the picture)
+    #   Sunday   22:30 NIGHT PATTERN, and NO encore at all
+    # Sunday is the one that was actually wrong: it was getting a 22:00 encore
+    # the guide never promised, which after the cards started holding slots
+    # meant an hour of COMING SOON on a night with no Ground Zero on the grid.
+    if name == "saturday":
+        P += strand("SHORT SUBJECTS", "pad_short", "22:30")
         P += programme(*spec["second_feature"])
+        P.append({"sequence": "station_break"})
+        P += strand("SHORT SUBJECTS", "pad_short", "23:00")
+    elif name == "sunday":
+        P += strand("SHORT SUBJECTS", "pad_short", "22:30")
+        P.append({"sequence": "station_break"})
     else:
-        P += coming_soon("GROUND ZERO ENCORE — COMING SOON", "coming_soon_gnd",
-                         "newsreels", "23:00")
-    P.append({"sequence": "station_break"})
-    P += strand("SHORT SUBJECTS", "pad_short", "23:00")
+        P += strand("SHORT SUBJECTS", "pad_short", "22:00")
+        P += coming_soon("GROUND ZERO ENCORE — COMING SOON",
+                         "coming_soon_gnd", "23:00")
+        P.append({"sequence": "station_break"})
+        P += strand("SHORT SUBJECTS", "pad_short", "23:00")
 
     # ── The late block ────────────────────────────────────────────────────────
     # Themed per night. A dimmer bug goes up for the duration — the only place
