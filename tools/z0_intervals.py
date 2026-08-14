@@ -80,9 +80,21 @@ def interval_block(seconds):
         # be redundant here; `graphics_up` puts all four back.
         {"graphics_off": None},
         {"epg_group": True},
+        # `filler_kind` is what keeps these out of the programme guide, the
+        # same mechanism the station idents use in _sequences.yml: ErsatzTV
+        # drops any playout item whose FillerKind is not None from the XMLTV
+        # output. Without it every junction became its own <programme> and
+        # STATION INTERVAL was 48 of 114 guide entries — 43% of the guide.
+        #
+        # It does NOT change how the item is selected or cut: in
+        # YamlPlayoutDurationHandler the trim, filler-kind and custom-title
+        # values are passed as independent arguments and the `else if (trim)`
+        # branch never consults the filler kind. `custom_title` is still set
+        # on the item, it is simply no longer surfaced in the guide.
         {"duration": "%02d:%02d:%02d" % (hh, mm, ss),
          "content": "generative",
          "trim": True,
+         "filler_kind": "preroll",
          "custom_title": "STATION INTERVAL"},
         {"epg_group": False},
         {"sequence": "graphics_up"},
