@@ -291,10 +291,17 @@ Two things worth knowing if you touch the placeholder path:
   x264; AAC-encoding 90 minutes of *silence* at 48k stereo measured 38 s against
   6 s for the video. The silence is 22050 mono for that reason, which takes a
   feature-length card from ~43 s to ~24 s. Framerate barely matters.
-- **`drawtext` and colons.** A runtime like `1:30:00` reads as the next filter
-  option and kills the filtergraph — the same landmine already fixed in
-  [`make-testcard.sh`](../tools/make-testcard.sh). Titles are flattened to a safe
-  charset and everything is escaped through `dt_escape`.
+- **The label is never escaped, it is handed over out-of-band.** A runtime like
+  `1:30:00` reads as the next filter option and kills the filtergraph, and a
+  title like `Kelowna's Own` closes drawtext's quote early and drops every
+  drawtext after it. This used to be handled by flattening the title to a safe
+  charset, which is worse than it sounds: the card rendered fine, exit 0, right
+  duration, and quietly said `KELOWNAS OWN` — and the label is the only thing a
+  placeholder is *for*. Both the title and the runtime now go through
+  `z0_text` from [`z0-lib.sh`](../tools/z0-lib.sh), which writes the words to a
+  file and points drawtext at it with `textfile=...:expansion=none`. There is no
+  escaping layer left to get wrong. Only newlines and tabs are still stripped,
+  because those break the card's *layout*, not its parsing.
 
 ---
 
