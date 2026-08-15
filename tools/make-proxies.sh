@@ -66,21 +66,26 @@ while [[ $# -gt 0 ]]; do
 done
 [[ ${#INPUTS[@]} -eq 0 ]] && INPUTS=("$MEDIA_ROOT")
 
-# drawtext is a minefield of escaping — colons separate options, quotes and
-# backslashes nest badly. These are throwaway test cards, so flatten the title
-# to a charset that can't bite instead of trying to escape everything.
+# The label is operator data — a filename out of the library — so it carries
+# apostrophes ("Kelowna's Own"), colons ("LAB HOUR: GROUND ZERO"), percents and
+# commas: every character drawtext's nested parsers fight over. This used to be
+# handled by flattening the title to a charset that couldn't bite, which is why
+# a proxy for "Kelowna's Own: LAB HOUR" silently read KELOWNAS OWN LAB HOUR —
+# no error, no clue, and the label is the one thing a proxy is *for*.
+#
+# So don't escape and don't flatten: hand the words to drawtext out-of-band with
+# z0_text, exactly as the full-size generators in make-slate.sh do. Then there
+# is no escaping layer left to get wrong the next time a title grows a bracket.
+#
 # Drop the trailing [archive-identifier] that fetch-archive.sh files with — it
 # doubles the title and there's only 320px of card. 30 chars fits with margin.
+# Newlines and tabs still go, because a filename holding one would wreck the
+# card's layout rather than its escaping.
 placeholder_label() {
-  sed -e 's/ *\[[^]]*\] *$//' <<<"$1" \
-    | tr -cd 'A-Za-z0-9 ._-' | tr '[:lower:]' '[:upper:]' | cut -c1-30
-}
-
-# ...and escape what's left. A runtime like "1:31:00" is the classic way to
-# break a filtergraph: the colon reads as the next option. Same fix as the one
-# in make-testcard.sh.
-dt_escape() {
-  sed -e 's/\\/\\\\/g' -e "s/'/\\\\'/g" -e 's/:/\\:/g' -e 's/%/\\%/g' <<<"$1"
+  local s
+  s="$(sed -e 's/ *\[[^]]*\] *$//' <<<"$1" | tr '\n\r\t' '   ' \
+       | tr '[:lower:]' '[:upper:]')"
+  printf '%s' "${s:0:30}"
 }
 
 hms() { awk -v s="${1:-0}" 'BEGIN{printf "%d:%02d:%02d", s/3600, (s%3600)/60, s%60}'; }
@@ -92,8 +97,8 @@ make_proxy() { # src, dst, duration
   local d="${SECONDS_LIMIT:-$dur}"
 
   if [[ "$PLACEHOLDER" == "1" ]]; then
-    local label; label=$(dt_escape "$(placeholder_label "$(basename "${src%.*}")")")
-    local runtime; runtime=$(dt_escape "$(hms "$d")")
+    local label; label=$(placeholder_label "$(basename "${src%.*}")")
+    local runtime; runtime=$(hms "$d")
     local font; font="$(z0_find_font)"
     # No input decode at all: a colour field, the title, and the runtime it is
     # standing in for.
@@ -107,8 +112,8 @@ make_proxy() { # src, dst, duration
       -f lavfi -i "color=c=${Z0_INK}:s=${WIDTH}x$(( WIDTH * 3 / 4 )):r=10:d=${d}" \
       -f lavfi -t "$d" -i "anullsrc=r=22050:cl=mono" \
       -vf "drawbox=x=0:y=8:w=iw:h=3:color=${Z0_RED}:t=fill,\
-drawtext=fontfile='${font}':text='${label}':fontcolor=${Z0_PAPER}:fontsize=14:x=(w-tw)/2:y=(h/2)-20,\
-drawtext=fontfile='${font}':text='PROXY ${runtime}':fontcolor=0x8A8A8A:fontsize=11:x=(w-tw)/2:y=(h/2)+10,\
+drawtext=fontfile='${font}':$(z0_text "${label}"):fontcolor=${Z0_PAPER}:fontsize=14:x=(w-tw)/2:y=(h/2)-20,\
+drawtext=fontfile='${font}':$(z0_text "PROXY ${runtime}"):fontcolor=0x8A8A8A:fontsize=11:x=(w-tw)/2:y=(h/2)+10,\
 drawtext=fontfile='${font}':text='RL-Z0 TEST':fontcolor=${Z0_RED}:fontsize=9:x=6:y=h-th-6" \
       -map 0:v -map 1:a \
       -c:v libx264 -preset ultrafast -tune stillimage -crf 34 -pix_fmt yuv420p \
@@ -157,7 +162,10 @@ echo ""
 
 attempted=0; skipped=0; src_bytes=0; dst_bytes=0
 srclist="$(mktemp)"; FAILLOG="$(mktemp)"; dstlist="$(mktemp)"
-trap 'rm -f "$srclist" "$FAILLOG" "$dstlist"' EXIT
+# z0-lib installs an EXIT trap for the z0_text scratch dir; a second `trap ...
+# EXIT` replaces it rather than adding to it, so carry that dir along or every
+# run leaves a z0-text.XXXXXX behind in /tmp.
+trap 'rm -f "$srclist" "$FAILLOG" "$dstlist"; rm -rf "${Z0_TEXT_DIR:-}"' EXIT
 
 for input in "${INPUTS[@]}"; do
   # Accept an absolute path, or one relative to the media root, or a bare file.
