@@ -273,7 +273,7 @@ The storefront lives at [`site/index.html`](../site/index.html) — live player,
    - Every push to `main` now auto-deploys. (Prefer deploying by hand? `npx wrangler deploy`.)
 
    **DNS gotcha for the tower:** add `watch.ch0.ripostelabs.xyz` → VPS IP as **DNS only (grey cloud), not proxied** — Cloudflare's proxy won't pass RTMP (:1935) and shouldn't carry a 24/7 video stream. The page is proxied; the stream host is not.
-3. **Cross-origin note.** The page is on Cloudflare and the stream is on the VPS, so the tower must send permissive CORS — the updated [`vps/Caddyfile`](../vps/Caddyfile) does this. `site/_headers` and `site/_redirects` (security headers, and short links like `/watch`) are honoured by Workers Static Assets, same as Pages. (Alternative host: the GitHub Pages workflow in `.github/workflows/deploy-pages.yml` still works if you'd rather.)
+3. **Cross-origin note.** The page is on Cloudflare and the stream is on the VPS, so the tower must send permissive CORS — the updated [`vps/Caddyfile`](../vps/Caddyfile) does this. `site/_headers` and `site/_redirects` (security headers, and short links like `/watch`) are honoured by Workers Static Assets, same as Pages. There is deliberately **no** GitHub Pages fallback: GitHub Pages is not enabled on this repo, and Cloudflare is the only publishing route.
 
 ### When channelz0.tv goes live
 
