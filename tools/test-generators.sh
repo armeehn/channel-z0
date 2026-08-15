@@ -10,7 +10,8 @@
 #
 #   ARGUMENTS    --help prints the usage and writes nothing; a bad duration
 #                fails immediately instead of 200 lines into a filtergraph
-#   TEXT         punctuation in a headline reaches the screen, not the parser
+#   TEXT         punctuation in a headline reaches the screen, not the parser,
+#                on the full-size cards *and* on a make-proxies placeholder
 #   CONFORMANCE  every card comes out 1080p/30 with audio, at the asked length
 #
 # Everything renders into a scratch media root at 1–2 seconds a card, so this
@@ -81,6 +82,13 @@ for s in "${GENERATORS[@]}"; do
   fi
 done
 
+out="$(bash "${DIR}/make-proxies.sh" --help 2>&1)"; rc=$?
+if (( rc == 0 )) && [[ "$out" == *"Usage:"* ]]; then
+  ok "make-proxies.sh --help prints its usage"
+else
+  bad "make-proxies.sh --help exited ${rc} without printing usage"
+fi
+
 n=$(find "$Z0_MEDIA_ROOT" -type f 2>/dev/null | wc -l | tr -d ' ')
 [[ "$n" == "0" ]] && ok "--help wrote nothing to the media root" \
                   || bad "--help wrote ${n} file(s) — it should render nothing"
@@ -142,6 +150,76 @@ if gen make-ident.sh 1 "ALWAYS ON: 24/7"; then
   ok "ident accepts a tagline with a colon"
 else
   bad "ident refused a tagline with a colon (exit $?)"
+fi
+
+# ── The same words, on a make-proxies placeholder card ────────────────────────
+# `make-proxies.sh --placeholder` labels every card with the title it stands in
+# for, and that title is a *filename out of the library* — the most operator-y
+# text in the repo. It used to be flattened to A-Za-z0-9 before rendering, so a
+# proxy for "Kelowna's Own: LAB HOUR" came out reading KELOWNAS OWN LAB HOUR:
+# exit 0, card present, correct duration, wrong words. The label is the one
+# thing a proxy exists to carry, so assert on the rendered frame, not the exit
+# code — a flattened card and a punctuated card must not hash the same.
+echo ""
+echo "  text on a proxy placeholder card"
+
+PSRC="${SCRATCH}/proxy-src"
+POUT="${SCRATCH}/proxy-out"
+mkdir -p "${PSRC}/short" "${PSRC}/long"
+
+seed() { # path, seconds — a tiny clip; only its name and duration matter here
+  ffmpeg -hide_banner -loglevel error -y \
+    -f lavfi -i "color=c=black:s=160x120:r=5:d=${2}" \
+    -f lavfi -t "$2" -i "anullsrc=r=22050:cl=mono" \
+    -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest "$1" 2>/dev/null
+}
+SEED="${SCRATCH}/seed.mp4"
+seed "$SEED" 2
+
+if [[ ! -s "$SEED" ]]; then
+  bad "could not build a seed clip — the proxy card assertions did not run"
+else
+  # One source per hostile title, plus one named with the punctuation stripped.
+  for text in "${HOSTILE[@]}"; do
+    cp "$SEED" "${PSRC}/${text}.mp4"
+    cp "$SEED" "${PSRC}/${text//[^A-Za-z0-9 -]/}.mp4"
+  done
+  # And a pair that differ only in runtime, so the "PROXY 0:00:07" line — which
+  # carries colons of its own — is proved to render too.
+  cp   "$SEED"                        "${PSRC}/short/RUNTIME CARD.mp4"
+  seed "${PSRC}/long/RUNTIME CARD.mp4" 7
+
+  Z0_MEDIA_ROOT="$PSRC" bash "${DIR}/make-proxies.sh" \
+    --placeholder --out "$POUT" --jobs 2 >"$LOG" 2>&1
+
+  for text in "${HOSTILE[@]}"; do
+    plain="${text//[^A-Za-z0-9 -]/}"
+    a="$(framehash "${POUT}/${text}.mp4")"
+    b="$(framehash "${POUT}/${plain}.mp4")"
+    if [[ ! -s "${POUT}/${text}.mp4" ]]; then
+      bad "proxy card for \"${text}\" was never built"
+    elif [[ -z "$a" ]]; then
+      bad "proxy card for \"${text}\" is unreadable"
+    elif [[ "$a" == "$b" ]]; then
+      bad "proxy card for \"${text}\" renders identically to \"${plain}\" — the punctuation was eaten"
+    else
+      ok "proxy card keeps the punctuation in \"${text}\""
+    fi
+  done
+
+  s2="$(framehash "${POUT}/short/RUNTIME CARD.mp4")"
+  s7="$(framehash "${POUT}/long/RUNTIME CARD.mp4")"
+  if [[ -n "$s2" && -n "$s7" && "$s2" != "$s7" ]]; then
+    ok "the PROXY runtime line renders (0:00:02 and 0:00:07 differ)"
+  else
+    bad "proxy cards of 2s and 7s render the same frame — the runtime line is missing"
+  fi
+
+  # z0-lib's scratch dir is owned by an EXIT trap that make-proxies.sh replaces
+  # with one of its own; forgetting to carry it leaks a tmpdir on every run.
+  n=$(find "${TMPDIR:-/tmp}" -maxdepth 1 -name 'z0-text.*' -newer "$SEED" 2>/dev/null | wc -l | tr -d ' ')
+  [[ "$n" == "0" ]] && ok "make-proxies.sh leaves no z0-text scratch dir behind" \
+                    || bad "make-proxies.sh leaked ${n} z0-text scratch dir(s) into ${TMPDIR:-/tmp}"
 fi
 
 # ── 3 · The cards themselves ──────────────────────────────────────────────────
