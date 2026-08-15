@@ -1,0 +1,128 @@
+{
+  "_comment": [
+    "ripdoc — this repo's filed documents. DOC NO. RL-BRAND-001-MD.",
+    "`ripdoc scan` owns which documents exist. Everything else here is",
+    "hand-set and survives a rescan: docno, rev, title, kicker,",
+    "strapline, class, class_options. Set \"pinned\": true to keep an",
+    "entry whose source has gone.",
+    "Numbers are registered in riposte-brand/docs/09-document-numbers.md."
+  ],
+  "docno_base": "RL-Z0",
+  "author": "Riposte Laboratories",
+  "class": "riposte-doc",
+  "exclude": [],
+  "documents": [
+    {
+      "id": "brand",
+      "source": "BRAND.md",
+      "docno": "RL-Z0-A",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
+      "id": "docs-ad-standards",
+      "source": "docs/ad-standards.md",
+      "docno": "RL-Z0-AD-STANDARDS",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
+      "id": "docs-archive-fetch",
+      "source": "docs/archive-fetch.md",
+      "docno": "RL-Z0-ARCHIVE-FETCH",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
+      "id": "docs-build-guide",
+      "source": "docs/build-guide.md",
+      "docno": "RL-Z0-BUILD-GUIDE",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
+      "id": "docs-clustering",
+      "source": "docs/clustering.md",
+      "docno": "RL-Z0-CLUSTERING",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
+      "id": "docs-gear-and-costs",
+      "source": "docs/gear-and-costs.md",
+      "docno": "RL-Z0-GEAR-AND-COSTS",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
+      "id": "docs-ideas",
+      "source": "docs/ideas.md",
+      "docno": "RL-Z0-IDEAS",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
+      "id": "docs-intervals",
+      "source": "docs/intervals.md",
+      "docno": "RL-Z0-INTERVALS",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
+      "id": "docs-programming",
+      "source": "docs/programming.md",
+      "docno": "RL-Z0-PROGRAMMING",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
+      "id": "docs-programming-library",
+      "source": "docs/programming-library.md",
+      "docno": "RL-Z0-PROGRAMMING-LIBRARY",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
+      "id": "docs-self-hosting",
+      "source": "docs/self-hosting.md",
+      "docno": "RL-Z0-SELF-HOSTING",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
+      "id": "docs-weather",
+      "source": "docs/weather.md",
+      "docno": "RL-Z0-WEATHER",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
+      "id": "playout-readme",
+      "source": "playout/README.md",
+      "docno": "RL-Z0-PLAYOUT",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
+      "id": "readme",
+      "source": "README.md",
+      "docno": "RL-Z0",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
+      "id": "vps-peertube-readme",
+      "source": "vps/peertube/README.md",
+      "docno": "RL-Z0-PEERTUBE",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
+      "id": "vps-readme",
+      "source": "vps/README.md",
+      "docno": "RL-Z0-VPS",
+      "rev": "A",
+      "class": "riposte-doc"
+    }
+  ]
+}
