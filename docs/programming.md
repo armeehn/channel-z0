@@ -378,6 +378,16 @@ than on air:
   sign-off the grid promises) and why Saturday has no late block: the double
   bill's second picture *is* the late block, exactly as the grid below says.
 
+**Changing the schedule file itself is `z0-day-align.py --redeploy`, not a
+copy.** There is no safe way to swap `channel-z0.yml` under a running playout by
+hand: the anchor stores an instruction *index* into the deployed file — into the
+flattened list, with `sequence:` expanded, so you cannot compute it — and a file
+with a different number of instructions leaves that index pointing at a
+different instruction. The week does not fail; it resumes somewhere else,
+mid-block, and the only symptom is a day that looks subtly wrong. `--redeploy`
+regenerates, deploys, cuts at the seam and re-enters at instruction 0, so the
+file and the index change together. Run it after any change to the generator.
+
 **The aligner regenerates from the copy of the generator ON VILE**, at
 `/mnt/main-data/channelz0/.z0tools/tools/`, not from this repo — vile has no
 checkout. Nothing syncs them. So a change to `z0-build-schedule.py` that is
