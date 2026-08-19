@@ -22,10 +22,10 @@ DAY_FURNITURE = """
   # switched on only at instruction 1 would not reach the air again until the
   # seven-day cycle came back around — a week of a bare screen after any
   # partial rebuild.
-  - graphics_on: 'image/z0-bug.yml'
+  - graphics_on: 'image/z0-rail-left.yml'
   - graphics_on: 'image/z0-weather-card.yml'
+  - graphics_on: 'image/z0-bug.yml'
   - graphics_on: 'text/z0-upnext.yml'
-  - graphics_on: 'subtitle/z0-crawl.yml'
 """
 
 WEATHER_SEGMENT = """  # The forecast. One file, rewritten in place every 15 minutes by

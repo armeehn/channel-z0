@@ -47,14 +47,44 @@ SEQUENCE_SECONDS = {
     "short_subjects": 210, "overnight_variety": 900,
 }
 
-# Instructions that precede a segment and belong to it — the strip coming down
-# for a feature, its pre/post rolls, a late-night watermark. An interval must go
-# in FRONT of these, or it plays with the strip already down and the rolls armed.
+# Instructions that precede a segment and belong to it — its pre/post rolls
+# being armed, a late-night watermark going on, the graphics going down. An
+# interval must go in FRONT of these, or it plays with the rolls already armed
+# and picks up the next segment's advert break around a piece of abstract art.
+#
+# ── Arming attaches forward; CLEARING belongs to the segment that ended ──────
+#
+# `{"pre_roll": True, "sequence": ...}` arms a roll for what follows, so an
+# interval goes before it. `{"pre_roll": False}` is the cleanup a finished
+# programme emits, so it belongs to the segment behind it and an interval goes
+# AFTER it. The same holds for post_roll and for the late-night watermark.
+#
+# This distinction used to be invisible. `programme()` closed every feature
+# with `pre_roll: false`, `post_roll: false`, `sequence: strip_up`, and
+# strip_up — not being in this list — stopped the backward walk before it ever
+# reached the two clears. Removing the strip removed that accidental guard, and
+# the walk ran straight past them: the interval was spliced in ahead of the
+# clears, which left the feature's advert break armed across it. Nothing would
+# have reported that; the station interval would simply have started running
+# commercials.
+#
+# `graphics_off` and `shuffle_sequence` attach forward whatever their value —
+# `graphics_off: null` is how an interval opens, and it is falsy.
 def _attaches_to_next(ins):
-    if "sequence" in ins and ins["sequence"] in ("strip_down", "graphics_up"):
+    if "sequence" in ins and ins["sequence"] == "graphics_up":
         return True
-    for k in ("pre_roll", "post_roll", "watermark", "graphics_off",
-              "shuffle_sequence"):
+    for k in ("pre_roll", "post_roll"):
+        if k in ins:
+            return bool(ins[k])
+    # `watermark` is deliberately NOT given the same treatment. By the same
+    # argument it should be — `watermark: false` closes the late-night strand,
+    # so the junction after it ought to play clean — and today the interval is
+    # spliced ahead of it and runs with the late-night bug still up. That is a
+    # real inconsistency, but it is a separate one: changing it here would move
+    # five more lines a week for a reason that has nothing to do with the
+    # strip, and this change is meant to be provably just the strip. Left as
+    # found, on purpose.
+    for k in ("watermark", "graphics_off", "shuffle_sequence"):
         if k in ins:
             return True
     return False

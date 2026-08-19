@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
 # Channel Z0 — the weather desk. Renders every weather asset the channel airs:
 #
-#   branding/z0-weather-card.png    the persistent corner card
-#   branding/z0-crawl.ass           the bottom-of-screen crawl
+#   branding/z0-rail-wx.png         the right rail, top: conditions
+#   branding/z0-rail-left.png       the left rail: spine, header, station line
 #   weather/z0-local-forecast.mp4   the full-screen segment
 #
 # Usage:
 #   tools/z0-weather.sh              # render everything
 #   tools/z0-weather.sh --card-only  # skip the segment (the slow part)
 #
-# Normally driven by cron every 15 minutes; see docs/weather.md.
+# Normally driven by cron every 15 minutes; see docs/weather.md and
+# docs/graphics.md.
 #
-# ── Two rules this script exists to enforce ─────────────────────────────────
+# ── Three rules this script exists to enforce ───────────────────────────────
 #
 # 1. EVERY INSTALL IS ATOMIC. ErsatzTV opens these files while it is streaming.
 #    A half-written PNG doesn't glitch for a frame — ImageElement catches the
@@ -25,6 +26,13 @@
 #    shorter, playout and reality would drift apart with nothing to report it.
 #    The output is pinned to Z0_WX_SEGMENT_SECS and the file keeps one name, so
 #    the library row stays valid and no rescan is ever needed.
+#
+# 3. THE RAILS ARE RENDERED AT FINAL SIZE. They are composited 1:1 with
+#    scale: false, so what comes out of ffmpeg here is exactly the pixels that
+#    go to air. Rendering large and letting the compositor shrink it — which is
+#    what the old 920x300 landscape card did — costs a resample, and at a
+#    107px column width that resample is the difference between legible small
+#    type and mush.
 set -euo pipefail
 
 MEDIA_ROOT="${Z0_MEDIA_ROOT:-/mnt/main-data/channelz0}"
@@ -34,11 +42,29 @@ SLIDE=$(( SECS / 4 ))
 CARD_ONLY=0
 [[ "${1:-}" == "--card-only" ]] && CARD_ONLY=1
 
-STATE="${MEDIA_ROOT}/.z0-station"
-WORK="$(mktemp -d "${MEDIA_ROOT}/.z0-station/.wx-work.XXXXXX")"
-trap 'rm -rf "$WORK"' EXIT
+# Geometry. Derived from the same three numbers as tools/z0-weather.py and
+# tools/make-bug.sh, so the rails cannot drift out of step with each other.
+FRAME_W="${Z0_FRAME_W:-854}"
+FRAME_H="${Z0_FRAME_H:-480}"
+CONTENT_W="${Z0_CONTENT_W:-640}"
+RAIL_W=$(( (FRAME_W - CONTENT_W) / 2 ))    # 107
+WX_H="${Z0_WX_RAIL_H:-340}"
 
+# The full-screen segment is 4:3 like everything else the channel airs, so the
+# picture window never changes size when the forecast comes on.
+SLIDE_W="${Z0_SLIDE_W:-1440}"
+SLIDE_H="${Z0_SLIDE_H:-1080}"
+
+STATE="${MEDIA_ROOT}/.z0-station"
+
+# The directories come first. This used to run mktemp -d against
+# ${MEDIA_ROOT}/.z0-station before creating it, which worked on vile only
+# because that directory already existed — and failed immediately anywhere
+# else, which is exactly where you want to test a change to this script.
 mkdir -p "${MEDIA_ROOT}/branding" "${MEDIA_ROOT}/weather" "$STATE"
+
+WORK="$(mktemp -d "${STATE}/.wx-work.XXXXXX")"
+trap 'rm -rf "$WORK"' EXIT
 
 # The renderer runs inside the ErsatzTV image on purpose: it is the same ffmpeg
 # and the same font set that the graphics engine will composite with, so what
@@ -58,7 +84,9 @@ ffprobe_() {
 }
 
 # ── 1. Fetch and lay out ─────────────────────────────────────────────────────
-python3 "$(dirname "${BASH_SOURCE[0]}")/z0-weather.py" "$WORK" "$STATE"
+Z0_FRAME_W="$FRAME_W" Z0_FRAME_H="$FRAME_H" Z0_CONTENT_W="$CONTENT_W" \
+Z0_SLIDE_W="$SLIDE_W" Z0_SLIDE_H="$SLIDE_H" \
+  python3 "$(dirname "${BASH_SOURCE[0]}")/z0-weather.py" "$WORK" "$STATE"
 
 install_atomic() { # src dst
   local dst="$2" tmp
@@ -68,18 +96,22 @@ install_atomic() { # src dst
   mv -f "$tmp" "$dst"      # rename(2): readers see old or new, never partial
 }
 
-# ── 2. The corner card ───────────────────────────────────────────────────────
+# ── 2. The right rail: conditions ────────────────────────────────────────────
 ff -hide_banner -loglevel error -y \
-  -f lavfi -i "color=c=black@0.0:s=920x300,format=rgba" \
-  -filter_script:v "${WORK}/card.vf" \
-  -frames:v 1 "${WORK}/card.png"
-install_atomic "${WORK}/card.png" "${MEDIA_ROOT}/branding/z0-weather-card.png"
+  -f lavfi -i "color=c=black@0.0:s=${RAIL_W}x${WX_H},format=rgba" \
+  -filter_script:v "${WORK}/wx-rail.vf" \
+  -frames:v 1 "${WORK}/wx-rail.png"
+install_atomic "${WORK}/wx-rail.png" "${MEDIA_ROOT}/branding/z0-rail-wx.png"
 
-# ── 3. The crawl ─────────────────────────────────────────────────────────────
-install_atomic "${WORK}/z0-crawl.ass" "${MEDIA_ROOT}/branding/z0-crawl.ass"
+# ── 3. The left rail: the frame around the live listings ─────────────────────
+ff -hide_banner -loglevel error -y \
+  -f lavfi -i "color=c=black@0.0:s=${RAIL_W}x${FRAME_H},format=rgba" \
+  -filter_script:v "${WORK}/listings-rail.vf" \
+  -frames:v 1 "${WORK}/listings-rail.png"
+install_atomic "${WORK}/listings-rail.png" "${MEDIA_ROOT}/branding/z0-rail-left.png"
 
 if (( CARD_ONLY )); then
-  echo "weather desk: card + crawl updated (segment skipped)"
+  echo "weather desk: both rails updated (segment skipped)"
   exit 0
 fi
 
@@ -89,7 +121,7 @@ fi
 # coordinate is wrong — this way a bad slide is a PNG you can look at.
 for i in 1 2 3 4; do
   ff -hide_banner -loglevel error -y \
-    -f lavfi -i "color=c=${Z0_INK_HEX:-0x141414}:s=1920x1080" \
+    -f lavfi -i "color=c=${Z0_INK_HEX:-0x141414}:s=${SLIDE_W}x${SLIDE_H}" \
     -filter_script:v "${WORK}/slide${i}.vf" \
     -frames:v 1 "${WORK}/slide${i}.png"
 done
@@ -129,7 +161,7 @@ ff -hide_banner -loglevel error -y \
 [v0][v1][v2][v3]concat=n=4:v=1:a=0,fps=30,format=yuv420p[v];\
 ${AFILTER}" \
   -map "[v]" -map "[a]" -t "$SECS" \
-  -c:v libx264 -preset veryfast -b:v 3000k -pix_fmt yuv420p -r 30 \
+  -c:v libx264 -preset veryfast -b:v 2400k -pix_fmt yuv420p -r 30 \
   -c:a aac -b:a 96k -ar 48000 -movflags +faststart \
   "${WORK}/forecast.mp4"
 
@@ -144,4 +176,4 @@ if [[ "$OK" != "1" ]]; then
 fi
 
 install_atomic "${WORK}/forecast.mp4" "${MEDIA_ROOT}/weather/z0-local-forecast.mp4"
-echo "weather desk: card, crawl and ${SECS}s segment updated"
+echo "weather desk: both rails and ${SECS}s segment updated"

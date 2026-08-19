@@ -1,61 +1,110 @@
-# Channel Z0 — the "next up" lower third.
+# Channel Z0 — the listings, down the LEFT rail.
 #
 # Reads ErsatzTV's own guide rather than anything the station generates, so it
-# cannot disagree with the EPG. Epg[0] is the programme now on air; Epg[1] is
-# what follows it.
+# cannot disagree with the EPG. Epg[0] is the programme now on air; Epg[1] and
+# Epg[2] are what follow it.
 #
-# It shows itself for about twenty seconds after each programme starts and
-# then gets out of the way — a station tells you what's coming, it doesn't nag.
-# The fade is driven by content_seconds (elapsed seconds within the current
-# item), so it lands correctly whatever the programme's length.
+# ── This used to be a lower third, and it used to hide ──────────────────────
+#
+# It was a wide strip across the bottom-left of the PICTURE that faded up ten
+# seconds into each programme and was gone by thirty, because anything sitting
+# on the picture has to leave. In the rail it is not on the picture, so it has
+# no reason to leave: it now stays up for the whole item and shows TWO
+# upcoming programmes with their start times instead of one bare title.
+#
+# That is the trade the gutter buys. A viewer who tunes in at any moment can
+# read what is on next without waiting for a crawl to come round or a lower
+# third to reappear — and the picture is never covered.
+#
+# The old opacity_expression (LinearFadePoints) is deliberately gone. A fade
+# driven by content_seconds is a way of apologising for being in the way.
 name: "Z0 UP NEXT"
 
-epg_entries: 2
+# 3 entries: the current programme plus the two after it. The guard on
+# Epg.size below still matters — during the last item of a build there is no
+# Epg[1], and an unguarded index renders the literal template or drops the
+# element.
+epg_entries: 3
 
-# LinearFadePoints(time, start, peakStart, peakEnd, end): transparent until
-# 10s, fully up 12s-28s, gone by 30s.
-opacity_expression: "LinearFadePoints(content_seconds, 10, 12, 28, 30)"
+location: "TopLeft"
 
-location: "BottomLeft"
-horizontal_margin_percent: 4
-vertical_margin_percent: 9
+# Lands in the void that image/z0-rail-left.yml leaves for it. That PNG draws
+# a header and a rule down to y=29 and the station block from y=356; this sits
+# between them. Both files quote those numbers, and they are the one thing the
+# two have to agree about.
+#
+#   horizontal 0.94% of 854 = 8px   — the rail's text inset
+#   vertical   8.33% of 480 = 40px  — clear of the header rule at y=29
+horizontal_margin_percent: 0.94
+vertical_margin_percent: 8.33
 
-# 73%, raised from 55% when the channel went 854x480 -> 640x480. With
-# text_fit: scale the rendered text is sized to this fraction of frame WIDTH,
-# and the frame got narrower while its height did not, so holding 55% would
-# have shrunk the lower third by a quarter. See the note in z0-bug.yml.
-width_percent: 73
-text_fit: scale
+# 10.3% of 854 = 88px, the rail's usable text column: 107 less the 3px spine
+# and an 8px inset on each side. Every generated rail asset uses the same 88.
+#
+# text_fit: wrap, NOT scale. `scale` shrinks the whole block to fit the width,
+# so a long title would silently render at four pixels and a short one at
+# forty — in a fixed column the type has to stay one size and the text has to
+# break instead.
+width_percent: 10.3
+text_fit: wrap
 text_align: left
 
 z_index: 20
 
-# One style, deliberately. Per-line styling isn't a thing here — base_style
-# applies to the whole block — so the label rides on the same line as the
-# title rather than being set as a heading that would render just as large.
 styles:
-  - name: "lower-third"
+  - name: "listing"
     font_family: "Noto Sans Mono"
-    font_size: 42
+    font_size: 12
     font_weight: 700
     text_color: "#F2F0E9"
+    # A halo this small is insurance, not decoration. The rail is pure black
+    # and needs none — but if a genuinely 16:9 item is ever added to the
+    # library it fills the frame edge to edge, there is no gutter, and this
+    # text lands on picture. 2px keeps it readable in that case without
+    # fattening the glyphs at 12px.
     halo_color: "#141414"
-    halo_width: 6
-    halo_blur: 3
+    halo_width: 2
+    halo_blur: 2
 
-base_style: "lower-third"
+  # The start time, set small and red so the eye can find the next boundary
+  # without reading the titles. A style span may not cross a line break — the
+  # engine matches [name]...[/name] with a regex that does not span newlines —
+  # so each one is opened and closed on its own line below.
+  - name: "t"
+    font_size: 11
+    text_color: "#E02A1B"
+
+base_style: "listing"
 
 # The graphics engine renders text with SkiaSharp/RichTextKit, which does NOT
 # consult fontconfig — so `fc-list` and `fc-match` finding a face inside the
 # container proves nothing about whether this will resolve. Without this the
-# log says "Could not find font Noto Sans Mono; using default" and the lower
-# third quietly renders in some other face.
+# log says "Could not find font Noto Sans Mono; using default" and the listings
+# quietly render in some other face.
 #
 # The folder holds only the two faces this needs, rather than pointing at the
 # 300-font system directory, so startup does not walk the lot.
 include_fonts_from: "/media/branding/fonts"
 
-# Guard on size: during the last item of a build there is no Epg[1], and an
-# unguarded index would render the literal template or drop the element.
+# ── Start times come from format_datetime, NOT scriban's date.to_string ─────
+#
+# The whole of this FILE is rendered as a scriban template before it is parsed
+# as YAML, so a template error does not produce a bad time — it fails the file.
+# The log says only "Failed to render graphics element YAML definition as
+# scriban template" and then "ignoring", and the element is silently absent
+# from air with everything else still rendering perfectly. `date.to_string`
+# fails exactly this way here.
+#
+# `format_datetime(value, timeZoneId, format)` is the function the graphics
+# engine actually imports, and it takes an IANA zone. Naming the zone is the
+# point: Epg[n].Start is a DateTimeOffset, and anything that formats it
+# implicitly formats it in the CONTAINER's timezone. vile's ErsatzTV runs on
+# TZ=America/Los_Angeles, which is the right hour for Kelowna today and would
+# quietly be the wrong one if that variable were ever changed. The station is
+# in Kelowna; say so here.
 text: |
-  {{ if Epg.size > 1 }}NEXT · {{ Epg[1].Title }}{{ end }}
+  {{ if Epg.size > 1 }}[t]{{ format_datetime Epg[1].Start "America/Vancouver" "h:mm tt" }}[/t]{{ end }}
+  {{ if Epg.size > 1 }}{{ Epg[1].Title | string.upcase }}{{ end }}
+
+  {{ if Epg.size > 2 }}[t]{{ format_datetime Epg[2].Start "America/Vancouver" "h:mm tt" }}[/t]{{ end }}
+  {{ if Epg.size > 2 }}{{ Epg[2].Title | string.upcase }}{{ end }}

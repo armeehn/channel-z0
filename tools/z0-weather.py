@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Channel Z0 — the weather desk.
+"""Channel Z0 — the weather desk and the on-air rails.
 
 Fetches the forecast, then writes every text asset the on-air graphics need:
-drawtext payloads for the corner card and the full-screen segment, and the
-scrolling crawl. It renders nothing itself; z0-weather.sh drives ffmpeg over
-the filter scripts written here.
+drawtext payloads for the two side rails and for the full-screen segment. It
+renders nothing itself; z0-weather.sh drives ffmpeg over the filter scripts
+written here.
 
 Splitting it this way is deliberate. Everything that comes off the network or
 out of the guide is user data as far as ffmpeg is concerned, and drawtext's
@@ -12,6 +12,13 @@ escaping rules (colons, backslashes, quotes, percent) are a minefield. So no
 dynamic string is ever inlined into a filtergraph: each one goes to its own
 file and drawtext reads it with textfile=. There is then no such thing as a
 forecast that happens to contain a character which breaks the render.
+
+── The rails ───────────────────────────────────────────────────────────────
+
+The channel is 854x480 and every frame of programming is 4:3, so ffmpeg
+pillarboxes 640x480 of picture into the middle and leaves a 107px black bar
+down each side. All of the station's furniture lives in those bars now, so
+nothing is ever composited over the picture. See docs/graphics.md.
 """
 
 import json
@@ -20,15 +27,13 @@ import sys
 import urllib.request
 import urllib.error
 import urllib.parse
-import xml.etree.ElementTree as ET
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 
 LAT = os.environ.get("Z0_WX_LAT", "49.88307")
 LON = os.environ.get("Z0_WX_LON", "-119.48568")
 CITY = os.environ.get("Z0_WX_CITY", "KELOWNA")
 REGION = os.environ.get("Z0_WX_REGION", "BC")
 TZNAME = os.environ.get("Z0_WX_TZ", "America/Vancouver")
-XMLTV = os.environ.get("Z0_XMLTV_URL", "http://127.0.0.1:8409/iptv/xmltv.xml")
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else "/tmp/z0wx"
 STATE = sys.argv[2] if len(sys.argv) > 2 else "/tmp/z0wx-state"
@@ -37,22 +42,42 @@ INK = "0x141414"
 PAPER = "0xF2F0E9"
 RED = "0xE02A1B"
 GREY = "0x8A8A8A"
-# Bottom information strip.
-#
-# PLAYRES is the ASS coordinate space, and its ASPECT MUST MATCH THE CHANNEL'S.
-# libass scales x by frame_width/PlayResX and y by frame_height/PlayResY, so a
-# 16:9 script rendered into the 4:3 channel squashes every glyph horizontally
-# by a third. Keeping PlayResY at 1080 means font sizes and CRAWL_Y below stay
-# meaningful whatever the output resolution; only PlayResX changes with aspect.
-# 1440x1080 is 4:3; use 1920x1080 if the channel ever goes back to 16:9.
-PLAYRES_X = int(os.environ.get("Z0_PLAYRES_X", "1440"))
-PLAYRES_Y = int(os.environ.get("Z0_PLAYRES_Y", "1080"))
 
-# CRAWL_Y is the top edge of the text box; the bug sits above it
-# (vertical_margin_percent 8 in z0-bug.yml) and must stay clear.
-MARGIN_X = 48
-CRAWL_Y = 1012
-DWELL = 9.0  # seconds a page holds before the next one replaces it
+# ── Frame geometry ──────────────────────────────────────────────────────────
+#
+# RAIL_W is derived, never typed twice: it is exactly half of what is left
+# over when 4:3 picture is pillarboxed into the channel's frame. Change the
+# channel resolution and this follows, which is the whole reason it is
+# computed rather than written down. The three numbers below are the only
+# place the geometry lives; the element YAMLs quote RAIL_W as a percentage of
+# frame width and docs/graphics.md shows the arithmetic.
+FRAME_W = int(os.environ.get("Z0_FRAME_W", "854"))
+FRAME_H = int(os.environ.get("Z0_FRAME_H", "480"))
+CONTENT_W = int(os.environ.get("Z0_CONTENT_W", "640"))
+RAIL_W = (FRAME_W - CONTENT_W) // 2          # 107
+
+# The right rail is one column split into two blocks that abut exactly, so the
+# red spine down its inner edge is unbroken from top to bottom. They are two
+# elements rather than one because the bug must never depend on a cron job:
+# the weather block is rewritten every 15 minutes, the bug is rendered once.
+WX_H = 340                                   # right rail, top: the weather
+BUG_H = FRAME_H - WX_H                       # right rail, bottom: the bug
+
+SPINE = 3       # the red rule down each rail's INNER edge, framing the picture
+PAD = 8         # text inset from the rail's outer edge
+
+# Usable text column, identical in both rails.
+COL_W = RAIL_W - SPINE - PAD - PAD           # 88
+
+# Mono advance is 0.6 em, which is what makes a fixed-width column predictable:
+# characters-per-line is (column / (0.6 * size)) and never needs measuring.
+ADVANCE = 0.6
+
+# The full-screen weather segment is 4:3 as well, so the picture window never
+# changes size when it comes on. 1440x1080 is 4:3 at a comfortable working
+# size; ErsatzTV scales it into the 640x480 content area like everything else.
+SLIDE_W = 1440
+SLIDE_H = 1080
 
 FONT = "/usr/share/fonts/truetype/noto/NotoSansMono-Bold.ttf"
 FONT_R = "/usr/share/fonts/truetype/noto/NotoSansMono-Regular.ttf"
@@ -89,9 +114,9 @@ def fetch_json(url, timeout=20):
 def get_weather():
     """Fetch the forecast, falling back to the last good copy.
 
-    A failed fetch must never blank the card. An overlay that vanishes reads as
+    A failed fetch must never blank the rail. An overlay that vanishes reads as
     a broken channel, whereas a forecast that is an hour stale reads as a
-    forecast — and the card carries its own "AS OF" stamp, so a viewer can tell.
+    forecast — and the rail carries its own "AS OF" stamp, so a viewer can tell.
     """
     url = (
         "https://api.open-meteo.com/v1/forecast"
@@ -124,36 +149,6 @@ def get_weather():
         return None, False
 
 
-def get_upcoming(limit=4):
-    """Next programmes from ErsatzTV's own XMLTV guide, for the crawl."""
-    try:
-        req = urllib.request.Request(XMLTV, headers={"User-Agent": "channel-z0/1.0"})
-        with urllib.request.urlopen(req, timeout=20) as r:
-            tree = ET.parse(r)
-    except Exception as e:  # noqa: BLE001
-        log(f"guide unavailable: {e}")
-        return []
-
-    now = datetime.now(timezone.utc)
-    out = []
-    for prog in tree.getroot().findall("programme"):
-        raw = prog.get("start", "")
-        try:
-            # XMLTV: YYYYMMDDHHMMSS +ZZZZ
-            start = datetime.strptime(raw, "%Y%m%d%H%M%S %z")
-        except ValueError:
-            continue
-        if start <= now:
-            continue
-        title_el = prog.find("title")
-        title = (title_el.text or "").strip() if title_el is not None else ""
-        if not title:
-            continue
-        out.append((start, title))
-    out.sort(key=lambda x: x[0])
-    return out[:limit]
-
-
 def local_now():
     """Wall clock at the station, without depending on a tz database package."""
     try:
@@ -169,6 +164,37 @@ def hhmm(dt):
 
 def c(v):
     return f"{round(v):d}"
+
+
+def fit_size(text, want, column=COL_W):
+    """Largest size at or below `want` that keeps `text` inside `column`.
+
+    A rail is 88 pixels wide and the temperature is the one string whose length
+    is not known in advance: "3°" and "-14°" differ by two characters, which at
+    display size is the difference between centred and clipped. Rather than
+    pick a size small enough for the worst case all winter, size to the string.
+    """
+    if not text:
+        return want
+    return max(8, min(want, int(column / (ADVANCE * len(text)))))
+
+
+def wrap(text, size, column=COL_W):
+    """Break on spaces to fit a fixed-width column. Over-long words are kept
+    whole and allowed to overhang rather than hyphenated — a broken word reads
+    as a rendering fault, an overhanging one reads as a long word."""
+    limit = max(1, int(column / (ADVANCE * size)))
+    words, lines, cur = text.split(), [], ""
+    for w in words:
+        trial = f"{cur} {w}".strip()
+        if cur and len(trial) > limit:
+            lines.append(cur)
+            cur = w
+        else:
+            cur = trial
+    if cur:
+        lines.append(cur)
+    return lines
 
 
 class Text:
@@ -195,40 +221,151 @@ class Text:
         )
 
 
-def build_card(wx, tx, live):
-    """The persistent corner card: 920x300, composited at ~24% of frame width."""
-    cur = wx["current"]
-    code = int(cur["weather_code"])
-    cond = WMO.get(code, "—")
-    temp = c(cur["temperature_2m"])
-    feels = c(cur["apparent_temperature"])
-    wind = c(cur["wind_speed_10m"])
-    wdir = COMPASS[int((cur["wind_direction_10m"] % 360) / 22.5 + 0.5) % 16]
-    hum = int(cur["relative_humidity_2m"])
-    stamp = hhmm(local_now())
+class Rail:
+    """A rail is a fixed-width column filled top-down.
 
-    f = [
-        # Ink panel, then the station's red spine down the left edge.
-        #
+    Everything in a rail is centred in the same 88px text column and stacked by
+    a running cursor, so adding or removing a line never means re-deriving a
+    dozen y coordinates by hand — which is exactly the edit that used to put a
+    graphic on top of another one with nothing to warn about it.
+
+    `side` places the red spine: "left" means the rail is on the left of the
+    frame, so its inner edge — the one facing the picture — is its right side.
+    """
+
+    def __init__(self, tx, side, height):
+        self.tx = tx
+        self.side = side
+        self.height = height
+        self.y = 0
+        self.f = []
+        spine_x = RAIL_W - SPINE if side == "left" else 0
         # replace=1 is load-bearing on a transparent canvas. drawbox's default
         # is to blend, which mixes the colour into RGB but leaves the source
-        # alpha at zero — the panel renders and is then composited away to
+        # alpha at zero — the rule renders and is then composited away to
         # nothing, and all you see is floating text.
-        f"drawbox=x=0:y=0:w=920:h=300:color={INK}@0.72:t=fill:replace=1",
-        f"drawbox=x=0:y=0:w=12:h=300:color={RED}:t=fill:replace=1",
-        tx.draw(f"{CITY}, {REGION}", x=48, y=30, size=44, color=PAPER),
-        tx.draw(f"{temp}°", x=48, y=88, size=150, color=PAPER),
-        tx.draw(cond, x=340, y=110, size=46, color=PAPER),
-        tx.draw(f"FEELS {feels}°", x=340, y=170, size=34, color=GREY),
-        tx.draw(f"WIND {wind} KM/H {wdir}  ·  HUM {hum}%",
-                x=48, y=245, size=32, color=GREY),
-    ]
+        self.f.append(
+            f"drawbox=x={spine_x}:y=0:w={SPINE}:h={height}"
+            f":color={RED}:t=fill:replace=1")
+        # Text starts clear of the spine on whichever side it is.
+        self.x0 = PAD if side == "left" else SPINE + PAD
+
+    def cx(self):
+        """Centre within the text column, not within the rail — otherwise the
+        spine pushes everything half its width off-centre."""
+        return f"{self.x0}+({COL_W}-tw)/2"
+
+    def gap(self, n):
+        self.y += n
+        return self
+
+    def line(self, s, size, color, font=FONT, alpha=None, lead=1.25):
+        self.f.append(self.tx.draw(s, x=self.cx(), y=self.y, size=size,
+                                   color=color, font=font, alpha=alpha))
+        self.y += int(size * lead)
+        return self
+
+    def block(self, s, size, color, font=FONT, alpha=None):
+        for ln in wrap(s, size):
+            self.line(ln, size, color, font=font, alpha=alpha)
+        return self
+
+    def rule(self, color=PAPER, alpha=0.25, thick=1):
+        self.f.append(
+            f"drawbox=x={self.x0}:y={self.y}:w={COL_W}:h={thick}"
+            f":color={color}@{alpha}:t=fill:replace=1")
+        self.y += thick
+        return self
+
+    def render(self):
+        return ",".join(self.f)
+
+
+def build_weather_rail(wx, tx, live):
+    """The right rail's top block: conditions, stacked in a 107px column.
+
+    This replaces the 920x300 landscape card, which could not survive being
+    squeezed into a gutter — the redesign is what makes the move possible, not
+    a side effect of it.
+    """
+    cur = wx["current"]
+    daily = wx["daily"]
+    code = int(cur["weather_code"])
+    temp = f"{c(cur['temperature_2m'])}°"
+    wdir = COMPASS[int((cur["wind_direction_10m"] % 360) / 22.5 + 0.5) % 16]
+
+    r = Rail(tx, "right", WX_H)
+    r.gap(12)
+    r.line(CITY, 15, PAPER)
+    r.line(REGION, 11, GREY)
+    r.gap(10)
+    # Sized to the string: see fit_size. A winter "-14°" is four characters.
+    r.line(temp, fit_size(temp, 54), PAPER, lead=1.15)
+    r.gap(6)
+    r.block(WMO.get(code, "—"), 12, PAPER)
+    r.gap(12)
+    r.rule()
+    r.gap(10)
+    r.line(f"FEELS {c(cur['apparent_temperature'])}°", 11, GREY)
+    r.gap(4)
+    # Wind is set as two deliberate lines rather than one wrapped string.
+    # Wrapping "WIND 2 KM/H WSW" leaves the bearing stranded on a line of its
+    # own, and where it breaks changes with the speed — "WIND 100 KM/H" fills
+    # the column exactly while "WIND 2 KM/H" does not. Two fixed lines always
+    # fit and always break in the same place.
+    r.line(f"WIND {wdir}", 11, GREY)
+    r.gap(2)
+    r.line(f"{c(cur['wind_speed_10m'])} KM/H", 11, GREY)
+    r.gap(4)
+    r.line(f"HUM {int(cur['relative_humidity_2m'])}%", 11, GREY)
+    r.gap(4)
+    # "PRECIP", not "RAIN": this is Open-Meteo's daily probability of
+    # precipitation, and in Kelowna half the year that precipitation is snow.
+    r.line(f"PRECIP {int(daily['precipitation_probability_max'][0])}%", 11, GREY)
+    r.gap(12)
+    r.rule()
+    r.gap(8)
+    # Say so on air rather than pretending a cached number is current. The
+    # element is re-read once per programme, not per frame, so even a live
+    # fetch is only as fresh as the last programme boundary.
     if live:
-        f.append(tx.draw(f"AS OF {stamp}", x=620, y=30, size=30, color=GREY))
+        r.line("AS OF", 10, GREY, font=FONT_R)
+        r.line(hhmm(local_now()), 11, GREY)
     else:
-        # Say so on air rather than pretending the number is current.
-        f.append(tx.draw(f"LAST GOOD {stamp}", x=560, y=30, size=30, color=RED))
-    return ",".join(f)
+        r.line("LAST GOOD", 10, RED, font=FONT_R)
+        r.line(hhmm(local_now()), 11, RED)
+    return r.render()
+
+
+def build_listings_rail(tx):
+    """The left rail: the frame around the live UP NEXT text element.
+
+    The listings themselves are NOT baked in here. They come from ErsatzTV's
+    own EPG through text/z0-upnext.yml, which is re-rendered for every playout
+    item and therefore cannot disagree with the guide — where a PNG written on
+    a 15-minute cron would go stale between programmes. This file supplies only
+    what does not change: the spine, the header, and the station line.
+
+    The middle of the rail is deliberately empty. That void is where the text
+    element lands, and its extent is the one thing the two files have to agree
+    about — z0-upnext.yml quotes the same numbers.
+    """
+    r = Rail(tx, "left", FRAME_H)
+    r.gap(12)
+    r.line("UP NEXT", 11, RED)
+    r.gap(2)
+    r.rule(color=RED, alpha=0.55, thick=2)
+
+    # ── the void: y from here to the station block belongs to z0-upnext.yml ──
+    r.y = FRAME_H - 124
+    r.rule()
+    r.gap(10)
+    now = local_now()
+    r.line(now.strftime("%a").upper(), 14, PAPER)
+    r.line(now.strftime("%b %-d").upper(), 11, GREY)
+    r.gap(14)
+    r.block("ONE SIGNAL, ALWAYS ON", 11, RED)
+    return r.render()
 
 
 def slide_base(tx, title):
@@ -269,13 +406,17 @@ def build_slides(wx, tx):
     slides.append(",".join(f))
 
     # ── 2. Next six hours ────────────────────────────────────────────────────
+    #
+    # Six evenly spaced columns. The divisor is SLIDE_W, not a literal — the
+    # canvas went 16:9 -> 4:3 so the picture window never changes size, and a
+    # hard-coded 1920/6 would have left every column a third too far right with
+    # the last one off the canvas entirely.
     f = slide_base(tx, "THE NEXT SIX HOURS")
     idx = [i for i, t in enumerate(hourly["time"])
            if datetime.fromisoformat(t) > now.replace(tzinfo=None)][:6]
-    # Six evenly spaced columns; 1920/6 = 320, so each column is centred at
-    # 160 + 320n and the text is drawn centred inside it.
+    step = SLIDE_W // 6
     for col, i in enumerate(idx):
-        cx = 160 + 320 * col
+        cx = step // 2 + step * col
         t = datetime.fromisoformat(hourly["time"][i])
         temp = c(hourly["temperature_2m"][i])
         pop = hourly["precipitation_probability"][i]
@@ -293,8 +434,9 @@ def build_slides(wx, tx):
 
     # ── 3. Five-day outlook ──────────────────────────────────────────────────
     f = slide_base(tx, "FIVE-DAY OUTLOOK")
+    step = SLIDE_W // 5
     for col in range(5):
-        cx = 192 + 384 * col
+        cx = step // 2 + step * col
         d = datetime.fromisoformat(daily["time"][col])
         hi = c(daily["temperature_2m_max"][col])
         lo = c(daily["temperature_2m_min"][col])
@@ -318,11 +460,12 @@ def build_slides(wx, tx):
     sr = datetime.fromisoformat(daily["sunrise"][0])
     ss = datetime.fromisoformat(daily["sunset"][0])
     daylen = ss - sr
+    left, right = SLIDE_W // 4, SLIDE_W * 3 // 4
     f += [
-        tx.draw("SUNRISE", x=480 - 0, y=330, size=40, color=GREY),
-        tx.draw(hhmm(sr), x=430, y=400, size=88, color=PAPER),
-        tx.draw("SUNSET", x=1200, y=330, size=40, color=GREY),
-        tx.draw(hhmm(ss), x=1150, y=400, size=88, color=PAPER),
+        tx.draw("SUNRISE", x=f"{left}-tw/2", y=330, size=40, color=GREY),
+        tx.draw(hhmm(sr), x=f"{left}-tw/2", y=400, size=88, color=PAPER),
+        tx.draw("SUNSET", x=f"{right}-tw/2", y=330, size=40, color=GREY),
+        tx.draw(hhmm(ss), x=f"{right}-tw/2", y=400, size=88, color=PAPER),
         tx.draw(f"{daylen.seconds // 3600}H {(daylen.seconds % 3600) // 60}M OF DAYLIGHT",
                 x="(w-tw)/2", y=600, size=48, color=PAPER),
         tx.draw("ONE SIGNAL, ALWAYS ON", x="(w-tw)/2", y=760, size=42, color=RED),
@@ -331,121 +474,6 @@ def build_slides(wx, tx):
     ]
     slides.append(",".join(f))
     return slides
-
-
-def ass_escape(s):
-    """ASS is line-oriented; a literal newline or brace would end the event or
-    open an override block."""
-    return s.replace("\\", "").replace("{", "(").replace("}", ")").replace("\n", " ")
-
-
-def build_crawl(wx, upcoming, path):
-    """The bottom-of-screen information strip, as a libass subtitle track.
-
-    Timing is relative to the start of whatever programme is on, because that
-    is the only clock a subtitle element has. Events are laid down for six
-    hours so a long feature never runs out.
-
-    This element is EXPENSIVE and it has taken the channel off air. ErsatzTV
-    composites graphics in-process and pipes one full-frame RGBA stream to
-    ffmpeg; image and text elements are rasterised once and reused, but a
-    subtitle element is re-rendered every single frame whether or not anything
-    changed. On vile that costs ~4x realtime at 1080p, so items carrying this
-    strip transcoded at 0.25x, and ErsatzTV logs [FTL] "not fast enough to
-    support playback", abandons the item and cuts to fallback colour bars —
-    which carry no graphics at all.
-
-    Measured, so it is not guesswork: it is not libass (ffmpeg renders this
-    exact file at 635 fps) and it is not the box (12 cores at load 2.2, no CPU
-    limit). It is also NOT animation — rewriting a scrolling \\move crawl into
-    the static paged form below changed nothing, still 0.254x. There is no
-    static-content fast path in ErsatzTV to exploit.
-
-    What made it affordable is the channel dropping to 854x480: the per-frame
-    cost is proportional to pixel count. Paging is kept because it reads far
-    better than a scroll at SD, not because it is cheaper.
-
-    If the channel ever goes back to 720p/1080p, this strip has to be removed.
-    """
-    cur = wx["current"]
-    bits = [
-        f"CHANNEL Z0",
-        f"{CITY} {c(cur['temperature_2m'])}° "
-        f"{WMO.get(int(cur['weather_code']), '')}",
-        f"WIND {c(cur['wind_speed_10m'])} KM/H",
-        f"HUMIDITY {int(cur['relative_humidity_2m'])}%",
-    ]
-    for start, title in upcoming:
-        try:
-            from zoneinfo import ZoneInfo
-            local = start.astimezone(ZoneInfo(TZNAME))
-        except Exception:  # noqa: BLE001
-            local = start
-        bits.append(f"{local.strftime('%-I:%M %p').upper()}  {title.upper()}")
-    bits.append("ONE SIGNAL, ALWAYS ON")
-
-    bits = [ass_escape(b) for b in bits]
-
-    # Monospace makes the run width computable: NotoSansMono advances 0.6 em,
-    # so a 34px face is ~20.4px per glyph. Pack bits into pages that fit the
-    # frame with the left margin, rather than one bit per page (too sparse).
-    size = 34
-    sep = "   ·   "
-    max_chars = int((PLAYRES_X - 2 * MARGIN_X) / (size * 0.6))
-
-    pages, cur_page = [], []
-    for b in bits:
-        trial = sep.join(cur_page + [b])
-        if cur_page and len(trial) > max_chars:
-            pages.append(sep.join(cur_page))
-            cur_page = [b]
-        else:
-            cur_page.append(b)
-    if cur_page:
-        pages.append(sep.join(cur_page))
-
-    header = f"""[Script Info]
-ScriptType: v4.00+
-PlayResX: {PLAYRES_X}
-PlayResY: {PLAYRES_Y}
-WrapStyle: 2
-ScaledBorderAndShadow: yes
-
-[V4+ Styles]
-Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Crawl,Noto Sans Mono,{size},&H00E9F0F2,&H00E9F0F2,&H00141414,&HB4141414,-1,0,0,0,100,100,0,0,3,6,0,7,0,0,0,1
-
-[Events]
-Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-"""
-
-    def ts(sec):
-        h = int(sec // 3600)
-        m = int((sec % 3600) // 60)
-        s = sec % 60
-        return f"{h:d}:{m:02d}:{s:05.2f}"
-
-    lines = []
-    t = 8.0  # let the programme breathe before the first page
-    limit = 6 * 3600
-    i = 0
-    while t < limit:
-        end = min(t + DWELL, limit)
-        lines.append(
-            f"Dialogue: 0,{ts(t)},{ts(end)},Crawl,,0,0,0,,"
-            f"{{\\pos({MARGIN_X},{CRAWL_Y})}}{pages[i % len(pages)]}"
-        )
-        # A short blank beat between pages so a changed page is noticeable
-        # and never looks like a smear.
-        t = end + 0.5
-        i += 1
-    body = "\n".join(lines) + "\n"
-
-    tmp = path + ".tmp"
-    with open(tmp, "w") as f:
-        f.write(header + body)
-    os.replace(tmp, path)
-    return len(lines)
 
 
 def main():
@@ -458,17 +486,16 @@ def main():
         return 2
 
     tx = Text(OUT)
-    with open(os.path.join(OUT, "card.vf"), "w") as f:
-        f.write(build_card(wx, tx, live))
+    with open(os.path.join(OUT, "wx-rail.vf"), "w") as f:
+        f.write(build_weather_rail(wx, tx, live))
+    with open(os.path.join(OUT, "listings-rail.vf"), "w") as f:
+        f.write(build_listings_rail(tx))
     for i, s in enumerate(build_slides(wx, tx), start=1):
         with open(os.path.join(OUT, f"slide{i}.vf"), "w") as f:
             f.write(s)
 
-    upcoming = get_upcoming()
-    n = build_crawl(wx, upcoming, os.path.join(OUT, "z0-crawl.ass"))
-
     log(f"forecast {'live' if live else 'CACHED'}; "
-        f"{len(upcoming)} guide entries; {n} strip pages")
+        f"rails {RAIL_W}x{WX_H} and {RAIL_W}x{FRAME_H}")
     return 0
 
 

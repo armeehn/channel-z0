@@ -1,33 +1,40 @@
-# Channel Z0 — the corner weather card.
+# Channel Z0 — the conditions block, top of the RIGHT rail.
 #
 # The PNG behind this is rewritten every 15 minutes by tools/z0-weather.sh.
 # ErsatzTV re-reads the file once per programme, when that programme's ffmpeg
-# process starts — not per frame and not per segment. So the card is as fresh
+# process starts — not per frame and not per segment. So the block is as fresh
 # as the last programme boundary, which is why it carries its own "AS OF"
 # stamp rather than implying it is live to the minute.
 #
 # That same read is why the generator installs via rename(2). If ErsatzTV
 # catches a half-written PNG, ImageElement logs "Failed to initialize image
-# element; will disable for this content" and the card is gone for the whole
+# element; will disable for this content" and it is gone for the whole
 # programme — a silent failure that looks like a config mistake.
+#
+# ── Redesigned portrait, and that is what made the move possible ────────────
+#
+# This used to be a 920x300 landscape card sitting on the top-right of the
+# PICTURE at 92% opacity. A landscape card cannot be squeezed into a 107px
+# gutter, so it was rebuilt as a stacked column: city, temperature, condition,
+# then the small print. tools/z0-weather.py lays it out with a running cursor
+# rather than absolute coordinates, so adding a line cannot silently push
+# another one underneath the block below.
+#
+# It occupies the top 340px of the right rail; z0-bug.yml takes the remaining
+# 140. They abut exactly (340 + 140 = 480), which is what makes the red spine
+# down the rail's inner edge read as one unbroken rule rather than two stubs.
 name: "Z0 WEATHER CARD"
 
-image: "/media/branding/z0-weather-card.png"
+image: "/media/branding/z0-rail-wx.png"
 
-opacity_percent: 92
+opacity_percent: 100
 
 location: "TopRight"
-horizontal_margin_percent: 4
-vertical_margin_percent: 5
+horizontal_margin_percent: 0
+vertical_margin_percent: 0
 
-# Rendered at 920x300 and scaled down here, so the card stays sharp and stays
-# correct if the channel is ever re-profiled.
-#
-# 29%, raised from 22% when the channel went 854x480 -> 640x480: this is a
-# percentage of frame WIDTH, which shrank, while frame height did not. At 22%
-# the card would have lost a quarter of its size and its small print stops
-# being readable at SD. See the note in z0-bug.yml.
-scale: true
-scale_width_percent: 29
+# Authored at exactly 107x340 and composited 1:1. See the note in
+# z0-rail-left.yml for why nothing here is scaled.
+scale: false
 
 z_index: 12
