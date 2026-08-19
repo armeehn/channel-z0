@@ -25,7 +25,7 @@ algorithm — the same bytes that `ffedit` ran, with the sha1 shown in the
 footer alongside the exact command and its `-sp` payload.
 
 **Nothing is hidden behind an import.** That is the whole claim, and it is why
-the machinery is duplicated into all eight files rather than shared. The files
+the machinery is duplicated into all sixteen files rather than shared. The files
 are therefore **output**: edit `specimen.template.js` or the `SYSTEMS` table in
 `make-specimens.py` and regenerate. Hand-edits to `specimens/*.js` are lost.
 
@@ -94,6 +94,19 @@ it produced running past below.
 | `levy` | LEVY C | `F→+F--F+` | 45° | 14 | 15 | green |
 | `bush` | BUSH | `F→FF-[-F+F+F]+[+F-F-F]` | 22.5° | 5 | 28 | amber |
 | `crystal` | CRYSTAL | `F→FF+F+F+F+FF` | 90° | 4 | 22 | bone |
+| `peano` | PEANO | `F→F+F-F-F-F+F+F+F-F` | 90° | 4 | 10 | amber |
+| `gosper` | GOSPER | `F→F-G--G+F++FF+G-`, `G→+F-GG--G-F++F+G` | 60° | 4 | 14 | green |
+| `moore` | MOORE | `L→-RF+LFL+FR-`, `R→+LF-RFR-FL+` | 90° | 5 | 10 | bone |
+| `tree` | TREE | `F→F[+F]F[-F][F]` | 20° | 5 | 26 | amber |
+| `snowflake` | SNOWFLAKE | `F→F-F++F-F` | 60° | 5 | 18 | red |
+| `terdragon` | TERDRAGON | `F→F+F-F` | 120° | 9 | 16 | green |
+| `seaweed` | SEAWEED | `F→FF-[-F+F]+[+F-F]` | 22° | 5 | 28 | amber |
+| `board` | BOARD | `F→FF+F+F+F+F+F-F` | 90° | 3 | 18 | bone |
+
+The specimen's header numbers it but does **not** carry a total: a count in
+every file means appending a seventeenth specimen rewrites the other sixteen,
+and every clip already on air would be showing a listing that no longer matches
+the repo.
 
 `push` is per specimen and lives in `SYS`, on screen, because it has to be:
 **a space-filling curve fills every macroblock, so the shove that animates a
@@ -124,7 +137,7 @@ pct exec 111 -- su - user -c \
   'cd ~/channel-z0/tools/z0-lsys && python3 z0-lsys-render.py --out-dir /tmp/z0lsys/out'
 ```
 
-Eight 55-second clips in about **40 seconds**, all told.
+Sixteen 55-second clips in about **105 seconds**, all told.
 
 `tools/z0-generative.py` needs three hosts because Glitchsheet's engine and
 numpy live in LXC 114, which has no ffmpeg at all. Nothing here needs either:

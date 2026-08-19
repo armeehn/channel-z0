@@ -1,6 +1,6 @@
-// FERN  ·  CH 0 L-SYSTEM SPECIMEN 01
-// Barnsley's fern. X is never drawn -- it is
-// only a promise to grow something later.
+// TERDRAGON  ·  CH 0 L-SYSTEM SPECIMEN 14
+// F becomes F+F-F at a hundred and
+// twenty degrees. Nothing else is said.
 //
 // This file is the whole program. qjs runs it
 // to draw the ink; ffedit runs it again to
@@ -8,15 +8,15 @@
 // are reading what made the picture beside it.
 
 export const SYS = {
-  name:    "FERN",
-  caption: "six rewrites of a single letter",
-  ink:     "#ffb000",
-  axiom:   "X",
-  rules:   { X: "F+[[X]-X]-F[-FX]+X", F: "FF" },
-  angle:   25,  // degrees per + or -
-  gens:    6,   // rewrites
-  heading: -90, // where the turtle starts
-  push:    30,  // how hard ffedit shoves it
+  name:    "TERDRAGON",
+  caption: "one rule, three ways, nine times",
+  ink:     "#33ff66",
+  axiom:   "F",
+  rules:   { F: "F+F-F" },
+  angle:   120, // degrees per + or -
+  gens:    9,   // rewrites
+  heading: 0,   // where the turtle starts
+  push:    16,  // how hard ffedit shoves it
 };
 const RAD = Math.PI / 180;
 

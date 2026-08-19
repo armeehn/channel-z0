@@ -1,6 +1,6 @@
-// FERN  ·  CH 0 L-SYSTEM SPECIMEN 01
-// Barnsley's fern. X is never drawn -- it is
-// only a promise to grow something later.
+// BOARD  ·  CH 0 L-SYSTEM SPECIMEN 16
+// Right angles only, eight to a side,
+// and the outline never repeats itself.
 //
 // This file is the whole program. qjs runs it
 // to draw the ink; ffedit runs it again to
@@ -8,15 +8,15 @@
 // are reading what made the picture beside it.
 
 export const SYS = {
-  name:    "FERN",
-  caption: "six rewrites of a single letter",
-  ink:     "#ffb000",
-  axiom:   "X",
-  rules:   { X: "F+[[X]-X]-F[-FX]+X", F: "FF" },
-  angle:   25,  // degrees per + or -
-  gens:    6,   // rewrites
-  heading: -90, // where the turtle starts
-  push:    30,  // how hard ffedit shoves it
+  name:    "BOARD",
+  caption: "a square that grows square teeth",
+  ink:     "#cfcabc",
+  axiom:   "F+F+F+F",
+  rules:   { F: "FF+F+F+F+F+F-F" },
+  angle:   90,  // degrees per + or -
+  gens:    3,   // rewrites
+  heading: 0,   // where the turtle starts
+  push:    18,  // how hard ffedit shoves it
 };
 const RAD = Math.PI / 180;
 

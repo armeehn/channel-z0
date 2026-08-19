@@ -1,4 +1,4 @@
-// KOCH ISLAND  ·  CH 0 L-SYSTEM SPECIMEN 4/8
+// KOCH ISLAND  ·  CH 0 L-SYSTEM SPECIMEN 04
 // Every edge grows a smaller copy of the
 // whole coast. The perimeter never settles.
 //

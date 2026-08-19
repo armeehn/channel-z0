@@ -1,4 +1,4 @@
-// SIERPINSKI  ·  CH 0 L-SYSTEM SPECIMEN 5/8
+// SIERPINSKI  ·  CH 0 L-SYSTEM SPECIMEN 05
 // Two letters, both drawing, one doubling.
 // The holes are what is left over.
 //

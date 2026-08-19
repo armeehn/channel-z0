@@ -1,6 +1,6 @@
-// FERN  ·  CH 0 L-SYSTEM SPECIMEN 01
-// Barnsley's fern. X is never drawn -- it is
-// only a promise to grow something later.
+// MOORE  ·  CH 0 L-SYSTEM SPECIMEN 11
+// Hilbert's curve joined end to end, so
+// the turtle finishes where it began.
 //
 // This file is the whole program. qjs runs it
 // to draw the ink; ffedit runs it again to
@@ -8,15 +8,15 @@
 // are reading what made the picture beside it.
 
 export const SYS = {
-  name:    "FERN",
-  caption: "six rewrites of a single letter",
-  ink:     "#ffb000",
-  axiom:   "X",
-  rules:   { X: "F+[[X]-X]-F[-FX]+X", F: "FF" },
-  angle:   25,  // degrees per + or -
-  gens:    6,   // rewrites
-  heading: -90, // where the turtle starts
-  push:    30,  // how hard ffedit shoves it
+  name:    "MOORE",
+  caption: "a closed curve that fills its square",
+  ink:     "#cfcabc",
+  axiom:   "LFL+F+LFL",
+  rules:   { L: "-RF+LFL+FR-", R: "+LF-RFR-FL+" },
+  angle:   90,  // degrees per + or -
+  gens:    5,   // rewrites
+  heading: 0,   // where the turtle starts
+  push:    10,  // how hard ffedit shoves it
 };
 const RAD = Math.PI / 180;
 
