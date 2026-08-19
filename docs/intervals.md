@@ -7,6 +7,11 @@ driven headlessly as a library rather than through its studio UI.
 
 Roughly **40 minutes a day**, across **168 junctions** in the seven-day cycle.
 
+A second family shares this pool: the **L-system specimens** in
+[lsystems.md](lsystems.md), where the program that drew the picture is on
+screen beside it. They carry the same `generative` tag, so they join the same
+shuffle and need no schedule change.
+
 ---
 
 ## What is on screen
