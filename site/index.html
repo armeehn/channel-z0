@@ -290,6 +290,7 @@
     color: var(--ink-2); letter-spacing: 0; text-transform: none;
     opacity: 0; visibility: hidden; transition: opacity .12s ease;
     pointer-events: none;
+    max-height: 0; overflow: hidden;
   }
   .spec-note b { color: var(--ink); }
   .spec-note::after {   /* the little pointer back at the row */
@@ -297,7 +298,7 @@
     border-left: 7px solid var(--ink);
     border-top: 5px solid transparent; border-bottom: 5px solid transparent;
   }
-  .spec-row:hover .spec-note, .spec-row:focus-within .spec-note { opacity: 1; visibility: visible; }
+  .spec-row:hover .spec-note, .spec-row:focus-within .spec-note { opacity: 1; visibility: visible; max-height: none; overflow: visible; }
   @media (prefers-reduced-motion: reduce) { .spec-note { transition: none; } }
 
   /* ---------- SEC.02 program ---------- */
@@ -391,7 +392,150 @@
     .spec-note { right: auto; left: 0; top: calc(100% - 1px); width: 100%; }
     .spec-note::after { display: none; }
   }
+
+  /* ---------- hero fold ----------
+     The masthead never leaves; only the paragraph and the statline fold away.
+     On a short window the boot code folds them by default, because the panel
+     below deserves the pixels more than a paragraph already read once. */
+  .hero-top { display: flex; align-items: center; gap: 20px; }
+  .hero-top > .hero-head { min-width: 0; }
+  .hero-toggle {
+    margin-left: auto; flex: none;
+    font-family: var(--mono); font-size: 10px; letter-spacing: .18em; font-weight: 700;
+    background: transparent; color: var(--ink-2); border: 1px solid var(--ink);
+    padding: 6px 10px; cursor: pointer; display: flex; align-items: center; gap: 8px;
+  }
+  .hero-toggle:hover { background: var(--ink); color: var(--paper); }
+  .hero-toggle:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+  .hero.collapsed .hero-more { display: none; }
+  /* no JS, no folding: the whole hero is simply there */
+  html:not(.tabs) .hero-toggle { display: none; }
+
+  /* ---------- section tabs ----------
+     Six sections, one click apart, in the order the SEC numbers already run.
+     Gated on html.tabs (set before first paint): with JS off the tabs would be
+     six dead buttons hiding five sections, so instead they vanish and the page
+     falls back to the one long scroll it has always been. */
+  .wrap > .checker { margin-top: 22px; }
+  html:not(.tabs) .secnav { display: none; }
+  .secnav {
+    display: flex; background: var(--paper-2);
+    border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink);
+  }
+  .sec-tab {
+    font-family: var(--mono); font-weight: 700; font-size: 11px;
+    letter-spacing: .14em; text-transform: uppercase;
+    background: transparent; color: var(--ink-2);
+    border: 0; border-right: 1px solid var(--ink);
+    padding: 11px 8px; cursor: pointer; flex: 1 1 0; min-width: 0;
+    display: flex; align-items: baseline; justify-content: center; gap: 8px;
+  }
+  .sec-tab:last-child { border-right: none; }
+  .sec-tab .n { color: var(--red); font-size: 10px; letter-spacing: .1em; flex: none; }
+  .sec-tab .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sec-tab:hover { color: var(--red); }
+  .sec-tab[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+  .sec-tab[aria-selected="true"] .n { color: var(--paper); }
+  .sec-tab:focus-visible { outline: 2px solid var(--red); outline-offset: -3px; }
+
+  html.tabs .panels > .panel { display: none; }
+  html.tabs .panels > .panel.on { display: block; }
+  html.tabs .panels > .panel:focus { outline: none; }
+  /* the tab bar is the divider now, and the section header repeats what the
+     tab already says — so the rule goes and the padding comes down. */
+  html.tabs section.panel, html.tabs footer.panel { border-bottom: none; padding: 26px 0 30px; }
+  html.tabs .panels > .panel .sec-head { margin-bottom: 20px; }
+
+  /* ---------- pinned shell ----------
+     Roomy window: the station is the window. Top bar, hero, tabs and one panel
+     divide 100dvh between them and the page itself never scrolls. Only a panel
+     that genuinely cannot fit (the week's guide) scrolls, inside its own frame,
+     so the tabs are always where the viewer left them. */
+  @media (min-width: 721px) and (min-height: 620px) {
+    html.tabs, html.tabs body { height: 100%; overflow: hidden; }
+    html.tabs .wrap {
+      height: 100dvh; display: flex; flex-direction: column; padding-bottom: 0;
+      --live-chrome: 470px;
+    }
+    html.tabs .topbar { flex: none; padding: 10px 0; }
+    html.tabs .hero { flex: none; padding: 16px 0 14px; }
+    html.tabs .hero .kicker { margin-bottom: 10px; }
+    html.tabs .hero h1.masthead { font-size: clamp(1.5rem, 3.6vw, 2.4rem); }
+    html.tabs .hero h1.masthead br { display: none; }   /* one line, not two */
+    html.tabs .hero .sub { margin-top: 12px; font-size: 13px; max-width: 88ch; }
+    html.tabs .hero .statline { margin-top: 12px; }
+    html.tabs .hero.collapsed { padding: 11px 0 10px; }
+    html.tabs .hero.collapsed .kicker { margin-bottom: 7px; }
+    html.tabs .hero.collapsed h1.masthead { font-size: clamp(1.2rem, 2.6vw, 1.7rem); }
+    html.tabs .secnav { flex: none; }
+
+    html.tabs .panels { flex: 1 1 auto; min-height: 0; display: flex; }
+    html.tabs .panels > .panel {
+      flex: 1 1 auto; min-height: 0; padding: 22px 0 14px;
+      overflow-y: auto; overscroll-behavior: contain;
+    }
+    html.tabs .panels > .panel.on { display: flex; flex-direction: column; }
+    html.tabs .panels > .panel .sec-head { flex: none; margin-bottom: 14px; }
+    html.tabs .panels > .panel .sec-title { font-size: clamp(1.05rem, 2.2vw, 1.35rem); }
+    html.tabs .wrap > .checker { flex: none; margin-top: 0; }
+
+    /* The picture is the one elastic thing on SEC.01: cap it off the window so
+       the transport row and the SPEC card stay on screen. It gives up WIDTH to
+       stay 16:9 rather than letterboxing inside a squashed frame. Folding the
+       hero hands the difference straight back to it. */
+    /* One-line spec values beat a wide picture here: at 236px twelve rows
+       wrapped to two lines each and the card, not the video, was what pushed
+       SEC.01 past the fold. */
+    html.tabs #live .feed-grid { grid-template-columns: minmax(0, 1fr) 292px; }
+    html.tabs #live .spec-rows { padding: 3px 0; }
+    html.tabs #live .spec-row { padding: 5px 12px; }
+    html.tabs #live .screen-frame { max-width: calc((100dvh - var(--live-chrome)) * 16 / 9); }
+    html.tabs .hero.collapsed ~ .panels { --live-chrome: 350px; }
+    /* full screen is full screen — the cap must not follow it there */
+    html.tabs #live .screen-frame.fs,
+    html.tabs #live .screen-frame:fullscreen,
+    html.tabs #live .screen-frame:-webkit-full-screen { max-width: none; }
+
+    /* A broadcast day is longer than any window. Scroll the rows inside the
+       frame; the day tabs, the header and the footnote hold still. */
+    html.tabs #program .program { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+    html.tabs #program .day-tabs,
+    html.tabs #program .program-head,
+    html.tabs #program .program-foot { flex: none; }
+    html.tabs #program #pvGrid { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+
+    /* SEC.06 is three lines; centred it reads as a sign-off card, not a stub */
+    html.tabs #sign-off.panel.on { justify-content: center; }
+  }
+
+  /* Phone, or a window too short to pin: still one section at a time — that is
+     where most of the scrolling went — but the page flows normally again. */
+  @media (max-width: 720px), (max-height: 619px) {
+    html.tabs .secnav { position: sticky; top: 0; z-index: 40; }
+  }
+  @media (max-width: 720px) {
+    /* Beside the masthead the button steals the width a 2.6rem headline needs
+       and "YOU FOUND IT." breaks into three. Give it its own row instead. */
+    .hero-top { flex-wrap: wrap; }
+    .hero-top > .hero-head { flex: 1 1 100%; }
+    .hero-toggle { order: -1; margin-left: auto; margin-bottom: 12px; }
+  }
+  @media (max-width: 600px) {
+    .secnav { flex-wrap: wrap; }
+    .sec-tab {
+      flex: 1 1 33%; border-bottom: 1px solid var(--ink);
+      letter-spacing: .05em; padding: 10px 4px; gap: 5px;
+    }
+    .sec-tab:nth-child(3n) { border-right: none; }
+    .sec-tab:nth-child(n+4) { border-bottom: none; }
+  }
 </style>
+<script>
+  /* Set before the first paint: every tab-shaped rule is gated on .tabs, so a
+     browser without JS gets the old top-to-bottom page instead of five hidden
+     sections. */
+  document.documentElement.classList.add("tabs");
+</script>
 </head>
 <body>
 <div class="wrap">
@@ -402,10 +546,23 @@
     <span class="meta"><span>PROJECT: <b>CHANNEL Z0</b></span> <span>DESIG: <b>RL-Z0</b></span> <span>VER: <b>FULL</b></span> <span class="clockbox">T: <b id="clock">--:--:--</b></span></span>
   </div>
 
-  <!-- ============ HERO ============ -->
-  <div class="hero">
-    <div class="kicker"><span class="dot" aria-hidden="true"></span> CHANNEL 0 · THE ONE THE DIAL SKIPS</div>
-    <h1 class="masthead">You found it.<br>Welcome to <span class="z0">Z0.</span></h1>
+  <!-- ============ HERO ============
+       Folds. The masthead and the kicker are the permanent half; the paragraph
+       and the statline are the half that gives way, because on a short window
+       the panel underneath has better uses for 130px than a paragraph the
+       viewer has already read. Boot decides the opening state from the window;
+       the button decides it after that. -->
+  <div class="hero" id="hero">
+    <div class="hero-top">
+      <div class="hero-head">
+        <div class="kicker"><span class="dot" aria-hidden="true"></span> CHANNEL 0 · THE ONE THE DIAL SKIPS</div>
+        <h1 class="masthead">You found it.<br> Welcome to <span class="z0">Z0.</span></h1>
+      </div>
+      <button class="hero-toggle" id="heroToggle" type="button" aria-expanded="true" aria-controls="heroMore">
+        <span id="heroToggleLabel">HIDE INTRO</span><span aria-hidden="true" id="heroToggleCaret">▴</span>
+      </button>
+    </div>
+    <div class="hero-more" id="heroMore">
     <p class="sub"><b>There's a channel at the bottom of the dial that most people scroll right past</b> —
        channel zero, the one the numbers skip. It's been running the whole time; you just tuned in.
        A real station, broadcasting 24/7 from a machine in a house: scheduled shows, neighbourhood ads,
@@ -416,10 +573,26 @@
       <span class="cell"><span class="k">LATENCY</span><span>~20s, BY DESIGN</span></span>
       <span class="cell"><span class="k">FREIGHT</span><span>NONE · LOCAL SIGNAL LOOP</span></span>
     </div>
+    </div><!-- /.hero-more -->
   </div>
 
+  <!-- ============ SECTION TABS ============
+       The six SEC numbers the page already runs on, one click apart instead of
+       six screens of scrolling. Hidden entirely without JS (html:not(.tabs)),
+       where the sections stay stacked and these buttons would do nothing. -->
+  <nav class="secnav" id="secnav" role="tablist" aria-label="Station sections">
+    <button class="sec-tab" type="button" role="tab" id="tab-live"        aria-controls="live"        aria-selected="true"  tabindex="0"><span class="n">01</span><span class="t">Live Feed</span></button>
+    <button class="sec-tab" type="button" role="tab" id="tab-program"     aria-controls="program"     aria-selected="false" tabindex="-1"><span class="n">02</span><span class="t">Program</span></button>
+    <button class="sec-tab" type="button" role="tab" id="tab-ground-zero" aria-controls="ground-zero" aria-selected="false" tabindex="-1"><span class="n">03</span><span class="t">Ground Zero</span></button>
+    <button class="sec-tab" type="button" role="tab" id="tab-submit-ad"   aria-controls="submit-ad"   aria-selected="false" tabindex="-1"><span class="n">04</span><span class="t">File a Spot</span></button>
+    <button class="sec-tab" type="button" role="tab" id="tab-lab"         aria-controls="lab"         aria-selected="false" tabindex="-1"><span class="n">05</span><span class="t">The Lab</span></button>
+    <button class="sec-tab" type="button" role="tab" id="tab-sign-off"    aria-controls="sign-off"    aria-selected="false" tabindex="-1"><span class="n">06</span><span class="t">Sign-Off</span></button>
+  </nav>
+
+  <div class="panels" id="panels">
+
   <!-- ============ SEC.01 LIVE FEED ============ -->
-  <section id="live">
+  <section class="panel on" id="live" role="tabpanel" aria-labelledby="tab-live" tabindex="0">
     <div class="sec-head">
       <span class="sec-no">SEC.01</span>
       <span class="sec-title">Live Feed</span>
@@ -527,7 +700,7 @@
   </section>
 
   <!-- ============ SEC.02 PROGRAM ============ -->
-  <section id="program">
+  <section class="panel" id="program" role="tabpanel" aria-labelledby="tab-program" tabindex="0">
     <div class="sec-head">
       <span class="sec-no">SEC.02</span>
       <span class="sec-title">Program</span>
@@ -542,7 +715,7 @@
   </section>
 
   <!-- ============ SEC.03 GROUND ZERO ============ -->
-  <section id="ground-zero">
+  <section class="panel" id="ground-zero" role="tabpanel" aria-labelledby="tab-ground-zero" tabindex="0">
     <div class="sec-head">
       <span class="sec-no">SEC.03</span>
       <span class="sec-title">Ground Zero</span>
@@ -578,7 +751,7 @@
   </section>
 
   <!-- ============ SEC.04 FILE A SPOT ============ -->
-  <section id="submit-ad">
+  <section class="panel" id="submit-ad" role="tabpanel" aria-labelledby="tab-submit-ad" tabindex="0">
     <div class="sec-head">
       <span class="sec-no">SEC.04</span>
       <span class="sec-title">File a Spot</span>
@@ -604,7 +777,7 @@
   </section>
 
   <!-- ============ SEC.05 THE LAB ============ -->
-  <section id="lab">
+  <section class="panel" id="lab" role="tabpanel" aria-labelledby="tab-lab" tabindex="0">
     <div class="sec-head">
       <span class="sec-no">SEC.05</span>
       <span class="sec-title">The Lab</span>
@@ -623,7 +796,7 @@
   </section>
 
   <!-- ============ SEC.06 SIGN-OFF ============ -->
-  <footer>
+  <footer class="panel" id="sign-off" role="tabpanel" aria-labelledby="tab-sign-off" tabindex="0">
     <div class="sec-head" style="margin-bottom:14px">
       <span class="sec-no">SEC.06</span>
       <span class="sec-title" style="font-size:1.1rem">Sign-Off</span>
@@ -634,7 +807,12 @@
       <span>© CHANNEL Z0 · A RIPOSTE LABORATORIES TRANSMISSION · EST. 2026</span>
     </div>
   </footer>
-  <div class="checker" style="margin-top:22px" aria-hidden="true"></div>
+
+  </div><!-- /.panels -->
+
+  <!-- The shell's bottom edge. Inline margin lifted out to CSS so the pinned
+       layout can close the gap without an !important. -->
+  <div class="checker" aria-hidden="true"></div>
 
 </div>
 <script>
@@ -1206,6 +1384,7 @@ function renderSchedule() {
   const viewingToday = selectedDay === today;
   const cur = viewingToday ? currentSlotIndex(sched) : -1;  // NOW only marks the real day
   renderDayTabs(today);
+  const keepScroll = els.pvGrid.scrollTop;
   els.pvGrid.innerHTML = "";
   sched.forEach((s, i) => {
     const row = document.createElement("div");
@@ -1218,10 +1397,100 @@ function renderSchedule() {
       </div>`;
     els.pvGrid.appendChild(row);
   });
+  els.pvGrid.scrollTop = keepScroll;
   updateNowShowing();
   els.pvDate.textContent = viewingToday
     ? new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" }).toUpperCase()
     : DAY_FULL[selectedDay] + " · SCHEDULE";
+}
+
+/* ---------------- section tabs ----------------
+   Six sections, one on screen at a time. Nothing here builds or rewrites a
+   panel: they are the same six elements the document has always had, and the
+   controller only decides which one carries .on. So with JS off the .tabs
+   class is never set, every rule above is inert, and the page is the old
+   top-to-bottom station.
+
+   The hash stays the address. #program deep-links straight to the guide, and
+   an external link into a section still lands on it. It is written with
+   replaceState rather than pushState on purpose: the tabs are one page, and
+   six presses of Back to leave the site would be a trap. */
+const secTabs = Array.from(document.querySelectorAll(".sec-tab"));
+const secOf = (t) => t.getAttribute("aria-controls");
+
+function centreNowRow() {
+  // Opening the guide should land on what is on NOW, not on the sign-on card.
+  // Set scrollTop by hand: scrollIntoView() would also scroll every ancestor,
+  // and one of them is the shell.
+  const g = els.pvGrid, cur = g.querySelector(".p-row.current");
+  if (!cur) return;
+  const top = cur.getBoundingClientRect().top - g.getBoundingClientRect().top + g.scrollTop;
+  g.scrollTop = Math.max(0, top - g.clientHeight / 2 + cur.offsetHeight / 2);
+}
+
+function showSection(id, opts = {}) {
+  let i = secTabs.findIndex((t) => secOf(t) === id);
+  if (i < 0) { i = 0; id = secOf(secTabs[0]); }
+  secTabs.forEach((t, n) => {
+    const on = n === i;
+    const panel = document.getElementById(secOf(t));
+    t.setAttribute("aria-selected", on ? "true" : "false");
+    t.tabIndex = on ? 0 : -1;
+    panel.classList.toggle("on", on);
+    if (on) panel.scrollTop = 0;
+  });
+  if (opts.focus) secTabs[i].focus();
+  if (id === "program") centreNowRow();
+  if (location.hash.slice(1) !== id) {
+    history.replaceState(null, "", "#" + id);
+  }
+}
+
+secTabs.forEach((t) => {
+  t.addEventListener("click", () => showSection(secOf(t)));
+});
+// Roving arrow keys across the tab strip, per the ARIA tabs pattern.
+document.getElementById("secnav").addEventListener("keydown", (e) => {
+  const step = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+  let next = null;
+  if (step) next = (secTabs.findIndex((t) => t.getAttribute("aria-selected") === "true") + step + secTabs.length) % secTabs.length;
+  else if (e.key === "Home") next = 0;
+  else if (e.key === "End") next = secTabs.length - 1;
+  if (next === null) return;
+  e.preventDefault();
+  showSection(secOf(secTabs[next]), { focus: true });
+});
+window.addEventListener("hashchange", () => showSection(location.hash.slice(1)));
+
+/* ---------------- hero fold ----------------
+   The paragraph and the statline cost about 130px, which on a 900px window is
+   a third of the picture. Open on a tall window, folded on a short one, and
+   the viewer's own choice wins from then on (remembered, so it does not argue
+   with them on every visit). */
+const heroBox = document.getElementById("hero");
+const heroBtn = document.getElementById("heroToggle");
+const HERO_KEY = "z0-hero-open";
+
+function setHero(open) {
+  heroBox.classList.toggle("collapsed", !open);
+  heroBtn.setAttribute("aria-expanded", open ? "true" : "false");
+  document.getElementById("heroToggleLabel").textContent = open ? "HIDE INTRO" : "ABOUT Z0";
+  document.getElementById("heroToggleCaret").textContent = open ? "▴" : "▾";
+}
+heroBtn.addEventListener("click", () => {
+  const open = heroBtn.getAttribute("aria-expanded") !== "true";
+  setHero(open);
+  try { localStorage.setItem(HERO_KEY, open ? "1" : "0"); } catch (_) {}
+});
+
+function initShell() {
+  let stored = null;
+  try { stored = localStorage.getItem(HERO_KEY); } catch (_) {}
+  // No stored choice: fold it only where the room is actually tight — a short
+  // desktop window. A phone scrolls anyway, and the intro is the welcome.
+  const roomy = window.innerHeight >= 860 || window.innerWidth <= 720;
+  setHero(stored === null ? roomy : stored === "1");
+  showSection(location.hash.slice(1) || "live");
 }
 
 /* ---------------- boot ---------------- */
@@ -1238,6 +1507,7 @@ els.adMail.addEventListener("click", () => {
 setInterval(tick, 1000); tick();
 armPeekOnTouch();
 renderSchedule(); setInterval(renderSchedule, 30 * 1000);
+initShell();
 pollStatus(); setInterval(pollStatus, CONFIG.STATUS_POLL_SECONDS * 1000);
 </script>
 </body>
