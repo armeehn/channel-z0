@@ -1,4 +1,4 @@
-// HILBERT  ·  CH 0 L-SYSTEM SPECIMEN 3/8
+// HILBERT  ·  CH 0 L-SYSTEM SPECIMEN 03
 // A space-filling curve. Given enough
 // generations it passes through every point.
 //

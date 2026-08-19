@@ -75,6 +75,56 @@ SYSTEMS = [
                "only, and it still comes out as frost."],
          axiom="F+F+F+F", rules={"F": "FF+F+F+F+FF"},
          angle=90, gens=4, heading=0),
+    dict(slug="peano", push=10, name="PEANO", ink="#ffb000",
+         caption="one line that fills a square",
+         note=["Nine copies of itself per generation,",
+               "and it reaches every point of the square."],
+         axiom="F", rules={"F": "F+F-F-F-F+F+F+F-F"},
+         angle=90, gens=4, heading=0),
+    dict(slug="gosper", push=14, name="GOSPER", ink="#33ff66",
+         caption="the flowsnake, a hexagon that tiles",
+         note=["Two letters, both drawing, at sixty",
+               "degrees. The curve tiles the plane."],
+         axiom="F", rules={"F": "F-G--G+F++FF+G-",
+                           "G": "+F-GG--G-F++F+G"},
+         angle=60, gens=4, heading=0),
+    dict(slug="moore", push=10, name="MOORE", ink="#cfcabc",
+         caption="a closed curve that fills its square",
+         note=["Hilbert's curve joined end to end, so",
+               "the turtle finishes where it began."],
+         axiom="LFL+F+LFL", rules={"L": "-RF+LFL+FR-",
+                                   "R": "+LF-RFR-FL+"},
+         angle=90, gens=5, heading=0),
+    dict(slug="tree", push=26, name="TREE", ink="#ffb000",
+         caption="a stem that keeps three ways open",
+         note=["Every segment sprouts left, right and",
+               "straight on, and the brackets remember."],
+         axiom="F", rules={"F": "F[+F]F[-F][F]"},
+         angle=20, gens=5, heading=-90),
+    dict(slug="snowflake", push=18, name="SNOWFLAKE", ink="#ff2d2d",
+         caption="the Koch snowflake, at sixty degrees",
+         note=["Three Koch curves nose to tail. The",
+               "area settles; the edge never does."],
+         axiom="F++F++F", rules={"F": "F-F++F-F"},
+         angle=60, gens=5, heading=0),
+    dict(slug="terdragon", push=16, name="TERDRAGON", ink="#33ff66",
+         caption="one rule, three ways, nine times",
+         note=["F becomes F+F-F at a hundred and",
+               "twenty degrees. Nothing else is said."],
+         axiom="F", rules={"F": "F+F-F"},
+         angle=120, gens=9, heading=0),
+    dict(slug="seaweed", push=28, name="SEAWEED", ink="#ffb000",
+         caption="a weed that leans as it grows",
+         note=["Two bracketed pairs per segment, at an",
+               "angle just tight enough to curl."],
+         axiom="F", rules={"F": "FF-[-F+F]+[+F-F]"},
+         angle=22, gens=5, heading=-90),
+    dict(slug="board", push=18, name="BOARD", ink="#cfcabc",
+         caption="a square that grows square teeth",
+         note=["Right angles only, eight to a side,",
+               "and the outline never repeats itself."],
+         axiom="F+F+F+F", rules={"F": "FF+F+F+F+F+F-F"},
+         angle=90, gens=3, heading=0),
 ]
 
 
@@ -91,11 +141,11 @@ def rules_lines(rules):
     return out
 
 
-def header(sys_def, index, total):
+def header(sys_def, index):
     n = sys_def
     L = []
-    L.append("// %s  ·  CH 0 L-SYSTEM SPECIMEN %d/%d"
-             % (n["name"], index, total))
+    L.append("// %s  ·  CH 0 L-SYSTEM SPECIMEN %02d"
+             % (n["name"], index))
     for line in n["note"]:
         L.append("// " + line)
     L.append("//")
@@ -132,7 +182,7 @@ def main():
     # after shipping it is not a guard.
     built, bad = [], 0
     for i, s in enumerate(SYSTEMS, 1):
-        text = template.replace("__HEADER__", header(s, i, len(SYSTEMS)))
+        text = template.replace("__HEADER__", header(s, i))
         for n, line in enumerate(text.splitlines(), 1):
             if len(line) > COLS:
                 print("%s:%d is %d columns: %s"

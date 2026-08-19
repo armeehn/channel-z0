@@ -1,6 +1,6 @@
-// FERN  ·  CH 0 L-SYSTEM SPECIMEN 01
-// Barnsley's fern. X is never drawn -- it is
-// only a promise to grow something later.
+// GOSPER  ·  CH 0 L-SYSTEM SPECIMEN 10
+// Two letters, both drawing, at sixty
+// degrees. The curve tiles the plane.
 //
 // This file is the whole program. qjs runs it
 // to draw the ink; ffedit runs it again to
@@ -8,15 +8,18 @@
 // are reading what made the picture beside it.
 
 export const SYS = {
-  name:    "FERN",
-  caption: "six rewrites of a single letter",
-  ink:     "#ffb000",
-  axiom:   "X",
-  rules:   { X: "F+[[X]-X]-F[-FX]+X", F: "FF" },
-  angle:   25,  // degrees per + or -
-  gens:    6,   // rewrites
-  heading: -90, // where the turtle starts
-  push:    30,  // how hard ffedit shoves it
+  name:    "GOSPER",
+  caption: "the flowsnake, a hexagon that tiles",
+  ink:     "#33ff66",
+  axiom:   "F",
+  rules:   {
+    F: "F-G--G+F++FF+G-",
+    G: "+F-GG--G-F++F+G",
+  },
+  angle:   60,  // degrees per + or -
+  gens:    4,   // rewrites
+  heading: 0,   // where the turtle starts
+  push:    14,  // how hard ffedit shoves it
 };
 const RAD = Math.PI / 180;
 
