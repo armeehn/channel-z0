@@ -86,7 +86,8 @@ WEEK = {
         prime=("SATURDAY DOUBLE BILL", "classics"),
         # Saturday takes a second feature instead of the encore, per the bible.
         second_feature=("SATURDAY DOUBLE BILL — SECOND FEATURE", "scifi"),
-        late=("THE LATE LATE SHOW", "late_show"),
+        # No `late`: the second feature holds the night and signs off when it
+        # ends. See the pad_to_next note in day_plan().
     ),
     "sunday": dict(
         matinee=("THE VANCOUVER REEL", "vancouver_reel"),
@@ -142,6 +143,22 @@ def strand(title, content, until, tomorrow=False, discard=6, trim=False):
     if trim:
         item["trim"] = True
     return [{"epg_group": True}, item, {"epg_group": False}]
+
+
+def strand_to_next(title, content, minutes, discard=6):
+    """A block padded out to the next multiple of `minutes` past the hour.
+
+    The difference from strand() is not cosmetic. `pad_until` names a time on
+    the day the instruction is REACHED and does not roll forward if that time
+    has already gone by, so an instruction reached at 00:03 and targeting
+    23:00 pads for twenty-three hours and eats the following day whole.
+    `pad_to_next` is relative, so it is bounded by `minutes` no matter what
+    the clock says — the only safe way to pad after something that may run
+    past midnight."""
+    return [{"epg_group": True},
+            {"pad_to_next": minutes, "content": content,
+             "custom_title": title, "discard_attempts": discard},
+            {"epg_group": False}]
 
 
 def coming_soon(title, card, until, discard=6):
@@ -282,7 +299,21 @@ def day_plan(name, spec):
         P += strand("SHORT SUBJECTS", "pad_short", "22:30")
         P += programme(*spec["second_feature"])
         P.append({"sequence": "station_break"})
-        P += strand("SHORT SUBJECTS", "pad_short", "23:00")
+        # ── This one is `pad_to_next`, and it HAS to be. ────────────────────
+        # Saturday is the only night whose picture is *designed* to run past
+        # midnight: the grid says feature two at 22:30 and sign-off at 00:30.
+        # A `pad_until` cannot express that. Its target is a time on the
+        # CURRENT day and it does not roll forward, so a second feature that
+        # ends at 00:03 leaves the next instruction padding to "23:00 today"
+        # — 23 hours away. It fills it, too: 251 items of SHORT SUBJECTS
+        # swallowing the whole of Sunday, after which Sunday's block airs on
+        # Monday and every day of the week is one day late for ever. That is
+        # not hypothetical; it is what a screener build did on 2026-08-19,
+        # and it is the mechanism behind "channel zero is a day behind".
+        # `pad_to_next: 30` pads to the next half hour whatever the clock
+        # says, so it is bounded by construction: at 00:03 it lands on 00:30,
+        # which is exactly the sign-off the storefront promises.
+        P += strand_to_next("SHORT SUBJECTS", "pad_short", 30)
     elif name == "sunday":
         P += strand("SHORT SUBJECTS", "pad_short", "22:30")
         P.append({"sequence": "station_break"})
@@ -297,10 +328,17 @@ def day_plan(name, spec):
     # Themed per night. A dimmer bug goes up for the duration — the only place
     # the channel uses a ChannelWatermark rather than a graphics element,
     # because a watermark is the thing that can be switched per block.
-    P.append({"watermark": True, "name": "Z0 Bug Late Night"})
-    P += strand(spec["late"][0], spec["late"][1], "00:00",
-                tomorrow=True, discard=8)
-    P.append({"watermark": False})
+    #
+    # Saturday has none, and the grid never promised one: the double bill's
+    # second picture IS the late block, and it is still running at midnight.
+    # (It used to get one anyway, which is the other half of the pad problem
+    # above — a late block padded to 00:00 after a feature that ended at
+    # 00:03 is another 24-hour target.)
+    if spec.get("late"):
+        P.append({"watermark": True, "name": "Z0 Bug Late Night"})
+        P += strand(spec["late"][0], spec["late"][1], "00:00",
+                    tomorrow=True, discard=8)
+        P.append({"watermark": False})
 
     # ── Sign-off ──────────────────────────────────────────────────────────────
     P.append({"sequence": "weather_break"})

@@ -31,6 +31,33 @@ restart_always() {
 }
 trap restart_always EXIT
 
+# ── The rotation guard ───────────────────────────────────────────────────────
+# This script is what put the channel a day behind on 2026-08-15. It was run at
+# 05:15 on a SATURDAY against a channel-z0.yml rotated to start on FRIDAY, and a
+# reset enters the file at block one: Saturday therefore aired Friday, Sunday
+# aired Saturday, and so on for four days with nothing reporting it.
+#
+# A reset is only ever correct if the deployed file starts on the day you are
+# resetting on. Refuse rather than regenerate — a reset needs a reason, and the
+# ordinary way to put the week back on the calendar is now
+#   tools/z0-day-align.py --apply
+# which cuts at a block boundary instead of re-entering the whole week.
+TODAY=$(date +%A | tr "[:upper:]" "[:lower:]")
+ROTATION=$(grep -m1 -oE "Rotated to start on [A-Z]+" "$D/channel-z0.yml" \
+           | awk "{print \$NF}" | tr "[:upper:]" "[:lower:]")
+if [ "$ROTATION" != "$TODAY" ]; then
+  echo "REFUSING: $D/channel-z0.yml is rotated to start on ${ROTATION:-<unknown>},"
+  echo "and today is $TODAY. Resetting now would air ${ROTATION}'s programming today"
+  echo "and every following day would be wrong too — silently."
+  echo
+  echo "Either regenerate for today first:"
+  echo "  z0-build-schedule.py --start-day $TODAY --out $D/channel-z0.yml"
+  echo "or, if the week has simply drifted off the calendar, use the aligner"
+  echo "instead of a reset:  z0-day-align.py --apply"
+  exit 1
+fi
+echo "rotation check: file starts on $ROTATION, today is $TODAY"
+
 B="$D/.z0-backup-presignon-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$B" || exit 1
 sqlite3 "$DB" "PRAGMA wal_checkpoint(TRUNCATE);" >/dev/null
