@@ -321,8 +321,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: true
-    name: 'Z0 Bug Late Night'
   - epg_group: true
   - pad_until: '23:58'
     tomorrow: true
@@ -339,7 +337,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: false
   - sequence: 'weather_break'
   - graphics_off: null
   - epg_group: true
@@ -690,8 +687,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: true
-    name: 'Z0 Bug Late Night'
   - epg_group: true
   - pad_until: '23:58'
     tomorrow: true
@@ -708,7 +703,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: false
   - sequence: 'weather_break'
   - graphics_off: null
   - epg_group: true
@@ -1345,8 +1339,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: true
-    name: 'Z0 Bug Late Night'
   - epg_group: true
   - pad_until: '23:58'
     tomorrow: true
@@ -1363,7 +1355,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: false
   - sequence: 'weather_break'
   - graphics_off: null
   - epg_group: true
@@ -1714,8 +1705,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: true
-    name: 'Z0 Bug Late Night'
   - epg_group: true
   - pad_until: '23:58'
     tomorrow: true
@@ -1732,7 +1721,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: false
   - sequence: 'weather_break'
   - graphics_off: null
   - epg_group: true
@@ -2083,8 +2071,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: true
-    name: 'Z0 Bug Late Night'
   - epg_group: true
   - pad_until: '23:58'
     tomorrow: true
@@ -2101,7 +2087,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: false
   - sequence: 'weather_break'
   - graphics_off: null
   - epg_group: true
@@ -2452,8 +2437,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: true
-    name: 'Z0 Bug Late Night'
   - epg_group: true
   - pad_until: '23:58'
     tomorrow: true
@@ -2470,7 +2453,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: false
   - sequence: 'weather_break'
   - graphics_off: null
   - epg_group: true

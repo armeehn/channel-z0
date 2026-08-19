@@ -323,20 +323,32 @@ def day_plan(name, spec):
         P += strand("SHORT SUBJECTS", "pad_short", "23:00")
 
     # ── The late block ────────────────────────────────────────────────────────
-    # Themed per night. A dimmer bug goes up for the duration — the only place
-    # the channel uses a ChannelWatermark rather than a graphics element,
-    # because a watermark is the thing that can be switched per block.
+    # Themed per night.
     #
-    # Saturday has none, and the grid never promised one: the double bill's
-    # second picture IS the late block, and it is still running at midnight.
-    # (It used to get one anyway, which is the other half of the pad problem
-    # above — a late block padded to 00:00 after a feature that ended at
-    # 00:03 is another 24-hour target.)
+    # This used to raise a `ChannelWatermark` called "Z0 Bug Late Night" for the
+    # duration — a second, dimmer bug at 45% opacity, bottom-LEFT, the only
+    # place the channel used a watermark rather than a graphics element. It was
+    # a survivor of ErsatzTV 25.2, where a single static watermark was the only
+    # overlay that existed at all.
+    #
+    # It is gone because it is now both redundant and wrong. Redundant: the bug
+    # is permanently in the right rail, so late night was drawing a second copy
+    # of a mark that never leaves. Wrong: a watermark is composited over the
+    # PICTURE, and the whole point of the rails is that nothing is. It was the
+    # last thing the channel put on top of the programme.
+    #
+    # The three ChannelWatermark rows are left in the database. Nothing
+    # references them now, and they are the only worked example of how to put a
+    # per-block overlay on this channel if one is ever wanted again.
+    #
+    # Saturday has no late block, and the grid never promised one: the double
+    # bill's second picture IS the late block, and it is still running at
+    # midnight. (It used to get one anyway, which is the other half of the pad
+    # problem above — a late block padded to 00:00 after a feature that ended
+    # at 00:03 is another 24-hour target.)
     if spec.get("late"):
-        P.append({"watermark": True, "name": "Z0 Bug Late Night"})
         P += strand(spec["late"][0], spec["late"][1], "00:00",
                     tomorrow=True, discard=8)
-        P.append({"watermark": False})
 
     # ── Sign-off ──────────────────────────────────────────────────────────────
     P.append({"sequence": "weather_break"})
