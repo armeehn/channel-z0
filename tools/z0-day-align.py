@@ -52,9 +52,23 @@ HOW IT REPAIRS  (--apply)
   deliberate. Nothing already scheduled before the seam is touched, and the
   cost is a ~1 minute stop of the ErsatzTV container.
 
+DEPLOYING A NEW SCHEDULE  (--redeploy)
+  There is no safe way to swap channel-z0.yml under a running playout by hand.
+  The anchor stores an instruction INDEX into the deployed file (and the index
+  is into the flattened list, with `sequence:` expanded, so you cannot even
+  compute it). Deploy a file with a different number of instructions and the
+  next build resumes at that index in the NEW file — which is now a different
+  instruction. The week does not fail; it lands somewhere else, mid-block, and
+  the only symptom is a day that looks subtly wrong.
+
+  `--redeploy` is the supported way: it does the full repair — regenerate for
+  the seam's weekday, deploy, cut, re-enter at instruction 0 — whether or not
+  anything is misaligned. Use it after any change to the generator.
+
 USAGE
     z0-day-align.py                 # check, print a table, exit 1 if misaligned
     z0-day-align.py --apply         # check, and repair at the next 06:00 seam
+    z0-day-align.py --redeploy      # deploy the current generator's week, aligned
     z0-day-align.py --apply --quiet-when-ok    # for cron
 
 EXIT CODES
@@ -474,6 +488,10 @@ def main():
     ap.add_argument("--tz", default=DEFAULT_TZ)
     ap.add_argument("--apply", action="store_true",
                     help="repair a misalignment at the next 06:00 boundary")
+    ap.add_argument("--redeploy", action="store_true",
+                    help="deploy the current generator's schedule and re-enter "
+                         "the week at the seam even if nothing is misaligned "
+                         "(the only safe way to change the schedule file)")
     ap.add_argument("--quiet-when-ok", action="store_true",
                     help="print nothing when the channel is already aligned")
     args = ap.parse_args()
@@ -498,6 +516,27 @@ def main():
     boundary = cut_boundary(now_local, built_to)
     over_ahead = [o for o in over
                   if dt.datetime.fromisoformat(o[1]) > boundary.replace(tzinfo=None)]
+
+    if args.redeploy:
+        log(f"Channel Z0 day alignment — {now_local:%Y-%m-%d %H:%M %Z}")
+        report(rows, now_local)
+        if boundary <= now_local:
+            die("no usable seam ahead; re-run after the next sign-on")
+        log("  REDEPLOY requested — cutting the week in at the seam so the new "
+            "schedule is entered at instruction 0.")
+        apply_repair(args, primes, now_local, boundary)
+        conn = open_db(db_path)
+        signon = conn.execute(
+            "select datetime(Start,'localtime') from PlayoutItem "
+            "where Start >= ? and CustomTitle = 'SIGN-ON' order by Start limit 1",
+            (to_utc_text(boundary),)).fetchone()
+        conn.close()
+        if not signon:
+            die("no SIGN-ON was built after the cut — the block did not restart "
+                "at instruction 0")
+        log(f"  block restarted: SIGN-ON at {signon[0]} "
+            f"(expected {boundary:%Y-%m-%d} 06:00)")
+        return 0
 
     if since and not rows:
         if not args.quiet_when_ok:
