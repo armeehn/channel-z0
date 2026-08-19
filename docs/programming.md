@@ -378,6 +378,16 @@ than on air:
   sign-off the grid promises) and why Saturday has no late block: the double
   bill's second picture *is* the late block, exactly as the grid below says.
 
+**The aligner regenerates from the copy of the generator ON VILE**, at
+`/mnt/main-data/channelz0/.z0tools/tools/`, not from this repo — vile has no
+checkout. Nothing syncs them. So a change to `z0-build-schedule.py` that is
+merged here but not copied across means the next automatic repair quietly
+deploys a schedule built from the *old* generator, undoing whatever the merge
+changed. Copy `z0-build-schedule.py` and `z0_intervals.py` across whenever
+either changes, and check the pair with `md5sum` on both sides — this already
+happened once, on 2026-08-19, when the graphics rework landed while the vile
+copies still emitted the deleted `strip_down` / `strip_up` sequences.
+
 If the checker ever reports an OVERRUN, that is this bug or a relative of it —
 some pad has been reached later than the generator assumed. Fix the shape in the
 generator; realigning the week only moves the symptom.
