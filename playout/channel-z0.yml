@@ -1010,7 +1010,7 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - pad_until: '22:28'
+  - pad_until: '22:27'
     tomorrow: false
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
@@ -1041,7 +1041,7 @@ playout:
   - sequence: 'station_break'
   - graphics_off: null
   - epg_group: true
-  - duration: '00:01:15'
+  - duration: '00:00:04'
     content: 'generative'
     trim: true
     filler_kind: 'preroll'
@@ -1049,40 +1049,20 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - pad_until: '22:58'
-    tomorrow: false
+  - pad_to_next: 30
     content: 'pad_short'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
   - graphics_off: null
   - epg_group: true
-  - duration: '00:02:30'
+  - duration: '00:00:04'
     content: 'generative'
     trim: true
     filler_kind: 'preroll'
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: true
-    name: 'Z0 Bug Late Night'
-  - epg_group: true
-  - pad_until: '23:58'
-    tomorrow: true
-    content: 'late_show'
-    custom_title: 'THE LATE LATE SHOW'
-    discard_attempts: 8
-  - epg_group: false
-  - graphics_off: null
-  - epg_group: true
-  - duration: '00:00:15'
-    content: 'generative'
-    trim: true
-    filler_kind: 'preroll'
-    custom_title: 'STATION INTERVAL'
-  - epg_group: false
-  - sequence: 'graphics_up'
-  - watermark: false
   - sequence: 'weather_break'
   - graphics_off: null
   - epg_group: true

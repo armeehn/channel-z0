@@ -323,6 +323,67 @@ Three things about that file are worth knowing before you edit it:
 
 ---
 
+## Keeping the day blocks on the calendar
+
+The cycle-not-a-calendar problem above is not theoretical and it does not
+announce itself. On **2026-08-15** a pre-sign-on playout reset was run at 05:15
+on a Saturday against a file rotated to start on **FRIDAY**. From that moment
+the channel aired Friday's programming on Saturday, Saturday's on Sunday, and so
+on — for four days, until someone noticed that the storefront's Wednesday tab
+promised WORKBENCH THEATRE while the transmitter was showing ATOMIC TUESDAY.
+Nothing reported it. The playout was healthy, the guide was self-consistent with
+the playout, `/api/status` was green, and the picture was fine. Only the *grid on
+the wall* disagreed.
+
+`tools/z0-day-align.py` is the answer to that, and it runs on vile from cron
+every day at 05:05:
+
+    z0-day-align.py            # check; prints a table, exits 1 if misaligned
+    z0-day-align.py --apply    # check, and repair at the next usable seam
+
+**What it compares.** Every broadcast day (06:00 → 06:00, which is exactly one
+day block) carries a 20:00 tentpole whose name is unique to its weekday. It
+reads those names out of `z0-build-schedule.py`'s own `WEEK` table — the same
+table this document and the storefront grid are written from — so the test is
+literally "is the channel showing what the site says it is showing".
+
+**How it repairs.** Not with a reset. It cuts at a 06:00 block boundary,
+regenerates the file with `--start-day` for that boundary's weekday, deletes the
+playout items and history at and after it, and points the anchor at the boundary
+with instruction index 0. Everything already scheduled before the seam keeps
+airing untouched.
+
+Two things it learned the hard way, both measured on a screener replica rather
+than on air:
+
+- **The seam must be the LAST 06:00 inside what has already been built, not the
+  first one after now.** ErsatzTV keeps the playout about two days ahead and
+  extends it a little at a time. Cut at tomorrow's 06:00 and the next build has
+  to lay down a day and a half in one pass — and the overnight `pad_until` in
+  that pass does not stop at 05:26. It ran to 09:16, 10:15 and 11:27 in three
+  separate trials, each time swallowing the morning behind it: no sign-on, no
+  cartoon block, straight from THE ALL-NIGHT SHOW to PRELINGER THEATRE at 09:20.
+  Only the first night after such a cut does it. Cutting inside the frontier
+  keeps every rebuild short and every night laid down by the same ordinary
+  incremental extension that has been getting them right all along. The price is
+  that a repair lands one broadcast day later than you would like.
+
+- **A `pad_until` reached after midnight eats the day.** Its target is a time on
+  the day the instruction is *reached* and it does not roll forward, so a
+  Saturday second feature that ends at 00:03 leaves the next instruction padding
+  to "23:00 today" — twenty-three hours away. It fills it: 251 items of SHORT
+  SUBJECTS across the whole of Sunday, after which Sunday's block airs on Monday
+  and the entire week is one day late for ever. This is why Saturday's tail now
+  uses `pad_to_next: 30` (bounded by construction, and it lands on the 00:30
+  sign-off the grid promises) and why Saturday has no late block: the double
+  bill's second picture *is* the late block, exactly as the grid below says.
+
+If the checker ever reports an OVERRUN, that is this bug or a relative of it —
+some pad has been reached later than the generator assumed. Fix the shape in the
+generator; realigning the week only moves the symptom.
+
+---
+
 ## Keeping the guide and the air in sync
 
 Three places describe the schedule; keep them saying the same thing:
