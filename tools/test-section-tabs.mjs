@@ -36,7 +36,7 @@ const ok = (name, pass, detail = "") => { results.push({ name, pass, detail }); 
 const browser = await chromium.launch({ executablePath: CHROME, args: ["--no-sandbox", "--autoplay-policy=no-user-gesture-required"] });
 const SECTIONS = [
   ["live", "01", "Live Feed"], ["program", "02", "Program"], ["ground-zero", "03", "Ground Zero"],
-  ["submit-ad", "04", "File a Spot"], ["lab", "05", "The Lab"], ["sign-off", "06", "Sign-Off"],
+  ["submit-ad", "04", "File a Spot"],
 ];
 
 const pageErrors = [];
@@ -58,7 +58,28 @@ const visible = (page) => page.evaluate(() =>
   await page.waitForTimeout(400);
 
   ok("tabs mode engages", await page.evaluate(() => document.documentElement.classList.contains("tabs")));
-  ok("six tabs rendered", (await page.$$(".sec-tab")).length === 6, `${(await page.$$(".sec-tab")).length}`);
+  ok("four tabs rendered", (await page.$$(".sec-tab")).length === 4, `${(await page.$$(".sec-tab")).length}`);
+
+  // the merged footer: one element, outside the tab machinery, no heading
+  const foot = await page.evaluate(() => {
+    const f = document.querySelector(".station-foot");
+    if (!f) return null;
+    return {
+      count: document.querySelectorAll(".station-foot").length,
+      inPanels: !!f.closest(".panels"),
+      heads: f.querySelectorAll(".sec-head, .sec-no, .sec-title").length,
+      sponsor: !!f.querySelector("#labLink"),
+      signoff: /BROADCAST DAY AT MIDNIGHT/.test(f.textContent) && /EST\. 2026/.test(f.textContent),
+      mantra: !!f.querySelector(".mantra"),
+      orphans: document.querySelectorAll("#lab, #sign-off, #tab-lab, #tab-sign-off").length,
+    };
+  });
+  ok("one station footer exists", foot && foot.count === 1, JSON.stringify(foot));
+  ok("footer sits outside .panels", foot && !foot.inPanels);
+  ok("footer carries no section heading", foot && foot.heads === 0, String(foot && foot.heads));
+  ok("footer keeps SEC.05's sponsor + mantra", foot && foot.sponsor && foot.mantra);
+  ok("footer keeps SEC.06's sign-off lines", foot && foot.signoff);
+  ok("old SEC.05/06 panels and tabs are gone", foot && foot.orphans === 0, String(foot && foot.orphans));
 
   let vis = await visible(page);
   ok("opens on SEC.01 only", vis.length === 1 && vis[0] === "live", vis.join(","));
@@ -81,6 +102,17 @@ const visible = (page) => page.evaluate(() =>
       return { over: e.scrollHeight - e.clientHeight, bodyOv: getComputedStyle(document.body).overflow };
     });
     ok(`tab ${no} page does not scroll`, doc.over <= 1, `overflow ${doc.over}px`);
+
+    // the footer is under every section, and on screen with it
+    const ft = await page.evaluate(() => {
+      const f = document.querySelector(".station-foot");
+      const r = f.getBoundingClientRect();
+      const p = document.querySelector(".panels").getBoundingClientRect();
+      return { shown: getComputedStyle(f).display !== "none" && r.height > 0,
+               below: r.top >= p.top, bottom: r.bottom, vh: window.innerHeight };
+    });
+    ok(`tab ${no} keeps the footer under it`, ft.shown && ft.below, `top ok ${ft.below}`);
+    ok(`tab ${no} footer is on screen`, ft.bottom <= ft.vh + 1, `bottom ${Math.round(ft.bottom)} of ${ft.vh}`);
 
     await page.screenshot({ path: join(OUTDIR, `sec-${no}-${id}.png`) });
   }
@@ -111,7 +143,7 @@ const visible = (page) => page.evaluate(() =>
   await page.keyboard.press("End");
   await page.waitForTimeout(140);
   vis = await visible(page);
-  ok("End jumps to SEC.06", vis[0] === "sign-off", vis.join(","));
+  ok("End jumps to SEC.04", vis[0] === "submit-ad", vis.join(","));
   await page.keyboard.press("Home");
   await page.waitForTimeout(140);
   vis = await visible(page);
@@ -148,6 +180,7 @@ const visible = (page) => page.evaluate(() =>
     return {
       ctl: r("#live .feed-controls").bottom,
       spec: r("#live .speccard").bottom,
+      foot: r(".station-foot").bottom,
       panelOver: p.scrollHeight - p.clientHeight,
       vh: window.innerHeight,
     };
@@ -165,6 +198,7 @@ const visible = (page) => page.evaluate(() =>
     ok(`SEC.01 transport row fits (${tag})`, f.ctl <= f.vh + 1, `bottom ${Math.round(f.ctl)} of ${f.vh}`);
     ok(`SEC.01 SPEC card fits (${tag})`, f.spec <= f.vh + 1, `bottom ${Math.round(f.spec)} of ${f.vh}`);
     ok(`SEC.01 panel does not scroll (${tag})`, f.panelOver <= 1, `overflow ${f.panelOver}px`);
+    ok(`SEC.01 footer fits (${tag})`, f.foot <= f.vh + 1, `bottom ${Math.round(f.foot)} of ${f.vh}`);
   }
 
   // the one-line masthead must not fuse the two sentences together
@@ -178,10 +212,18 @@ const visible = (page) => page.evaluate(() =>
 {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await newPage(ctx);
-  await page.goto(`http://127.0.0.1:${PORT}/#lab`, { waitUntil: "load" });
+  await page.goto(`http://127.0.0.1:${PORT}/#program`, { waitUntil: "load" });
   await page.waitForTimeout(350);
-  const vis = await visible(page);
-  ok("#lab deep-links to SEC.05", vis.length === 1 && vis[0] === "lab", vis.join(","));
+  let vis = await visible(page);
+  ok("#program deep-links to SEC.02", vis.length === 1 && vis[0] === "program", vis.join(","));
+
+  // the retired sections were addresses once; they must land somewhere, not blank
+  for (const dead of ["lab", "sign-off"]) {
+    await page.goto(`http://127.0.0.1:${PORT}/#${dead}`, { waitUntil: "load" });
+    await page.waitForTimeout(300);
+    vis = await visible(page);
+    ok(`retired #${dead} falls back to SEC.01`, vis.length === 1 && vis[0] === "live", vis.join(","));
+  }
   await ctx.close();
 }
 
@@ -245,7 +287,14 @@ const visible = (page) => page.evaluate(() =>
     navHidden: getComputedStyle(document.getElementById("secnav")).display === "none",
     scrolls: document.scrollingElement.scrollHeight > window.innerHeight,
   }));
-  ok("no JS: all six sections present", st.shown === 6, `${st.shown}`);
+  ok("no JS: all four sections present", st.shown === 4, `${st.shown}`);
+  const noJsFoot = await page.evaluate(() => {
+    const f = document.querySelector(".station-foot");
+    const last = document.querySelectorAll(".panels > .panel");
+    return f && getComputedStyle(f).display !== "none" &&
+           f.getBoundingClientRect().top >= last[last.length - 1].getBoundingClientRect().top;
+  });
+  ok("no JS: footer ends the long page", noJsFoot);
   ok("no JS: dead tab bar is hidden", st.navHidden);
   ok("no JS: page scrolls as before", st.scrolls);
   await ctx.close();
