@@ -1,0 +1,45 @@
+# Channel Z0 — the LEFT rail.
+#
+# The channel is 854x480 and everything it airs is 4:3, so ffmpeg pillarboxes
+# 640x480 of picture into the middle of the frame and leaves a 107px black bar
+# down each side:
+#
+#     0        107                      747       854
+#     |  LEFT  |       PICTURE          | RIGHT  |
+#     |  RAIL  |       640x480          |  RAIL  |
+#
+# All of the station's furniture lives in those bars now. Nothing is
+# composited over the picture, which is why every element in this folder is
+# fully opaque: opacity was only ever there to let the programme show through,
+# and there is no longer anything behind these to show through.
+#
+# This file is the frame around the listings, not the listings themselves.
+# What's on next comes from ErsatzTV's own EPG via text/z0-upnext.yml, which is
+# re-rendered for every playout item and therefore cannot disagree with the
+# guide. A PNG written on a 15-minute cron would go stale between programmes,
+# so the middle of this image is deliberately EMPTY — that void is where the
+# text element lands. The two files have to agree about its extent and both
+# quote the same numbers: it runs from y=29 to y=356.
+name: "Z0 RAIL LEFT"
+
+image: "/media/branding/z0-rail-left.png"
+
+opacity_percent: 100
+
+location: "TopLeft"
+horizontal_margin_percent: 0
+vertical_margin_percent: 0
+
+# scale: false is the point, not an omission. The PNG is authored at exactly
+# 107x480 by tools/z0-weather.sh and composited 1:1, so no resampling ever
+# touches it. At a 107px column width a resample is the difference between
+# legible small type and mush — which is what the old design suffered by
+# rendering a 920px-wide card and letting the compositor shrink it to 248.
+#
+# The cost of pixel-exactness is that this file is tied to the channel's
+# resolution. If the channel is ever re-profiled, re-run tools/z0-weather.sh
+# with Z0_FRAME_W / Z0_FRAME_H / Z0_CONTENT_W set to the new geometry; every
+# generator derives the rail width from those three numbers.
+scale: false
+
+z_index: 10

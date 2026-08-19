@@ -156,7 +156,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -168,7 +167,6 @@ playout:
   - epg_group: false
   - pre_roll: false
   - post_roll: false
-  - sequence: 'strip_up'
   - graphics_off: null
   - epg_group: true
   - duration: '00:01:15'
@@ -253,7 +251,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -265,7 +262,6 @@ playout:
   - epg_group: false
   - pre_roll: false
   - post_roll: false
-  - sequence: 'strip_up'
   - graphics_off: null
   - epg_group: true
   - duration: '00:01:15'
@@ -325,8 +321,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: true
-    name: 'Z0 Bug Late Night'
   - epg_group: true
   - pad_until: '23:58'
     tomorrow: true
@@ -343,7 +337,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: false
   - sequence: 'weather_break'
   - graphics_off: null
   - epg_group: true
@@ -364,7 +357,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - sequence: 'overnight_variety'
   - graphics_off: null
   - epg_group: true
@@ -400,7 +392,6 @@ playout:
     discard_attempts: 6
     trim: true
   - epg_group: false
-  - sequence: 'strip_up'
 
   # ═════════════════════════════════════════════════════════════════════════
   # FRIDAY  (block 2 of 7)
@@ -531,7 +522,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -543,7 +533,6 @@ playout:
   - epg_group: false
   - pre_roll: false
   - post_roll: false
-  - sequence: 'strip_up'
   - graphics_off: null
   - epg_group: true
   - duration: '00:01:15'
@@ -628,7 +617,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -640,7 +628,6 @@ playout:
   - epg_group: false
   - pre_roll: false
   - post_roll: false
-  - sequence: 'strip_up'
   - graphics_off: null
   - epg_group: true
   - duration: '00:01:15'
@@ -700,8 +687,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: true
-    name: 'Z0 Bug Late Night'
   - epg_group: true
   - pad_until: '23:58'
     tomorrow: true
@@ -718,7 +703,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: false
   - sequence: 'weather_break'
   - graphics_off: null
   - epg_group: true
@@ -739,7 +723,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - sequence: 'overnight_variety'
   - graphics_off: null
   - epg_group: true
@@ -775,7 +758,6 @@ playout:
     discard_attempts: 6
     trim: true
   - epg_group: false
-  - sequence: 'strip_up'
 
   # ═════════════════════════════════════════════════════════════════════════
   # SATURDAY  (block 3 of 7)
@@ -890,7 +872,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -902,7 +883,6 @@ playout:
   - epg_group: false
   - pre_roll: false
   - post_roll: false
-  - sequence: 'strip_up'
   - graphics_off: null
   - epg_group: true
   - duration: '00:01:15'
@@ -987,7 +967,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -999,7 +978,6 @@ playout:
   - epg_group: false
   - pre_roll: false
   - post_roll: false
-  - sequence: 'strip_up'
   - graphics_off: null
   - epg_group: true
   - duration: '00:01:15'
@@ -1025,7 +1003,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -1037,7 +1014,6 @@ playout:
   - epg_group: false
   - pre_roll: false
   - post_roll: false
-  - sequence: 'strip_up'
   - sequence: 'station_break'
   - graphics_off: null
   - epg_group: true
@@ -1083,7 +1059,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - sequence: 'overnight_variety'
   - graphics_off: null
   - epg_group: true
@@ -1119,7 +1094,6 @@ playout:
     discard_attempts: 6
     trim: true
   - epg_group: false
-  - sequence: 'strip_up'
 
   # ═════════════════════════════════════════════════════════════════════════
   # SUNDAY  (block 4 of 7)
@@ -1233,7 +1207,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -1245,7 +1218,6 @@ playout:
   - epg_group: false
   - pre_roll: false
   - post_roll: false
-  - sequence: 'strip_up'
   - graphics_off: null
   - epg_group: true
   - duration: '00:01:15'
@@ -1330,7 +1302,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -1342,7 +1313,6 @@ playout:
   - epg_group: false
   - pre_roll: false
   - post_roll: false
-  - sequence: 'strip_up'
   - graphics_off: null
   - epg_group: true
   - duration: '00:01:15'
@@ -1369,8 +1339,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: true
-    name: 'Z0 Bug Late Night'
   - epg_group: true
   - pad_until: '23:58'
     tomorrow: true
@@ -1387,7 +1355,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: false
   - sequence: 'weather_break'
   - graphics_off: null
   - epg_group: true
@@ -1408,7 +1375,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - sequence: 'overnight_variety'
   - graphics_off: null
   - epg_group: true
@@ -1444,7 +1410,6 @@ playout:
     discard_attempts: 6
     trim: true
   - epg_group: false
-  - sequence: 'strip_up'
 
   # ═════════════════════════════════════════════════════════════════════════
   # MONDAY  (block 5 of 7)
@@ -1575,7 +1540,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -1587,7 +1551,6 @@ playout:
   - epg_group: false
   - pre_roll: false
   - post_roll: false
-  - sequence: 'strip_up'
   - graphics_off: null
   - epg_group: true
   - duration: '00:01:15'
@@ -1672,7 +1635,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -1684,7 +1646,6 @@ playout:
   - epg_group: false
   - pre_roll: false
   - post_roll: false
-  - sequence: 'strip_up'
   - graphics_off: null
   - epg_group: true
   - duration: '00:01:15'
@@ -1744,8 +1705,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: true
-    name: 'Z0 Bug Late Night'
   - epg_group: true
   - pad_until: '23:58'
     tomorrow: true
@@ -1762,7 +1721,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: false
   - sequence: 'weather_break'
   - graphics_off: null
   - epg_group: true
@@ -1783,7 +1741,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - sequence: 'overnight_variety'
   - graphics_off: null
   - epg_group: true
@@ -1819,7 +1776,6 @@ playout:
     discard_attempts: 6
     trim: true
   - epg_group: false
-  - sequence: 'strip_up'
 
   # ═════════════════════════════════════════════════════════════════════════
   # TUESDAY  (block 6 of 7)
@@ -1950,7 +1906,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -1962,7 +1917,6 @@ playout:
   - epg_group: false
   - pre_roll: false
   - post_roll: false
-  - sequence: 'strip_up'
   - graphics_off: null
   - epg_group: true
   - duration: '00:01:15'
@@ -2047,7 +2001,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -2059,7 +2012,6 @@ playout:
   - epg_group: false
   - pre_roll: false
   - post_roll: false
-  - sequence: 'strip_up'
   - graphics_off: null
   - epg_group: true
   - duration: '00:01:15'
@@ -2119,8 +2071,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: true
-    name: 'Z0 Bug Late Night'
   - epg_group: true
   - pad_until: '23:58'
     tomorrow: true
@@ -2137,7 +2087,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: false
   - sequence: 'weather_break'
   - graphics_off: null
   - epg_group: true
@@ -2158,7 +2107,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - sequence: 'overnight_variety'
   - graphics_off: null
   - epg_group: true
@@ -2194,7 +2142,6 @@ playout:
     discard_attempts: 6
     trim: true
   - epg_group: false
-  - sequence: 'strip_up'
 
   # ═════════════════════════════════════════════════════════════════════════
   # WEDNESDAY  (block 7 of 7)
@@ -2325,7 +2272,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -2337,7 +2283,6 @@ playout:
   - epg_group: false
   - pre_roll: false
   - post_roll: false
-  - sequence: 'strip_up'
   - graphics_off: null
   - epg_group: true
   - duration: '00:01:15'
@@ -2422,7 +2367,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -2434,7 +2378,6 @@ playout:
   - epg_group: false
   - pre_roll: false
   - post_roll: false
-  - sequence: 'strip_up'
   - graphics_off: null
   - epg_group: true
   - duration: '00:01:15'
@@ -2494,8 +2437,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: true
-    name: 'Z0 Bug Late Night'
   - epg_group: true
   - pad_until: '23:58'
     tomorrow: true
@@ -2512,7 +2453,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - watermark: false
   - sequence: 'weather_break'
   - graphics_off: null
   - epg_group: true
@@ -2533,7 +2473,6 @@ playout:
     custom_title: 'STATION INTERVAL'
   - epg_group: false
   - sequence: 'graphics_up'
-  - sequence: 'strip_down'
   - sequence: 'overnight_variety'
   - graphics_off: null
   - epg_group: true
@@ -2569,7 +2508,6 @@ playout:
     discard_attempts: 6
     trim: true
   - epg_group: false
-  - sequence: 'strip_up'
 
   # Back to block 1. Without this the playout runs out of
   # instructions and the channel stops after seven days.

@@ -98,20 +98,20 @@ WEEK = {
 }
 
 
-def programme(title, content, count=1, strip=True, rolls=True):
+def programme(title, content, count=1, rolls=True):
     """A single scheduled programme, bracketed the way a broadcast day
-    brackets one: strip down for the duration, an ident and two adverts either
-    side, strip back up.
+    brackets one: an ident and two adverts either side.
 
-    The bottom strip is a subtitle element and costs roughly 4x realtime at
-    1080p — it is why this channel runs at 640x480 at all. Dropping it for
-    features buys back headroom on exactly the items that need it most.
+    This used to bracket every feature with `strip_down` / `strip_up` as well,
+    because the bottom strip was a subtitle element costing roughly 4x realtime
+    at 1080p and dropping it bought back headroom on exactly the items that
+    needed it most. The strip is gone — its content lives in the side rails,
+    which are image elements and effectively free — so there is nothing to drop
+    and every programme now carries the full set of on-air furniture.
 
     pre_roll / post_roll are only emitted by the `all`, `count` and `duration`
     handlers, which is why this uses `count:` and not `pad_until:`."""
     out = []
-    if strip:
-        out.append({"sequence": "strip_down"})
     if rolls:
         out.append({"pre_roll": True, "sequence": "feature_break"})
         out.append({"post_roll": True, "sequence": "feature_break"})
@@ -123,8 +123,6 @@ def programme(title, content, count=1, strip=True, rolls=True):
         # picks up the same pre-roll and the guide fills with idents.
         out.append({"pre_roll": False})
         out.append({"post_roll": False})
-    if strip:
-        out.append({"sequence": "strip_up"})
     return out
 
 
@@ -325,25 +323,36 @@ def day_plan(name, spec):
         P += strand("SHORT SUBJECTS", "pad_short", "23:00")
 
     # ── The late block ────────────────────────────────────────────────────────
-    # Themed per night. A dimmer bug goes up for the duration — the only place
-    # the channel uses a ChannelWatermark rather than a graphics element,
-    # because a watermark is the thing that can be switched per block.
+    # Themed per night.
     #
-    # Saturday has none, and the grid never promised one: the double bill's
-    # second picture IS the late block, and it is still running at midnight.
-    # (It used to get one anyway, which is the other half of the pad problem
-    # above — a late block padded to 00:00 after a feature that ended at
-    # 00:03 is another 24-hour target.)
+    # This used to raise a `ChannelWatermark` called "Z0 Bug Late Night" for the
+    # duration — a second, dimmer bug at 45% opacity, bottom-LEFT, the only
+    # place the channel used a watermark rather than a graphics element. It was
+    # a survivor of ErsatzTV 25.2, where a single static watermark was the only
+    # overlay that existed at all.
+    #
+    # It is gone because it is now both redundant and wrong. Redundant: the bug
+    # is permanently in the right rail, so late night was drawing a second copy
+    # of a mark that never leaves. Wrong: a watermark is composited over the
+    # PICTURE, and the whole point of the rails is that nothing is. It was the
+    # last thing the channel put on top of the programme.
+    #
+    # The three ChannelWatermark rows are left in the database. Nothing
+    # references them now, and they are the only worked example of how to put a
+    # per-block overlay on this channel if one is ever wanted again.
+    #
+    # Saturday has no late block, and the grid never promised one: the double
+    # bill's second picture IS the late block, and it is still running at
+    # midnight. (It used to get one anyway, which is the other half of the pad
+    # problem above — a late block padded to 00:00 after a feature that ended
+    # at 00:03 is another 24-hour target.)
     if spec.get("late"):
-        P.append({"watermark": True, "name": "Z0 Bug Late Night"})
         P += strand(spec["late"][0], spec["late"][1], "00:00",
                     tomorrow=True, discard=8)
-        P.append({"watermark": False})
 
     # ── Sign-off ──────────────────────────────────────────────────────────────
     P.append({"sequence": "weather_break"})
     P.append({"sequence": "sign_off"})
-    P.append({"sequence": "strip_down"})
 
     # ── Overnight ─────────────────────────────────────────────────────────────
     # This used to be `pad_until 06:00 trim: true content: colorbars` — one
@@ -358,7 +367,6 @@ def day_plan(name, spec):
     P += strand("THE ALL-NIGHT SHOW", "overnight", "05:30",
                 tomorrow=True, discard=8)
     P += strand("COLOUR BARS", "colorbars", "06:00", tomorrow=True, trim=True)
-    P.append({"sequence": "strip_up"})
     return P
 
 
