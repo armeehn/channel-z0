@@ -69,6 +69,13 @@
       "class": "riposte-doc"
     },
     {
+      "id": "docs-lsystems",
+      "source": "docs/lsystems.md",
+      "docno": "RL-Z0-LSYSTEMS",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
       "id": "docs-programming",
       "source": "docs/programming.md",
       "docno": "RL-Z0-PROGRAMMING",
