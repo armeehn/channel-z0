@@ -40,22 +40,31 @@ sequence:
   # partial rebuild.
   - key: graphics_up
     items:
-      - graphics_on: 'image/z0-bug.yml'
+      - graphics_on: 'image/z0-rail-left.yml'
       - graphics_on: 'image/z0-weather-card.yml'
+      - graphics_on: 'image/z0-bug.yml'
       - graphics_on: 'text/z0-upnext.yml'
-      - graphics_on: 'subtitle/z0-crawl.yml'
 
-  # The bottom strip is a SUBTITLE element, and a subtitle element is
-  # re-rendered every single frame whether or not its content changed. It is
-  # the single most expensive thing this channel does and the reason the
-  # channel runs at 640x480. Drop it for anything long or hard to decode.
-  - key: strip_down
-    items:
-      - graphics_off: 'subtitle/z0-crawl.yml'
-
-  - key: strip_up
-    items:
-      - graphics_on: 'subtitle/z0-crawl.yml'
+  # ── There is no strip_down / strip_up any more, and that is the point ──────
+  #
+  # The bottom strip was a SUBTITLE element, and a subtitle element is
+  # re-rendered every single frame whether or not its content changed. It cost
+  # about 4x realtime at 1080p; it took the channel off air 27 times in one
+  # morning; and it is the whole reason the channel was dropped to 640x480.
+  # `strip_down` existed to switch it off for anything long or hard to decode,
+  # and every scheduled feature called it.
+  #
+  # The strip is gone. Its content moved into the two side rails, which are
+  # image elements — rasterised once and reused — so there is nothing left that
+  # is expensive enough to need switching off. All four elements above now stay
+  # up for everything, which is also why the up-next listing no longer fades.
+  #
+  # A `sequence:` naming a key that does not exist is a silent no-op in
+  # ErsatzTV (ExecuteSequence filters the definition and iterates an empty
+  # list), so an older deployed channel-z0.yml that still calls strip_down
+  # keeps building correctly against this file. That is deliberate: it means
+  # this fragment can be deployed on its own, without redeploying a schedule
+  # artifact whose day rotation has to be got right.
 
   # ══ Station breaks ═════════════════════════════════════════════════════════
   # Idents are 5–8 seconds. They are only ever scheduled with `count: 1`.
