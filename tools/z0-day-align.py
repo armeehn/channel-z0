@@ -35,9 +35,8 @@ HOW IT REPAIRS  (--apply)
   NOT with a playout reset. A reset re-enters the week at instruction one at
   whatever time it is run, which collapses every `pad_until` already in the
   past and — measured across four resets — costs the FOLLOWING day its entire
-  morning. Instead this cuts at the next 06:00 block boundary, which is the one
-  seam in the week where "start of a day block" and "start of a day" are the
-  same instant:
+  morning. Instead this cuts at a 06:00 block boundary, the one seam in the
+  week where "start of a day block" and "start of a day" are the same instant:
 
     1. regenerate channel-z0.yml with --start-day <weekday of that boundary>
     2. stop ErsatzTV
@@ -46,9 +45,12 @@ HOW IT REPAIRS  (--apply)
     4. point the playout anchor at the boundary, instruction index 0
     5. start ErsatzTV, let it rebuild forward, restart the uplink
 
-  Nothing that is going to air before tomorrow's sign-on is touched, no
-  pad_until is entered late, and the day the channel resumes on is the day the
-  file now starts on. The cost is a ~1 minute stop of the ErsatzTV container.
+  The seam is the LAST 06:00 inside what has already been built, not the first
+  one after now — see cut_boundary() for why that distinction is the whole
+  difference between repairing the week and breaking a morning. It means the
+  repair lands one broadcast day later than you might expect, and that is
+  deliberate. Nothing already scheduled before the seam is touched, and the
+  cost is a ~1 minute stop of the ErsatzTV container.
 
 USAGE
     z0-day-align.py                 # check, print a table, exit 1 if misaligned
@@ -161,6 +163,44 @@ def next_boundary(now_local):
     return today6 + dt.timedelta(days=1)
 
 
+def cut_boundary(now_local, frontier_local):
+    """Where to cut: the LAST 06:00 that is still inside what has already been
+    built, not the first one after now.
+
+    This is the difference between a repair and a new fault. ErsatzTV builds
+    the playout out to `playout.days_to_build` (2) ahead of the wall clock and
+    then extends it a little at a time. Cut at tomorrow's 06:00 and the next
+    build has to lay down a day and a half in a single pass — and the overnight
+    `pad_until` in that pass does not stop at 05:26. It runs until the build
+    frontier: measured three times on a screener replica at 09:16, 10:15 and
+    11:27, each time swallowing the morning behind it (no sign-on, no cartoon
+    block, straight from THE ALL-NIGHT SHOW to PRELINGER at 09:20). Only the
+    FIRST night after the cut does it; the six nights after that were correct
+    in a seven-day build, which is why this is worth working around rather than
+    fixing in the schedule. Nothing in ErsatzTV logs it.
+
+    Cutting at the last boundary inside the frontier instead means the rebuild
+    is a few hours long and every night after it is laid down by the same
+    ordinary incremental extension that has been getting them right all along.
+    The cost is that the repair lands one broadcast day later.
+    """
+    latest = dt.datetime.combine(frontier_local.date(),
+                                 dt.time(DAY_START_HOUR)).astimezone()
+    if latest > frontier_local:
+        latest -= dt.timedelta(days=1)
+    first = next_boundary(now_local)
+    return max(latest, first)
+
+
+def frontier(conn):
+    """How far the playout has been built — the anchor's next start."""
+    row = conn.execute("select NextStart from PlayoutAnchor limit 1").fetchone()
+    if not row:
+        die("no playout anchor; the playout has never been built")
+    stamp = dt.datetime.strptime(row[0][:19], "%Y-%m-%d %H:%M:%S")
+    return stamp.replace(tzinfo=dt.timezone.utc).astimezone()
+
+
 # ── reading the playout ──────────────────────────────────────────────────────
 def open_db(db_path, readonly=True):
     if readonly:
@@ -187,17 +227,76 @@ def built_days(conn, primes):
     return out
 
 
-def check(conn, primes, now_local):
-    """Returns (rows, misaligned_dates). rows = (date, expected, aired, ok)."""
+def over_all(conn, hours=6):
+    """Contiguous runs of one title longer than `hours` — the fingerprint of a
+    pad that has eaten a day.
+
+    `pad_until` names a time on the day the instruction is reached and does not
+    roll forward, so an instruction reached at 00:03 and targeting 23:00 pads
+    for 23 hours. It fills it, silently, and everything after it slides a day
+    late. Nothing else in a healthy day comes close to six hours — the longest
+    real block is the overnight variety strand at about five and a half.
+    """
+    rows = conn.execute(
+        "select datetime(Start,'localtime'), datetime(Finish,'localtime'), "
+        "CustomTitle from PlayoutItem order by Start").fetchall()
+    out = []
+    run_title, run_start, run_end = None, None, None
+    for start, finish, title in rows:
+        if title != run_title:
+            if run_title and run_start:
+                span = (dt.datetime.fromisoformat(run_end)
+                        - dt.datetime.fromisoformat(run_start))
+                if span >= dt.timedelta(hours=hours):
+                    out.append((run_start, run_end, run_title, span))
+            run_title, run_start = title, start
+        run_end = finish
+    if run_title and run_start and run_end:
+        span = (dt.datetime.fromisoformat(run_end)
+                - dt.datetime.fromisoformat(run_start))
+        if span >= dt.timedelta(hours=hours):
+            out.append((run_start, run_end, run_title, span))
+    return out
+
+
+def check(conn, primes, since=None):
+    """Returns (rows, misaligned_dates). rows = (date, expected, aired, ok).
+
+    `since` drops broadcast days that belong to the phase BEFORE the last cut.
+    A cut only moves the week from its seam forward, so the days built before
+    it stay on the old rotation for ever; judging them again would make every
+    later run think the channel is still broken and cut it a second time.
+    """
     rows = []
     bad = []
     for date, title, _local in built_days(conn, primes):
+        if since and date < since:
+            continue
         expected = primes[WEEKDAYS[date.weekday()]]
         ok = (title == expected)
         rows.append((date, expected, title, ok))
         if not ok:
             bad.append(date)
     return rows, bad
+
+
+def state_path(config):
+    return os.path.join(config, ".z0-day-align.json")
+
+
+def load_cut(config):
+    """The seam of the last repair, as a local date (or None)."""
+    try:
+        with open(state_path(config)) as fh:
+            return dt.date.fromisoformat(json.load(fh)["cut_boundary"][:10])
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
+def save_cut(config, boundary):
+    with open(state_path(config), "w") as fh:
+        json.dump({"cut_boundary": boundary.isoformat(),
+                   "written": dt.datetime.now().astimezone().isoformat()}, fh)
 
 
 def report(rows, now_local):
@@ -272,6 +371,11 @@ def apply_repair(args, primes, now_local, boundary):
     else:
         die("the playout did not rebuild past the boundary; the channel is "
             "running but the week beyond tomorrow's sign-on is EMPTY")
+
+    # Record the seam. Everything built before it stays on the old rotation
+    # for ever, so without this the next run reads those days, calls the
+    # channel broken and cuts it again — every night, on a timer.
+    save_cut(args.config, boundary)
 
     # 4. the uplink does not survive an ErsatzTV restart: it keeps a frozen
     #    RTMP session and Owncast keeps reporting online with the old title.
@@ -383,14 +487,27 @@ def main():
 
     primes = load_primes(args.tools)
     now_local = dt.datetime.now().astimezone()
+    since = load_cut(args.config)
     conn = open_db(db_path)
-    rows, bad = check(conn, primes, now_local)
+    rows, bad = check(conn, primes, since)
+    over = [o for o in over_all(conn)
+            if not since or dt.date.fromisoformat(o[1][:10]) >= since]
+    built_to = frontier(conn)
     conn.close()
 
-    boundary = next_boundary(now_local)
-    ahead = [d for d in bad if d >= boundary.date()]
+    boundary = cut_boundary(now_local, built_to)
+    over_ahead = [o for o in over
+                  if dt.datetime.fromisoformat(o[1]) > boundary.replace(tzinfo=None)]
 
-    if not bad:
+    if since and not rows:
+        if not args.quiet_when_ok:
+            log(f"Channel Z0 day alignment — {now_local:%Y-%m-%d %H:%M %Z}")
+            log(f"  the week was cut back onto the calendar at {since} and "
+                f"nothing past that seam carries a day tentpole yet; "
+                f"re-check once the playout has built past 20:00.")
+        return 0
+
+    if not bad and not over:
         if not args.quiet_when_ok:
             log(f"Channel Z0 day alignment — {now_local:%Y-%m-%d %H:%M %Z}")
             report(rows, now_local)
@@ -400,28 +517,58 @@ def main():
 
     log(f"Channel Z0 day alignment — {now_local:%Y-%m-%d %H:%M %Z}")
     report(rows, now_local)
-    log(f"  MISALIGNED: {len(bad)} built day(s) do not match the published grid.")
+    if bad:
+        log(f"  MISALIGNED: {len(bad)} built day(s) do not match the "
+            f"published grid.")
+    for start, end, title, span in over:
+        log(f"  OVERRUN: {title} runs {span} — {start} → {end}. A pad has "
+            f"eaten a day; everything after it airs late.")
 
     if not args.apply:
         log("  (run again with --apply to cut the week back onto the calendar "
             "at the next 06:00 sign-on)")
         return 1
 
-    if not ahead:
-        log("  every misaligned day is already in the past or airing now; "
-            "nothing to cut. Re-run after the next sign-on.")
+    if boundary <= now_local:
+        log("  no usable seam ahead; re-run after the next sign-on.")
         return 1
 
     apply_repair(args, primes, now_local, boundary)
 
     conn = open_db(db_path)
-    rows, bad = check(conn, primes, dt.datetime.now().astimezone())
+    now2 = dt.datetime.now().astimezone()
+    rows, bad = check(conn, primes, boundary.date())
+    over = over_all(conn)
+    over = [o for o in over
+            if dt.date.fromisoformat(o[1][:10]) >= boundary.date()]
     conn.close()
     log("\nafter the repair:")
-    report(rows, dt.datetime.now().astimezone())
-    still = [d for d in bad if d >= boundary.date()]
+    report(rows, now2)
+
+    # The day tentpole is at 20:00 and the rebuild only reaches the old build
+    # frontier, so it usually is not built yet and the table above cannot
+    # confirm the day. What CAN be confirmed now is that the block restarted
+    # where it was told to: instruction 0 is an 8-second interval landing on
+    # 06:00:00 and instruction 5 is the sign-on.
+    conn = open_db(db_path)
+    signon = conn.execute(
+        "select datetime(Start,'localtime'), CustomTitle from PlayoutItem "
+        "where Start >= ? and CustomTitle = 'SIGN-ON' order by Start limit 1",
+        (to_utc_text(boundary),)).fetchone()
+    conn.close()
+    if not signon:
+        die("no SIGN-ON was built after the cut — the block did not restart "
+            "at instruction 0")
+    log(f"  block restarted: SIGN-ON at {signon[0]} "
+        f"(expected {boundary:%Y-%m-%d} 06:00)")
+    still = list(bad)
+    for start, end, title, span in over:
+        log(f"  OVERRUN REMAINS: {title} {span} — {start} → {end}")
     if still:
         die(f"still misaligned after the repair: {still}")
+    if over:
+        die("the week rebuilt with a block that runs over; the schedule "
+            "itself is at fault, not the alignment")
     log("  ALIGNED from the next sign-on onward.")
     return 0
 
