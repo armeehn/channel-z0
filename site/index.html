@@ -140,8 +140,41 @@
   .screen-frame.fs .live-status a { color: var(--paper); }
   .screen-frame.fs .onair-chip { border-color: var(--paper); }
   @media (prefers-reduced-motion: reduce) { .screen-frame.fs .feed-controls { transition: none; } }
+  /* Hover the picture and the channel says what it is. Same title as the SPEC
+     card's FEED row — live from the tower via nowplaying.py, falling back to
+     today's grid — but shown where the pointer already is.
+
+     Top left on purpose. The bottom of the frame carries the burned-in strip
+     and the bottom right the channel bug: both are painted INTO the video
+     upstream, so anything drawn over them here would be a second layer of
+     furniture on top of the station's own. The plate is pointer-events: none
+     so it can never eat a click meant for the picture, and it sits under the
+     OFF AIR bars (z-index 30 against their 35) rather than floating over a
+     channel that is not transmitting. */
+  .now-plate {
+    position: absolute; top: 0; left: 0; z-index: 30;
+    max-width: min(74%, 520px);
+    display: flex; align-items: baseline; gap: 10px;
+    margin: 10px; padding: 7px 12px;
+    background: rgba(10, 10, 10, .82); border-left: 3px solid var(--red);
+    color: var(--paper); text-transform: uppercase;
+    opacity: 0; transition: opacity .16s ease; pointer-events: none;
+  }
+  .now-plate .k { color: #cfcabc; font-size: 10px; letter-spacing: .22em; white-space: nowrap; }
+  .now-plate .v { font-size: 12px; font-weight: 700; letter-spacing: .1em; overflow-wrap: anywhere; }
+  /* :focus-within covers the keyboard route in full screen, where the transport
+     lives inside the frame; .peek is the touch route, set for a moment on tap
+     because a touch device never hovers. */
+  .screen-frame:hover .now-plate,
+  .screen-frame:focus-within .now-plate,
+  .screen-frame.peek .now-plate { opacity: 1; }
+  /* When the pointer goes still in full screen the transport fades; the plate
+     goes with it rather than being the one thing left burning on the picture. */
+  .screen-frame.fs.idle .now-plate { opacity: 0; }
+  @media (prefers-reduced-motion: reduce) { .now-plate { transition: none; } }
+
   .offair {
-    position: absolute; inset: 0; display: none; flex-direction: column;
+    position: absolute; inset: 0; display: none; flex-direction: column; z-index: 35;
     align-items: center; justify-content: center; gap: 10px;
     background:
       conic-gradient(#0d0d0d 90deg, #1f1f1f 90deg 180deg, #0d0d0d 180deg 270deg, #1f1f1f 270deg);
@@ -396,6 +429,12 @@
       <div>
         <div class="screen-frame">
           <video id="tv" playsinline muted></video>
+          <!-- aria-hidden: the SPEC card's FEED row already exposes this exact
+               title to a screen reader, with a description. Announcing it twice
+               would be noise, and a hover-only element is not reachable anyway. -->
+          <div class="now-plate" id="nowPlate" aria-hidden="true">
+            <span class="k">NOW SHOWING</span><span class="v" id="nowPlateTitle">—</span>
+          </div>
           <div class="offair show" id="offair">
             <span class="tag">OFF AIR</span>
             <span class="sub" id="offairSub">TRANSMISSION RESUMES SHORTLY — STAY TUNED</span>
@@ -737,6 +776,7 @@ const els = {
   offair: $("offair"), offairSub: $("offairSub"),
   airChip: $("airChip"), airLabel: $("airLabel"),
   clock: $("clock"), nowShowing: $("nowShowing"), specStatus: $("specStatus"),
+  nowPlate: $("nowPlate"), nowPlateTitle: $("nowPlateTitle"),
   viewerNote: $("viewerNote"), pvGrid: $("pvGrid"), pvDate: $("pvDate"), dayTabs: $("dayTabs"),
   tuneBtn: $("tuneBtn"), soundBtn: $("soundBtn"), pauseBtn: $("pauseBtn"), fsBtn: $("fsBtn"),
   volGroup: $("volGroup"), volSlider: $("volSlider"), volVal: $("volVal"),
@@ -750,7 +790,28 @@ const state = { tuned: false, hls: null, retryTimer: null, owncastOnline: null, 
    always today's, never the tab a viewer is browsing. */
 function updateNowShowing() {
   const sched = todaySchedule();
-  els.nowShowing.textContent = state.streamTitle || sched[currentSlotIndex(sched)].name;
+  const title = state.streamTitle || sched[currentSlotIndex(sched)].name;
+  els.nowShowing.textContent = title;
+  // The plate carries its own NOW SHOWING label, so the tower's "CH0 · " prefix
+  // would read as a stutter there. The FEED row keeps it verbatim — that row is
+  // documented as showing what master control actually set.
+  if (els.nowPlateTitle) {
+    els.nowPlateTitle.textContent = title.replace(/^\s*CH0\s*·\s*/i, "");
+  }
+}
+
+/* Touch devices never hover, so a tap on the picture shows the plate for a
+   moment instead. Passive: this must not interfere with the tap reaching the
+   video, and it never calls preventDefault. */
+function armPeekOnTouch() {
+  const frame = document.querySelector(".screen-frame");
+  if (!frame) return;
+  let timer = null;
+  frame.addEventListener("touchstart", () => {
+    frame.classList.add("peek");
+    clearTimeout(timer);
+    timer = setTimeout(() => frame.classList.remove("peek"), 2600);
+  }, { passive: true });
 }
 
 /* ---------------- hls.js loader (cdnjs → jsdelivr → native) ---------------- */
@@ -1175,6 +1236,7 @@ els.adMail.addEventListener("click", () => {
     "&body=" + encodeURIComponent("Business/name:\nSpot length (15/30/60s):\nLink to file (or attach):\nI own the rights to all video, audio, and music in this spot: YES\n");
 });
 setInterval(tick, 1000); tick();
+armPeekOnTouch();
 renderSchedule(); setInterval(renderSchedule, 30 * 1000);
 pollStatus(); setInterval(pollStatus, CONFIG.STATUS_POLL_SECONDS * 1000);
 </script>
