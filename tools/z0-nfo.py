@@ -243,6 +243,21 @@ SUBJECT_RULES = [
 # The music library is filed "Artist - Track". Pulling the artist out gives the
 # guide a sensible title and gives the schedule an `artist-*` tag to build a
 # music strand from — Other Videos have no artist field of their own.
+
+# ── Dance forms and performance types in the prairie Ukrainian-Canadian 78s ──
+# Matched against the WORK TITLE only, never the whole "Artist - Title" stem --
+# see the note at the use site. A record can legitimately carry more than one:
+# a wedding waltz is both, and the Peter Lamb medleys are three things at once.
+MUSIC_FORMS = [
+    ("polka",     "Polka",     r"\bpolka\b"),
+    ("waltz",     "Waltz",     r"\bwaltz\b"),
+    ("kolomyika", "Kolomyika", r"kolomayk|kolomyik|kozachok|kozak|hrechanyky"),
+    ("wedding",   "Wedding",   r"wedding|bride|veevot|veenki|marriage|malanka"
+                               r"|presentation|kum i kuma"),
+    ("song",      "Song",      r"\bsong\b|\bchorus\b|lament|\bcarol\b"),
+    ("fiddle",    None,        r"\breel\b|breakdown|fiddle"),
+]
+
 MUSIC_SPLIT = re.compile(r"^(.{2,60}?)\s+-\s+(.+)$")
 
 
@@ -400,19 +415,33 @@ def build(item, media_root):
     artist = None
     if "music" in folders:
         m = MUSIC_SPLIT.match(title)
+        work = title
         if m:
             artist = m.group(1).strip()
+            work = m.group(2).strip()
             tags.append(f"artist-{slugify(artist)}")
         genres += ["Music", "Folk"]
         tags.append("canada")
-        if re.search(r"\bpolka\b", low):
-            genres.append("Polka")
-            tags.append("polka")
-        if re.search(r"\bwaltz\b", low):
-            genres.append("Waltz")
-            tags.append("waltz")
-        if re.search(r"\breel\b|breakdown|fiddle", low):
-            tags.append("fiddle")
+
+        # The form comes from the WORK TITLE, not from `low` (the whole stem).
+        # Matching the stem tags every record by a band with a form in its NAME:
+        # "Original Polka Kings - Chownyk Waltz" came out tagged both polka and
+        # waltz, "The Polka Drifters - A Soldier's Lament" came out a polka, and
+        # `Z0 Prairie Music Polkas` was inflated from 14 real polkas to 20 --
+        # so "Polka Party" was quietly playing laments. The band is not the tune.
+        wlow = work.lower()
+        for tag, genre, pat in MUSIC_FORMS:
+            if re.search(pat, wlow):
+                tags.append(tag)
+                if genre:
+                    genres.append(genre)
+
+        # The one artist-derived form tag, and only because the act's own name
+        # states outright what it is. Everything else about a performance is an
+        # inference from the band name and does not belong in a pool query.
+        if artist and "chorus" in artist.lower() and "song" not in tags:
+            tags.append("song")
+            genres.append("Song")
 
     # ── Contested copyright: the NFB shorts ──────────────────────────────────
     # As a federal agency the NFB's pre-1976 output should be public domain in

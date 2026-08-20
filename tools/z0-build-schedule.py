@@ -52,26 +52,31 @@ WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday",
 # the guide-on-the-wall and the guide disagree.
 WEEK = {
     "monday": dict(
+        lunch=("LUNCH LOOPS — WALTZ HOUR", "pl_lunch_waltz"),
         matinee=("THE AFTERNOON PICTURE SHOW", "docs"),
         prime=("MONDAY NIGHT NOIR", "noir"),
         late=("AFTER HOURS", "soundies"),
     ),
     "tuesday": dict(
+        lunch=("LUNCH LOOPS — POLKA HOUR", "pl_lunch_polka"),
         matinee=("THE AFTERNOON PICTURE SHOW", "features_short"),
         prime=("ATOMIC TUESDAY", "scifi"),
         late=("THE LATE TRANSMISSION", "science"),
     ),
     "wednesday": dict(
+        lunch=("LUNCH LOOPS — SONGS AND CHORUSES", "pl_lunch_song"),
         matinee=("THE AFTERNOON PICTURE SHOW", "classics"),
         prime=("WORKBENCH THEATRE", "docs"),
         late=("NIGHT PATTERN", "industrial"),
     ),
     "thursday": dict(
+        lunch=("LUNCH LOOPS — KOLOMYIKA HOUR", "pl_lunch_kolomyika"),
         matinee=("CHAPTER PLAY MATINEE", "serials"),
         prime=("SERIAL NIGHT", "serials"),
         late=("CHAPTER'S END", "cult"),
     ),
     "friday": dict(
+        lunch=("LUNCH LOOPS — POLKA PARTY", "pl_lunch_party"),
         matinee=("THE AFTERNOON PICTURE SHOW", "classics"),
         prime=("FRIDAY NIGHT FEATURE", "cult"),
         # The one slot the Z0-LATE material is scheduled into. Everything rated
@@ -81,6 +86,7 @@ WEEK = {
         late=("THE LATE LATE SHOW", "late_show"),
     ),
     "saturday": dict(
+        lunch=("LUNCH LOOPS — WEDDING PARTY", "pl_lunch_wedding"),
         morning="pl_saturday_morning",
         matinee=("SERIAL MATINEE", "pl_serial_matinee"),
         prime=("SATURDAY DOUBLE BILL", "classics"),
@@ -90,6 +96,7 @@ WEEK = {
         # ends. See the pad_to_next note in day_plan().
     ),
     "sunday": dict(
+        lunch=("LUNCH LOOPS — PRAIRIE MIXED", "pl_lunch_mixed"),
         matinee=("THE VANCOUVER REEL", "vancouver_reel"),
         prime=("SUNDAY CINEMA", "classics"),
         late=("NIGHT PATTERN", "slowtv"),
@@ -261,7 +268,14 @@ def day_plan(name, spec):
     # music cards are 640x480 and cheap to decode.
     # Saturday's matinee is an hour earlier (13:00 MATINEE DOUBLE), so lunch is
     # an hour shorter. Every other day runs 12:00-14:00.
-    P += strand("LUNCH LOOPS", "pl_lunch_loops",
+    # Each weekday leads with a different form -- waltzes, polkas, songs,
+    # kolomyiky, the fast pool, the wedding sides -- and Sunday is the whole
+    # library shuffled. The playlists are in lists/z0-lists.yml; the titles are
+    # here because they are what the guide shows, and a viewer only ever learns
+    # the day has a theme from the guide.
+    lunch_title, lunch_content = spec.get(
+        "lunch", ("LUNCH LOOPS", "pl_lunch_loops"))
+    P += strand(lunch_title, lunch_content,
                 "13:00" if name == "saturday" else "14:00")
 
     # ── Afternoon ─────────────────────────────────────────────────────────────

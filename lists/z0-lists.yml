@@ -140,6 +140,39 @@ smart_collections:
   - name: Z0 Prairie Music Waltzes
     query: 'type:other_video AND tag:waltz NOT tag:nfb'
 
+  # The rest of the dance forms and performance types in the 78s. All six come
+  # from tags that tools/z0-nfo.py reads off the WORK TITLE -- before
+  # 2026-08-20 it matched the whole "Artist - Title" stem, so every record by a
+  # band with a form in its NAME was tagged with that form: `tag:polka` held 20
+  # records of which only 14 were polkas, and this pool served "Chownyk Waltz"
+  # and "A Soldier's Lament" as polkas. Re-check with `--check` after any
+  # change to that matcher, because the failure is silent and sounds fine.
+  - name: Z0 Prairie Music Kolomyiky
+    query: 'type:other_video AND tag:kolomyika NOT tag:nfb'
+    note: Kolomyiky, kozachky and the other fast village dances.
+
+  - name: Z0 Prairie Music Weddings
+    query: 'type:other_video AND tag:wedding NOT tag:nfb'
+    note: >
+      The vesillia sequences -- veevot, veenki, bride's and wedding
+      presentations, Malanka. A distinct strand in this collection rather than
+      a genre: several are narrated ceremony, not dance numbers.
+
+  - name: Z0 Prairie Music Songs
+    query: 'type:other_video AND tag:song NOT tag:nfb'
+    note: Sung numbers and the Ivan Romanoff Male Chorus sides.
+
+  - name: Z0 Prairie Music Fiddle
+    query: 'type:other_video AND tag:fiddle NOT tag:nfb'
+    note: >
+      Only three records (the King Ganam sides and CNE Breakdown), so this is
+      an accent pool, never a lead. A day led from three tracks would play each
+      of them a dozen times before 14:00.
+
+  - name: Z0 Prairie Music Fast
+    query: 'type:other_video AND (tag:polka OR tag:kolomyika OR tag:fiddle) NOT tag:nfb'
+    note: Every uptempo form at once. The Friday lead.
+
   # The only BC-MADE narrative features in the library: Central Films'
   # quota quickies, shot at Willows Park in Victoria 1935-37. Everything else
   # Canadian here is archive or documentary footage, so these carry a feature
@@ -510,6 +543,84 @@ playlists:
       - {smart: Z0 Prairie Music Polkas, count: 2, order: shuffle, guide: true}
       - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
       - {smart: Z0 Prairie Music Waltzes, count: 2, order: shuffle, guide: true}
+
+  # ── One lunch per weekday ──────────────────────────────────────────────────
+  # Same shape as `Lunch Loops` above -- eight music slots against one 10-30
+  # minute film and an ident -- but each day leads with a different form, takes
+  # a complementary second form, and tops up from the whole pool so a thin
+  # theme never has to carry two hours on its own.
+  #
+  # EVERY ITEM IN A PLAYLIST MUST NAME A DIFFERENT SOURCE (see Cartoon Hour
+  # above): a repeated collection collides on (ContentKey, CollectionKey) and
+  # the whole playout fails to build, not just this playlist. That rule is why
+  # a day cannot simply draw its lead pool twice, and it turned out to be
+  # better programming anyway -- the second form is what stops a themed day
+  # sounding like one record.
+  #
+  # `Z0 Prairie Music Fiddle` is three records and appears only as a SECOND
+  # form, never a lead. Sunday deliberately has no theme: it is the whole
+  # library shuffled, which is also the only day every unclassified side is as
+  # likely as anything else.
+  - name: Lunch Loops Waltzes
+    group: Channel Z0
+    items:
+      - {smart: Z0 Prairie Music Waltzes, count: 4, order: shuffle, guide: true}
+      - {smart: Z0 Pad Medium 10 to 30 min, count: 1, order: shuffle, guide: true}
+      - {smart: Z0 Prairie Music Songs, count: 2, order: shuffle, guide: true}
+      - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
+      - {smart: Z0 Prairie Music, count: 2, order: shuffle, guide: true}
+
+  - name: Lunch Loops Polka Hour
+    group: Channel Z0
+    items:
+      - {smart: Z0 Prairie Music Polkas, count: 4, order: shuffle, guide: true}
+      - {smart: Z0 Pad Medium 10 to 30 min, count: 1, order: shuffle, guide: true}
+      - {smart: Z0 Prairie Music Fiddle, count: 2, order: shuffle, guide: true}
+      - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
+      - {smart: Z0 Prairie Music, count: 2, order: shuffle, guide: true}
+
+  - name: Lunch Loops Songs
+    group: Channel Z0
+    items:
+      - {smart: Z0 Prairie Music Songs, count: 4, order: shuffle, guide: true}
+      - {smart: Z0 Pad Medium 10 to 30 min, count: 1, order: shuffle, guide: true}
+      - {smart: Z0 Prairie Music Waltzes, count: 2, order: shuffle, guide: true}
+      - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
+      - {smart: Z0 Prairie Music, count: 2, order: shuffle, guide: true}
+
+  - name: Lunch Loops Kolomyiky
+    group: Channel Z0
+    items:
+      - {smart: Z0 Prairie Music Kolomyiky, count: 4, order: shuffle, guide: true}
+      - {smart: Z0 Pad Medium 10 to 30 min, count: 1, order: shuffle, guide: true}
+      - {smart: Z0 Prairie Music Polkas, count: 2, order: shuffle, guide: true}
+      - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
+      - {smart: Z0 Prairie Music, count: 2, order: shuffle, guide: true}
+
+  - name: Lunch Loops Polka Party
+    group: Channel Z0
+    items:
+      - {smart: Z0 Prairie Music Fast, count: 4, order: shuffle, guide: true}
+      - {smart: Z0 Pad Medium 10 to 30 min, count: 1, order: shuffle, guide: true}
+      - {smart: Z0 Prairie Music Weddings, count: 2, order: shuffle, guide: true}
+      - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
+      - {smart: Z0 Prairie Music, count: 2, order: shuffle, guide: true}
+
+  - name: Lunch Loops Weddings
+    group: Channel Z0
+    items:
+      - {smart: Z0 Prairie Music Weddings, count: 4, order: shuffle, guide: true}
+      - {smart: Z0 Pad Medium 10 to 30 min, count: 1, order: shuffle, guide: true}
+      - {smart: Z0 Prairie Music Kolomyiky, count: 2, order: shuffle, guide: true}
+      - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
+      - {smart: Z0 Prairie Music, count: 2, order: shuffle, guide: true}
+
+  - name: Lunch Loops Prairie Mixed
+    group: Channel Z0
+    items:
+      - {smart: Z0 Prairie Music, count: 6, order: shuffle, guide: true}
+      - {smart: Z0 Pad Medium 10 to 30 min, count: 1, order: shuffle, guide: true}
+      - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
 
   - name: Saturday Morning
     group: Channel Z0
