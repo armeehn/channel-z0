@@ -6,21 +6,36 @@
 // Long titles are shrunk to fit rather than allowed to overflow: the card is
 // 640x480 and some of these 78s have titles like "Crossing Over the Ferry" in
 // one breath and a five-word subtitle in the next.
+//
+// --viz renders the card WITHOUT the static equaliser mark, for use as the
+// backplate under tools/z0-music-viz.py. Two card sets can coexist; which one a
+// track gets is decided at remux time, not here.
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const listFile = process.argv[2];
-const outDir = process.argv[3];
-if (!listFile || !outDir) { console.error('usage: render-music.mjs <list> <outdir>'); process.exit(1); }
+const argv = process.argv.slice(2);
+const vizFlag = argv.findIndex(a => a === '--viz' || a.startsWith('--viz='));
+const viz = vizFlag >= 0;
+const vizMode = viz && argv[vizFlag].includes('=') ? argv[vizFlag].split('=')[1] : '1';
+const htmlFlag = argv.indexOf('--html');
+const htmlPath = htmlFlag >= 0 ? argv[htmlFlag + 1] : '/root/z0cards/music-card.html';
+const pos = argv.filter((a, i) =>
+  !a.startsWith('--') && !(htmlFlag >= 0 && i === htmlFlag + 1));
+const [listFile, outDir] = pos;
+if (!listFile || !outDir) {
+  console.error('usage: render-music.mjs [--html <card.html>] [--viz[=tall]] <list> <outdir>');
+  process.exit(1);
+}
 
 const tracks = fs.readFileSync(listFile, 'utf8').split('\n').map(s => s.trim()).filter(Boolean);
 fs.mkdirSync(outDir, { recursive: true });
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 640, height: 480 }, deviceScaleFactor: 2 });
-await page.goto('file://' + path.resolve('/root/z0cards/music-card.html'), { waitUntil: 'load' });
+await page.goto('file://' + path.resolve(htmlPath), { waitUntil: 'load' });
 await page.evaluate(() => document.fonts.ready);
+if (viz) await page.evaluate(m => document.body.setAttribute('data-viz', m), vizMode);
 
 let n = 0;
 for (const stem of tracks) {
@@ -51,4 +66,4 @@ for (const stem of tracks) {
 }
 
 await browser.close();
-console.log('rendered ' + n + ' music cards');
+console.log('rendered ' + n + ' music cards' + (viz ? ' (viz backplates, mode ' + vizMode + ')' : ''));
