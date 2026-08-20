@@ -1,0 +1,98 @@
+"""Colour for the 16-bit GROUND ZERO opening.
+
+The 8-bit pass was sixteen flat colours and ordered dither wherever two of them
+had to meet.  A 16-bit frame is the opposite problem: the hardware can put a
+different colour on every scanline (that is what HDMA gradients are), 15 colours
+in a tile, 256 on screen, and it can add or subtract two layers.  So this module
+provides ramps rather than a fixed list, and gradients are computed rather than
+dithered.
+
+Ramps run light -> dark, five entries, index 0 is the highlight.  Sprites index
+them by position (edge / body / edge) so one light direction governs the whole
+figure — see gzart.shade().
+"""
+
+KEYLINE = (0x0a, 0x0a, 0x12)
+
+# Station colours are the anchors: marigold is the armour, teal the visor and
+# the core, bone the type.  Everything else is a ramp built around them.
+ARMOUR = [(0xff, 0xe3, 0xb0), (0xff, 0xc2, 0x58), (0xfe, 0x9a, 0x0d),
+          (0xb8, 0x6d, 0x05), (0x6e, 0x41, 0x02)]
+SUIT   = [(0x4a, 0x5a, 0x7a), (0x35, 0x42, 0x5c), (0x23, 0x2c, 0x40),
+          (0x16, 0x1c, 0x2a), (0x0c, 0x10, 0x18)]
+STEEL  = [(0xcf, 0xc7, 0xb8), (0x9d, 0x94, 0x88), (0x6b, 0x64, 0x59),
+          (0x47, 0x42, 0x3a), (0x2a, 0x26, 0x21)]
+VISOR  = [(0xb8, 0xff, 0xf0), (0x4f, 0xe0, 0xc4), (0x12, 0xb7, 0x95),
+          (0x0a, 0x7d, 0x66), (0x06, 0x48, 0x3b)]
+TEAL = VISOR
+BONE   = [(0xff, 0xff, 0xff), (0xf6, 0xf1, 0xe7), (0xd6, 0xcf, 0xc0),
+          (0xa9, 0xa2, 0x94), (0x6f, 0x6a, 0x5f)]
+PINK   = [(0xff, 0xb0, 0xcb), (0xf6, 0x77, 0x9d), (0xf0, 0x47, 0x7d),
+          (0xb0, 0x22, 0x53), (0x6a, 0x0f, 0x30)]
+
+# The chrome the logo is cut from: a full metal ramp, not a three-band fake.
+# Reading top to bottom it is sky-reflection, hot specular, body, core shadow,
+# then the warm bounce a metal letter picks up off whatever it is standing on.
+CHROME = [(0xff, 0xff, 0xff), (0xff, 0xf3, 0xd4), (0xff, 0xd9, 0x8f),
+          (0xff, 0xb4, 0x3a), (0xfe, 0x9a, 0x0d), (0xd8, 0x7c, 0x06),
+          (0xa1, 0x5a, 0x03), (0x6b, 0x39, 0x02), (0x8a, 0x4d, 0x0a),
+          (0xc2, 0x74, 0x14)]
+
+INK      = (0x1d, 0x1a, 0x17)
+INK_DEEP = (0x0b, 0x0a, 0x09)
+BLACK    = (0x00, 0x00, 0x00)
+WHITE    = (0xff, 0xff, 0xff)
+
+# Night sky, as a stack of gradient stops rather than three dithered bands.
+SKY_STOPS = [(0.00, (0x07, 0x06, 0x14)),
+             (0.34, (0x11, 0x0d, 0x26)),
+             (0.58, (0x22, 0x18, 0x3e)),
+             (0.78, (0x3c, 0x25, 0x54)),
+             (0.90, (0x63, 0x35, 0x5e)),
+             (1.00, (0x9a, 0x50, 0x60))]
+
+LAKE_STOPS = [(0.00, (0x35, 0x28, 0x52)),
+              (1.00, (0x14, 0x10, 0x24))]
+
+
+def lerp(a, b, t):
+    return (int(a[0] + (b[0] - a[0]) * t),
+            int(a[1] + (b[1] - a[1]) * t),
+            int(a[2] + (b[2] - a[2]) * t))
+
+
+def stops_at(stops, t):
+    """Sample a stop list.  This is the HDMA table, evaluated per scanline."""
+    if t <= stops[0][0]:
+        return stops[0][1]
+    for i in range(len(stops) - 1):
+        t0, c0 = stops[i]
+        t1, c1 = stops[i + 1]
+        if t <= t1:
+            return lerp(c0, c1, (t - t0) / (t1 - t0))
+    return stops[-1][1]
+
+
+def ramp_at(ramp, t):
+    """Sample a ramp continuously; t in 0..1, 0 = highlight."""
+    if t <= 0:
+        return ramp[0]
+    if t >= 1:
+        return ramp[-1]
+    f = t * (len(ramp) - 1)
+    i = int(f)
+    return lerp(ramp[i], ramp[min(i + 1, len(ramp) - 1)], f - i)
+
+
+def mix(c, target, t):
+    return lerp(c, target, t)
+
+
+# A lightning strike re-maps the palette rather than re-rendering anything,
+# which is what the hardware would have done and what keeps the strike frames
+# from costing more than any other frame.
+FLASH_MAP = {}
+for _r in (ARMOUR, SUIT, STEEL, VISOR, BONE, PINK, CHROME):
+    for _c in _r:
+        FLASH_MAP[_c] = mix(_c, WHITE, 0.55)
+FLASH_MAP[KEYLINE] = (0x1a, 0x1a, 0x28)
