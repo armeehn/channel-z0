@@ -135,10 +135,10 @@ smart_collections:
     query: 'type:other_video AND tag:canada AND genre:Music NOT tag:nfb'
 
   - name: Z0 Prairie Music Polkas
-    query: 'type:other_video AND tag:polka NOT tag:nfb'
+    query: 'type:other_video AND tag:polka NOT tag:nfb AND minutes:[0 TO 9]'
 
   - name: Z0 Prairie Music Waltzes
-    query: 'type:other_video AND tag:waltz NOT tag:nfb'
+    query: 'type:other_video AND tag:waltz NOT tag:nfb AND minutes:[0 TO 9]'
 
   # The rest of the dance forms and performance types in the 78s. All six come
   # from tags that tools/z0-nfo.py reads off the WORK TITLE -- before
@@ -148,29 +148,56 @@ smart_collections:
   # and "A Soldier's Lament" as polkas. Re-check with `--check` after any
   # change to that matcher, because the failure is silent and sounds fine.
   - name: Z0 Prairie Music Kolomyiky
-    query: 'type:other_video AND tag:kolomyika NOT tag:nfb'
+    query: 'type:other_video AND tag:kolomyika NOT tag:nfb AND minutes:[0 TO 9]'
     note: Kolomyiky, kozachky and the other fast village dances.
 
   - name: Z0 Prairie Music Weddings
-    query: 'type:other_video AND tag:wedding NOT tag:nfb'
+    query: 'type:other_video AND tag:wedding NOT tag:nfb AND minutes:[0 TO 9]'
     note: >
       The vesillia sequences -- veevot, veenki, bride's and wedding
       presentations, Malanka. A distinct strand in this collection rather than
       a genre: several are narrated ceremony, not dance numbers.
 
   - name: Z0 Prairie Music Songs
-    query: 'type:other_video AND tag:song NOT tag:nfb'
+    query: 'type:other_video AND tag:song NOT tag:nfb AND minutes:[0 TO 9]'
     note: Sung numbers and the Ivan Romanoff Male Chorus sides.
 
   - name: Z0 Prairie Music Fiddle
-    query: 'type:other_video AND tag:fiddle NOT tag:nfb'
+    query: 'type:other_video AND tag:fiddle NOT tag:nfb AND minutes:[0 TO 9]'
     note: >
       Only three records (the King Ganam sides and CNE Breakdown), so this is
       an accent pool, never a lead. A day led from three tracks would play each
       of them a dozen times before 14:00.
 
+  # ── The library is not all 78rpm singles ───────────────────────────────────
+  # Four sides are 18-23 minutes: Peter Picklyk's two LP sides and the
+  # two-part "Marriage & Married Life" narration. They are records in the same
+  # collection but they are not three-minute dance numbers, and dropping one
+  # into a slot sized for a polka eats a third of the block -- on top of the
+  # 10-30 minute film the block already schedules. Every pool the lunch
+  # playlists draw music from is therefore bounded `minutes:[0 TO 9]`.
+  #
+  # `minutes` is numeric and ONLY works in range syntax; written bare it is
+  # parsed as a term and matches nothing, which here would silently un-bound
+  # every pool rather than fail.
+  - name: Z0 Prairie Music Short Sides
+    query: 'type:other_video AND tag:canada AND genre:Music NOT tag:nfb AND minutes:[0 TO 9]'
+    note: >
+      The general prairie pool with the long sides removed. Used as the top-up
+      in every lunch day and as Sunday's lead. `Z0 Prairie Music` is left
+      unbounded because Canada Night and the Neighbourhood Desk also draw on it
+      and are not slot-constrained the same way.
+
+  - name: Z0 Prairie Music Long Sides
+    query: 'type:other_video AND tag:canada AND genre:Music NOT tag:nfb AND minutes:[10 TO 30]'
+    note: >
+      The four long sides, which are exactly the 10-30 minute shape the lunch
+      block's own film slot wants. Saturday spends that slot here instead of on
+      a general short, so the wedding day is built around the wedding narration
+      rather than burying it among polkas.
+
   - name: Z0 Prairie Music Fast
-    query: 'type:other_video AND (tag:polka OR tag:kolomyika OR tag:fiddle) NOT tag:nfb'
+    query: 'type:other_video AND (tag:polka OR tag:kolomyika OR tag:fiddle) NOT tag:nfb AND minutes:[0 TO 9]'
     note: Every uptempo form at once. The Friday lead.
 
   # The only BC-MADE narrative features in the library: Central Films'
@@ -568,7 +595,7 @@ playlists:
       - {smart: Z0 Pad Medium 10 to 30 min, count: 1, order: shuffle, guide: true}
       - {smart: Z0 Prairie Music Songs, count: 2, order: shuffle, guide: true}
       - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
-      - {smart: Z0 Prairie Music, count: 2, order: shuffle, guide: true}
+      - {smart: Z0 Prairie Music Short Sides, count: 2, order: shuffle, guide: true}
 
   - name: Lunch Loops Polka Hour
     group: Channel Z0
@@ -577,7 +604,7 @@ playlists:
       - {smart: Z0 Pad Medium 10 to 30 min, count: 1, order: shuffle, guide: true}
       - {smart: Z0 Prairie Music Fiddle, count: 2, order: shuffle, guide: true}
       - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
-      - {smart: Z0 Prairie Music, count: 2, order: shuffle, guide: true}
+      - {smart: Z0 Prairie Music Short Sides, count: 2, order: shuffle, guide: true}
 
   - name: Lunch Loops Songs
     group: Channel Z0
@@ -586,7 +613,7 @@ playlists:
       - {smart: Z0 Pad Medium 10 to 30 min, count: 1, order: shuffle, guide: true}
       - {smart: Z0 Prairie Music Waltzes, count: 2, order: shuffle, guide: true}
       - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
-      - {smart: Z0 Prairie Music, count: 2, order: shuffle, guide: true}
+      - {smart: Z0 Prairie Music Short Sides, count: 2, order: shuffle, guide: true}
 
   - name: Lunch Loops Kolomyiky
     group: Channel Z0
@@ -595,7 +622,7 @@ playlists:
       - {smart: Z0 Pad Medium 10 to 30 min, count: 1, order: shuffle, guide: true}
       - {smart: Z0 Prairie Music Polkas, count: 2, order: shuffle, guide: true}
       - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
-      - {smart: Z0 Prairie Music, count: 2, order: shuffle, guide: true}
+      - {smart: Z0 Prairie Music Short Sides, count: 2, order: shuffle, guide: true}
 
   - name: Lunch Loops Polka Party
     group: Channel Z0
@@ -604,21 +631,21 @@ playlists:
       - {smart: Z0 Pad Medium 10 to 30 min, count: 1, order: shuffle, guide: true}
       - {smart: Z0 Prairie Music Weddings, count: 2, order: shuffle, guide: true}
       - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
-      - {smart: Z0 Prairie Music, count: 2, order: shuffle, guide: true}
+      - {smart: Z0 Prairie Music Short Sides, count: 2, order: shuffle, guide: true}
 
   - name: Lunch Loops Weddings
     group: Channel Z0
     items:
       - {smart: Z0 Prairie Music Weddings, count: 4, order: shuffle, guide: true}
-      - {smart: Z0 Pad Medium 10 to 30 min, count: 1, order: shuffle, guide: true}
+      - {smart: Z0 Prairie Music Long Sides, count: 1, order: shuffle, guide: true}
       - {smart: Z0 Prairie Music Kolomyiky, count: 2, order: shuffle, guide: true}
       - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
-      - {smart: Z0 Prairie Music, count: 2, order: shuffle, guide: true}
+      - {smart: Z0 Prairie Music Short Sides, count: 2, order: shuffle, guide: true}
 
   - name: Lunch Loops Prairie Mixed
     group: Channel Z0
     items:
-      - {smart: Z0 Prairie Music, count: 6, order: shuffle, guide: true}
+      - {smart: Z0 Prairie Music Short Sides, count: 6, order: shuffle, guide: true}
       - {smart: Z0 Pad Medium 10 to 30 min, count: 1, order: shuffle, guide: true}
       - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
 
