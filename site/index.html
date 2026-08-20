@@ -363,28 +363,40 @@
   .spot-copy p { margin-bottom: 14px; max-width: 55ch; }
   .fine { font-size: 12px; color: var(--ink-2); }
 
-  /* ---------- SEC.05 the lab ---------- */
-  .lab-card { border: 2px solid var(--ink); padding: 24px; display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
+  /* ---------- the sponsor mark (footer) ---------- */
   .lab-esh {
-    width: 64px; height: 64px; border: 2px solid var(--ink);
+    width: 30px; height: 30px; flex: none; border: 2px solid var(--ink);
     background: conic-gradient(var(--ink) 90deg, var(--paper) 90deg 180deg, var(--ink) 180deg 270deg, var(--paper) 270deg);
-    background-size: 16px 16px;
+    background-size: 7.5px 7.5px;
   }
-  .lab-copy p { max-width: 62ch; }
-  .lab-copy .wordmark { font-weight: 700; }
   .mantra {
     margin-top: 26px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);
     padding: 10px 0; white-space: nowrap; overflow: hidden;
     font-size: 12px; letter-spacing: .3em; color: var(--ink-2);
   }
 
-  /* ---------- footer ---------- */
-  footer { padding: 30px 0 0; font-size: 11px; letter-spacing: .12em; color: var(--ink-2); }
-  footer .rows { display: flex; flex-wrap: wrap; gap: 8px 30px; justify-content: space-between; }
+  /* ---------- station footer ----------
+     One element under everything: the sponsor line, the mantra and the
+     sign-off rows, in footer register — small type, no heading, no border of
+     its own beyond the rule that separates it from the section above. */
+  .station-foot {
+    border-top: 1px solid var(--ink); margin-top: 22px; padding: 12px 0 0;
+    font-size: 11px; letter-spacing: .12em; color: var(--ink-2);
+  }
+  .station-foot .foot-lab { display: flex; align-items: center; gap: 12px; }
+  .station-foot .foot-lab p { font-size: 12px; letter-spacing: 0; line-height: 1.45; }
+  .station-foot .wordmark { font-weight: 700; color: var(--ink); }
+  .station-foot .mantra { margin-top: 10px; padding: 6px 0; }
+  .station-foot .rows {
+    display: flex; flex-wrap: wrap; gap: 6px 26px; justify-content: space-between;
+    padding-top: 10px; font-size: 10px;
+  }
 
   @media (max-width: 720px) {
     .feed-grid, .dossier, .spot-grid { grid-template-columns: 1fr; }
-    .lab-card { grid-template-columns: 1fr; }
+    /* the mark would eat a third of a phone's width beside three lines of
+       copy, so the sponsor line stacks instead */
+    .station-foot .foot-lab { flex-wrap: wrap; gap: 10px; }
     .sec-note { margin-left: 0; }
     .live-status { margin-left: 0; }
     /* one column: the card is full width, so the note drops under its row
@@ -412,10 +424,11 @@
   html:not(.tabs) .hero-toggle { display: none; }
 
   /* ---------- section tabs ----------
-     Six sections, one click apart, in the order the SEC numbers already run.
+     Four sections, one click apart, in the order the SEC numbers already run.
      Gated on html.tabs (set before first paint): with JS off the tabs would be
-     six dead buttons hiding five sections, so instead they vanish and the page
-     falls back to the one long scroll it has always been. */
+     four dead buttons hiding three sections, so instead they vanish and the
+     page falls back to the one long scroll it has always been. The footer is
+     outside .panels and therefore outside all of this — it is always on. */
   .wrap > .checker { margin-top: 22px; }
   html:not(.tabs) .secnav { display: none; }
   .secnav {
@@ -443,7 +456,7 @@
   html.tabs .panels > .panel:focus { outline: none; }
   /* the tab bar is the divider now, and the section header repeats what the
      tab already says — so the rule goes and the padding comes down. */
-  html.tabs section.panel, html.tabs footer.panel { border-bottom: none; padding: 26px 0 30px; }
+  html.tabs section.panel { border-bottom: none; padding: 26px 0 22px; }
   html.tabs .panels > .panel .sec-head { margin-bottom: 20px; }
 
   /* ---------- pinned shell ----------
@@ -455,7 +468,7 @@
     html.tabs, html.tabs body { height: 100%; overflow: hidden; }
     html.tabs .wrap {
       height: 100dvh; display: flex; flex-direction: column; padding-bottom: 0;
-      --live-chrome: 470px;
+      --live-chrome: 638px;
     }
     html.tabs .topbar { flex: none; padding: 10px 0; }
     html.tabs .hero { flex: none; padding: 16px 0 14px; }
@@ -471,13 +484,21 @@
 
     html.tabs .panels { flex: 1 1 auto; min-height: 0; display: flex; }
     html.tabs .panels > .panel {
-      flex: 1 1 auto; min-height: 0; padding: 22px 0 14px;
+      flex: 1 1 auto; min-height: 0; padding: 18px 0 10px;
       overflow-y: auto; overscroll-behavior: contain;
     }
     html.tabs .panels > .panel.on { display: flex; flex-direction: column; }
-    html.tabs .panels > .panel .sec-head { flex: none; margin-bottom: 14px; }
+    html.tabs .panels > .panel .sec-head { flex: none; margin-bottom: 12px; }
     html.tabs .panels > .panel .sec-title { font-size: clamp(1.05rem, 2.2vw, 1.35rem); }
     html.tabs .wrap > .checker { flex: none; margin-top: 0; }
+    /* The footer holds its size; the panel above it is what flexes. Every
+       pixel it takes comes out of the picture, so in the pinned shell it is
+       trimmed to the two things that have to be said — who pays for the
+       transmitter, and when the broadcast day ends. The mantra is decoration
+       and can wait for a page that scrolls. */
+    html.tabs .station-foot { flex: none; margin-top: 0; padding-top: 8px; }
+    html.tabs .station-foot .rows { padding-top: 8px; }
+    html.tabs .station-foot .mantra { display: none; }
 
     /* The picture is the one elastic thing on SEC.01: cap it off the window so
        the transport row and the SPEC card stay on screen. It gives up WIDTH to
@@ -487,10 +508,12 @@
        wrapped to two lines each and the card, not the video, was what pushed
        SEC.01 past the fold. */
     html.tabs #live .feed-grid { grid-template-columns: minmax(0, 1fr) 292px; }
-    html.tabs #live .spec-rows { padding: 3px 0; }
-    html.tabs #live .spec-row { padding: 5px 12px; }
+    /* Twelve rows at 5px of padding each were 60px of air, and the footer
+       below now wants those pixels more than the card does. */
+    html.tabs #live .spec-rows { padding: 2px 0; }
+    html.tabs #live .spec-row { padding: 3px 12px; }
     html.tabs #live .screen-frame { max-width: calc((100dvh - var(--live-chrome)) * 16 / 9); }
-    html.tabs .hero.collapsed ~ .panels { --live-chrome: 350px; }
+    html.tabs .hero.collapsed ~ .panels { --live-chrome: 518px; }
     /* full screen is full screen — the cap must not follow it there */
     html.tabs #live .screen-frame.fs,
     html.tabs #live .screen-frame:fullscreen,
@@ -503,9 +526,6 @@
     html.tabs #program .program-head,
     html.tabs #program .program-foot { flex: none; }
     html.tabs #program #pvGrid { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
-
-    /* SEC.06 is three lines; centred it reads as a sign-off card, not a stub */
-    html.tabs #sign-off.panel.on { justify-content: center; }
   }
 
   /* Phone, or a window too short to pin: still one section at a time — that is
@@ -523,16 +543,16 @@
   @media (max-width: 600px) {
     .secnav { flex-wrap: wrap; }
     .sec-tab {
-      flex: 1 1 33%; border-bottom: 1px solid var(--ink);
+      flex: 1 1 50%; border-bottom: 1px solid var(--ink);
       letter-spacing: .05em; padding: 10px 4px; gap: 5px;
     }
-    .sec-tab:nth-child(3n) { border-right: none; }
-    .sec-tab:nth-child(n+4) { border-bottom: none; }
+    .sec-tab:nth-child(2n) { border-right: none; }
+    .sec-tab:nth-child(n+3) { border-bottom: none; }
   }
 </style>
 <script>
   /* Set before the first paint: every tab-shaped rule is gated on .tabs, so a
-     browser without JS gets the old top-to-bottom page instead of five hidden
+     browser without JS gets the old top-to-bottom page instead of three hidden
      sections. */
   document.documentElement.classList.add("tabs");
 </script>
@@ -577,16 +597,16 @@
   </div>
 
   <!-- ============ SECTION TABS ============
-       The six SEC numbers the page already runs on, one click apart instead of
-       six screens of scrolling. Hidden entirely without JS (html:not(.tabs)),
-       where the sections stay stacked and these buttons would do nothing. -->
+       The four SEC numbers the page already runs on, one click apart instead of
+       four screens of scrolling. Hidden entirely without JS (html:not(.tabs)),
+       where the sections stay stacked and these buttons would do nothing.
+       The sponsor and the sign-off used to be SEC.05 and SEC.06; they are not
+       places you visit, so they are the station footer now — see below. -->
   <nav class="secnav" id="secnav" role="tablist" aria-label="Station sections">
     <button class="sec-tab" type="button" role="tab" id="tab-live"        aria-controls="live"        aria-selected="true"  tabindex="0"><span class="n">01</span><span class="t">Live Feed</span></button>
     <button class="sec-tab" type="button" role="tab" id="tab-program"     aria-controls="program"     aria-selected="false" tabindex="-1"><span class="n">02</span><span class="t">Program</span></button>
     <button class="sec-tab" type="button" role="tab" id="tab-ground-zero" aria-controls="ground-zero" aria-selected="false" tabindex="-1"><span class="n">03</span><span class="t">Ground Zero</span></button>
     <button class="sec-tab" type="button" role="tab" id="tab-submit-ad"   aria-controls="submit-ad"   aria-selected="false" tabindex="-1"><span class="n">04</span><span class="t">File a Spot</span></button>
-    <button class="sec-tab" type="button" role="tab" id="tab-lab"         aria-controls="lab"         aria-selected="false" tabindex="-1"><span class="n">05</span><span class="t">The Lab</span></button>
-    <button class="sec-tab" type="button" role="tab" id="tab-sign-off"    aria-controls="sign-off"    aria-selected="false" tabindex="-1"><span class="n">06</span><span class="t">Sign-Off</span></button>
   </nav>
 
   <div class="panels" id="panels">
@@ -776,39 +796,30 @@
     </div>
   </section>
 
-  <!-- ============ SEC.05 THE LAB ============ -->
-  <section class="panel" id="lab" role="tabpanel" aria-labelledby="tab-lab" tabindex="0">
-    <div class="sec-head">
-      <span class="sec-no">SEC.05</span>
-      <span class="sec-title">The Lab</span>
-      <span class="sec-note">SPONSOR OF RECORD</span>
-    </div>
-    <div class="lab-card">
+  </div><!-- /.panels -->
+
+  <!-- ============ STATION FOOTER ============
+       What used to be SEC.05 (the Lab) and SEC.06 (Sign-Off), merged and moved
+       out of the tab strip. Neither was a place you go — one is who pays for
+       the transmitter and the other is the bottom of the page — so they sit
+       OUTSIDE .panels, once, and read as the footer under whichever of the
+       four sections is on screen. No headings: a footer does not announce
+       itself. With JS off it is simply the end of the long page, as before. -->
+  <footer class="station-foot">
+    <div class="foot-lab">
       <div class="lab-esh" aria-hidden="true"></div>
-      <div class="lab-copy">
-        <p><span class="wordmark">Channel Z0 is sponsored by Riposte Laboratories</span> — an engineering
-           company that transforms discarded plastic and end-of-life battery cells into durable, modular
-           products. Between programs you'll see what the lab has been building lately. Come by sometime.</p>
-        <p class="fine"><a id="labLink" href="https://ripostelabs.xyz" target="_blank" rel="noopener">ripostelabs.xyz →</a></p>
-      </div>
+      <p><span class="wordmark">Channel Z0 is sponsored by Riposte Laboratories</span> — durable, modular
+         products built from discarded plastic and end-of-life battery cells. Between programs you'll see
+         what the lab has been building lately.
+         <a id="labLink" href="https://ripostelabs.xyz" target="_blank" rel="noopener">ripostelabs.xyz →</a></p>
     </div>
     <div class="mantra" aria-hidden="true">PARRY · RIPOSTE · RECYCLE · REPEAT ♻ &nbsp;&nbsp; PARRY · RIPOSTE · RECYCLE · REPEAT ♻ &nbsp;&nbsp; PARRY · RIPOSTE · RECYCLE · REPEAT ♻ &nbsp;&nbsp; PARRY · RIPOSTE · RECYCLE · REPEAT ♻</div>
-  </section>
-
-  <!-- ============ SEC.06 SIGN-OFF ============ -->
-  <footer class="panel" id="sign-off" role="tabpanel" aria-labelledby="tab-sign-off" tabindex="0">
-    <div class="sec-head" style="margin-bottom:14px">
-      <span class="sec-no">SEC.06</span>
-      <span class="sec-title" style="font-size:1.1rem">Sign-Off</span>
-    </div>
     <div class="rows">
       <span>THIS STATION CONCLUDES ITS BROADCAST DAY AT MIDNIGHT.</span>
       <span>SHORT SIGNAL LOOPS · LONG-LIVED PROGRAMS · NO OCEAN FREIGHT</span>
       <span>© CHANNEL Z0 · A RIPOSTE LABORATORIES TRANSMISSION · EST. 2026</span>
     </div>
   </footer>
-
-  </div><!-- /.panels -->
 
   <!-- The shell's bottom edge. Inline margin lifted out to CSS so the pinned
        layout can close the gap without an !important. -->
@@ -1405,8 +1416,8 @@ function renderSchedule() {
 }
 
 /* ---------------- section tabs ----------------
-   Six sections, one on screen at a time. Nothing here builds or rewrites a
-   panel: they are the same six elements the document has always had, and the
+   Four sections, one on screen at a time. Nothing here builds or rewrites a
+   panel: they are the same four elements the document has always had, and the
    controller only decides which one carries .on. So with JS off the .tabs
    class is never set, every rule above is inert, and the page is the old
    top-to-bottom station.
@@ -1414,7 +1425,9 @@ function renderSchedule() {
    The hash stays the address. #program deep-links straight to the guide, and
    an external link into a section still lands on it. It is written with
    replaceState rather than pushState on purpose: the tabs are one page, and
-   six presses of Back to leave the site would be a trap. */
+   four presses of Back to leave the site would be a trap. An unknown hash —
+   including the retired #lab and #sign-off — falls through to SEC.01, whose
+   footer now carries what those two sections used to say. */
 const secTabs = Array.from(document.querySelectorAll(".sec-tab"));
 const secOf = (t) => t.getAttribute("aria-controls");
 
