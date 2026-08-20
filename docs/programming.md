@@ -63,7 +63,7 @@ people who are home, and add a second feature.
 | 07:00 | **CARTOON BLOCK** | Public-domain toons, drawn before your grandparents met |
 | 09:00 | **PRELINGER THEATRE** | Vintage PSAs & educational shorts; trust the narrator |
 | 11:00 | **LAB HOUR** | What Riposte Labs is building this week, sometimes live |
-| 12:00 | **LUNCH LOOPS** | Music + the community bulletin board — the `Lunch Loops` playlist, prairie dance-band records interleaved with one 10–30 min film per cycle |
+| 12:00 | **LUNCH LOOPS** | Music + the community bulletin board — prairie dance-band records interleaved with one 10–30 min film per cycle. **A different form leads each day** (see below), and the guide names it |
 | 14:00 | **AFTERNOON PICTURE SHOW** | A matinee feature older than streaming |
 | 16:00 | **CARTOON BLOCK II** | The toons return, as toons do |
 | 18:00 | **NEIGHBOURHOOD DESK** | Notices, events, found cats, lost causes — the `The Neighbourhood Desk` playlist: BC archive film + prairie records |
@@ -203,6 +203,34 @@ ErsatzTV collection the schedule item points at.
   Music you own, looped, over the bulletin or a still card. The daytime version
   carries the Neighbourhood Desk crawl; the late version is just the jazz.
   **Collection:** `Music Loops`.
+
+  **Each weekday leads with a different form**, so the block is not the same two
+  hours seven times. The guide carries the theme in the block title:
+
+  | day | title | leads with | second form |
+  |---|---|---|---|
+  | Mon | LUNCH LOOPS — WALTZ HOUR | waltzes | songs |
+  | Tue | LUNCH LOOPS — POLKA HOUR | polkas | fiddle |
+  | Wed | LUNCH LOOPS — SONGS AND CHORUSES | sung sides | waltzes |
+  | Thu | LUNCH LOOPS — KOLOMYIKA HOUR | kolomyiky, kozachky | polkas |
+  | Fri | LUNCH LOOPS — POLKA PARTY | every fast form at once | weddings |
+  | Sat | LUNCH LOOPS — WEDDING PARTY | vesillia sides, Malanka | kolomyiky |
+  | Sun | LUNCH LOOPS — PRAIRIE MIXED | the whole library | — |
+
+  Each day is a lead form (4 slots), a complementary second form (2) and a
+  general top-up (2), against one film and an ident — the same eight music
+  slots the single playlist had. The second form is not decoration: a playlist
+  may not name the same source twice (it fails the whole playout build), so a
+  day cannot simply draw its lead pool again.
+
+  Nineteen of the 73 sides have titles that say nothing about the music
+  ("Side 1", "Julayda", "Once More") and are deliberately left unclassified
+  rather than guessed at. They stay in the general pool, so they still play
+  every day, and Sunday is the day they are as likely as anything else.
+
+  Four sides run 18–23 minutes and are excluded from the music slots by
+  `minutes:[0 TO 9]`; Saturday spends its film slot on them instead. See
+  `docs/music-cards.md` for how the cards themselves are built.
 
 ### The connective tissue — filler, always running
 
