@@ -1,4 +1,4 @@
-// LEVY C  ·  CH 0 L-SYSTEM SPECIMEN 6/8
+// LEVY C  ·  CH 0 L-SYSTEM SPECIMEN 06
 // The whole curve is +F--F+ applied to
 // itself. Nothing else is specified.
 //

@@ -1,4 +1,4 @@
-// BUSH  ·  CH 0 L-SYSTEM SPECIMEN 7/8
+// BUSH  ·  CH 0 L-SYSTEM SPECIMEN 07
 // Brackets are a stack: the turtle remembers
 // where a branch began and returns to it.
 //
