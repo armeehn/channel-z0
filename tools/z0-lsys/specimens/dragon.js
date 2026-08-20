@@ -1,4 +1,4 @@
-// DRAGON  ·  CH 0 L-SYSTEM SPECIMEN 2/8
+// DRAGON  ·  CH 0 L-SYSTEM SPECIMEN 02
 // The Heighway dragon: fold a strip in half
 // twelve times, then open every crease to 90.
 //

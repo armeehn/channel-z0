@@ -1,6 +1,6 @@
-// FERN  ·  CH 0 L-SYSTEM SPECIMEN 01
-// Barnsley's fern. X is never drawn -- it is
-// only a promise to grow something later.
+// SNOWFLAKE  ·  CH 0 L-SYSTEM SPECIMEN 13
+// Three Koch curves nose to tail. The
+// area settles; the edge never does.
 //
 // This file is the whole program. qjs runs it
 // to draw the ink; ffedit runs it again to
@@ -8,15 +8,15 @@
 // are reading what made the picture beside it.
 
 export const SYS = {
-  name:    "FERN",
-  caption: "six rewrites of a single letter",
-  ink:     "#ffb000",
-  axiom:   "X",
-  rules:   { X: "F+[[X]-X]-F[-FX]+X", F: "FF" },
-  angle:   25,  // degrees per + or -
-  gens:    6,   // rewrites
-  heading: -90, // where the turtle starts
-  push:    30,  // how hard ffedit shoves it
+  name:    "SNOWFLAKE",
+  caption: "the Koch snowflake, at sixty degrees",
+  ink:     "#ff2d2d",
+  axiom:   "F++F++F",
+  rules:   { F: "F-F++F-F" },
+  angle:   60,  // degrees per + or -
+  gens:    5,   // rewrites
+  heading: 0,   // where the turtle starts
+  push:    18,  // how hard ffedit shoves it
 };
 const RAD = Math.PI / 180;
 

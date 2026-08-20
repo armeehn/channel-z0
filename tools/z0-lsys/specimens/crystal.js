@@ -1,4 +1,4 @@
-// CRYSTAL  ·  CH 0 L-SYSTEM SPECIMEN 8/8
+// CRYSTAL  ·  CH 0 L-SYSTEM SPECIMEN 08
 // The quadratic Koch island. Right angles
 // only, and it still comes out as frost.
 //
