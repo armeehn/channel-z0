@@ -4,6 +4,10 @@
 #   ./build.sh                 render + encode into $GZ_WORK
 #   ./build.sh --install       ...and copy it onto the playout machine
 #
+# Render anywhere; run --install from **x**.  LXC 111 has the checkout and the
+# toolchain but no SSH trust to vile (Host key verification failed), so the
+# install half of this script only works from the node.
+#
 # Everything is deterministic: no seeds, no clock, no network.  The same
 # checkout produces the same 1800 frames and the same 60 s of audio, so the
 # master can always be regenerated rather than archived.

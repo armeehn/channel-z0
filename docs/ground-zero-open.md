@@ -89,7 +89,10 @@ cd tools/z0-gz-open
 ./build.sh --install             # ...and scp's it to vile
 ```
 
-Needs `python3` with PIL, and `ffmpeg`. Takes about fifteen seconds. It is
+Needs `python3` with PIL, and `ffmpeg`. Takes about fifteen seconds. Render
+anywhere; run `--install` **from x** — LXC 111 has the checkout and the
+toolchain but no SSH trust to vile, so the install half fails there with
+`Host key verification failed`. It is
 fully deterministic — no seed, no clock, no network — so the master is
 regenerated rather than archived, and `*.mp4` stays gitignored like every other
 piece of station media.
@@ -110,7 +113,7 @@ than no opening at all.
 
 Three steps, in order:
 
-1. **Install and rescan.** `./build.sh --install`, then let ErsatzTV rescan
+1. **Install and rescan.** `./build.sh --install` (from x), then let ErsatzTV rescan
    `/media` (it does so on its own within six hours) or trigger it from the UI.
    Do **not** `UPDATE LibraryPath SET LastScan = NULL` on the live DB.
 2. **Add the content key** to `playout/_content.yml`:
