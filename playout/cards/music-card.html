@@ -8,10 +8,22 @@
      the broadcast week aired a near-black frame with audio under it and the
      viewer never learned what the track was.
 
-     SAFE AREA is tighter here than on the show cards. LUNCH LOOPS is one of the
-     few blocks where the bottom crawl is deliberately left UP for the whole two
-     hours (it is the community bulletin board), and the weather card sits top
-     right. So: nothing below y 375, and nothing right of x 420 above y 90. */
+     SAFE AREA — REVISED 2026-08-20. This block used to reserve "nothing below
+     y 375, nothing right of x 420 above y 90", because the crawl was burnt over
+     the bottom of the PICTURE for the whole two-hour block and the weather card
+     sat top right. PR #35 (2026-08-19) moved every on-air element into the
+     854x480 pillarbox rails and deleted the bottom strip outright, so the
+     picture is now unobscured and the whole 640x480 is available. The band
+     below the datum strip is dead space, not reserved space — `z0-music-viz.py`
+     draws the analyser into it. Re-check where the furniture lives before
+     tightening this back up.
+
+     `data-viz` on <body> suppresses the static equaliser MARK. Set it when the
+     bars are going to be animated for real, so the drawn-on one does not sit
+     behind the live one — a frozen drawing of an equaliser next to a moving
+     one reads as a fault, which is exactly how it looked on test.
+     `data-viz="tall"` additionally drops the datum strip to the very bottom,
+     handing the whole lower half to the analyser. See tools/z0-music-viz.py. */
   :root{
     --ink:#0b0f14; --bone:#f6f1e7; --line:#5c554c;
     --pink:#f0477d; --orange:#fe9a0d; --teal:#12b795;
@@ -38,7 +50,9 @@
   .kicker{font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase}
   .kicker .slash{color:var(--orange)}
 
-  /* the "now playing" mark — a hard-edged equaliser, no blur, brand accents */
+  /* the "now playing" mark — a hard-edged equaliser, no blur, brand accents.
+     These heights are a DRAWING of an equaliser; z0-music-viz.py replaces it
+     with one driven by the track's own spectrum, at exactly this geometry. */
   .bars{position:absolute;top:120px;right:56px;display:flex;align-items:flex-end;
     gap:7px;height:120px}
   .bars i{display:block;width:15px;background:var(--line)}
@@ -47,6 +61,7 @@
   .bars i:nth-child(3){height:66px}
   .bars i:nth-child(4){height:120px}
   .bars i:nth-child(5){height:34px;background:var(--teal)}
+  body[data-viz] .bars{display:none}
 
   .label{margin-top:26px;font-size:10px;font-weight:700;letter-spacing:.34em;
     text-transform:uppercase;color:var(--line)}
@@ -60,6 +75,7 @@
     text-transform:uppercase;color:var(--orange)}
 
   .foot{position:absolute;left:0;right:0;bottom:105px}
+  body[data-viz="tall"] .foot{bottom:0}
   .datum{display:flex;justify-content:space-between;gap:18px;
     background:#141b22;border-top:2px solid var(--bone);padding:6px 40px;
     font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
