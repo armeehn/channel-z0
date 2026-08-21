@@ -222,11 +222,12 @@ def stab(t, vol=0.30, note="D4"):
 
 
 # ── the score ─────────────────────────────────────────────────────────────
-# Upbeat, in the Mega Man register: 168 BPM, A minor, eighth-note bass under a
-# hook that keeps climbing, and a Picardy third at the very end — the last
-# chord is A MAJOR, because the story resolves with somebody arriving to help.
-# The 8-bit pass was a D-minor dirge at 150 and it made the whole thing feel
-# like a warning.
+# Driving but grave — the Mega Man ZERO register rather than classic Mega Man.
+# Those games are fast and heavy at the same time, and that is the target here:
+# 168 BPM and eighth-note bass keep the drive, while the loop turns on an E
+# major dominant and a Phrygian Bb instead of the bright C and G it used to,
+# and the piece ends on an open fifth — A and E, no third at all. A Picardy
+# third resolved it too sweetly for what the story actually is.
 BPM = 168.0
 BEAT = 60.0 / BPM
 BAR = 4 * BEAT
@@ -236,16 +237,18 @@ CHORDS = {
     "Am": ["A3", "C4", "E4", "A4"], "F": ["F3", "A3", "C4", "F4"],
     "C": ["C4", "E4", "G4", "C5"], "G": ["G3", "B3", "D4", "G4"],
     "Dm": ["D3", "F3", "A3", "D4"], "E": ["E3", "G#3", "B3", "E4"],
-    "A": ["A3", "C#4", "E4", "A4"],
+    "A": ["A3", "C#4", "E4", "A4"], "Bb": ["Bb3", "D4", "F4", "Bb4"],
+    "A5": ["A3", "E4", "A4", "E5"],
 }
 ROOTS = {"Am": "A2", "F": "F2", "C": "C3", "G": "G2", "Dm": "D3", "E": "E2",
-         "A": "A2"}
+         "A": "A2", "Bb": "Bb2", "A5": "A2"}
 PADS = {"Am": ["A4", "C5", "E5"], "F": ["F4", "A4", "C5"],
         "C": ["G4", "C5", "E5"], "G": ["G4", "B4", "D5"],
         "Dm": ["D4", "F4", "A4"], "E": ["E4", "G#4", "B4"],
-        "A": ["A4", "C#5", "E5"]}
+        "A": ["A4", "C#5", "E5"], "Bb": ["Bb4", "D5", "F5"],
+        "A5": ["A4", "E5", "A5"]}
 
-LOOP = ["Am", "F", "C", "G"]
+LOOP = ["Am", "F", "G", "E"]        # the E is major, and it is what darkens it
 
 
 def arp(t, bars, chord, vol=0.05, step=None, wave_name="bell", echo=0.4):
@@ -327,8 +330,8 @@ def build():
         voice(t + i * 0.070, 0.16, nm, "bell", 0.17, pan=-0.6 + 0.40 * i,
               atk=0.002, dec=0.10, sus=0.35, rel=0.22, echo=0.55)
     t += 0.29
-    stab(t, 0.26, "C3")
-    for nm, v, pn in (("C4", 0.13, -0.3), ("E4", 0.10, 0.0), ("G4", 0.09, 0.3)):
+    stab(t, 0.26, "A3")
+    for nm, v, pn in (("A3", 0.13, -0.3), ("E4", 0.10, 0.0), ("A4", 0.09, 0.3)):
         voice(t, 1.5, nm, "brass", v, pn, atk=0.008, dec=0.35, sus=0.42,
               rel=0.55, vib=0.10, echo=0.45, detune=6.0)
     voice(t, 1.7, "A2", "bass", 0.20, atk=0.003, dec=0.30, sus=0.55, rel=0.5)
@@ -344,7 +347,7 @@ def build():
     while t < t0 + bars * BAR:
         chord = LOOP[i % 4]
         pad(t, BAR * 0.96, chord, 0.040)
-        arp(t, 1, chord, vol=0.044)
+        arp(t, 1, chord, vol=0.034)
         for j in range(4):
             voice(t + j * BEAT, BEAT * 0.7, ROOTS[chord], "bass", 0.15,
                   atk=0.004, dec=0.12, sus=0.5, rel=0.08)
@@ -356,8 +359,8 @@ def build():
             snare(t0 + b * BEAT, 0.10)
 
     # the hook, previewed quietly on the bell while the crawl is still running
-    line(t0 + 5 * BAR, HOOK, vol=0.070, wave_name="bell", pan=-0.15, sus=0.45,
-         echo=0.45)
+    line(t0 + 5 * BAR, HOOK, vol=0.072, wave_name="lead", pan=-0.15, sus=0.45,
+         echo=0.38)
     # a lift into the launch
     line(t0 + 9 * BAR, [("A4", 2), ("B4", 2), ("C5", 2), ("D5", 2),
                         ("E5", 2), ("F5", 2), ("G5", 2), ("G#5", 2)],
@@ -413,7 +416,7 @@ def build():
     t = t0
     i = 0
     while t < t0 + 8.0:
-        chord = LOOP[i % 4]
+        chord = ("Am", "F", "Bb", "E")[i % 4]
         bassline(t, 1, chord, vol=0.20)
         pad(t, BAR * 0.95, chord, 0.045)
         t += BAR
@@ -494,7 +497,7 @@ def build():
 
     # ── 55.50 – 60.00  attract, ending on A MAJOR ─────────────────────────
     t0 = 55.5
-    for i, chord in enumerate(("F", "G", "A")):
+    for i, chord in enumerate(("F", "E", "A5")):
         dur = BAR if i < 2 else 2.2
         voice(t0 + i * BAR, dur * 0.94, ROOTS[chord], "bass", 0.14,
               atk=0.01, dec=0.3, sus=0.6, rel=0.4)
@@ -502,11 +505,11 @@ def build():
         if i < 2:
             arp(t0 + i * BAR, 1, chord, vol=0.034)
     line(t0, [("C6", 4), ("B5", 4), ("A5", 8),
-              ("B5", 4), ("C#6", 4), ("E6", 8)],
-         vol=0.100, wave_name="bell", pan=-0.1, sus=0.55, echo=0.45, vib=0.05)
-    # the final chord, major, held
-    for nm, v, pn in (("A5", 0.10, -0.3), ("C#6", 0.075, 0.0),
-                      ("E6", 0.070, 0.3)):
+              ("B5", 4), ("G#5", 4), ("E5", 8)],
+         vol=0.100, wave_name="lead", pan=-0.1, sus=0.55, echo=0.40, vib=0.05)
+    # the final chord: A and E and A, no third
+    for nm, v, pn in (("A5", 0.105, -0.3), ("E6", 0.080, 0.0),
+                      ("A6", 0.065, 0.3)):
         voice(t0 + 2 * BAR, 2.4, nm, "brass", v, pn, atk=0.02, dec=0.7,
               sus=0.6, rel=0.9, vib=0.10, echo=0.4, detune=7.0)
     for b in range(6):

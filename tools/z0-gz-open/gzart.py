@@ -1,16 +1,23 @@
 """The GROUND ZERO hero sprite.
 
-SASHA ZERO: slender, tall-legged, anime proportions — a head about a fifth of
-her height, large eyes, and long hair with a silhouette of its own.  The
-Bubblegum Crisis heritage survives as *accents* rather than as a shell: a
-chest plate, a belt, gloves and boots over a dark bodysuit, not a hardsuit.
-Marigold and teal are Channel Z0's; the pale blue hair with the pink streak is
-hers.
+SASHA ZERO, built on Zero from Mega Man Zero: the enormous ponytail, the
+crested helmet with a gem set in the brow, gems on the shoulders and knees,
+red armour with gold trim over a dark bodysuit, and a slim, long-legged build.
 
-She carries a baguette.  It is the microphone, and it has to read as bread at
+Three things are hers rather than his.  The ponytail is pale blue with a pink
+streak instead of blonde; the gems are the station's teal instead of green; and
+what she carries at her side, in the hand and at the angle Zero carries the
+Z-Saber, is a baguette.  It is the microphone.  It has to read as bread at
 twelve pixels, which is why it gets its own ramp and three score marks.
 
+The gold is Channel Z0's marigold, so the reference and the brand land on the
+same colour and neither has to give way.
+
 Nothing on her is a crosshair.  She is not here to aim at anyone.
+
+The organic vessel below is deliberately NOT a rocket: no nose cone, no fins,
+no engine bell.  It is a shell with ribs, a membrane, a lit core and trailing
+filaments — something grown, that came a long way, and broke.
 
 Built from primitives into a 36x58 RGBA rather than hand-typed as ASCII art.
 At this size the difference that matters is not authorship, it is *shading*:
@@ -27,7 +34,7 @@ from PIL import Image, ImageChops, ImageDraw
 
 import gzpal as P
 
-W, H = 34, 62
+W, H = 40, 64
 
 # One light, off frame left.  Every part is shaded against this and nothing
 # else, which is what stops the figure reading as a collage.
@@ -70,162 +77,210 @@ def _fill(shape_fn):
     return m
 
 
-def _wobble(pts, dx):
-    return [(x + dx if y > 18 else x, y) for x, y in pts]
-
-
 def build():
-    """Standing, hair and scarf taking the wind, baguette up like a mic."""
+    """Standing, ponytail taking the wind, baguette held low at her side."""
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
 
-    # ── hair, behind everything: two long locks framing the whole figure ──
-    hair_back = _fill(lambda d: d.polygon(
-        [(10, 4), (24, 4), (27, 17), (26, 32), (24, 44), (20, 35),
-         (20, 13), (14, 13), (14, 35), (10, 44), (8, 32), (7, 17)], fill=255))
-    shade(img, hair_back, P.HAIR)
+    # ── the ponytail: the single most identifiable thing about the design ──
+    # It attaches behind the helmet, sweeps out and falls past the knee.  At
+    # this size it is most of the silhouette, so it is drawn first and big.
+    tail = _fill(lambda d: d.polygon(
+        [(16, 11), (12, 14), (6, 24), (3, 38), (4, 50), (8, 60), (12, 62),
+         (11, 57), (8, 48), (8, 36), (11, 25), (16, 17)], fill=255))
+    shade(img, tail, P.HAIR)
     streak = _fill(lambda d: d.polygon(
-        [(8, 14), (11, 14), (12, 33), (9, 35)], fill=255))
+        [(14, 13), (10, 24), (7, 38), (8, 50), (11, 59), (12, 55), (10, 47),
+         (10, 37), (13, 25), (16, 16)], fill=255))
     img.paste(P.PINK[2], (0, 0), streak)
     img.paste(P.PINK[1], (0, 0), _fill(lambda d: d.polygon(
-        [(8, 14), (9, 14), (10, 33), (9, 34)], fill=255)))
+        [(14, 13), (11, 24), (9, 38), (10, 50), (11, 55), (11, 47), (12, 37),
+         (14, 25), (16, 16)], fill=255)))
+    band = _fill(lambda d: d.polygon(
+        [(13, 10), (17, 12), (15, 17), (11, 15)], fill=255))
+    shade(img, band, P.ARMOUR)
 
-    # ── the scarf, taking the wind to frame left ─────────────────────────
-    # A ribbon, not a blob: it has to keep a constant width along its length
-    # or it reads as a pink cloud stuck to her shoulder.
-    scarf = _fill(lambda d: d.polygon(
-        [(13, 17), (13, 20), (9, 22), (5, 20), (1, 24), (2, 26), (6, 23),
-         (10, 25), (13, 23)], fill=255))
-    shade(img, scarf, P.PINK)
-
-    # ── legs: long, slim, dark ────────────────────────────────────────────
+    # ── legs ──────────────────────────────────────────────────────────────
     legs = _fill(lambda d: (
-        d.polygon([(14, 33), (17, 33), (17, 53), (14, 53)], fill=255),
-        d.polygon([(19, 33), (22, 33), (22, 53), (19, 53)], fill=255)))
+        d.rectangle([17, 38, 20, 55], fill=255),
+        d.rectangle([22, 38, 25, 55], fill=255)))
     shade(img, legs, P.SUIT)
 
-    # Two boots with a gap between them.  Butted together at x18/19 they merged
-    # into one orange mass and she appeared to be wearing a long skirt.
+    # Knee guards stay SHORT.  Run from 41 to 47 with boots from 52 they left
+    # five pixels of undersuit and the whole lower body read as one red block.
+    knees = _fill(lambda d: (
+        d.polygon([(16, 42), (21, 42), (21, 46), (16, 46)], fill=255),
+        d.polygon([(21, 42), (26, 42), (26, 46), (21, 46)], fill=255)))
+    shade(img, knees, P.RED)
+    for gx in (18, 23):
+        img.paste(P.VISOR[2], (0, 0),
+                  _fill(lambda d, gx=gx: d.ellipse([gx, 43, gx + 1, 44],
+                                                   fill=255)))
+
+    # A pixel of gap, or the two boots merge into one red trapezoid.
     boots = _fill(lambda d: (
-        d.polygon([(13, 51), (17, 51), (17, 60), (11, 60)], fill=255),
-        d.polygon([(20, 51), (24, 51), (26, 60), (20, 60)], fill=255)))
-    shade(img, boots, P.ARMOUR)
+        d.polygon([(16, 54), (20, 54), (20, 62), (13, 62)], fill=255),
+        d.polygon([(23, 54), (27, 54), (30, 62), (23, 62)], fill=255)))
+    shade(img, boots, P.RED)
+    cuffs = _fill(lambda d: (
+        d.rectangle([16, 54, 20, 55], fill=255),
+        d.rectangle([23, 54, 27, 55], fill=255)))
+    shade(img, cuffs, P.ARMOUR, keyline=False)
 
-    # ── far arm ───────────────────────────────────────────────────────────
-    arm_r = _fill(lambda d: d.polygon(
-        [(22, 19), (25, 19), (26, 31), (23, 31)], fill=255))
+    # ── far arm, and the baguette held at her side ───────────────────────
+    arm_r = _fill(lambda d: d.rounded_rectangle([26, 25, 30, 36], 2, fill=255))
     shade(img, arm_r, P.SUIT)
-    glove_r = _fill(lambda d: d.rectangle([23, 29, 26, 34], fill=255))
-    shade(img, glove_r, P.ARMOUR)
+    brace_r = _fill(lambda d: d.rounded_rectangle([26, 34, 31, 43], 2, fill=255))
+    shade(img, brace_r, P.RED)
 
-    # ── hips ──────────────────────────────────────────────────────────────
-    hips = _fill(lambda d: d.polygon(
-        [(13, 29), (22, 29), (23, 35), (12, 35)], fill=255))
-    shade(img, hips, P.ARMOUR)
-
-    # ── torso ─────────────────────────────────────────────────────────────
-    torso = _fill(lambda d: d.polygon(
-        [(13, 17), (22, 17), (21, 25), (21, 31), (14, 31), (14, 25)],
-        fill=255))
-    shade(img, torso, P.SUIT)
-    plate = _fill(lambda d: d.polygon(
-        [(14, 18), (21, 18), (20, 25), (15, 25)], fill=255))
-    shade(img, plate, P.ARMOUR)
-
-    core = _fill(lambda d: d.ellipse([16, 20, 19, 23], fill=255))
-    img.paste(P.TEAL[2], (0, 0), core)
-    img.paste(P.TEAL[0], (0, 0), _fill(lambda d: d.rectangle([17, 21, 18, 22],
-                                                             fill=255)))
-
-    # ── near arm, raised, and the baguette it is holding ─────────────────
-    arm_l = _fill(lambda d: d.polygon(
-        [(10, 19), (13, 19), (13, 28), (10, 28)], fill=255))
-    shade(img, arm_l, P.SUIT)
-    glove_l = _fill(lambda d: d.rectangle([10, 25, 13, 30], fill=255))
-    shade(img, glove_l, P.ARMOUR)
-
+    # Held low and angled forward, which is how Zero holds the saber when he
+    # is not using it.  It is a baguette.
     bread = _fill(lambda d: d.polygon(
-        [(10, 28), (13, 30), (18, 18), (16, 15), (13, 16)], fill=255))
+        [(28, 42), (31, 41), (38, 55), (36, 58), (33, 56)], fill=255))
     shade(img, bread, P.BREAD)
-    for a, b in (((12, 25), (14, 26)), ((14, 21), (16, 22)),
-                 ((15, 18), (17, 19))):
+    for a, b in (((30, 45), (32, 44)), ((32, 49), (34, 48)),
+                 ((34, 53), (36, 52))):
         img.paste(P.BREAD[4], (0, 0),
                   _fill(lambda d, a=a, b=b: d.line([a, b], fill=255)))
 
+    # ── hips and waist ────────────────────────────────────────────────────
+    hips = _fill(lambda d: d.polygon(
+        [(16, 34), (26, 34), (27, 41), (15, 41)], fill=255))
+    shade(img, hips, P.RED)
+    waist = _fill(lambda d: d.rectangle([18, 31, 24, 36], fill=255))
+    shade(img, waist, P.SUIT, keyline=False)
+
+    # ── torso ─────────────────────────────────────────────────────────────
+    torso = _fill(lambda d: d.polygon(
+        [(16, 19), (26, 19), (25, 28), (25, 33), (17, 33), (17, 28)],
+        fill=255))
+    shade(img, torso, P.RED)
+    crest = _fill(lambda d: d.polygon(
+        [(17, 19), (25, 19), (23, 25), (19, 25)], fill=255))
+    shade(img, crest, P.ARMOUR, keyline=False)
+    core = _fill(lambda d: d.ellipse([19, 25, 23, 29], fill=255))
+    img.paste(P.KEYLINE, (0, 0), _outline(core))
+    img.paste(P.VISOR[2], (0, 0), core)
+    img.paste(P.VISOR[0], (0, 0),
+              _fill(lambda d: d.rectangle([20, 26, 21, 27], fill=255)))
+
+    # ── shoulders, each with a gem ────────────────────────────────────────
+    pauldrons = _fill(lambda d: (
+        d.polygon([(10, 22), (12, 18), (17, 18), (18, 23), (16, 27), (11, 27)],
+                  fill=255),
+        d.polygon([(31, 22), (29, 18), (24, 18), (23, 23), (25, 27), (30, 27)],
+                  fill=255)))
+    shade(img, pauldrons, P.RED)
+    for gx in (12, 27):
+        img.paste(P.KEYLINE, (0, 0),
+                  _fill(lambda d, gx=gx: d.ellipse([gx, 21, gx + 3, 24],
+                                                   fill=255)))
+        img.paste(P.VISOR[2], (0, 0),
+                  _fill(lambda d, gx=gx: d.ellipse([gx + 1, 22, gx + 2, 23],
+                                                   fill=255)))
+
+    arm_l = _fill(lambda d: d.rounded_rectangle([11, 25, 15, 36], 2, fill=255))
+    shade(img, arm_l, P.SUIT)
+    brace_l = _fill(lambda d: d.rounded_rectangle([10, 34, 15, 43], 2, fill=255))
+    shade(img, brace_l, P.RED)
+
     # ── head ──────────────────────────────────────────────────────────────
-    neck = _fill(lambda d: d.rectangle([16, 12, 19, 17], fill=255))
+    neck = _fill(lambda d: d.rectangle([19, 15, 23, 20], fill=255))
     shade(img, neck, P.SKIN, keyline=False)
 
-    face = _fill(lambda d: d.ellipse([11, 3, 23, 16], fill=255))
+    # ── head ──────────────────────────────────────────────────────────────
+    # The face goes down FIRST and the helmet only covers the crown and the
+    # sides.  Drawn the other way round the dome came down over the eyes and
+    # she had no face at all — which is the one thing Zero's design does not do.
+    face = _fill(lambda d: d.ellipse([15, 4, 26, 18], fill=255))
     shade(img, face, P.SKIN)
 
-    # Large eyes, and a highlight in each.  At this size the eye IS the face.
-    for ex in (13, 18):
+    for ex in (17, 22):
         img.paste(P.KEYLINE, (0, 0),
-                  _fill(lambda d, ex=ex: d.rectangle([ex, 8, ex + 2, 12],
+                  _fill(lambda d, ex=ex: d.rectangle([ex, 10, ex + 2, 13],
                                                      fill=255)))
         img.paste(P.EYE[2], (0, 0),
-                  _fill(lambda d, ex=ex: d.rectangle([ex, 9, ex + 2, 12],
-                                                     fill=255)))
-        img.paste(P.EYE[1], (0, 0),
-                  _fill(lambda d, ex=ex: d.rectangle([ex, 11, ex + 2, 12],
+                  _fill(lambda d, ex=ex: d.rectangle([ex, 11, ex + 2, 13],
                                                      fill=255)))
         img.paste(P.EYE[0], (0, 0),
-                  _fill(lambda d, ex=ex: d.point((ex, 9), fill=255)))
-    img.paste(P.SKIN[3], (0, 0), _fill(lambda d: d.point((17, 14), fill=255)))
-    img.paste(P.PINK[2], (0, 0),
-              _fill(lambda d: d.line([(16, 15), (18, 15)], fill=255)))
+                  _fill(lambda d, ex=ex: d.point((ex, 11), fill=255)))
+    img.paste(P.SKIN[3], (0, 0),
+              _fill(lambda d: d.line([(20, 16), (22, 16)], fill=255)))
 
-    # ── fringe over the top of the head ──────────────────────────────────
-    fringe = _fill(lambda d: d.polygon(
-        [(10, 3), (24, 3), (25, 11), (22, 7), (20, 10), (17, 6), (14, 10),
-         (12, 7), (9, 11)], fill=255))
-    shade(img, fringe, P.HAIR)
+    # side guards, down the cheeks, framing the face rather than covering it
+    guards = _fill(lambda d: (
+        d.polygon([(14, 4), (17, 6), (16, 15), (13, 12)], fill=255),
+        d.polygon([(27, 4), (24, 6), (25, 15), (28, 12)], fill=255)))
+    shade(img, guards, P.RED)
 
-    # ── antennae.  Cheapest possible way to say "not from here". ─────────
-    ant = _fill(lambda d: (
-        d.line([(14, 4), (12, 0)], fill=255),
-        d.line([(20, 4), (22, 0)], fill=255)))
-    img.paste(P.HAIR[3], (0, 0), ant)
-    for tip in ((12, 0), (22, 0)):
-        img.paste(P.TEAL[1], (0, 0),
-                  _fill(lambda d, t=tip: d.ellipse([t[0] - 1, t[1], t[0] + 1,
-                                                    t[1] + 2], fill=255)))
+    fins = _fill(lambda d: (
+        d.polygon([(12, 15), (15, 8), (17, 11), (14, 18)], fill=255),
+        d.polygon([(29, 15), (26, 8), (24, 11), (27, 18)], fill=255)))
+    shade(img, fins, P.RED)
+
+    helm = _fill(lambda d: (
+        d.ellipse([14, 0, 27, 12], fill=255),
+        d.polygon([(14, 4), (27, 4), (27, 8), (14, 8)], fill=255)))
+    helm = ImageChops.subtract(
+        helm, _fill(lambda d: d.ellipse([15, 7, 26, 20], fill=255)))
+    shade(img, helm, P.RED)
+
+    blade = _fill(lambda d: d.polygon(
+        [(17, 0), (24, 0), (27, 5), (14, 5)], fill=255))
+    shade(img, blade, P.ARMOUR, keyline=False)
+
+    gem = _fill(lambda d: d.polygon(
+        [(20, 1), (23, 4), (20, 7), (17, 4)], fill=255))
+    img.paste(P.KEYLINE, (0, 0), _outline(gem))
+    img.paste(P.VISOR[2], (0, 0), gem)
+    img.paste(P.VISOR[0], (0, 0),
+              _fill(lambda d: d.line([(19, 3), (20, 2)], fill=255)))
     return img
 
 
-ROCKET_W, ROCKET_H = 28, 15
+ROCKET_W, ROCKET_H = 32, 20
 
 
 def rocket():
-    """A rocket, pointing right.  Used in space, in the wormhole, and — turned
-    forty-five degrees and on fire — coming down over the lake."""
+    """Her vessel — grown, not built.
+
+    No nose cone, no fins, no engine bell.  A ribbed shell tapering forward, a
+    membrane along the back, a lit core showing through, and filaments trailing
+    behind it.  It is meant to look like something that was alive on the way
+    here and is not any more.
+    """
     img = Image.new("RGBA", (ROCKET_W, ROCKET_H), (0, 0, 0, 0))
 
-    fins = _fill_sz(ROCKET_W, ROCKET_H, lambda d: (
-        d.polygon([(4, 4), (9, 4), (5, 0)], fill=255),
-        d.polygon([(4, 10), (9, 10), (5, 14)], fill=255)))
-    shade(img, fins, P.PINK)
+    # trailing filaments first, so the hull overlaps their roots
+    fil = _fill_sz(ROCKET_W, ROCKET_H, lambda d: (
+        d.line([(6, 9), (0, 5), (3, 3)], fill=255),
+        d.line([(6, 10), (1, 12), (4, 15)], fill=255),
+        d.line([(7, 11), (2, 17)], fill=255)))
+    shade(img, fil, P.VISOR, keyline=False)
 
-    body = _fill_sz(ROCKET_W, ROCKET_H,
-                    lambda d: d.rounded_rectangle([2, 4, 20, 10], 2, fill=255))
-    shade(img, body, P.BONE)
+    membrane = _fill_sz(ROCKET_W, ROCKET_H, lambda d: d.polygon(
+        [(9, 7), (17, 1), (24, 3), (22, 7)], fill=255))
+    shade(img, membrane, P.VISOR)
 
-    nose = _fill_sz(ROCKET_W, ROCKET_H,
-                    lambda d: d.polygon([(18, 4), (27, 7), (18, 10)], fill=255))
-    shade(img, nose, P.ARMOUR)
+    hull = _fill_sz(ROCKET_W, ROCKET_H, lambda d: (
+        d.ellipse([4, 5, 26, 15], fill=255),
+        d.polygon([(20, 5), (31, 10), (20, 15)], fill=255),
+        d.polygon([(9, 12), (18, 12), (16, 18), (11, 17)], fill=255)))
+    shade(img, hull, P.SHELL)
 
-    bell = _fill_sz(ROCKET_W, ROCKET_H,
-                    lambda d: d.polygon([(0, 3), (3, 5), (3, 9), (0, 11)],
-                                        fill=255))
-    shade(img, bell, P.STEEL)
+    # ribs, which is what stops it reading as a fuselage
+    for rx in (10, 13, 16, 19):
+        img.paste(P.SHELL[3], (0, 0),
+                  _fill_sz(ROCKET_W, ROCKET_H,
+                           lambda d, rx=rx: d.arc([rx - 3, 5, rx + 3, 15],
+                                                  250, 110, fill=255)))
 
-    port = _fill_sz(ROCKET_W, ROCKET_H,
-                    lambda d: d.ellipse([9, 5, 14, 10], fill=255))
-    img.paste(P.KEYLINE, (0, 0), _outline_sz(ROCKET_W, ROCKET_H, port))
-    img.paste(P.VISOR[3], (0, 0), port)
-    img.paste(P.VISOR[1], (0, 0),
+    core = _fill_sz(ROCKET_W, ROCKET_H, lambda d: d.ellipse([12, 8, 17, 13],
+                                                            fill=255))
+    img.paste(P.KEYLINE, (0, 0), _outline_sz(ROCKET_W, ROCKET_H, core))
+    img.paste(P.VISOR[2], (0, 0), core)
+    img.paste(P.VISOR[0], (0, 0),
               _fill_sz(ROCKET_W, ROCKET_H,
-                       lambda d: d.ellipse([10, 6, 12, 8], fill=255)))
+                       lambda d: d.ellipse([13, 9, 15, 11], fill=255)))
     return img
 
 

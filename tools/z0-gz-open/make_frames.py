@@ -68,16 +68,17 @@ PROLOGUE = [
     "A DISTRESS SIGNAL",
     "LEFT EARTH.",
     "",
-    "IT WAS FAINT, AND IT",
-    "WAS NOT ADDRESSED",
-    "TO ANYONE IN",
-    "PARTICULAR.",
+    "IT WAS FAINT. IT WAS",
+    "NOT ADDRESSED TO",
+    "ANYONE IN PARTICULAR.",
     "",
-    "SOMEONE ANSWERED IT.",
+    "IT WENT UNANSWERED",
+    "FOR A LONG TIME.",
     "",
-    "SHE HAD BEEN LOOKING",
-    "FOR A REASON",
-    "TO COME HOME.",
+    "THEN SOMETHING CAME",
+    "A VERY LONG WAY,",
+    "AND DID NOT SURVIVE",
+    "THE ARRIVAL INTACT.",
 ]
 CRAWL_PITCH = 18
 CRAWL_SPEED = 1
@@ -338,20 +339,25 @@ def _earth(img):
     return add(img, halo.filter(ImageFilter.GaussianBlur(3)), 0.9)
 
 
-def _ship(img, x, y, thrust=1.0, shake=0):
+def _ship(img, x, y, thrust=1.0, shake=0, f=0):
+    """The vessel and its wake.
+
+    A grown hull does not have an exhaust plume, so what trails it is a
+    bioluminescent wake — cool, irregular, and shed rather than burned."""
     ship = gzart.load_rocket()
     sx = x + (shake if (x + y) % 2 else -shake)
-    plume = layer()
-    pd = ImageDraw.Draw(plume)
-    n = int(10 * thrust)
+    wake = layer()
+    wd = ImageDraw.Draw(wake)
+    n = int(14 * thrust)
     for i in range(n):
-        w_ = max(1, 5 - i // 2)
-        pd.ellipse([sx - 3 - i * 2 - w_, y + 7 - w_ // 2,
-                    sx - 3 - i * 2 + w_, y + 8 + w_ // 2],
-                   fill=P.stops_at([(0.0, P.WHITE), (0.4, P.ARMOUR[1]),
-                                    (1.0, P.PINK[2])], i / max(1, n - 1))
-                   + (max(0, 210 - i * 22),))
-    img = add(img, plume.filter(ImageFilter.GaussianBlur(1)), thrust)
+        w_ = max(1, 4 - i // 4)
+        oy = int(2.5 * math.sin(i * 0.9 + f * 0.25))
+        wd.ellipse([sx - 2 - i * 3 - w_, y + 10 + oy - w_,
+                    sx - 2 - i * 3 + w_, y + 10 + oy + w_],
+                   fill=P.stops_at([(0.0, P.VISOR[0]), (0.45, P.VISOR[1]),
+                                    (1.0, P.HAIR[3])], i / max(1, n - 1))
+                   + (max(0, 190 - i * 14),))
+    img = add(img, wake.filter(ImageFilter.GaussianBlur(2)), thrust * 0.85)
     img.paste(ship, (sx, y), ship)
     return img
 
@@ -378,7 +384,8 @@ def scene_space(f):
     else:
         x = -30 + 120 * 0.55 + (f - 120) * 1.25
         thrust = 1.0
-    img = _ship(img, int(x), EARTH_Y - 6, thrust, shake=1 if f > 120 else 0)
+    img = _ship(img, int(x), EARTH_Y - 8, thrust, shake=1 if f > 120 else 0,
+                f=f)
 
     if f >= 24:
         blit_text(img, 12, 200, "DISTRESS · SOURCE: SOL III", P.HAIR[1], 1,
@@ -433,7 +440,8 @@ def scene_worm(f):
                 fill=P.stops_at(P.WORM_STOPS, (i / 30.0)) + (110,))
     img = add(img, streaks, 0.8)
 
-    img = _ship(img, cx - 14 + (1 if f % 3 else -1), cy - 7, 1.0, shake=1)
+    img = _ship(img, cx - 16 + (1 if f % 3 else -1), cy - 10, 1.0, shake=1,
+                f=f)
 
     if 20 <= f < 110:
         blit_centre(img, 210, "TRANSIT", P.BONE[2])
@@ -520,20 +528,26 @@ SMOKE = [((i * 29) % 13 - 6, (i * 17) % 70, 3 + (i % 4)) for i in range(22)]
 
 
 def _crash_site(img, f):
-    """The ship, nose into the hillside, still burning."""
+    """The hull, part-buried in the hillside, cracked and leaking light.
+
+    Fire would be wrong here: nothing aboard was burning.  What comes out of
+    the break is the same cold light the core showed in transit, guttering."""
+    d = ImageDraw.Draw(img)
+    d.polygon([(CRASH_X - 26, CRASH_Y + 16), (CRASH_X - 6, CRASH_Y - 6),
+               (CRASH_X + 22, CRASH_Y + 14)], fill=(0x0d, 0x09, 0x14))
     ship = gzart.load_rocket().rotate(-52, expand=True, resample=Image.NEAREST)
     img.paste(ship, (CRASH_X - ship.width // 2, CRASH_Y - ship.height // 2), ship)
 
-    fire = layer()
-    fd = ImageDraw.Draw(fire)
-    for i in range(7):
-        r = 3 + (i + f // 3) % 6
-        fd.ellipse([CRASH_X - 8 + i * 3 - r, CRASH_Y + 8 - r,
-                    CRASH_X - 8 + i * 3 + r, CRASH_Y + 8 + r],
-                   fill=P.stops_at([(0.0, P.WHITE), (0.5, P.ARMOUR[1]),
-                                    (1.0, P.PINK[2])], (i / 6.0))
-                   + (120,))
-    img = add(img, fire.filter(ImageFilter.GaussianBlur(3)), 0.85)
+    leak = layer()
+    ld = ImageDraw.Draw(leak)
+    gut = 0.55 + 0.45 * math.sin(f / 5.0) * math.sin(f / 13.0)
+    for i in range(6):
+        r = 3 + (i + f // 4) % 5
+        ld.ellipse([CRASH_X - 7 + i * 3 - r, CRASH_Y + 6 - r,
+                    CRASH_X - 7 + i * 3 + r, CRASH_Y + 6 + r],
+                   fill=P.stops_at([(0.0, P.VISOR[0]), (1.0, P.HAIR[3])],
+                                   i / 5.0) + (int(110 * gut),))
+    img = add(img, leak.filter(ImageFilter.GaussianBlur(3)), 0.8)
 
     smoke = layer()
     sd = ImageDraw.Draw(smoke)
@@ -544,7 +558,7 @@ def _crash_site(img, f):
         a = int(90 * (1.0 - t))
         sd.ellipse([CRASH_X + dx - rr + t * 14, yy - rr,
                     CRASH_X + dx + rr + t * 14, yy + rr],
-                   fill=(0x3a, 0x33, 0x40) + (a,))
+                   fill=(0x2a, 0x25, 0x30) + (a,))
     return over(img, smoke.filter(ImageFilter.GaussianBlur(2)))
 
 
@@ -564,8 +578,8 @@ def scene_land(f):
             ty = 6 + kk * (CRASH_Y - 6)
             rr = max(1, 5 - i // 3)
             td.ellipse([tx - rr, ty - rr, tx + rr, ty + rr],
-                       fill=P.stops_at([(0.0, P.WHITE), (0.5, P.ARMOUR[1]),
-                                        (1.0, P.PINK[2])], i / 17.0)
+                       fill=P.stops_at([(0.0, P.WHITE), (0.45, P.VISOR[0]),
+                                        (1.0, P.HAIR[3])], i / 17.0)
                        + (max(0, 220 - i * 12),))
         img = add(img, tr.filter(ImageFilter.GaussianBlur(2)))
         if f >= 62:
@@ -587,11 +601,11 @@ def scene_land(f):
     glow = layer()
     gd = ImageDraw.Draw(glow)
     top = SASHA_FOOT - gzart.H
-    gd.ellipse([SASHA_X + 15, top + 19, SASHA_X + 20, top + 24],
+    gd.ellipse([SASHA_X + 19, top + 25, SASHA_X + 23, top + 29],
+               fill=P.VISOR[1] + (160,))
+    gd.polygon([(SASHA_X + 20, top + 1), (SASHA_X + 23, top + 4),
+                (SASHA_X + 20, top + 7), (SASHA_X + 17, top + 4)],
                fill=P.VISOR[1] + (150,))
-    for ax in (12, 22):
-        gd.ellipse([SASHA_X + ax - 2, top - 1, SASHA_X + ax + 2, top + 3],
-                   fill=P.VISOR[1] + (170,))
     img = add(img, glow.filter(ImageFilter.GaussianBlur(2)), 0.9)
 
     if g >= 40:
@@ -628,43 +642,40 @@ def scene_face(f):
     for i in range(26):
         ex = (i * 53 + f) % W
         ey = H - ((i * 37 + f * 2) % (H + 40)) + 20
-        ed.point((ex, ey), fill=P.ARMOUR[1] + (150,))
+        ed.point((ex, ey), fill=P.HAIR[3] + (140,))
     img = add(img, embers.filter(ImageFilter.GaussianBlur(1)), 0.7)
     d = ImageDraw.Draw(img)
 
     def s(v):
         return int(v * z)
 
-    # ── hair behind ───────────────────────────────────────────────────────
-    # Two earlier passes failed here in ways worth naming: flat quads pitched
-    # over an oval read as a tent, and a deep zigzag fringe over a long jaw
-    # read as a muzzle.  The fix is ordinary head geometry — a cranium with a
-    # SHORT jaw, a hair mass only a little larger than it, and a shallow
-    # fringe.  A specular band across the crown is what says "anime hair".
-    sway = int(s(4) * math.sin(f / 9.0))
-    d.ellipse([cx - s(104) + sway, cy - s(122), cx + s(104) + sway,
-               cy + s(190)], fill=P.HAIR[3])
-    d.ellipse([cx - s(96) + sway, cy - s(116), cx + s(96) + sway, cy + s(180)],
-              fill=P.HAIR[2])
-    d.arc([cx - s(92), cy - s(118), cx + s(92), cy - s(4)], 200, 340,
-          fill=P.HAIR[0], width=max(4, s(11)))
-    d.arc([cx - s(84), cy - s(110), cx + s(84), cy - s(14)], 210, 330,
-          fill=P.HAIR[1], width=max(2, s(5)))
-    # The pink lock has to sit INSIDE the hair silhouette.  Run out to the
-    # ellipse edge it floats free of her head as a stripe on the background.
-    d.polygon([(cx - s(86), cy - s(66)), (cx - s(62), cy - s(76)),
-               (cx - s(46) + sway, cy + s(190)),
-               (cx - s(78) + sway, cy + s(190))], fill=P.PINK[2])
-    d.polygon([(cx - s(86), cy - s(66)), (cx - s(74), cy - s(71)),
-               (cx - s(62) + sway, cy + s(190)),
-               (cx - s(78) + sway, cy + s(190))], fill=P.PINK[1])
+    # ── the ponytail, behind everything ──────────────────────────────────
+    sway = int(s(5) * math.sin(f / 9.0))
+    d.polygon([(cx - s(30), cy - s(96)), (cx + s(20), cy - s(104)),
+               (cx - s(40) + sway, cy - s(20)),
+               (cx - s(86) + sway, cy + s(80)),
+               (cx - s(150) + sway, cy + s(200)),
+               (cx - s(210) + sway, cy + s(200)),
+               (cx - s(140) + sway, cy + s(50)),
+               (cx - s(96), cy - s(40))], fill=P.HAIR[3])
+    d.polygon([(cx - s(28), cy - s(92)), (cx + s(10), cy - s(98)),
+               (cx - s(46) + sway, cy - s(20)),
+               (cx - s(92) + sway, cy + s(80)),
+               (cx - s(152) + sway, cy + s(200)),
+               (cx - s(196) + sway, cy + s(200)),
+               (cx - s(132) + sway, cy + s(50)),
+               (cx - s(90), cy - s(40))], fill=P.HAIR[2])
+    d.polygon([(cx - s(60) + sway, cy - s(30)),
+               (cx - s(76) + sway, cy + s(20)),
+               (cx - s(136) + sway, cy + s(200)),
+               (cx - s(162) + sway, cy + s(200)),
+               (cx - s(100) + sway, cy + s(30)),
+               (cx - s(76), cy - s(36))], fill=P.PINK[2])
 
     # ── face: cranium plus a short jaw ────────────────────────────────────
     def head(shrink, colour):
         d.ellipse([cx - s(74) + shrink, cy - s(98) + shrink,
                    cx + s(74) - shrink, cy + s(52) - shrink], fill=colour)
-        # Wider and shorter than the first attempt: tapering from +/-58 to
-        # +/-26 over 56 units made a V, not a jaw.
         d.polygon([(cx - s(66) + shrink, cy + s(8)),
                    (cx + s(66) - shrink, cy + s(8)),
                    (cx + s(36) - shrink, cy + s(62)),
@@ -675,7 +686,6 @@ def scene_face(f):
     head(0, P.KEYLINE)
     head(max(1, s(3)), P.SKIN[1])
 
-    # the shadow side, clipped to the head so it cannot spill onto the hair
     keep = Image.new("L", (W, H), 0)
     kd = ImageDraw.Draw(keep)
     kd.ellipse([cx - s(71), cy - s(95), cx + s(71), cy + s(49)], fill=255)
@@ -688,77 +698,95 @@ def scene_face(f):
     img.paste(new_frame(P.SKIN[2]), (0, 0), ImageChops.multiply(side, keep))
     d = ImageDraw.Draw(img)
 
-    # ── eyes ──────────────────────────────────────────────────────────────
+    # ── eyes.  Level and narrow rather than round: the tone is not cheerful.
     blink = 56 <= f < 62
-    ey = cy + s(4)
+    ey = cy + s(6)
     for ex in (-32, 32):
         exx = cx + s(ex)
         if blink:
             d.line([(exx - s(22), ey), (exx + s(22), ey)],
                    fill=P.SKIN[4], width=max(2, s(4)))
             continue
-        d.ellipse([exx - s(24), ey - s(22), exx + s(24), ey + s(22)],
+        d.ellipse([exx - s(24), ey - s(18), exx + s(24), ey + s(18)],
                   fill=P.BONE[0])
-        d.ellipse([exx - s(17), ey - s(18), exx + s(17), ey + s(20)],
+        d.ellipse([exx - s(17), ey - s(15), exx + s(17), ey + s(17)],
                   fill=P.EYE[2])
-        d.ellipse([exx - s(17), ey, exx + s(17), ey + s(20)], fill=P.EYE[1])
-        d.ellipse([exx - s(8), ey - s(6), exx + s(8), ey + s(13)],
+        d.ellipse([exx - s(17), ey + s(1), exx + s(17), ey + s(17)],
+                  fill=P.EYE[1])
+        d.ellipse([exx - s(8), ey - s(5), exx + s(8), ey + s(11)],
                   fill=P.EYE[4])
-        d.ellipse([exx - s(13), ey - s(16), exx - s(4), ey - s(7)],
+        d.ellipse([exx - s(13), ey - s(13), exx - s(5), ey - s(6)],
                   fill=P.BONE[0])
-        d.ellipse([exx + s(5), ey + s(6), exx + s(10), ey + s(11)],
-                  fill=P.BONE[0])
-        d.arc([exx - s(27), ey - s(33), exx + s(27), ey + s(11)], 188, 352,
-              fill=P.KEYLINE, width=max(2, s(5)))
+        d.arc([exx - s(27), ey - s(29), exx + s(27), ey + s(9)], 190, 350,
+              fill=P.KEYLINE, width=max(2, s(6)))
 
-    for bx in (-48, 48):
-        blush = layer()
-        ImageDraw.Draw(blush).ellipse(
-            [cx + s(bx) - s(14), ey + s(24) - s(6),
-             cx + s(bx) + s(14), ey + s(24) + s(6)], fill=P.PINK[1] + (80,))
-        img = add(img, blush.filter(ImageFilter.GaussianBlur(3)), 0.6)
-        d = ImageDraw.Draw(img)
+    d.line([(cx - s(9), cy + s(40)), (cx + s(9), cy + s(40))],
+           fill=P.SKIN[4], width=max(1, s(2)))
 
-    # ── mouth: a line that becomes a smile ────────────────────────────────
-    if f < 84:
-        d.line([(cx - s(9), cy + s(40)), (cx + s(9), cy + s(40))],
-               fill=P.SKIN[4], width=max(1, s(2)))
-    else:
-        d.arc([cx - s(15), cy + s(30), cx + s(15), cy + s(48)], 20, 160,
-              fill=P.PINK[3], width=max(2, s(3)))
+    # ── the helmet.  The close-up used to show bare hair while the sprite
+    #    wore a helmet, which is the kind of continuity error that only shows
+    #    up when you put the two shots next to each other.
+    for sgn in (-1, 1):                       # cheek guards
+        d.polygon([(cx + sgn * s(78), cy - s(74)),
+                   (cx + sgn * s(52), cy - s(60)),
+                   (cx + sgn * s(58), cy + s(34)),
+                   (cx + sgn * s(84), cy + s(10))], fill=P.RED[3])
+        d.polygon([(cx + sgn * s(78), cy - s(74)),
+                   (cx + sgn * s(64), cy - s(66)),
+                   (cx + sgn * s(70), cy + s(20)),
+                   (cx + sgn * s(84), cy + s(10))], fill=P.RED[2])
+        # swept fins
+        d.polygon([(cx + sgn * s(84), cy - s(30)),
+                   (cx + sgn * s(120), cy + s(30)),
+                   (cx + sgn * s(104), cy + s(60)),
+                   (cx + sgn * s(76), cy + s(16))], fill=P.RED[3])
 
-    # ── fringe: shallow points, swaying ───────────────────────────────────
-    pts = [(cx - s(96), cy - s(92))]
-    for i in range(6):
-        base = cx - s(96) + i * s(32)
-        pts.append((base + s(16),
-                    cy - s(58) + int(s(3) * math.sin(f / 7.0 + i))))
-        pts.append((base + s(32), cy - s(70)))
-    pts += [(cx + s(96), cy - s(92)), (cx + s(96), cy - s(126)),
-            (cx - s(96), cy - s(126))]
-    d.polygon(pts, fill=P.HAIR[2])
-    d.polygon([(cx - s(94), cy - s(122)), (cx + s(2), cy - s(122)),
-               (cx - s(22), cy - s(64)), (cx - s(56), cy - s(52)),
-               (cx - s(80), cy - s(72))], fill=P.HAIR[1])
+    # The dome is a CRESCENT, not a disc: build it as a mask and subtract the
+    # face opening.  Filled as a plain ellipse it covered her eyes, and the
+    # chord used to carve it back out just painted a skin-coloured dome over
+    # the lower half of the shot.
+    dome = Image.new("L", (W, H), 0)
+    dd = ImageDraw.Draw(dome)
+    dd.ellipse([cx - s(88), cy - s(126), cx + s(88), cy + s(36)], fill=255)
+    dd.ellipse([cx - s(64), cy - s(24), cx + s(64), cy + s(100)], fill=0)
+    grown = dome.copy()
+    for dx_, dy_ in ((2, 0), (-2, 0), (0, 2), (0, -2)):
+        grown = ImageChops.lighter(grown, ImageChops.offset(dome, dx_, dy_))
+    img.paste(P.KEYLINE, (0, 0), ImageChops.subtract(grown, dome))
+    img.paste(P.RED[2], (0, 0), dome)
 
-    # ── side locks, in front of the cheeks ────────────────────────────────
-    for sgn in (-1, 1):
-        d.polygon([(cx + sgn * s(96), cy - s(84)),
-                   (cx + sgn * s(70), cy - s(60)),
-                   (cx + sgn * s(64), cy + s(44)),
-                   (cx + sgn * s(90), cy + s(18))],
-                  fill=P.HAIR[2 if sgn < 0 else 3])
+    hi = Image.new("L", (W, H), 0)
+    ImageDraw.Draw(hi).ellipse([cx - s(78), cy - s(118), cx - s(4),
+                                cy - s(40)], fill=255)
+    img.paste(P.RED[1], (0, 0), ImageChops.multiply(hi, dome))
+    sh = Image.new("L", (W, H), 0)
+    ImageDraw.Draw(sh).ellipse([cx + s(30), cy - s(110), cx + s(140),
+                                cy + s(40)], fill=255)
+    img.paste(P.RED[3], (0, 0), ImageChops.multiply(sh, dome))
+    d = ImageDraw.Draw(img)
 
-    # ── antennae ──────────────────────────────────────────────────────────
-    for ax, tx in ((-26, -50), (26, 50)):
-        d.line([(cx + s(ax), cy - s(112)), (cx + s(tx), cy - s(176))],
-               fill=P.HAIR[3], width=max(2, s(3)))
-        tip = layer()
-        ImageDraw.Draw(tip).ellipse(
-            [cx + s(tx) - s(7), cy - s(176) - s(7),
-             cx + s(tx) + s(7), cy - s(176) + s(7)], fill=P.VISOR[1] + (220,))
-        img = add(img, tip.filter(ImageFilter.GaussianBlur(3)))
-        d = ImageDraw.Draw(img)
+    blade = [(cx - s(86), cy - s(60)), (cx + s(86), cy - s(60)),
+             (cx + s(70), cy - s(30)), (cx - s(70), cy - s(30))]
+    d.polygon(blade, fill=P.KEYLINE)
+    d.polygon([(cx - s(82), cy - s(58)), (cx + s(82), cy - s(58)),
+               (cx + s(68), cy - s(33)), (cx - s(68), cy - s(33))],
+              fill=P.ARMOUR[2])
+    d.polygon([(cx - s(82), cy - s(58)), (cx + s(82), cy - s(58)),
+               (cx + s(78), cy - s(51)), (cx - s(78), cy - s(51))],
+              fill=P.ARMOUR[1])
+
+    gemp = [(cx, cy - s(76)), (cx + s(22), cy - s(46)), (cx, cy - s(16)),
+            (cx - s(22), cy - s(46))]
+    d.polygon(gemp, fill=P.KEYLINE)
+    d.polygon([(cx, cy - s(70)), (cx + s(18), cy - s(46)), (cx, cy - s(22)),
+               (cx - s(18), cy - s(46))], fill=P.VISOR[2])
+    d.polygon([(cx, cy - s(70)), (cx + s(8), cy - s(56)),
+               (cx - s(6), cy - s(42)), (cx - s(14), cy - s(50))],
+              fill=P.VISOR[1])
+    glow = layer()
+    ImageDraw.Draw(glow).polygon(gemp, fill=P.VISOR[1] + (110,))
+    img = add(img, glow.filter(ImageFilter.GaussianBlur(5)), 0.8)
+    d = ImageDraw.Draw(img)
 
     # moonlight down the left edge of her face
     d.arc([cx - s(74), cy - s(98), cx + s(74), cy + s(52)], 150, 250,
@@ -856,9 +884,11 @@ def _shine(img, phase):
 NAME_SASHA = None
 NAME_ZERO = None
 
+SPEC_KEY_X, SPEC_VAL_X, SPEC_RIGHT = 22, 100, 302
+
 SPEC = [("ISSUE", "ONE (1) BAGUETTE"),
-        ("BRIEF", "ASK WHAT PEOPLE ARE UP TO"),
-        ("FINDINGS", "THERE ARE SOME BAD FOLK"),
+        ("BRIEF", "ASK WHAT PEOPLE ARE DOING"),
+        ("FINDINGS", "SOME ANSWERS ARE NOT TRUE"),
         ("POSTING", "THE OKANAGAN, INDEFINITE")]
 
 
@@ -869,7 +899,7 @@ def scene_name(f):
 
     bloom = layer()
     ImageDraw.Draw(bloom).ellipse([40, 40, 280, 200],
-                                  fill=(0x2a, 0x3a, 0x5a) + (90,))
+                                  fill=(0x1e, 0x28, 0x40) + (70,))
     img = add(img, bloom.filter(ImageFilter.GaussianBlur(26)), 0.9)
     d = ImageDraw.Draw(img)
 
@@ -899,10 +929,9 @@ def scene_name(f):
         glow = layer()
         gd = ImageDraw.Draw(glow)
         bx = (W - gzart.W) // 2
-        gd.ellipse([bx + 15, 89, bx + 20, 94], fill=P.VISOR[1] + (150,))
-        for ax in (12, 22):
-            gd.ellipse([bx + ax - 2, 69, bx + ax + 2, 73],
-                       fill=P.VISOR[1] + (170,))
+        gd.ellipse([bx + 19, 95, bx + 23, 99], fill=P.VISOR[1] + (160,))
+        gd.polygon([(bx + 20, 71), (bx + 23, 74), (bx + 20, 77),
+                    (bx + 17, 74)], fill=P.VISOR[1] + (150,))
         img = add(img, glow.filter(ImageFilter.GaussianBlur(2)), 0.9)
         d = ImageDraw.Draw(img)
 
@@ -910,12 +939,12 @@ def scene_name(f):
         if f < 42 + i * 12:
             continue
         y = 140 + i * 13
-        blit_text(img, 22, y, k, P.BONE[3])
-        blit_text(img, 110, y, v, P.BONE[1])
+        blit_text(img, SPEC_KEY_X, y, k, P.BONE[3])
+        blit_text(img, SPEC_VAL_X, y, v, P.BONE[1])
         d.rectangle([22, y + 9, 300, y + 9], fill=(0x2c, 0x26, 0x36))
 
     if f >= 100:
-        blit_centre(img, 200, "▸ SHE IS HERE TO HELP", P.ARMOUR[2])
+        blit_centre(img, 200, "▸ SOMEBODY HAD TO ANSWER IT", P.ARMOUR[2])
     triband(img, 0, 235, W, 3)
 
     if f < 8:
@@ -1038,10 +1067,34 @@ def render(i):
     return scene_attract(i - C_ATTRACT)
 
 
+def check_fits():
+    """Refuse to render if any fixed caption would run off the frame.
+
+    Two of the name-card values did exactly that and the only symptom was a
+    sentence quietly missing its last four characters — invisible in the code,
+    invisible in a single still unless you happen to look at the right edge.
+    """
+    for k, v in SPEC:
+        assert SPEC_VAL_X + text_w(v) <= SPEC_RIGHT, \
+            f"spec value too wide: {v!r} ends at {SPEC_VAL_X + text_w(v)}"
+        assert SPEC_KEY_X + text_w(k) < SPEC_VAL_X, f"spec key too wide: {k!r}"
+    for ln in PROLOGUE:
+        assert text_w(ln) <= W - 16, f"prologue line too wide: {ln!r}"
+    for cap in ("FIELD CORRESPONDENT · NON-TERRESTRIAL",
+                "▸ SOMEBODY HAD TO ANSWER IT",
+                "DESIG. RL-Z0-GND · LANDING SITE",
+                "▸ THE DAY, FROM THE POINT IT HAPPENED",
+                "NIGHTLY 19:00 · ENCORE 22:00",
+                "© 2026 RIPOSTE LABORATORIES INC.",
+                "A CHANNEL Z0 TRANSMISSION", WORDMARK):
+        assert text_w(cap) <= W, f"caption too wide: {cap!r}"
+
+
 def main():
     global CRAWL, NEBULA, LAND, LOGO_TOP, LOGO_BOT, NAME_SASHA, NAME_ZERO
     outdir = sys.argv[1]
     os.makedirs(outdir, exist_ok=True)
+    check_fits()
     gzart.load()
     CRAWL = _crawl_block()
     NEBULA = _nebula()
