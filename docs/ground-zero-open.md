@@ -1,12 +1,17 @@
 # GROUND ZERO — opening titles
 
-**DOC NO. RL-Z0-GND-B · REV. B**
+**DOC NO. RL-Z0-GND-B · REV. C**
 
-A 60-second opening title sequence for the nightly GROUND ZERO slot, built as a
-16-bit parody of the *Mega Man X* / *X2* / *X3* openings. Everything on screen
-is generated: two hand-authored bitmap fonts, one procedurally-built sprite, a
-palette of ramps, and an SPC700-style score. No fonts, no samples, no stock
-art, no network.
+A 60-second opening title sequence for the nightly GROUND ZERO slot, in the
+grammar of the *Mega Man X* intros and telling the programme's own story: a
+distress signal leaves Earth, someone a long way off answers it, comes through
+a wormhole, and puts her ship into a hillside in the Okanagan where nobody
+sees her land. She then goes and asks people what they are doing, holding a
+baguette.
+
+Everything on screen is generated: two hand-authored bitmap fonts, two
+procedurally-built sprites, a palette of ramps, and an SPC700-style score. No
+fonts, no samples, no stock art, no network.
 
 | | |
 |---|---|
@@ -15,106 +20,112 @@ art, no network.
 | Output | `GROUND ZERO - OPENING TITLES.mp4` — 60.0 s, 640x480, 30 fps, H.264 + AAC |
 | Installs to | `/mnt/main-data/channelz0/opens/groundzero/` on vile |
 | Tags | `media`, `opens`, `groundzero` |
-| Loudness | **-23.8 LUFS** integrated, true peak **-1.0 dBFS**, LRA 12.5 LU |
 
 ---
 
 ## The beats
 
-The structure is lifted from the X openings and the timings from them too: a
-publisher sting, a long prologue nobody asked for, a hero shot, a push-in, and
-a logo that arrives harder than the material warrants.
-
 | Frames | Time | Beat |
 |---|---|---|
-| 0–134 | 0:00 | **Sting.** `RIPOSTE LABORATORIES INC.` types in over ticks, flashes, and drops the tri-band. A four-note chime — the Capcom logo jingle, in D minor. |
-| 135–794 | 0:04.5 | **Prologue crawl.** Twenty-six lines over a deep-field wash and three star planes, with the programme's reticle holding station off the right edge. Ends on `GROUND ZERO.` |
-| 795–1094 | 0:26.5 | **The rooftop.** Kelowna at night in the rain — two mountain ranges, the lake, the bridge, a mast. A lone hardsuit on a parapet, lit by the moon. Two lightning strikes. |
-| 1095–1244 | 0:36.5 | **Push-in.** The visor, cropped by the frame, scanlines travelling. It flares white on the cut. |
-| 1245–1559 | 0:41.5 | **Logo.** `GROUND` drops, `ZERO` arrives from the right, the frame judders, the reticle takes the place of the final O, and a shine sweeps the chrome. |
-| 1560–1799 | 0:52 | **Attract.** `PRESS START`, the transmission times, the copyright, the tri-band. |
+| 0–134 | 0:00 | **Sting.** `RIPOSTE LABORATORIES INC.` types in over ticks, flashes, drops the tri-band. A four-note chime resolving to C major. |
+| 135–554 | 0:04.5 | **Prologue crawl.** Fourteen lines over a deep field, with the signal itself arriving from off frame right. Ends on `TO COME HOME.` |
+| 555–764 | 0:18.5 | **Deep space.** Earth, small and far off, throwing out arcs that are not addressed to anyone. Her ship drifts in from frame left, and at the halfway mark the plume doubles and she starts closing. |
+| 765–944 | 0:25.5 | **The wormhole.** A tunnel of rings in light blue, white and pink. |
+| 945–1184 | 0:31.5 | **The landing.** A fireball down the diagonal, an impact, and then the Okanagan: two ranges, the lake, the moon — and the ship nose-down in the hillside, burning, with Sasha standing on the near shore. `NOBODY SAW HER LAND`. |
+| 1185–1304 | 0:39.5 | **Her face.** A push-in. She blinks, then smiles. |
+| 1305–1454 | 0:43.5 | **SASHA ZERO.** The name in chrome, and her posting. |
+| 1455–1664 | 0:48.5 | **Logo.** `GROUND` drops, `ZERO` arrives from the right, the frame judders, and a shine sweeps the chrome. |
+| 1665–1799 | 0:55.5 | **Attract.** `PRESS START`, the transmission times, the copyright. |
 
-The joke is the register, not the gags: the prologue is played completely
-straight, and what it is grave about is a local news bulletin.
+The prologue is played completely straight. What it is grave about is a local
+news bulletin.
 
-## It was 8-bit first, and the differences are specific
+## Nothing here is a crosshair
 
-The first pass (commit `c392ec2`) was a 2A03 and a sixteen-colour palette.
-"Make it 16-bit" is not a filter you apply — it is a different machine, and
-each of these is a concrete capability the earlier one did not have:
+An earlier pass built the whole identity around a reticle — the O of `ZERO`
+*was* one, the crawl's mark was one, and the strapline read `EPICENTRE`. All of
+it is gone, deliberately:
 
-| | 8-bit pass | 16-bit pass |
-|---|---|---|
-| Sky | three ordered-dither bands | a per-scanline gradient — an HDMA table, evaluated once per line |
-| Layers | opaque, replace only | **colour math**: rain, cloud, moon glow, lightning, the logo bloom and the visor flare all add or blend |
-| Depth | position only | three planes separated by *contrast* — atmospheric perspective on two mountain ranges |
-| Hero | a flat silhouette + a rim mask | a shaded 36x58 sprite, one light direction, lit palette swapped for lightning |
-| Logo | three flat bands of marigold | a ten-stop chrome ramp, specular rim, keyline, cast shadow, and a lean |
-| Fades | quantised to six steps | smooth |
-| Audio | 2 pulses + triangle + noise | wavetable voices with ADSR, stereo pan, detune chorus, and a feedback echo |
+| Was | Is |
+|---|---|
+| The O of ZERO as a targeting reticle | a small world with a ring round it — same shape, same weight in the lockup, points at nobody |
+| A reticle holding station in the crawl | a **transmission bloom**: concentric *arcs*, opening one way |
+| `DESIG. RL-Z0-GND · EPICENTRE` | `DESIG. RL-Z0-GND · LANDING SITE` |
 
-**Mega Man X is a 16-bit game**, so this pass is the faithful one. The 8-bit
-version is kept in history rather than in the tree; `git show c392ec2` has it.
+`signal_arcs()` draws arcs and never rings-with-a-cross, and the docstring says
+why: a ring plus two crossed lines is a gunsight whatever the caption calls it.
+The premise is that she turned up to help.
+
+## Sasha Zero
+
+Slender, anime proportions — a head about a fifth of her height, large eyes,
+long hair with a silhouette of its own. The Bubblegum Crisis heritage of the
+previous pass survives as *accents* rather than as a shell: a chest plate, a
+belt, gloves and boots over a dark bodysuit, not a hardsuit. Marigold and teal
+are Channel Z0's; the pale blue hair with the pink streak is hers, and the
+antennae are the cheapest possible way to say "not from here".
+
+She carries a baguette. It is the microphone. It has its own colour ramp and
+three score marks because it has to read as bread at twelve pixels.
+
+The wormhole is light blue, white and pink. It is the only place in the
+sequence those three colours sit together, and nothing else needs to say it.
 
 ## Why it looks like that
 
-**320x240, doubled.** The logical canvas is 320x240 — 4:3 with square pixels —
-scaled to 640x480 with `neighbor`. 640x480 is what the other station cards are
-authored at, and a 4:3 item pillarboxes into the channel's 854x480 **exactly
-inside the on-air rails**, so no part of this is ever drawn under the up-next
-strip or the weather card.
+**320x240, doubled.** The logical canvas is 4:3 with square pixels, scaled to
+640x480 with `neighbor`. 640x480 is what the other station cards are authored
+at, and a 4:3 item pillarboxes into the channel's 854x480 **exactly inside the
+on-air rails**, so no part of this is ever drawn under the up-next strip or the
+weather card.
 
-**Ramps, not a fixed palette.** `gzpal.py` holds light-to-dark ramps for
-armour, undersuit, steel, visor, bone and chrome, plus gradient stop lists for
-the sky and the lake. Sprites index the ramps by position — highlight edge,
-body, shadow edge — so one `shade()` call lights every part of the figure from
-the same direction. Lighting a sprite part-by-part is how you end up with a
-character lit from four directions at once.
+**16-bit means specific things**, and each is a capability the 8-bit pass
+(commit `c392ec2`) did not have: per-scanline gradients — HDMA tables — instead
+of ordered dither; **colour math**, so the moon, the signal, the engine, the
+fireball, the wormhole and the logo bloom all add rather than replace; depth
+planes separated by *contrast*; shaded sprites lit from one direction; and a
+ten-stop chrome ramp for the display face.
 
-**Two bitmap fonts, hand-authored.** `gzfont.py` holds a 6x7 uppercase face in
-an 8x8 cell for all the type, and a 16x18 heavy face for the eight letters
-`GROUND ZERO` needs. A hinted TTF rendered small produces soft uneven stems
-that read as *small text* rather than as tiles.
+**Ramps, not a fixed palette.** `gzpal.py` holds light-to-dark ramps and
+gradient stop lists. Sprites index the ramps by position — highlight edge,
+body, shadow edge — so one `shade()` call lights every part of a figure from
+the same direction. Lighting a sprite part-by-part is how you get a character
+lit from four directions at once.
 
-**The hero is a Bubblegum Crisis hardsuit** in station colours: rounded-square
-pauldrons carried high and flared, a narrow waist, hip flares, chunky forearm
-bracers, heavy boots, a full-face helmet with a crown fin, swept-back ear fins
-and a wraparound visor. She is built from primitives rather than typed as
-colour-keyed ASCII, which is what makes the shading consistent — and what made
-it cheap to re-proportion her twice when the first passes fused into one orange
-mass from the helmet to the bracers.
+**Two bitmap fonts, hand-authored.** A 6x7 uppercase face in an 8x8 cell for
+all the type, and a 16x18 heavy face for the letters `GROUND ZERO` and
+`SASHA ZERO` need.
 
 ## The score
 
-`gzaudio.py` synthesises an SPC700 rather than a 2A03: wavetable voices —
-slap bass, lead, brass, strings, bell — each with an ADSR envelope, equal-power
-stereo pan, optional detuned second voice for chorus, and an echo send. The
-mixdown runs a real delay line with feedback and a one-pole lowpass in the
-loop, so repeats get darker rather than only quieter. That echo is most of why
-this era sounds the way it does.
+`gzaudio.py` synthesises an SPC700: wavetable voices — slap bass, lead, brass,
+strings, bell — each with an ADSR envelope, equal-power stereo pan, an optional
+detuned second voice for chorus, and an echo send. The mixdown runs a delay
+line with feedback and a one-pole lowpass in the loop, so repeats get darker
+rather than only quieter.
 
-Pure Python and `wave` — numpy is broken in LXC 111 — and wavetable lookup is
-a table index and an add, which is what makes that affordable: the whole track
-renders in ten seconds.
+**Upbeat, in the Mega Man register**: 168 BPM, A minor, eighth-note bass under
+a hook that climbs every bar — and a **Picardy third at the very end**, so the
+last chord is A *major*. The previous pass was a D-minor dirge at 150 BPM and
+it made the whole thing feel like a warning.
 
-D minor throughout, 150 BPM. The bed under the crawl is a bass note, a string
-pad and a bell arpeggio for eleven bars; the lead does not arrive until the
-crawl is half read, because the text is the event. Drums enter on the rooftop,
-the push-in narrows to one rising line and an accelerating snare roll, and the
-logo lands on an orchestra hit.
+The quiet bar is deliberate: everything stops for her face except a pad and a
+bell. It is where the sequence stops being about a spaceship.
 
 ### Verification without ears
 
-`test_audio.py` proves three things, each with a negative control, because all
-three have been wrong at some point and none is visible in a waveform:
+`test_audio.py` proves three things, each with a negative control, and
+`build.sh` runs it before rendering anything:
 
 | Check | How |
 |---|---|
 | The echo unit works | one note with a full send must repeat at 0.30 s intervals, decaying — and must **not** repeat with the send at zero |
-| The pan law works | hard left must be >20x louder in L than R and vice versa; centre must be equal. The first pan law clamped to 1.0 on the near side and could never move a voice more than 2 dB — the whole mix measured 0.04 wide, i.e. mono |
-| Voices play the right notes | Goertzel at the note against both neighbouring semitones. **Size the window to the frequency**: at D2 a semitone is 4.4 Hz and a fixed 8192-sample window resolves only 5.9 Hz, so the bass fails for arithmetic reasons and not musical ones |
+| The pan law works | hard left >20x louder in L than R and vice versa; centre equal. An earlier pan law clamped on the near side and could never move a voice more than 2 dB — the mix measured 0.04 wide, i.e. mono |
+| Voices play the right notes | Goertzel at the note against both neighbouring semitones, with the window **sized to the frequency** — at D2 a semitone is 4.4 Hz and a fixed 8192-sample window resolves only 5.9 Hz |
 
-`build.sh` runs them before it renders anything.
+The ending is checked the same way rather than by ear: in the final chord the
+C# measures **5.6x** the C natural, which is what makes it A major and not
+A minor.
 
 ## Rebuilding
 
@@ -129,15 +140,20 @@ anywhere; run `--install` **from x** — LXC 111 has the checkout and the
 toolchain but no SSH trust to vile, so the install half fails there with
 `Host key verification failed`.
 
-It is fully deterministic — no seed, no clock, no network — so the master is
+Fully deterministic — no seed, no clock, no network — so the master is
 regenerated rather than archived, and `*.mp4` stays gitignored like every other
 piece of station media.
 
-To look at single frames without encoding:
-
 ```sh
-python3 make_frames.py /tmp/stills --stills
+python3 make_frames.py /tmp/stills --stills    # single frames, no encode
 ```
+
+**Render stills and look at them.** Six separate passes have been wrong here in
+ways no code review would show: a black figure on a black ground (the near
+plane must be the darkest thing in the frame); a visor close-up that looked
+like a flowerpot; twice a hardsuit that fused into one orange mass because
+nothing that was not armour separated the plates; a face pitched under flat
+quads that read as a tent; and a jaw that tapered too far and read as a muzzle.
 
 ## Putting it on air
 
@@ -146,8 +162,6 @@ pool selects, and it stays inert until the schedule names it. That is
 deliberate — `cards/groundzero/` is the pool `coming_soon_gnd` *shuffles* to
 pad the hour, and an opening shuffled into the middle of its own slot is worse
 than no opening at all.
-
-Three steps, in order:
 
 1. **Install and rescan.** `./build.sh --install` (from x), then let ErsatzTV
    rescan `/media` (it does so on its own within six hours) or trigger it from
@@ -175,15 +189,18 @@ Three steps, in order:
    playout. Both the 19:00 slot and the 22:00 encore take the same change.
 
 Do steps 2 and 3 **after** the rescan has actually found the file. An empty
-content pool is skipped in silence — it does not error, it leaves a hole — so
-naming `gz_open` before the item exists takes the top of the hour off the air
-with nothing to show for it.
+content pool is skipped in silence — it does not error, it leaves a hole.
+
+> **Note.** The COMING SOON card in `playout/cards/ground-zero.html` still
+> carries the old reticle mark. It is a separate artefact, currently on air,
+> and it was left alone rather than re-rendered under a live slot — but it no
+> longer matches the programme's identity and should be reworked.
 
 ---
 
 <table>
 <tr>
-<td><b>DOC NO. RL-Z0-GND-B</b><br>REV. B · EST. 2026</td>
+<td><b>DOC NO. RL-Z0-GND-B</b><br>REV. C · EST. 2026</td>
 <td align="right"><b>PARRY ♻ RIPOSTE ♻ RECYCLE ♻ REPEAT</b><br>Riposte Laboratories Inc.</td>
 </tr>
 </table>
