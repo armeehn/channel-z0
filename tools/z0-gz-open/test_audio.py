@@ -96,6 +96,31 @@ def test_pitch():
     print("  PASS  every voice lands on the note it was given")
 
 
+def test_ending():
+    """The cue must end on an OPEN FIFTH — A and E, and no third at all.
+
+    It used to end on a Picardy third and the claim in the docs was "A major".
+    Both the claim and its opposite are one interval apart, so the check is
+    the interval: neither C natural nor C# may be anywhere near the level of
+    the A and the E."""
+    reset()
+    A.build()
+    A.mixdown()
+    rate = A.RATE
+    i0 = int(58.4 * rate)
+    win = min(int(1.2 * rate), max(8192, int(34 * rate / 440.0)))
+    seg = A.L[i0:i0 + win]
+    lvl = {nm: goertzel(seg, A.hz(nm), rate)
+           for nm in ("A5", "E6", "C6", "C#6")}
+    for nm, v in lvl.items():
+        print("  %-4s %.5f" % (nm, v))
+    root = max(lvl["A5"], lvl["E6"])
+    third = max(lvl["C6"], lvl["C#6"])
+    print("  root/third ratio %.1f" % (root / max(third, 1e-9)))
+    assert root > 6 * third, "there is a third in the final chord"
+    print("  PASS  final chord is an open fifth, no third")
+
+
 if __name__ == "__main__":
     print("echo unit:")
     test_echo()
@@ -103,4 +128,6 @@ if __name__ == "__main__":
     test_pan()
     print("pitch:")
     test_pitch()
+    print("ending:")
+    test_ending()
     print("\nall audio checks passed")

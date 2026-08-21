@@ -1,6 +1,6 @@
 # GROUND ZERO — opening titles
 
-**DOC NO. RL-Z0-GND-B · REV. C**
+**DOC NO. RL-Z0-GND-B · REV. D**
 
 A 60-second opening title sequence for the nightly GROUND ZERO slot, in the
 grammar of the *Mega Man X* intros and telling the programme's own story: a
@@ -32,7 +32,7 @@ fonts, no samples, no stock art, no network.
 | 555–764 | 0:18.5 | **Deep space.** Earth, small and far off, throwing out arcs that are not addressed to anyone. Her ship drifts in from frame left, and at the halfway mark the plume doubles and she starts closing. |
 | 765–944 | 0:25.5 | **The wormhole.** A tunnel of rings in light blue, white and pink. |
 | 945–1184 | 0:31.5 | **The landing.** A fireball down the diagonal, an impact, and then the Okanagan: two ranges, the lake, the moon — and the ship nose-down in the hillside, burning, with Sasha standing on the near shore. `NOBODY SAW HER LAND`. |
-| 1185–1304 | 0:39.5 | **Her face.** A push-in. She blinks, then smiles. |
+| 1185–1304 | 0:39.5 | **Her face.** A push-in. She blinks and holds. She does not smile — she has just been brought down a long way from home. |
 | 1305–1454 | 0:43.5 | **SASHA ZERO.** The name in chrome, and her posting. |
 | 1455–1664 | 0:48.5 | **Logo.** `GROUND` drops, `ZERO` arrives from the right, the frame judders, and a shine sweeps the chrome. |
 | 1665–1799 | 0:55.5 | **Attract.** `PRESS START`, the transmission times, the copyright. |
@@ -58,18 +58,40 @@ The premise is that she turned up to help.
 
 ## Sasha Zero
 
-Slender, anime proportions — a head about a fifth of her height, large eyes,
-long hair with a silhouette of its own. The Bubblegum Crisis heritage of the
-previous pass survives as *accents* rather than as a shell: a chest plate, a
-belt, gloves and boots over a dark bodysuit, not a hardsuit. Marigold and teal
-are Channel Z0's; the pale blue hair with the pink streak is hers, and the
-antennae are the cheapest possible way to say "not from here".
+Built on **Zero from Mega Man Zero**: the enormous ponytail, the crested helmet
+with a gem set in the brow, gems on the shoulders and knees, red armour with
+gold trim over a dark bodysuit, and a slim long-legged build.
 
-She carries a baguette. It is the microphone. It has its own colour ramp and
-three score marks because it has to read as bread at twelve pixels.
+Three things are hers rather than his. The ponytail is **pale blue with a pink
+streak** instead of blonde; the gems are the station's **teal** instead of
+green; and what she carries at her side — in the hand and at the angle Zero
+carries the Z-Saber — is a **baguette**. It is the microphone. It has its own
+colour ramp and three score marks because it has to read as bread at twelve
+pixels.
+
+The gold is Channel Z0's marigold, so the reference and the brand land on the
+same colour and neither has to give way.
 
 The wormhole is light blue, white and pink. It is the only place in the
 sequence those three colours sit together, and nothing else needs to say it.
+
+**The close-up wears the helmet too.** It did not, for one pass — bare hair in
+the close-up while the sprite wore a crested helmet — which is the kind of
+continuity error that only shows up when you put the two shots side by side.
+The dome there is built as a **mask with the face opening subtracted**, not as
+a filled ellipse: filled, it covered her eyes.
+
+## The vessel
+
+Not a rocket. No nose cone, no fins, no engine bell. A ribbed shell tapering
+forward, a membrane along the back, a lit core showing through, and filaments
+trailing behind it — something grown, that came a long way and did not survive
+the arrival intact.
+
+What follows from that is the rest of the tone: the wake is **bioluminescent**
+rather than burned, the entry down the diagonal is cold white and teal rather
+than a fireball, and what leaks out of the break at the crash site is the same
+cold light the core showed in transit, guttering. Nothing aboard was on fire.
 
 ## Why it looks like that
 
@@ -104,10 +126,15 @@ detuned second voice for chorus, and an echo send. The mixdown runs a delay
 line with feedback and a one-pole lowpass in the loop, so repeats get darker
 rather than only quieter.
 
-**Upbeat, in the Mega Man register**: 168 BPM, A minor, eighth-note bass under
-a hook that climbs every bar — and a **Picardy third at the very end**, so the
-last chord is A *major*. The previous pass was a D-minor dirge at 150 BPM and
-it made the whole thing feel like a warning.
+**Driving but grave — the Mega Man *Zero* register** rather than classic Mega
+Man. Those games are fast and heavy at the same time, and that is the target:
+168 BPM and eighth-note bass keep the drive, while the loop turns on an E major
+dominant and a Phrygian Bb instead of the bright C and G it used to, and the
+piece ends on an **open fifth** — A and E, no third at all.
+
+It went through both extremes to get here: a D-minor dirge at 150 BPM that felt
+like a warning, then a Picardy third that resolved too sweetly for what the
+story is.
 
 The quiet bar is deliberate: everything stops for her face except a pad and a
 bell. It is where the sequence stops being about a spaceship.
@@ -123,9 +150,14 @@ bell. It is where the sequence stops being about a spaceship.
 | The pan law works | hard left >20x louder in L than R and vice versa; centre equal. An earlier pan law clamped on the near side and could never move a voice more than 2 dB — the mix measured 0.04 wide, i.e. mono |
 | Voices play the right notes | Goertzel at the note against both neighbouring semitones, with the window **sized to the frequency** — at D2 a semitone is 4.4 Hz and a fixed 8192-sample window resolves only 5.9 Hz |
 
-The ending is checked the same way rather than by ear: in the final chord the
-C# measures **5.6x** the C natural, which is what makes it A major and not
-A minor.
+The ending is checked the same way rather than by ear. The claim is now an
+*interval*, which is the right shape for the test: neither C nor C# may be
+anywhere near the level of the A and the E. It measures **28:1**, so the final
+chord is an open fifth and not a triad of either flavour.
+
+`check_fits()` refuses to render if any fixed caption would run off the frame.
+Two name-card values did exactly that, and the only symptom was a sentence
+quietly missing its last few characters.
 
 ## Rebuilding
 
@@ -148,12 +180,13 @@ piece of station media.
 python3 make_frames.py /tmp/stills --stills    # single frames, no encode
 ```
 
-**Render stills and look at them.** Six separate passes have been wrong here in
-ways no code review would show: a black figure on a black ground (the near
-plane must be the darkest thing in the frame); a visor close-up that looked
-like a flowerpot; twice a hardsuit that fused into one orange mass because
+**Render stills and look at them.** Eight passes have been wrong here in ways no
+code review would show: a black figure on a black ground (the near plane must
+be the darkest thing in the frame); a visor close-up that looked like a
+flowerpot; three times a figure whose armour fused into one solid mass because
 nothing that was not armour separated the plates; a face pitched under flat
-quads that read as a tent; and a jaw that tapered too far and read as a muzzle.
+quads that read as a tent; a jaw that tapered too far and read as a muzzle; and
+a helmet dome filled rather than carved, which covered her eyes.
 
 ## Putting it on air
 
