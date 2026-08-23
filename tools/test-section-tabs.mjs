@@ -154,6 +154,11 @@ const visible = (page) => page.evaluate(() =>
   await page.waitForTimeout(150);
   // FEED is live text of any length, so it is excluded; the rest are fixed
   // strings and at 292px at most one of them ought to need a second line.
+  // The rail now carries SPEC and CHAT as a pair of tabs and opens on CHAT,
+  // so select SPEC before measuring its rows — a hidden panel measures zero
+  // and would make this assertion pass without proving anything.
+  await page.click("#rtab-spec");
+  await page.waitForTimeout(120);
   const wrapped = await page.evaluate(() => Array.from(document.querySelectorAll("#live .spec-row"))
     .filter((r) => r.getBoundingClientRect().height > 34)
     .map((r) => r.querySelector(".k").textContent)
