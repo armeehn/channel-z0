@@ -5,10 +5,54 @@
   "observability": {
     "enabled": true
   },
-  "assets": {
-    "directory": "site"
-  },
   "compatibility_flags": [
     "nodejs_compat"
-  ]
+  ],
+
+  // site/ is still served as static assets exactly as before. The Worker only
+  // sees a request when no file matches it — today that is /api/comment and
+  // nothing else. ASSETS is how the Worker hands everything else straight back
+  // to the static server.
+  "assets": {
+    "directory": "site",
+    "binding": "ASSETS"
+  },
+  "main": "worker/index.js",
+
+  // The comment relay's rate limiter. One object for the whole channel: rate
+  // limiting is read-modify-write, and KV's eventual consistency makes a
+  // limiter that can be beaten by sending faster.
+  "durable_objects": {
+    "bindings": [
+      { "name": "COMMENT_GATE", "class_name": "CommentGate" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["CommentGate"] }
+  ],
+
+  "vars": {
+    "WATCH_HOST": "watch.ch0.ripostelabs.xyz",
+
+    // anthropic | workers-ai | off   (see docs/comment-relay.md)
+    "MODERATION_PROVIDER": "anthropic",
+    "MODERATION_MODEL": "claude-haiku-4-5",
+    "MODERATION_TIMEOUT_MS": "8000",
+
+    // Set to "false" to take the comment box off the page without a redeploy
+    // of the site itself.
+    "RELAY_ENABLED": "true",
+    "RELAY_BURST_SECONDS": "15",
+    "RELAY_VIEWER_PER_HOUR": "8",
+    "RELAY_CHANNEL_PER_HOUR": "200"
+  }
+
+  // Two secrets, neither of them in this file:
+  //   wrangler secret put OWNCAST_TOKEN       (scope CAN_SEND_MESSAGES)
+  //   wrangler secret put ANTHROPIC_API_KEY   (only for MODERATION_PROVIDER=anthropic)
+  //
+  // To moderate with Cloudflare's own inference instead of Claude, set
+  // MODERATION_PROVIDER to "workers-ai", MODERATION_MODEL to
+  // "@cf/meta/llama-3.1-8b-instruct", and add:
+  //   "ai": { "binding": "AI" }
 }
