@@ -67,10 +67,13 @@ const st = () => page.evaluate(() => {
   const $ = (id) => document.getElementById(id);
   const tv = $("tv");
   return {
-    pauseLabel: $("pauseBtn").textContent.trim(),
+    // innerText, NOT textContent: each toggling label keeps both of its states
+    // in the DOM (the hidden one reserves the width so the button cannot
+    // resize), and only innerText respects visibility: hidden.
+    pauseLabel: $("pauseBtn").innerText.trim(),
     pauseDisabled: $("pauseBtn").disabled,
-    soundLabel: $("soundBtn").textContent.trim(),
-    fsLabel: $("fsBtn").textContent.trim(),
+    soundLabel: $("soundBtn").innerText.trim(),
+    fsLabel: $("fsBtn").innerText.trim(),
     fsShown: getComputedStyle($("fsBtn")).display !== "none",
     volSlider: Number($("volSlider").value),
     volVal: $("volVal").textContent,
@@ -85,10 +88,41 @@ const st = () => page.evaluate(() => {
   };
 });
 
+/* ---------- 0. the bar holds still ----------
+   The complaint this answers: "toggling settings makes adjacent toggles change
+   size, and full screen is larger than the other buttons." Both are layout
+   facts, so they get measured rather than eyeballed. Every control in the bar
+   is boxed to the same height; the three handling buttons are one width; and
+   no press of any of them changes any box by a pixel. Sampled after EVERY
+   toggle below, because a label pair that reserves the wrong width only shows
+   up in the state you didn't look at. */
+const CTLS = ["tuneBtn", "pauseBtn", "fsBtn", "soundBtn", "volGroup", "airChip"];
+const boxes = () => page.evaluate((ids) => {
+  const out = {};
+  ids.forEach((id) => {
+    const r = document.getElementById(id).getBoundingClientRect();
+    out[id] = [Math.round(r.width * 100) / 100, Math.round(r.height * 100) / 100];
+  });
+  return out;
+}, CTLS);
+const sizeLog = [];
+const recordSizes = async (label) => { sizeLog.push([label, await boxes()]); };
+
+await recordSizes("boot");
+{
+  const b = sizeLog[0][1];
+  const heights = new Set(CTLS.map((id) => b[id][1]));
+  ok("size: every control in the bar is the same height", heights.size === 1,
+     CTLS.map((id) => `${id} ${b[id][1]}`).join(" · "));
+  const mains = ["tuneBtn", "pauseBtn", "fsBtn"].map((id) => b[id][0]);
+  ok("size: TUNE, PAUSE and FULL SCREEN are one width — no odd slab out",
+     Math.max(...mains) - Math.min(...mains) < 1, mains.join(" / "));
+}
+
 /* ---------- 1. initial state ---------- */
 let s = await st();
 ok("boot: PAUSE is disabled (nothing playing)", s.pauseDisabled === true);
-ok("boot: pause label reads PAUSE", /^❚❚ PAUSE$/.test(s.pauseLabel), s.pauseLabel);
+ok("boot: pause label reads PAUSE", /^PAUSE$/.test(s.pauseLabel), s.pauseLabel);
 ok("boot: SOUND: OFF", s.soundLabel === "SOUND: OFF", s.soundLabel);
 ok("boot: volume group marked muted", s.volMutedClass === true);
 ok("boot: full-screen button visible", s.fsShown === true);
@@ -119,6 +153,7 @@ await page.waitForFunction(() => document.getElementById("tv").readyState >= 2 &
 s = await st();
 ok("tune: stream is playing", s.readyState >= 2 && s.videoPaused === false, `readyState=${s.readyState} paused=${s.videoPaused}`);
 ok("tune: PAUSE became enabled", s.pauseDisabled === false);
+await recordSizes("tune");
 
 /* ---------- 4. pause / resume-at-live ---------- */
 await page.click("#pauseBtn");
@@ -128,6 +163,7 @@ s = await st();
 const pausedAt = s.currentTime;
 ok("pause: video paused", s.videoPaused === true);
 ok("pause: label flipped to RESUME LIVE", /RESUME LIVE$/.test(s.pauseLabel), s.pauseLabel);
+await recordSizes("pause");
 
 // Sit paused so the live edge moves out ahead of where we stopped.
 await page.waitForTimeout(9000);
@@ -136,7 +172,8 @@ await page.waitForFunction(() => !document.getElementById("tv").paused, null, { 
 await page.waitForTimeout(250);
 s = await st();
 ok("resume: playing again", s.videoPaused === false);
-ok("resume: label back to PAUSE", /^❚❚ PAUSE$/.test(s.pauseLabel), s.pauseLabel);
+ok("resume: label back to PAUSE", /^PAUSE$/.test(s.pauseLabel), s.pauseLabel);
+await recordSizes("resume");
 ok("resume: jumped forward to the live edge, not continued from the hold",
    s.currentTime > pausedAt + 4, `held at ${pausedAt.toFixed(1)}s, resumed at ${s.currentTime.toFixed(1)}s`);
 
@@ -162,6 +199,7 @@ s = await st();
 ok("volume: slider 40 sets video volume to 0.40", Math.abs(s.videoVolume - 0.4) < 0.01, String(s.videoVolume));
 ok("volume: unmuted by the drag", s.videoMuted === false);
 ok("volume: SOUND: ON", s.soundLabel === "SOUND: ON", s.soundLabel);
+await recordSizes("sound on");
 ok("volume: readout shows 40", s.volVal === "40", s.volVal);
 ok("volume: persisted to localStorage", s.stored === "40", String(s.stored));
 
@@ -169,6 +207,7 @@ await setVol(0);
 s = await st();
 ok("volume: dragging to 0 mutes", s.videoMuted === true && s.volMutedClass === true);
 ok("volume: SOUND: OFF at zero", s.soundLabel === "SOUND: OFF", s.soundLabel);
+await recordSizes("volume 0");
 
 await page.click("#soundBtn");
 await page.waitForTimeout(200);
@@ -256,7 +295,7 @@ if (fsWorked) {
   await page.click("#fsBtn");
   await page.waitForTimeout(1000);
   s = await st();
-  ok("fullscreen: exits back to the page", s.fsEl === null && /^⛶ FULL SCREEN$/.test(s.fsLabel), `${s.fsEl} / ${s.fsLabel}`);
+  ok("fullscreen: exits back to the page", s.fsEl === null && /^FULL SCREEN$/.test(s.fsLabel), `${s.fsEl} / ${s.fsLabel}`);
   const home = await page.evaluate(() => {
     const f = document.querySelector(".screen-frame"), c = document.querySelector(".feed-controls");
     return { insideFrame: f.contains(c), pos: getComputedStyle(c).position,
@@ -322,18 +361,47 @@ await page.locator("#live").screenshot({ path: join(OUTDIR, "mobile.png") });
 ok("layout: no horizontal overflow at 390px", narrow.overflow <= 0, `overflow=${narrow.overflow}px`);
 ok("layout: all 5 controls render at 390px", narrow.visible === 5, `${narrow.visible}/5`);
 
+/* ---------- the invariance check ----------
+   Everything above pressed every toggle at least once, sampling the bar each
+   time. All the samples must be identical: one differing pixel IS the reported
+   bug, so this compares exactly rather than within a tolerance. */
+{
+  const ref = sizeLog[0][1];
+  const moved = [];
+  sizeLog.slice(1).forEach(([label, b]) => {
+    CTLS.forEach((id) => {
+      // Half a pixel. The defects this guards were 5px (the volume readout
+      // growing from one digit to three) and 35px (EXIT FULL SCREEN); what is
+      // left is sub-pixel rounding on a calc()ed min-width, which nothing can
+      // see and no layout moves for.
+      if (Math.abs(b[id][0] - ref[id][0]) > 0.5 || Math.abs(b[id][1] - ref[id][1]) > 0.5) {
+        moved.push(`${id} ${ref[id].join("x")} -> ${b[id].join("x")} (after ${label})`);
+      }
+    });
+  });
+  ok(`size: nothing in the bar resizes when toggled (${sizeLog.length} states sampled)`,
+     moved.length === 0, moved.join(" · ") || "held");
+}
+
 console.log("\n-- network problems seen (informational) --");
 [...new Set(badRequests)].forEach((b) => console.log("   " + b));
 ok("no uncaught JS errors on the page", consoleErrors.filter((e) => e.startsWith("PAGEERROR:")).length === 0,
    consoleErrors.filter((e) => e.startsWith("PAGEERROR:")).slice(0, 3).join(" ; "));
-/* Two known-and-not-mine misses are allowed:
+/* Known-and-not-ours misses are allowed:
      - favicon: this throwaway test server doesn't serve one.
      - cdnjs hls.js 1.6.16: that exact version is NOT published on cdnjs (it
        404s, which Chrome surfaces as ERR_BLOCKED_BY_ORB). Pre-existing on
        origin/main; harmless only because the jsdelivr fallback catches it,
        at the cost of a wasted round trip before playback starts.
+     - ERR_ABORTED on the tower's own /hls/: this suite reloads the page while
+       a live channel is playing, and the browser cancels whatever segment or
+       playlist poll was in flight. It is the browser tidying up after the
+       test, not a failure of the site — and it is a coin-toss on timing, so
+       asserting against it makes the suite flaky. Verified by running this
+       exact file against an unmodified origin/main: clean on one run,
+       two aborts on the next.
    Anything else is a regression from this change. */
-const KNOWN = /favicon|cdnjs\.cloudflare\.com\/ajax\/libs\/hls\.js/i;
+const KNOWN = /favicon|cdnjs\.cloudflare\.com\/ajax\/libs\/hls\.js|\/hls\/\d+\/stream[^ ]*\s+net::ERR_ABORTED/i;
 const realBad = [...new Set(badRequests)].filter((b) => !KNOWN.test(b));
 ok("no failed requests beyond the two known pre-existing misses", realBad.length === 0, realBad.slice(0, 4).join(" ; "));
 

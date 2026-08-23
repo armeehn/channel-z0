@@ -16,12 +16,16 @@
 /retro/index.html
   Cache-Control: public, max-age=0, must-revalidate
 
-# NOTE: no Content-Security-Policy is set here on purpose. The player pulls
+# NOTE: no Content-Security-Policy is set here on purpose. Note that the chat
+# panel in SEC.01 talks to the tower over BOTH https (the message backlog) and
+# wss (everything said after that), and renders custom emoji served from it —
+# so a CSP has to allow all three or the chat goes quiet with no visible error. The player pulls
 # hls.js (and the p2p-media-loader library) from a CDN and talks to the Owncast
 # tower on another origin, and both hosts are yours to change. If you want a
 # CSP, allow (at least):
 #   script-src  'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net
-#   connect-src 'self' https://watch.<your-domain> wss://tracker.novage.com.ua wss://tracker.openwebtorrent.com
+#   connect-src 'self' https://watch.<your-domain> wss://watch.<your-domain> wss://tracker.novage.com.ua wss://tracker.openwebtorrent.com
+#   img-src     'self' data: https://watch.<your-domain>   # chat custom emoji
 #   media-src   'self' https://watch.<your-domain> blob:
 #   frame-src   https://watch.<your-domain>          # only if you set PEERTUBE_EMBED
 # The wss:// hosts are the P2P WebRTC signalling trackers (match your
