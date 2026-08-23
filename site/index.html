@@ -189,14 +189,80 @@
 
   .feed-controls {
     display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; align-items: center;
+    --ctl-h: 40px;
   }
   /* Zero-height full-width flex item: forces the line break wherever it sits. */
   .ctl-break { flex-basis: 100%; height: 0; margin: 0; }
+
+  /* ---------- transport sizing: nothing here changes size, ever ----------
+     Three rules, each fixing a different way this bar used to move:
+       1. every control is exactly --ctl-h tall, so a button, the volume box
+          and the ON AIR chip line up whatever is inside them;
+       2. the three handling buttons share their row equally (flex-basis 0),
+          so FULL SCREEN is not a slab beside a stub;
+       3. a label that toggles reserves the width of its LONGEST state (.swap
+          below), so pressing a button never shoves its neighbours sideways.
+     Wrapping still works: flex breaks lines on min-content, and the three
+     together (~451px) fit the 586px of a 606px column with room to spare. */
+  .feed-controls .btn,
+  .feed-controls .vol,
+  .feed-controls .onair-chip { height: var(--ctl-h); padding-top: 0; padding-bottom: 0; }
+  .feed-controls .btn { padding-left: 12px; padding-right: 12px; }
+  .feed-controls .ctl-main { flex: 1 1 0; }
+  /* Full screen is screen-wide and one line: natural widths there, not three
+     enormous slabs stretched across a 1920px television. */
+  .screen-frame.fs .feed-controls .ctl-main { flex: 0 0 auto; padding-left: 18px; padding-right: 18px; }
+
+  /* Both states of a toggling label sit in the SAME grid cell, so the cell is
+     as wide as the wider one and the button is a fixed block. visibility —
+     not display — keeps the hidden state laid out while keeping it out of
+     innerText and out of the accessibility tree, so the visible text is still
+     the whole story a screen reader gets ("SOUND: OFF" is the state). */
+  .swap { display: inline-grid; }
+  .swap > * {
+    grid-area: 1 / 1; display: inline-flex; align-items: center;
+    justify-content: center; gap: 8px; white-space: nowrap;
+  }
+  .swap > .s-b { visibility: hidden; }
+  .alt .swap > .s-a { visibility: hidden; }
+  .alt .swap > .s-b { visibility: visible; }
+
+  /* House-drawn control icons. A glyph like ⛶ arrives from whatever fallback
+     font the machine happens to have, at whatever metrics it likes — which is
+     why FULL SCREEN sat wider and taller than the buttons beside it. These are
+     boxes of a known size painted in currentColor, so the palette flip in full
+     screen comes along for free and no font can move them. */
+  .ico { display: inline-block; flex: none; width: 13px; height: 13px; }
+  .ico-pause {
+    background:
+      linear-gradient(currentColor, currentColor) 1px 1px / 4px 11px no-repeat,
+      linear-gradient(currentColor, currentColor) 8px 1px / 4px 11px no-repeat;
+  }
+  .ico-play {
+    width: 0; height: 0; margin: 0 2px;
+    border-left: 10px solid currentColor;
+    border-top: 6px solid transparent; border-bottom: 6px solid transparent;
+  }
+  .ico-fs {
+    background:
+      linear-gradient(currentColor, currentColor) 0 0 / 5px 2px no-repeat,
+      linear-gradient(currentColor, currentColor) 0 0 / 2px 5px no-repeat,
+      linear-gradient(currentColor, currentColor) 100% 0 / 5px 2px no-repeat,
+      linear-gradient(currentColor, currentColor) 100% 0 / 2px 5px no-repeat,
+      linear-gradient(currentColor, currentColor) 0 100% / 5px 2px no-repeat,
+      linear-gradient(currentColor, currentColor) 0 100% / 2px 5px no-repeat,
+      linear-gradient(currentColor, currentColor) 100% 100% / 5px 2px no-repeat,
+      linear-gradient(currentColor, currentColor) 100% 100% / 2px 5px no-repeat;
+  }
   .btn {
     font-family: var(--mono); font-size: 12px; letter-spacing: .14em; font-weight: 700;
     background: var(--ink); color: var(--paper);
     border: 2px solid var(--ink); padding: 10px 18px; cursor: pointer;
     transition: transform .05s;
+    /* inline-flex + line-height 1 so the box is the padding and nothing else:
+       a tall glyph inside can no longer stretch the button past its siblings. */
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px; line-height: 1; white-space: nowrap;
   }
   .btn:hover { background: var(--red); border-color: var(--red); color: #fff; }
   .btn:active { transform: translateY(2px); }
@@ -216,7 +282,14 @@
     border: 2px solid var(--ink); padding: 8px 12px;
     font-size: 12px; letter-spacing: .14em; font-weight: 700;
   }
-  .vol .val { min-width: 3ch; text-align: right; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  /* Three digits' worth, letter-spacing included — 3ch alone is 5px short of
+     "100" once .14em is added after every character, so the box used to grow
+     the first time the volume reached three figures and shove the ON AIR chip
+     sideways. tabular-nums keeps the digits themselves from jittering. */
+  .vol .val {
+    min-width: calc(3ch + 0.42em); text-align: right;
+    color: var(--ink-2); font-variant-numeric: tabular-nums;
+  }
   .vol.muted .val { color: #b9b4a6; }
   .vol:focus-within { border-color: var(--red); }
 
@@ -260,6 +333,78 @@
   .onair-chip.on .b { background: var(--red); animation: pulse 1.6s infinite; }
   @keyframes pulse { 50% { opacity: .35; } }
   @media (prefers-reduced-motion: reduce) { .onair-chip.on .b { animation: none; } }
+
+  /* ---------- the rail: SPEC | CHAT ----------
+     The card's head bar was already a black strip with a label on it, so the
+     switch lives there rather than adding a second bar above the card. */
+  .rail-tabs { display: inline-flex; gap: 0; }
+  .rail-tab {
+    font: inherit; font-size: 11px; letter-spacing: .2em; font-weight: 700;
+    background: transparent; color: #b9b4a6; border: 0; cursor: pointer;
+    padding: 0 10px 0 0; margin-right: 10px; position: relative;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .rail-tab + .rail-tab { border-left: 1px solid #55524a; padding-left: 10px; }
+  .rail-tab:hover { color: var(--paper); }
+  .rail-tab[aria-selected="true"] { color: var(--paper); }
+  .rail-tab[aria-selected="true"]::after {
+    content: ""; position: absolute; left: 0; right: 10px; bottom: -3px; height: 2px; background: var(--red);
+  }
+  .rail-tab + .rail-tab[aria-selected="true"]::after { left: 10px; right: 0; }
+  .rail-tab:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+  /* Unread only ever counts what arrived while CHAT was the panel you couldn't
+     see; opening it clears the count. */
+  .rail-tab .unread {
+    background: var(--red); color: #fff; border-radius: 9px;
+    font-size: 10px; letter-spacing: .06em; padding: 1px 6px; min-width: 18px; text-align: center;
+  }
+  /* [hidden] has to out-specify .rail-panel's own display, or the panel stays
+     on the page — the same trap as the KB's [hidden] losing to a class. */
+  .rail-panel { display: flex; flex-direction: column; min-height: 0; }
+  .rail-panel[hidden] { display: none; }
+
+  /* ---------- live chat ----------
+     Read straight from the Owncast tower: history over REST, then a websocket
+     for whatever is said next. Nothing is posted from this page (see
+     CONFIG.CHAT_POST_ENDPOINT) — the way in is the tower, until the moderated
+     relay exists. */
+  .chat-log {
+    flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+    padding: 8px 10px; font-size: 12px; line-height: 1.45;
+    display: flex; flex-direction: column; gap: 7px;
+  }
+  .chat-msg { overflow-wrap: anywhere; }
+  .chat-msg .who { font-weight: 700; letter-spacing: .04em; }
+  .chat-msg .who::after { content: ""; }
+  .chat-msg .body { color: var(--ink); }
+  .chat-msg .body p { display: inline; }
+  .chat-msg .body a { color: var(--red); }
+  .chat-msg .body code { background: var(--paper); padding: 0 3px; }
+  .chat-msg .body img.emoji { height: 18px; width: auto; vertical-align: -4px; }
+  .chat-msg.system { color: var(--ink-2); font-style: italic; }
+  .chat-note { color: var(--ink-2); font-size: 11px; letter-spacing: .1em; padding: 4px 0; }
+  /* Scrolled up to read something? Then a new message must not yank the log
+     out from under you — it waits behind this button instead. */
+  .chat-jump {
+    flex: none; margin: 0 10px 6px; padding: 5px 8px; cursor: pointer;
+    font: inherit; font-size: 10px; letter-spacing: .14em; font-weight: 700;
+    background: var(--ink); color: var(--paper); border: 0;
+  }
+  .chat-jump:hover { background: var(--red); }
+  .chat-foot {
+    flex: none; display: flex; align-items: center; gap: 8px;
+    border-top: 1px dashed #b9b4a6; padding: 7px 10px;
+    font-size: 10px; letter-spacing: .12em; color: var(--ink-2);
+  }
+  .chat-state { display: inline-flex; align-items: center; gap: 6px; }
+  .chat-state::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%; background: #b9b4a6; flex: none;
+  }
+  .chat-state.live::before { background: var(--red); }
+  .chat-post { margin-left: auto; white-space: nowrap; font-weight: 700; }
+  /* Off the pinned layout the rail is a normal block, so the log needs a size
+     of its own or it collapses to nothing. */
+  .rail .chat-log { max-height: 46vh; min-height: 180px; }
 
   .speccard { border: 2px solid var(--ink); background: var(--paper-2); }
   .speccard .spec-head {
@@ -507,7 +652,15 @@
     /* One-line spec values beat a wide picture here: at 236px twelve rows
        wrapped to two lines each and the card, not the video, was what pushed
        SEC.01 past the fold. */
-    html.tabs #live .feed-grid { grid-template-columns: minmax(0, 1fr) 292px; }
+    html.tabs #live .feed-grid { grid-template-columns: minmax(0, 1fr) 292px; align-items: stretch; }
+    /* Pinned: the rail is as tall as the picture column, and the chat log eats
+       whatever the SPEC head and the chat foot leave. That is the only reason
+       the chat is worth having here — 250-450px of column instead of the ~16px
+       that stacking it under the SPEC card would have given it. */
+    html.tabs #live .rail { display: flex; flex-direction: column; min-height: 0; }
+    html.tabs #live .rail .spec-head { flex: none; }
+    html.tabs #live .rail-panel { flex: 1 1 auto; min-height: 0; }
+    html.tabs #live .rail .chat-log { max-height: none; min-height: 0; }
     /* Twelve rows at 5px of padding each were 60px of air, and the footer
        below now wants those pixels more than the card does. */
     html.tabs #live .spec-rows { padding: 2px 0; }
@@ -635,33 +788,90 @@
         </div>
         <!-- Transport. No aria-label on these: the visible text IS the state
              ("SOUND: OFF"), and an aria-label would override it for a screen
-             reader and announce only the verb. -->
+             reader and announce only the verb.
+
+             Every label that toggles is a .swap: both states in one grid cell,
+             the unused one hidden with visibility so it still reserves width.
+             The button is therefore a fixed block — press it and nothing on
+             the row moves. Icons are CSS boxes (.ico), not font glyphs, for
+             the same reason: a fallback font's metrics are nobody's to trust. -->
         <div class="feed-controls">
-          <button class="btn" id="tuneBtn">TUNE IN ▸</button>
-          <button class="btn ghost" id="pauseBtn" disabled
-                  title="Hold the picture. Resuming rejoins the broadcast live — this is a channel, not a recording.">
-            <span aria-hidden="true">❚❚</span> PAUSE
+          <button class="btn ctl-main" id="tuneBtn">
+            <span class="swap">
+              <span class="s-a">TUNE IN<i class="ico ico-play" aria-hidden="true"></i></span>
+              <span class="s-b">RE-TUNE<i class="ico ico-play" aria-hidden="true"></i></span>
+            </span>
           </button>
-          <button class="btn ghost" id="fsBtn"><span aria-hidden="true">⛶</span> FULL SCREEN</button>
+          <button class="btn ghost ctl-main" id="pauseBtn" disabled
+                  title="Hold the picture. Resuming rejoins the broadcast live — this is a channel, not a recording.">
+            <span class="swap">
+              <span class="s-a"><i class="ico ico-pause" aria-hidden="true"></i>PAUSE</span>
+              <span class="s-b"><i class="ico ico-play" aria-hidden="true"></i>RESUME LIVE</span>
+            </span>
+          </button>
+          <button class="btn ghost ctl-main" id="fsBtn">
+            <span class="swap">
+              <span class="s-a"><i class="ico ico-fs" aria-hidden="true"></i>FULL SCREEN</span>
+              <span class="s-b"><i class="ico ico-fs" aria-hidden="true"></i>EXIT FULL SCREEN</span>
+            </span>
+          </button>
           <!-- Six controls need ~970px and this column is ~660px, so the row
                wraps no matter what. Break it on purpose instead: handling the
                picture above, handling the sound below. Suppressed in full
                screen, where the bar is screen-wide and fits on one line. -->
           <span class="ctl-break" aria-hidden="true"></span>
-          <button class="btn ghost" id="soundBtn">SOUND: OFF</button>
+          <button class="btn ghost" id="soundBtn">
+            <span class="swap">
+              <span class="s-a">SOUND: OFF</span>
+              <span class="s-b">SOUND: ON</span>
+            </span>
+          </button>
           <span class="vol muted" id="volGroup">
             <label for="volSlider">VOL</label>
             <input type="range" id="volSlider" min="0" max="100" step="1" value="100" aria-label="Volume">
             <span class="val" id="volVal">100</span>
           </span>
+          <!-- The chip is the last thing on the row, so its width changing
+               only ever moved itself — but OFF AIR is one character wider than
+               ON AIR, and a status light that twitches is still a twitch. -->
           <span class="live-status">
-            <span class="onair-chip" id="airChip"><span class="b" aria-hidden="true"></span><span id="airLabel">OFF AIR</span></span>
-            <a id="chatLink" href="#" target="_blank" rel="noopener">LIVE CHAT →</a>
+            <span class="onair-chip" id="airChip"><span class="b" aria-hidden="true"></span><span class="swap" id="airLabel"><span class="s-a">OFF AIR</span><span class="s-b">ON AIR</span></span></span>
           </span>
         </div>
       </div>
-      <aside class="speccard" aria-label="Channel specification">
-        <div class="spec-head"><span>SPEC</span><span class="code">RL-Z0</span></div>
+      <!-- The right-hand rail carries two things that both want the whole
+           column: the SPEC card and the chat. They share it as a pair of tabs
+           in the card's own head bar rather than stacking — measured, there is
+           only ~16px under the SPEC card at 1280x900, which is no chat at all.
+           CHAT opens first (it is the live thing on a live page); the viewer's
+           choice is remembered from then on. -->
+      <aside class="speccard rail" aria-label="Channel specification and live chat">
+        <div class="spec-head">
+          <span class="rail-tabs" role="tablist" aria-label="Rail">
+            <button class="rail-tab" type="button" role="tab" id="rtab-chat"
+                    aria-controls="rail-chat" aria-selected="true" tabindex="0">CHAT<span class="unread" id="chatUnread" hidden></span></button>
+            <button class="rail-tab" type="button" role="tab" id="rtab-spec"
+                    aria-controls="rail-spec" aria-selected="false" tabindex="-1">SPEC</button>
+          </span>
+          <span class="code">RL-Z0</span>
+        </div>
+
+        <!-- Live chat, read from the tower. Read-only on purpose for now: the
+             way in for viewers is the moderated relay (CONFIG.CHAT_POST_
+             ENDPOINT), not a straight pipe from a public page to the room. -->
+        <div class="rail-panel" id="rail-chat" role="tabpanel" aria-labelledby="rtab-chat">
+          <div class="chat-log" id="chatLog" role="log" aria-live="polite" aria-relevant="additions"
+               aria-label="Live chat" tabindex="0">
+            <p class="chat-note" id="chatNote">TUNING IN TO THE CHAT…</p>
+          </div>
+          <button class="chat-jump" type="button" id="chatJump" hidden>NEW MESSAGES ▾</button>
+          <div class="chat-foot">
+            <span class="chat-state" id="chatState">—</span>
+            <a class="chat-post" id="chatLink" href="#" target="_blank" rel="noopener">SAY SOMETHING ↗</a>
+          </div>
+        </div>
+
+        <div class="rail-panel" id="rail-spec" role="tabpanel" aria-labelledby="rtab-spec" hidden>
         <!-- Every row carries a hover note (.spec-note). Keep the numbers here in
              step with the real plant: ErsatzTV's FFmpegProfile on the playout box
              and the Owncast tower — see docs/build-guide.md. -->
@@ -714,6 +924,7 @@
             <span class="k">P2P</span><span class="v" id="p2pStat">STANDBY</span>
             <span class="spec-note" role="tooltip" id="note-p2p">Viewers quietly hand each other stream segments over <b>WebRTC</b>, so the tower ships each one far fewer times. Strictly a bonus: no WebRTC, or no one else watching, and it's ordinary HLS with nothing lost.</span>
           </div>
+        </div>
         </div>
       </aside>
     </div>
@@ -853,6 +1064,22 @@ const CONFIG = {
   OWNCAST_BASE: WATCH_HOST ? `https://${WATCH_HOST}` : "",
   AD_EMAIL,
   CHAT_URL:     WATCH_HOST ? `https://${WATCH_HOST}` : "",
+
+  // --- Live chat ------------------------------------------------------------
+  // The chat in the rail is read from the tower directly: /api/chat for the
+  // backlog, then a websocket for what is said next. Set CHAT_ENABLED to false
+  // to take the panel off the page entirely.
+  CHAT_ENABLED: true,
+  CHAT_BACKLOG: 50,          // messages fetched on open
+  CHAT_MAX_RENDER: 200,      // nodes kept in the log; older ones are dropped
+  // Reserved for the moderated comment relay, which does not exist yet. When
+  // it does it belongs HERE and not in this file: a Worker route on this origin
+  // that takes { body }, rate-limits per viewer, runs the text past a small
+  // model against the house rules, and only then speaks to Owncast with a
+  // server-side token. Leaving it null keeps this panel read-only, which is
+  // the honest state of things — a public page must not hold a chat token that
+  // can post, because a token in a page belongs to everyone who views it.
+  CHAT_POST_ENDPOINT: null,
   LAB_URL:      "https://ripostelabs.xyz",
   STATUS_POLL_SECONDS: 30,
   RETRY_SECONDS: 20,
@@ -970,6 +1197,10 @@ const els = {
   tuneBtn: $("tuneBtn"), soundBtn: $("soundBtn"), pauseBtn: $("pauseBtn"), fsBtn: $("fsBtn"),
   volGroup: $("volGroup"), volSlider: $("volSlider"), volVal: $("volVal"),
   chatLink: $("chatLink"), adMail: $("adMail"), labLink: $("labLink"),
+  chatLog: $("chatLog"), chatNote: $("chatNote"), chatState: $("chatState"),
+  chatJump: $("chatJump"), chatUnread: $("chatUnread"),
+  railChat: $("rail-chat"), railSpec: $("rail-spec"),
+  rtabChat: $("rtab-chat"), rtabSpec: $("rtab-spec"),
 };
 
 const state = { tuned: false, hls: null, retryTimer: null, owncastOnline: null, streamTitle: "", p2p: null, embed: false };
@@ -1113,7 +1344,7 @@ function usePeerTubeEmbed(src) {
   [els.tuneBtn, els.soundBtn, els.pauseBtn, els.volGroup, els.fsBtn]
     .forEach((el) => { if (el) el.style.display = "none"; });
   els.airChip.classList.remove("on");
-  els.airLabel.textContent = "VIA PEERTUBE";
+  els.airLabel.textContent = "VIA PEERTUBE";   // embed mode: one fixed label, no pair to swap
   els.specStatus.innerHTML = "<b>PEERTUBE</b>";
   const p2pEl = document.getElementById("p2pStat");
   if (p2pEl) p2pEl.textContent = "IN PLAYER";
@@ -1122,7 +1353,7 @@ function usePeerTubeEmbed(src) {
 /* ---------------- the feed ---------------- */
 function setOnAir(on) {
   els.airChip.classList.toggle("on", on);
-  els.airLabel.textContent = on ? "ON AIR" : "OFF AIR";
+  els.airLabel.classList.toggle("alt", !!on);
   els.specStatus.innerHTML = on ? "<b>LIVE — SIGNAL ACQUIRED</b>" : (state.tuned ? "<b>SEEKING SIGNAL</b>" : "<b>STANDBY</b>");
 }
 function showOffair(show) { els.offair.classList.toggle("show", show); }
@@ -1130,7 +1361,7 @@ function showOffair(show) { els.offair.classList.toggle("show", show); }
 async function tuneIn() {
   clearTimeout(state.retryTimer);
   state.tuned = true;
-  els.tuneBtn.textContent = "RE-TUNE ▸";
+  els.tuneBtn.classList.add("alt");   // TUNE IN ▸ RE-TUNE, same block either way
   syncPauseBtn();                    // there is something to hold now
   const url = CONFIG.STREAM_URL;
 
@@ -1200,11 +1431,11 @@ function togglePause() {
     syncPauseBtn();          // paused is true synchronously; don't wait for the event
   }
 }
+/* .alt picks the second label out of the pair already in the DOM. Rewriting
+   innerHTML here is what made the button resize on every press. */
 function syncPauseBtn() {
   els.pauseBtn.disabled = !state.tuned;
-  els.pauseBtn.innerHTML = (state.tuned && tv.paused)
-    ? '<span aria-hidden="true">▸</span> RESUME LIVE'
-    : '<span aria-hidden="true">❚❚</span> PAUSE';
+  els.pauseBtn.classList.toggle("alt", state.tuned && tv.paused);
 }
 els.pauseBtn.addEventListener("click", togglePause);
 tv.addEventListener("play", syncPauseBtn);
@@ -1223,7 +1454,7 @@ function applyVolumeUI() {
   els.volVal.textContent = String(pct);
   const silent = tv.muted || pct === 0;
   els.volGroup.classList.toggle("muted", silent);
-  els.soundBtn.textContent = silent ? "SOUND: OFF" : "SOUND: ON";
+  els.soundBtn.classList.toggle("alt", !silent);      // s-a SOUND: OFF · s-b SOUND: ON
 }
 tv.addEventListener("volumechange", applyVolumeUI);   // covers media keys and the iOS player too
 
@@ -1250,7 +1481,11 @@ els.volSlider.addEventListener("input", () => {
 (function restoreVolume() {
   let pct = 100;
   try {
-    const n = Number(localStorage.getItem(VOL_KEY));
+    // Number(null) is 0 and Number.isFinite(0) is true, so reading a key that
+    // was never written used to boot every first-time viewer at VOL 0 — the
+    // SOUND button worked and played silence. Absent is not zero.
+    const raw = localStorage.getItem(VOL_KEY);
+    const n = raw === null ? NaN : Number(raw);
     if (Number.isFinite(n)) pct = Math.min(100, Math.max(0, n));
   } catch (e) { /* no storage */ }
   tv.volume = pct / 100;
@@ -1286,9 +1521,7 @@ function toggleFullscreen() {
   }
 }
 function syncFsBtn() {
-  els.fsBtn.innerHTML = fsElement()
-    ? '<span aria-hidden="true">⛶</span> EXIT FULL SCREEN'
-    : '<span aria-hidden="true">⛶</span> FULL SCREEN';
+  els.fsBtn.classList.toggle("alt", !!fsElement());   // s-a FULL SCREEN · s-b EXIT FULL SCREEN
 }
 /* Full screen swallows the page, so the transport has to travel with the
    picture — otherwise pause and volume are unreachable for as long as the
@@ -1506,6 +1739,290 @@ function initShell() {
   showSection(location.hash.slice(1) || "live");
 }
 
+
+/* ==========================================================================
+   LIVE CHAT  ·  the tower's room, shown on the storefront
+   --------------------------------------------------------------------------
+   Owncast keeps the chat; this reads it. Backlog over REST, then a websocket
+   for everything after. Three things about that tower worth knowing before
+   changing any of it:
+
+     1. The API is CORS-open (`access-control-allow-origin: *`) but its
+        Access-Control-Allow-Headers is NOT. Sending `Content-Type:
+        application/json` on the register POST triggers a preflight the tower
+        refuses, and the whole panel dies with "Failed to fetch". Register with
+        no headers and no body — a simple request, no preflight — and let the
+        tower name the viewer.
+     2. USER_JOINED is broadcast on a token's FIRST connection only. Persisting
+        the token means a returning viewer never re-announces themselves, so
+        watching Z0 doesn't spam the room every time the page is opened.
+     3. Message bodies arrive as HTML the tower rendered from somebody else's
+        markdown. It is inserted here through an allowlist and nothing else —
+        this page has no CSP, so an <img onerror> from the chat would be an XSS
+        on the storefront.
+   ========================================================================== */
+const CHAT_USER_KEY = "z0.chat.user";
+const RAIL_KEY = "z0.rail";
+const chat = {
+  base: (CONFIG.OWNCAST_BASE || "").replace(/\/$/, ""),
+  user: null, ws: null, seen: new Set(), unread: 0,
+  open: true, retry: 0, retryTimer: null, stopped: false, reregistered: false,
+};
+
+/* ---- the allowlist ----
+   Everything not named here is unwrapped to its text. Anything that can load
+   or run — script, style, iframe, on* attributes, javascript: URLs — never
+   makes it into the document, because the parse happens in a detached
+   DOMParser document that fetches nothing and the rebuild copies attributes
+   one at a time rather than trusting the ones it was handed. */
+const CHAT_TAGS = new Set(["B","STRONG","I","EM","U","S","DEL","CODE","PRE","BR","P","SPAN","A","IMG","BLOCKQUOTE","UL","OL","LI"]);
+function safeUrl(u, schemes) {
+  try {
+    const url = new URL(String(u), chat.base || location.href);
+    return schemes.includes(url.protocol) ? url.href : null;
+  } catch (_) { return null; }
+}
+function sanitizeChatBody(html) {
+  const frag = document.createDocumentFragment();
+  let doc;
+  try { doc = new DOMParser().parseFromString(String(html == null ? "" : html), "text/html"); }
+  catch (_) { frag.appendChild(document.createTextNode(String(html || ""))); return frag; }
+
+  (function walk(src, dest) {
+    src.childNodes.forEach((node) => {
+      if (node.nodeType === Node.TEXT_NODE) { dest.appendChild(document.createTextNode(node.nodeValue)); return; }
+      if (node.nodeType !== Node.ELEMENT_NODE) return;
+      const tag = node.tagName.toUpperCase();
+      if (!CHAT_TAGS.has(tag)) { walk(node, dest); return; }   // unwrap, keep the words
+      const el = document.createElement(tag.toLowerCase());
+      if (tag === "A") {
+        const href = safeUrl(node.getAttribute("href"), ["http:", "https:", "mailto:"]);
+        if (!href) { walk(node, dest); return; }
+        el.setAttribute("href", href);
+        el.setAttribute("target", "_blank");
+        el.setAttribute("rel", "noopener noreferrer nofollow ugc");
+      } else if (tag === "IMG") {
+        // Custom emoji, and only those. "Same tower over https" is not tight
+        // enough on its own: `<img src=x>` resolves against the tower base and
+        // would sail through as an emoji pointing at an arbitrary path. Owncast
+        // serves emoji out of /img/, so require that too.
+        const src2 = safeUrl(node.getAttribute("src"), ["https:"]);
+        if (!src2) return;
+        let u; try { u = new URL(src2); } catch (_) { return; }
+        const tower = chat.base ? new URL(chat.base) : null;
+        if (!tower || u.origin !== tower.origin || !u.pathname.startsWith("/img/")) return;
+        el.setAttribute("src", src2);
+        el.setAttribute("alt", String(node.getAttribute("alt") || "emoji").slice(0, 60));
+        el.className = "emoji";
+        el.setAttribute("loading", "lazy");
+      }
+      walk(node, el);
+      dest.appendChild(el);
+    });
+  })(doc.body, frag);
+  return frag;
+}
+
+/* Owncast hands out a hue per user. Its own client paints them on black; this
+   page is paper, so the same hue is taken down to something that reads on it. */
+function chatColour(n) {
+  const hue = Number.isFinite(n) ? ((n % 360) + 360) % 360 : 0;
+  return `hsl(${hue}, 58%, 30%)`;
+}
+
+const chatLog = () => els.chatLog;
+function chatAtBottom() {
+  const l = chatLog();
+  return l.scrollHeight - l.scrollTop - l.clientHeight < 24;
+}
+function chatScrollToEnd() {
+  const l = chatLog();
+  l.scrollTop = l.scrollHeight;
+  els.chatJump.hidden = true;
+}
+function chatNote(text) {
+  els.chatNote.textContent = text;
+  els.chatNote.hidden = false;
+}
+function chatState(text, live) {
+  els.chatState.textContent = text;
+  els.chatState.classList.toggle("live", !!live);
+}
+
+function appendChatMessage(m) {
+  if (!m || m.type !== "CHAT" || m.visible === false) return;
+  const id = m.id || "";
+  if (id && chat.seen.has(id)) return;
+  if (id) chat.seen.add(id);
+
+  const stick = chatAtBottom();
+  const row = document.createElement("div");
+  row.className = "chat-msg";
+  if (id) row.dataset.id = id;
+  const when = m.timestamp ? new Date(m.timestamp) : null;
+  if (when && !isNaN(when)) row.title = when.toLocaleString();
+
+  const who = document.createElement("span");
+  who.className = "who";
+  who.textContent = String((m.user && m.user.displayName) || "someone") + ": ";
+  if (m.user && m.user.displayColor != null) who.style.color = chatColour(m.user.displayColor);
+
+  const body = document.createElement("span");
+  body.className = "body";
+  body.appendChild(sanitizeChatBody(m.body));
+
+  row.appendChild(who); row.appendChild(body);
+  chatLog().appendChild(row);
+  els.chatNote.hidden = true;
+
+  // Keep the log a fixed cost no matter how long the page is left open.
+  const rows = chatLog().querySelectorAll(".chat-msg");
+  if (rows.length > CONFIG.CHAT_MAX_RENDER) {
+    for (let i = 0; i < rows.length - CONFIG.CHAT_MAX_RENDER; i++) rows[i].remove();
+  }
+
+  if (stick) chatScrollToEnd();
+  else els.chatJump.hidden = false;
+  if (!chat.open) { chat.unread++; renderUnread(); }
+}
+
+function removeChatMessages(ids) {
+  (ids || []).forEach((id) => {
+    const el = chatLog().querySelector(`.chat-msg[data-id="${CSS.escape(String(id))}"]`);
+    if (el) el.remove();
+  });
+}
+
+function renderUnread() {
+  const n = chat.unread;
+  els.chatUnread.hidden = n === 0;
+  els.chatUnread.textContent = n > 99 ? "99+" : String(n);
+}
+
+/* Register once, then keep the token. See note 2 at the top: this is what
+   stops every page view announcing a new arrival in the room. */
+async function chatUser() {
+  if (chat.user) return chat.user;
+  try {
+    const raw = localStorage.getItem(CHAT_USER_KEY);
+    const u = raw ? JSON.parse(raw) : null;
+    if (u && u.accessToken) { chat.user = u; return u; }
+  } catch (_) {}
+  // No Content-Type, no body: a simple request, so no preflight to be refused.
+  const r = await fetch(chat.base + "/api/chat/register", { method: "POST" });
+  if (!r.ok) throw new Error("register " + r.status);
+  const u = await r.json();
+  if (!u || !u.accessToken) throw new Error("register: no token");
+  chat.user = u;
+  try { localStorage.setItem(CHAT_USER_KEY, JSON.stringify(u)); } catch (_) {}
+  return u;
+}
+function forgetChatUser() {
+  chat.user = null;
+  try { localStorage.removeItem(CHAT_USER_KEY); } catch (_) {}
+}
+
+async function loadChatBacklog(token) {
+  const r = await fetch(chat.base + "/api/chat?accessToken=" + encodeURIComponent(token), { cache: "no-store" });
+  if (!r.ok) throw new Error("history " + r.status);
+  const list = await r.json();
+  if (!Array.isArray(list)) return;
+  list.filter((m) => m && m.type === "CHAT" && m.visible !== false)
+      .slice(-CONFIG.CHAT_BACKLOG)
+      .forEach(appendChatMessage);
+  if (!chatLog().querySelector(".chat-msg")) chatNote("NOTHING SAID YET — BE THE FIRST.");
+  chat.unread = 0; renderUnread();
+  chatScrollToEnd();
+}
+
+function chatConnect(token) {
+  const url = chat.base.replace(/^http/, "ws") + "/ws?accessToken=" + encodeURIComponent(token);
+  const ws = new WebSocket(url);
+  chat.ws = ws;
+  ws.onopen = () => { chat.retry = 0; chatState("LIVE", true); };
+  ws.onmessage = (e) => {
+    // Owncast can pack several JSON objects into one frame, newline separated.
+    String(e.data).split("\n").forEach((line) => {
+      if (!line.trim()) return;
+      let m; try { m = JSON.parse(line); } catch (_) { return; }
+      if (m.type === "CHAT") appendChatMessage(m);
+      else if (m.type === "VISIBILITY-UPDATE") removeChatMessages(m.ids);
+      else if (m.type === "ERROR_NEEDS_REGISTRATION") {
+        // The stored token was revoked or the tower was rebuilt. Register once
+        // more; the guard stops this becoming a loop against a dead server.
+        forgetChatUser();
+        if (!chat.reregistered) { chat.reregistered = true; startChat(); }
+      }
+    });
+  };
+  ws.onclose = () => {
+    if (chat.stopped) return;
+    chatState("RECONNECTING…", false);
+    const wait = Math.min(30000, 2000 * Math.pow(2, chat.retry++));
+    clearTimeout(chat.retryTimer);
+    chat.retryTimer = setTimeout(() => chatUser().then((u) => chatConnect(u.accessToken)).catch(() => {}), wait);
+  };
+  ws.onerror = () => { try { ws.close(); } catch (_) {} };
+}
+
+async function startChat() {
+  if (!CONFIG.CHAT_ENABLED || !chat.base) { chatState("CHAT OFF", false); chatNote("CHAT IS NOT CONFIGURED."); return; }
+  try {
+    const u = await chatUser();
+    await loadChatBacklog(u.accessToken);
+    chatState("CONNECTING…", false);
+    chatConnect(u.accessToken);
+  } catch (e) {
+    chatState("UNREACHABLE", false);
+    chatNote("THE TOWER'S CHAT CAN'T BE REACHED FROM HERE — TRY IT ON THE TOWER ITSELF.");
+  }
+}
+
+/* ---- the rail switch ---- */
+function showRail(which) {
+  const isChat = which !== "spec";
+  chat.open = isChat;
+  els.railChat.hidden = !isChat;
+  els.railSpec.hidden = isChat;
+  els.rtabChat.setAttribute("aria-selected", isChat ? "true" : "false");
+  els.rtabSpec.setAttribute("aria-selected", isChat ? "false" : "true");
+  els.rtabChat.tabIndex = isChat ? 0 : -1;
+  els.rtabSpec.tabIndex = isChat ? -1 : 0;
+  if (isChat) { chat.unread = 0; renderUnread(); chatScrollToEnd(); }
+  try { localStorage.setItem(RAIL_KEY, isChat ? "chat" : "spec"); } catch (_) {}
+}
+els.rtabChat.addEventListener("click", () => showRail("chat"));
+els.rtabSpec.addEventListener("click", () => showRail("spec"));
+els.chatJump.addEventListener("click", chatScrollToEnd);
+els.chatLog.addEventListener("scroll", () => { if (chatAtBottom()) els.chatJump.hidden = true; });
+document.querySelector(".rail-tabs").addEventListener("keydown", (e) => {
+  if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+  e.preventDefault();
+  const to = els.rtabChat.getAttribute("aria-selected") === "true" ? "spec" : "chat";
+  showRail(to);
+  (to === "spec" ? els.rtabSpec : els.rtabChat).focus();
+});
+
+function initChat() {
+  if (!CONFIG.CHAT_ENABLED) {
+    els.railChat.remove();
+    els.rtabChat.remove();
+    els.railSpec.hidden = false;
+    els.rtabSpec.setAttribute("aria-selected", "true");
+    els.rtabSpec.tabIndex = 0;
+    return;
+  }
+  let stored = null;
+  try { stored = localStorage.getItem(RAIL_KEY); } catch (_) {}
+  showRail(stored === "spec" ? "spec" : "chat");
+  startChat();
+}
+
+/* Exposed for tools/test-chat-panel.mjs — the sanitiser is the one piece here
+   worth testing against hostile input directly, and driving it through a live
+   tower to do that would mean posting junk into a real room. */
+window.__z0ChatInternals = { sanitizeChatBody, appendMessage: appendChatMessage, chatColour };
+
 /* ---------------- boot ---------------- */
 els.chatLink.href = CONFIG.CHAT_URL || "#";
 els.labLink.href = CONFIG.LAB_URL;
@@ -1522,6 +2039,7 @@ armPeekOnTouch();
 renderSchedule(); setInterval(renderSchedule, 30 * 1000);
 initShell();
 pollStatus(); setInterval(pollStatus, CONFIG.STATUS_POLL_SECONDS * 1000);
+initChat();
 </script>
 </body>
 </html>

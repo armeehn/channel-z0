@@ -49,7 +49,7 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | [`docs/weather.md`](docs/weather.md) | **On-air graphics.** The bug, the weather desk, the crawl, and the traps in ErsatzTV’s graphics engine |
 | [`docs/ad-standards.md`](docs/ad-standards.md) | The one-page rulebook for locally submitted commercials |
 | [`docs/ideas.md`](docs/ideas.md) | The writers' room — what's shipped, what's next |
-| [`site/index.html`](site/index.html) | The storefront — six tabbed sections (SEC.01–06) pinned to the window, live player (pause, volume, full screen), program grid, ad submissions (Riposte Labs design language) |
+| [`site/index.html`](site/index.html) | The storefront — tabbed sections pinned to the window, live player (pause, volume, full screen), the tower's live chat in the rail, program grid, ad submissions (Riposte Labs design language) |
 | [`site/retro/index.html`](site/retro/index.html) | The original CRT-and-wood-cabinet version, preserved |
 | [`site/_headers`](site/_headers) · [`site/_redirects`](site/_redirects) | Cloudflare headers + short links (`/watch`, `/lab`) |
 | [`vps/`](vps/) | The tower: Owncast `docker-compose.yml` + `Caddyfile` (and [`vps/peertube/`](vps/peertube/) — a peer-to-peer alternative tower) |
@@ -73,6 +73,7 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | `tools/test-broadcast.sh` | Fire a live test pattern at the tower (build guide, Phase 1.5) |
 | `tools/test-player-controls.mjs` | Drive the storefront player in a real browser — pause/resume-at-live, mute + volume, full screen (needs the channel on air) |
 | `tools/test-section-tabs.mjs` | Drive the storefront's section tabs in a real browser — one panel at a time, deep links, keyboard, and that nothing spills past the fold |
+| `tools/test-chat-panel.mjs` | Drive the rail's live chat in a real browser — the SPEC/CHAT switch, the wire to the tower, and the sanitiser against hostile message bodies |
 | `tools/check-ad.sh` | Screen a submitted spot: length, codecs, true loudness (read-only) |
 | `tools/normalize-ad.sh` | Clear a submitted spot for air: 1080p/30, loudness-normalized |
 | `tools/make-colorbars.sh` | Generate the midnight sign-off bars (with optional silence) |
@@ -125,8 +126,43 @@ The short version — the [build guide](docs/build-guide.md) has every command.
 - **`site/index.html` `CONFIG` block** — stream URL, Owncast base (for the
   ON AIR light, receiver count, and the live NOW SHOWING title), ad-submission
   email, chat and lab links. Also the **`P2P_*` keys** (WebRTC segment sharing,
-  on by default — viewers offload the tower for each other) and `PEERTUBE_EMBED`
-  (set it to run the PeerTube tower's player instead; see [`vps/peertube/`](vps/peertube/)).
+  on by default — viewers offload the tower for each other), the **`CHAT_*`
+  keys** (see below) and `PEERTUBE_EMBED` (set it to run the PeerTube tower's
+  player instead; see [`vps/peertube/`](vps/peertube/)).
+
+### The live chat in the rail
+
+SEC.01's right-hand rail carries two things behind one switch in the card's
+head bar: the **SPEC** card and the tower's **CHAT**. It opens on CHAT, and the
+viewer's choice is remembered. They share the column rather than stacking
+because there is only ~16px of slack under the SPEC card on a 1280×900 window —
+measured, not guessed.
+
+The chat is **read-only, on purpose.** The storefront reads the room straight
+from Owncast (`/api/chat` for the backlog, then a websocket) and posts nothing.
+A page that could post would have to carry a chat token, and a token in a public
+page belongs to everyone who views it. The way in for viewers is the tower
+itself, linked at the foot of the panel.
+
+`CONFIG.CHAT_POST_ENDPOINT` is the seam for changing that: a route **on this
+origin** that accepts `{ body }`, rate-limits per viewer, runs the text past a
+small model against the house rules, and only then speaks to Owncast with a
+server-side token. It is `null` until that exists, which is what keeps the
+panel honest about being read-only.
+
+Three things about the tower are worth knowing before touching any of it, all
+of them found the hard way and all of them commented at the chat block in
+`site/index.html`:
+
+- the register POST must be a **simple request** — send `Content-Type:
+  application/json` and the preflight is refused by the tower's
+  `Access-Control-Allow-Headers`, and the whole panel dies with "Failed to
+  fetch";
+- **`USER_JOINED` is broadcast on a token's first connection only**, so
+  persisting the token in `localStorage` is what stops every page view
+  announcing a new arrival in the room;
+- message bodies are **HTML the tower rendered from someone else's markdown**,
+  and this page sets no CSP, so they go through an allowlist and nothing else.
 - **Everything else** lives in the ErsatzTV and Owncast admin UIs, documented
   in the build guide.
 
