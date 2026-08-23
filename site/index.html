@@ -391,6 +391,35 @@
     background: var(--ink); color: var(--paper); border: 0;
   }
   .chat-jump:hover { background: var(--red); }
+  /* ---------- the comment box ----------
+     Two rows so the name does not steal width from the words. The SEND button
+     uses the same .swap trick as the transport: SENDING is longer than SEND,
+     and a button that grows while you are waiting on it is exactly the
+     complaint this branch started with. */
+  .chat-say {
+    flex: none; border-top: 1px dashed #b9b4a6; padding: 8px 10px 6px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .chat-say-top { display: flex; align-items: center; gap: 8px; }
+  .chat-say-lbl { font-size: 10px; letter-spacing: .18em; color: var(--ink-2); }
+  .chat-name {
+    flex: 1 1 auto; min-width: 0; font: inherit; font-size: 11px; letter-spacing: .08em;
+    background: var(--paper); border: 1px solid #b9b4a6; padding: 4px 6px; color: var(--ink);
+  }
+  .chat-count { font-size: 10px; color: var(--ink-2); font-variant-numeric: tabular-nums; min-width: 3ch; text-align: right; }
+  .chat-count.low { color: var(--red); font-weight: 700; }
+  .chat-say-bottom { display: flex; align-items: stretch; gap: 8px; }
+  .chat-say textarea {
+    flex: 1 1 auto; min-width: 0; resize: none; font: inherit; font-size: 12px; line-height: 1.4;
+    background: var(--paper); border: 1px solid #b9b4a6; padding: 5px 6px; color: var(--ink);
+  }
+  .chat-say textarea:focus, .chat-name:focus { outline: 2px solid var(--red); outline-offset: -1px; }
+  .chat-say .btn { flex: none; padding: 0 12px; font-size: 11px; }
+  .chat-say .btn:disabled { opacity: .4; }
+  .chat-say-note { font-size: 10px; letter-spacing: .06em; line-height: 1.4; color: var(--ink-2); min-height: 0; }
+  .chat-say-note:empty { display: none; }
+  .chat-say-note.bad { color: var(--red); }
+
   .chat-foot {
     flex: none; display: flex; align-items: center; gap: 8px;
     border-top: 1px dashed #b9b4a6; padding: 7px 10px;
@@ -865,6 +894,29 @@
             <p class="chat-note" id="chatNote">TUNING IN TO THE CHAT…</p>
           </div>
           <button class="chat-jump" type="button" id="chatJump" hidden>NEW MESSAGES ▾</button>
+          <!-- The way in. Hidden until the relay says it is open and moderated
+               (GET /api/comment), so a station without the Worker deployed —
+               or with it deployed and unconfigured — shows the tower link
+               instead of a box that can only fail. -->
+          <form class="chat-say" id="chatSay" hidden>
+            <div class="chat-say-top">
+              <label class="chat-say-lbl" for="chatName">AS</label>
+              <input class="chat-name" id="chatName" maxlength="24" autocomplete="off" spellcheck="false"
+                     placeholder="name" aria-label="The name your comment appears under">
+              <span class="chat-count" id="chatCount" aria-hidden="true"></span>
+            </div>
+            <div class="chat-say-bottom">
+              <textarea id="chatInput" rows="2" placeholder="Say something to the room…"
+                        aria-label="Your comment" aria-describedby="chatSayNote"></textarea>
+              <button class="btn" id="chatSend" type="submit">
+                <span class="swap">
+                  <span class="s-a">SEND</span>
+                  <span class="s-b">SENDING</span>
+                </span>
+              </button>
+            </div>
+            <p class="chat-say-note" id="chatSayNote" role="status"></p>
+          </form>
           <div class="chat-foot">
             <span class="chat-state" id="chatState">—</span>
             <a class="chat-post" id="chatLink" href="#" target="_blank" rel="noopener">SAY SOMETHING ↗</a>
@@ -1079,7 +1131,10 @@ const CONFIG = {
   // server-side token. Leaving it null keeps this panel read-only, which is
   // the honest state of things — a public page must not hold a chat token that
   // can post, because a token in a page belongs to everyone who views it.
-  CHAT_POST_ENDPOINT: null,
+  // The relay's own origin path. GET it for {enabled, maxLength,
+  // cooldownSeconds}; POST { body, name, viewerId } to say something. Set to
+  // null to take the comment box off the page without touching the Worker.
+  CHAT_POST_ENDPOINT: "/api/comment",
   LAB_URL:      "https://ripostelabs.xyz",
   STATUS_POLL_SECONDS: 30,
   RETRY_SECONDS: 20,
@@ -1199,6 +1254,8 @@ const els = {
   chatLink: $("chatLink"), adMail: $("adMail"), labLink: $("labLink"),
   chatLog: $("chatLog"), chatNote: $("chatNote"), chatState: $("chatState"),
   chatJump: $("chatJump"), chatUnread: $("chatUnread"),
+  chatSay: $("chatSay"), chatName: $("chatName"), chatInput: $("chatInput"),
+  chatSend: $("chatSend"), chatCount: $("chatCount"), chatSayNote: $("chatSayNote"),
   railChat: $("rail-chat"), railSpec: $("rail-spec"),
   rtabChat: $("rtab-chat"), rtabSpec: $("rtab-spec"),
 };
@@ -2015,8 +2072,128 @@ function initChat() {
   let stored = null;
   try { stored = localStorage.getItem(RAIL_KEY); } catch (_) {}
   showRail(stored === "spec" ? "spec" : "chat");
-  startChat();
+  // startChat() first: the default name in the box is the one the tower gave
+  // this viewer, and that is only known once registration has happened.
+  startChat().then(initSay);
 }
+
+
+/* ---- saying something ----
+   The page never speaks to the tower directly here. It asks the relay on this
+   origin, which holds the chat token, applies the house rules and posts on the
+   viewer's behalf — see worker/index.js. Everything below is therefore about
+   one fetch and about being honest when it says no.
+
+   Nothing is echoed into the log optimistically: the message comes back down
+   the websocket like everyone else's, which is also the proof it landed. */
+const CHAT_NAME_KEY = "z0.chat.name";
+const say = { open: false, cooldown: 0, timer: null, sending: false, max: 280 };
+
+function sayNote(text, bad) {
+  els.chatSayNote.textContent = text || "";
+  els.chatSayNote.classList.toggle("bad", !!bad);
+}
+function updateCount() {
+  const left = say.max - els.chatInput.value.length;
+  els.chatCount.textContent = String(left);
+  els.chatCount.classList.toggle("low", left <= 20);
+}
+function sendable() {
+  return say.open && !say.sending && say.cooldown === 0 && els.chatInput.value.trim().length > 0;
+}
+function syncSend() {
+  els.chatSend.disabled = !sendable();
+  els.chatSend.classList.toggle("alt", say.sending);
+}
+/* A countdown rather than a dead button: the viewer is told what they are
+   waiting for, and the relay is not asked a question it will refuse. */
+function startCooldown(seconds) {
+  clearInterval(say.timer);
+  say.timer = null;
+  say.cooldown = Math.max(0, Math.ceil(seconds));
+  syncSend();
+  if (say.cooldown === 0) return;
+  // Decrement first, then test: checking before decrementing costs an extra
+  // tick, and the button comes back a second later than the relay said.
+  say.timer = setInterval(() => {
+    say.cooldown--;
+    if (say.cooldown <= 0) {
+      clearInterval(say.timer); say.timer = null; say.cooldown = 0;
+      if (!els.chatSayNote.classList.contains("bad")) sayNote("");
+    }
+    syncSend();
+  }, 1000);
+}
+
+async function sendComment(e) {
+  e.preventDefault();
+  if (!sendable()) return;
+  const body = els.chatInput.value.trim();
+  const name = els.chatName.value.trim();
+  say.sending = true; syncSend(); sayNote("");
+
+  try {
+    const r = await fetch(CONFIG.CHAT_POST_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ body, name, viewerId: (chat.user && chat.user.id) || "" }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (r.ok && data.ok) {
+      els.chatInput.value = "";
+      updateCount();
+      sayNote("Sent.");
+      try { localStorage.setItem(CHAT_NAME_KEY, name); } catch (_) {}
+      startCooldown(Number(r.headers.get("Retry-After")) || say.cooldownSeconds || 0);
+    } else if (r.status === 429) {
+      sayNote(data.detail || "Too fast.", true);
+      startCooldown(Number(r.headers.get("Retry-After")) || 15);
+    } else {
+      // 422 carries the moderator's own sentence; 503 means it is offline. In
+      // both cases the words the viewer typed stay in the box.
+      sayNote(data.detail || "That did not go through.", true);
+    }
+  } catch (_) {
+    sayNote("The relay could not be reached.", true);
+  } finally {
+    say.sending = false; syncSend();
+  }
+}
+
+/* Ask the relay what it is before showing a box. A 404 (no Worker deployed) or
+   a relay with no token or no moderator both end up here as "closed", and the
+   panel keeps the link to the tower it has always had. */
+async function initSay() {
+  if (!CONFIG.CHAT_POST_ENDPOINT) return;
+  let cfg = null;
+  try {
+    const r = await fetch(CONFIG.CHAT_POST_ENDPOINT, { cache: "no-store" });
+    if (r.ok) cfg = await r.json();
+  } catch (_) {}
+  if (!cfg || !cfg.enabled) return;          // stays hidden; the tower link stands
+
+  say.open = true;
+  say.max = Number(cfg.maxLength) || 280;
+  say.cooldownSeconds = Number(cfg.cooldownSeconds) || 0;
+  els.chatInput.maxLength = say.max;
+  els.chatSay.hidden = false;
+  els.chatLink.textContent = "OPEN THE TOWER ↗";   // no longer the only way in
+
+  let stored = "";
+  try { stored = localStorage.getItem(CHAT_NAME_KEY) || ""; } catch (_) {}
+  els.chatName.value = stored || (chat.user && chat.user.displayName) || "";
+
+  updateCount(); syncSend();
+  if (!cfg.moderated) sayNote("Comments are not being screened.");
+}
+
+els.chatSay.addEventListener("submit", sendComment);
+els.chatInput.addEventListener("input", () => { updateCount(); syncSend(); });
+els.chatName.addEventListener("input", syncSend);
+/* Enter sends, Shift+Enter is a new line — the chat convention. */
+els.chatInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); els.chatSay.requestSubmit(); }
+});
 
 /* Exposed for tools/test-chat-panel.mjs — the sanitiser is the one piece here
    worth testing against hostile input directly, and driving it through a live
