@@ -393,6 +393,11 @@ ok("no uncaught JS errors on the page", consoleErrors.filter((e) => e.startsWith
        404s, which Chrome surfaces as ERR_BLOCKED_BY_ORB). Pre-existing on
        origin/main; harmless only because the jsdelivr fallback catches it,
        at the cost of a wasted round trip before playback starts.
+     - 404 on /api/comment: this suite serves site/ as static files with no
+       Worker behind them, which is exactly the case the comment box is meant
+       to survive — the page asks the relay what it is, hears nothing, and
+       keeps the link to the tower instead of showing a box that cannot work.
+       The 404 is the graceful path being taken, not a fault.
      - ERR_ABORTED on the tower's own /hls/: this suite reloads the page while
        a live channel is playing, and the browser cancels whatever segment or
        playlist poll was in flight. It is the browser tidying up after the
@@ -401,7 +406,7 @@ ok("no uncaught JS errors on the page", consoleErrors.filter((e) => e.startsWith
        exact file against an unmodified origin/main: clean on one run,
        two aborts on the next.
    Anything else is a regression from this change. */
-const KNOWN = /favicon|cdnjs\.cloudflare\.com\/ajax\/libs\/hls\.js|\/hls\/\d+\/stream[^ ]*\s+net::ERR_ABORTED/i;
+const KNOWN = /favicon|cdnjs\.cloudflare\.com\/ajax\/libs\/hls\.js|\/hls\/\d+\/stream[^ ]*\s+net::ERR_ABORTED|404 [^ ]*\/api\/comment/i;
 const realBad = [...new Set(badRequests)].filter((b) => !KNOWN.test(b));
 ok("no failed requests beyond the two known pre-existing misses", realBad.length === 0, realBad.slice(0, 4).join(" ; "));
 
