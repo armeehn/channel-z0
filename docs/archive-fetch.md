@@ -251,6 +251,57 @@ The next operator should run `tools/make-media-tree.sh` then
 
 ---
 
+## When a viewer flags something
+
+The intake policy is public. `site/index.html` carries it as **SEC.05, the Rights
+Desk**: where the acquired half of the schedule came from, that only
+public-domain-marked items are ever fetched, and — in as many words — that a mark
+is an uploader's claim rather than a ruling. Under it sits a flag link, a
+`mailto:` the page fills in on the viewer's behalf, because a viewer cannot name
+what they are looking at. The picture carries no identifier; the page knows one.
+
+A claim arrives with these lines above whatever the sender wrote:
+
+```
+PROGRAMME:   THE VANCOUVER REEL
+TITLE FROM:  the tower, live
+SLOT:        SUNDAY 14:00 · THE VANCOUVER REEL
+FLAGGED:     2026-08-24 14:07:31 UTC-07:00
+FLAGGED UTC: 2026-08-24T21:07:31.412Z
+WATCHING:    yes
+```
+
+**Read `TITLE FROM` first.** *The tower, live* is the title master control
+actually set, which names a programme. *Today's schedule* means the page could
+not reach Owncast and fell back to its own copy of the grid — the claim then
+points at a **slot**, not a file, and the two timestamps are what narrow it down.
+Both are always sent: local time carries its UTC offset because a claim is read
+in another timezone weeks later, and a bare wall clock is not a moment.
+
+To act on one:
+
+1. **Find the item.** `PROGRAMME` matches the on-air title; the file is
+   `Title (Year) [identifier].ext` and the identifier is the archive.org item.
+   ```bash
+   jq -r 'select(.title|test("vancouver";"i"))' .z0-archive/manifest.jsonl
+   ```
+2. **Read its manifest line.** `licenseurl` is the mark it was aired under —
+   that, not a memory of the query, is what the station acted on.
+3. **Take it off air, then check.** Delete the file, and *keep* the manifest
+   line: `already_have()` skips any identifier that appears in the manifest at
+   all, whatever its `status`, so the line is what stops the next `--all` from
+   fetching it straight back. Set its `status` to `withdrawn` while you are in
+   there; nothing reads the value, and the next operator will read it. (The
+   *replace* recipe above deletes both, on purpose — that is for an item you
+   merely didn't want, and which may be fetched again.)
+4. **Say so at the source** if the mark itself was wrong. The next station to
+   run this script reads the same field off the same item.
+
+Claims land in the same mailbox as spot submissions; the subject line
+(`Channel Z0 — rights claim — …`) is what separates them.
+
+---
+
 ## Testing without the bytes
 
 A stocked library is tens of gigabytes and one feature is a few hundred
