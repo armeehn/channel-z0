@@ -782,7 +782,7 @@
             <span class="k">NOW SHOWING</span><span class="v" id="nowPlateTitle">—</span>
           </div>
           <div class="offair show" id="offair">
-            <span class="tag">OFF AIR</span>
+            <span class="tag" id="offairTag">OFF AIR</span>
             <span class="sub" id="offairSub">TRANSMISSION RESUMES SHORTLY — STAY TUNED</span>
           </div>
         </div>
@@ -1189,7 +1189,7 @@ const todaySchedule = () => WEEK[new Date().getDay()];
 const $ = (id) => document.getElementById(id);
 const tv = $("tv");
 const els = {
-  offair: $("offair"), offairSub: $("offairSub"),
+  offair: $("offair"), offairTag: $("offairTag"), offairSub: $("offairSub"),
   airChip: $("airChip"), airLabel: $("airLabel"),
   clock: $("clock"), nowShowing: $("nowShowing"), specStatus: $("specStatus"),
   nowPlate: $("nowPlate"), nowPlateTitle: $("nowPlateTitle"),
@@ -1203,7 +1203,7 @@ const els = {
   rtabChat: $("rtab-chat"), rtabSpec: $("rtab-spec"),
 };
 
-const state = { tuned: false, hls: null, retryTimer: null, owncastOnline: null, streamTitle: "", p2p: null, embed: false };
+const state = { tuned: false, hls: null, retryTimer: null, owncastOnline: null, streamTitle: "", p2p: null, embed: false, receiverDead: false };
 
 /* The "NOW SHOWING" line prefers the live title from the tower (what ErsatzTV
    is actually airing, via nowplaying.py) and falls back to today's schedule —
@@ -1356,7 +1356,32 @@ function setOnAir(on) {
   els.airLabel.classList.toggle("alt", !!on);
   els.specStatus.innerHTML = on ? "<b>LIVE — SIGNAL ACQUIRED</b>" : (state.tuned ? "<b>SEEKING SIGNAL</b>" : "<b>STANDBY</b>");
 }
-function showOffair(show) { els.offair.classList.toggle("show", show); }
+/* The card over the picture is the loudest thing on the page, so it has to
+   report what the STATION is doing and not what this receiver happens to be
+   doing. Nobody having pressed TUNE IN is not a sign-off: while the tower says
+   the channel is up, the card is an invitation to tune in, and a tuned-in
+   player that has stalled says that instead. OFF AIR is kept for the cases
+   that earn it — the tower saying the channel is down, a receiver that cannot
+   decode us, and a tower we cannot reach at all, since an unanswered status
+   API is not evidence of a broadcast.
+
+   It reads from state on every repaint rather than being written once at the
+   moment something happens, because the two inputs — the player and the
+   30-second tower poll — change independently, and whichever moved last used
+   to win. That is how the chip could sit at ON AIR with OFF AIR across the
+   picture beneath it. */
+function offairCopy() {
+  if (state.receiverDead)          return ["OFF AIR", "THIS RECEIVER CANNOT DECODE OUR SIGNAL — TRY ANOTHER BROWSER"];
+  if (state.owncastOnline !== true) return ["OFF AIR", "TRANSMISSION RESUMES SHORTLY — STAY TUNED"];
+  return state.tuned ? ["ON AIR", "SEEKING SIGNAL — STAND BY"]
+                     : ["ON AIR", "PRESS TUNE IN TO WATCH"];
+}
+function renderOffair() {
+  const [tag, sub] = offairCopy();
+  els.offairTag.textContent = tag;
+  els.offairSub.textContent = sub;
+}
+function showOffair(show) { els.offair.classList.toggle("show", show); renderOffair(); }
 
 async function tuneIn() {
   clearTimeout(state.retryTimer);
@@ -1383,7 +1408,7 @@ async function tuneIn() {
     tv.play().then(() => { showOffair(false); setOnAir(true); }).catch(() => signalLost());
     tv.onerror = () => signalLost();
   } else {
-    els.offairSub.textContent = "THIS RECEIVER CANNOT DECODE OUR SIGNAL — TRY ANOTHER BROWSER";
+    state.receiverDead = true;
     signalLost(true);
   }
 }
@@ -1584,10 +1609,11 @@ async function pollStatus() {
     const j = await r.json();
     state.owncastOnline = !!j.online;
     setOnAir(state.owncastOnline);
+    renderOffair();
     if (typeof j.viewerCount === "number") els.viewerNote.textContent = "RECEIVERS: " + j.viewerCount;
     state.streamTitle = (state.owncastOnline && j.streamTitle) ? String(j.streamTitle) : "";
     updateNowShowing();
-  } catch (e) { state.owncastOnline = null; els.viewerNote.textContent = "RECEIVERS: —"; state.streamTitle = ""; }
+  } catch (e) { state.owncastOnline = null; els.viewerNote.textContent = "RECEIVERS: —"; state.streamTitle = ""; renderOffair(); }
 }
 
 /* ---------------- clock + program grid ---------------- */
