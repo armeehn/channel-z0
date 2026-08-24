@@ -49,13 +49,15 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | [`docs/weather.md`](docs/weather.md) | **On-air graphics.** The bug, the weather desk, the crawl, and the traps in ErsatzTV’s graphics engine |
 | [`docs/ad-standards.md`](docs/ad-standards.md) | The one-page rulebook for locally submitted commercials |
 | [`docs/ideas.md`](docs/ideas.md) | The writers' room — what's shipped, what's next |
+| [`docs/comment-relay.md`](docs/comment-relay.md) | **The comment relay.** How a viewer's comment gets from the storefront into the chat room: shape, allowance, house rules, post |
 | [`site/index.html`](site/index.html) | The storefront — tabbed sections pinned to the window, live player (pause, volume, full screen), the tower's live chat in the rail, program grid, ad submissions (Riposte Labs design language) |
 | [`site/retro/index.html`](site/retro/index.html) | The original CRT-and-wood-cabinet version, preserved |
 | [`site/_headers`](site/_headers) · [`site/_redirects`](site/_redirects) | Cloudflare headers + short links (`/watch`, `/lab`) |
 | [`vps/`](vps/) | The tower: Owncast `docker-compose.yml` + `Caddyfile` (and [`vps/peertube/`](vps/peertube/) — a peer-to-peer alternative tower) |
 | [`playout/`](playout/) | Master control: `compose.yml` (containerized), ErsatzTV launcher, uplink supervisor, now-playing bridge |
 | [`tools/`](tools/) | Station scripts — see below |
-| [`wrangler.jsonc`](wrangler.jsonc) | Cloudflare Worker config (serves `site/` as static assets at `ch0.ripostelabs.xyz`) |
+| [`worker/`](worker/) | The storefront Worker — the moderated comment relay and nothing else ([manual](docs/comment-relay.md)) |
+| [`wrangler.jsonc`](wrangler.jsonc) | Cloudflare Worker config (serves `site/` as static assets at `ch0.ripostelabs.xyz`, plus the relay) |
 | [`.env.example`](.env.example) | Domains, stream key, media root, tokens — copy, fill, never commit |
 
 ### Station scripts
@@ -74,6 +76,8 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | `tools/test-player-controls.mjs` | Drive the storefront player in a real browser — pause/resume-at-live, mute + volume, full screen (needs the channel on air) |
 | `tools/test-section-tabs.mjs` | Drive the storefront's section tabs in a real browser — one panel at a time, deep links, keyboard, and that nothing spills past the fold |
 | `tools/test-chat-panel.mjs` | Drive the rail's live chat in a real browser — the SPEC/CHAT switch, the wire to the tower, and the sanitiser against hostile message bodies |
+| `tools/test-chat-composer.mjs` | Drive the comment box in a real browser against a stubbed relay — every way it can say yes, no, and wait |
+| `tools/test-comment-relay.mjs` | Drive the relay Worker with no browser and no network — shape, rate limits, fail-closed moderation, the tower call |
 | `tools/check-ad.sh` | Screen a submitted spot: length, codecs, true loudness (read-only) |
 | `tools/normalize-ad.sh` | Clear a submitted spot for air: 1080p/30, loudness-normalized |
 | `tools/make-colorbars.sh` | Generate the midnight sign-off bars (with optional silence) |
@@ -144,11 +148,17 @@ A page that could post would have to carry a chat token, and a token in a public
 page belongs to everyone who views it. The way in for viewers is the tower
 itself, linked at the foot of the panel.
 
-`CONFIG.CHAT_POST_ENDPOINT` is the seam for changing that: a route **on this
-origin** that accepts `{ body }`, rate-limits per viewer, runs the text past a
-small model against the house rules, and only then speaks to Owncast with a
-server-side token. It is `null` until that exists, which is what keeps the
-panel honest about being read-only.
+**The way in is the relay** — `worker/`, documented in
+[`docs/comment-relay.md`](docs/comment-relay.md). A viewer's comment goes to a
+Worker route on this origin, which checks its shape, spends the viewer's
+allowance, puts it in front of a small model against the house rules, and only
+then speaks to Owncast with a server-side token. Failure is closed: if the
+moderator cannot be reached, nothing is posted.
+
+Until `OWNCAST_TOKEN` and a moderator are configured the relay reports itself
+closed, the comment box never appears, and the panel keeps its link to the
+tower. **A storefront deployed without those secrets looks exactly as it did
+before the relay existed.**
 
 Three things about the tower are worth knowing before touching any of it, all
 of them found the hard way and all of them commented at the chat block in
@@ -166,7 +176,12 @@ of them found the hard way and all of them commented at the chat block in
 - **Everything else** lives in the ErsatzTV and Owncast admin UIs, documented
   in the build guide.
 
-Two secrets, both in `.env` (gitignored) and nowhere else: the **stream key**
+The relay's own two secrets live in Cloudflare, set with `wrangler secret put`
+and never in the repo: **`OWNCAST_TOKEN`** (an Owncast token scoped
+`CAN_SEND_MESSAGES` — its *name* is the author the chat room sees) and
+**`ANTHROPIC_API_KEY`** (skip it for `MODERATION_PROVIDER=workers-ai` or `off`).
+
+Two more secrets, both in `.env` (gitignored) and nowhere else: the **stream key**
 (the world vs. your airwaves) and, if you run the marquee, an **Owncast access
 token**. Cloudflare needs no secret in the repo — its Git integration deploys
 the storefront on every push on its own.

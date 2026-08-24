@@ -1,0 +1,14 @@
+{
+  "name": "channel-z0",
+  "private": true,
+  "type": "module",
+  "description": "Channel Z0 — the storefront Worker. The station itself is not a node project.",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "test:relay": "node tools/test-comment-relay.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.125.0"
+  }
+}

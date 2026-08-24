@@ -1,0 +1,12 @@
+# Copy to .dev.vars (gitignored) for `wrangler dev`. Production values are set
+# with `wrangler secret put`, never here — see docs/comment-relay.md.
+
+# Owncast token with the CAN_SEND_MESSAGES scope. Its NAME is the author the
+# chat room sees for every relayed comment.
+OWNCAST_TOKEN=paste-an-owncast-access-token
+
+# Only for MODERATION_PROVIDER=anthropic (the default).
+ANTHROPIC_API_KEY=sk-ant-...
+
+# Point the moderator somewhere else — a stub, or a gateway.
+# ANTHROPIC_BASE=http://127.0.0.1:8999
