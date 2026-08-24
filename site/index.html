@@ -550,6 +550,25 @@
   .spot-copy p { margin-bottom: 14px; max-width: 55ch; }
   .fine { font-size: 12px; color: var(--ink-2); }
 
+  /* ---------- SEC.05 rights desk ----------
+     The desk sits BESIDE the copy, not under it: in the pinned shell the panel
+     scrolls, and a section whose whole purpose is one button cannot put that
+     button below the fold. The source table is reference and goes underneath,
+     where scrolling to it costs nothing. */
+  a.btn { text-decoration: none; }
+  .rights-grid { display: grid; grid-template-columns: minmax(0,1fr) 330px; gap: 26px; align-items: start; }
+  .rights-desk { border-left: 2px solid var(--ink); padding-left: 16px; }
+  .rights-h { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 9px; }
+  .rights-desk p { margin-bottom: 12px; }
+  .rights-desk .btn { width: 100%; }
+  .rights-src { margin-top: 22px; }
+  .rights-src .req-table td:first-child { width: 15%; }
+  .flag-card { margin-bottom: 12px; }
+  /* The value is a programme title and a timestamp, not a fixed string, so the
+     key column is narrower here and a long title wraps instead of overflowing. */
+  .flag-card .spec-row { grid-template-columns: 84px 1fr; }
+  .flag-card .spec-row .v { overflow-wrap: anywhere; }
+
   /* ---------- the sponsor mark (footer) ---------- */
   .lab-esh {
     width: 30px; height: 30px; flex: none; border: 2px solid var(--ink);
@@ -580,7 +599,9 @@
   }
 
   @media (max-width: 720px) {
-    .feed-grid, .dossier, .spot-grid { grid-template-columns: 1fr; }
+    .feed-grid, .dossier, .spot-grid, .rights-grid { grid-template-columns: 1fr; }
+    /* stacked, the rule reads as a stray line down the left of the page */
+    .rights-desk { border-left: 0; padding-left: 0; border-top: 2px solid var(--ink); padding-top: 16px; }
     /* the mark would eat a third of a phone's width beside three lines of
        copy, so the sponsor line stacks instead */
     .station-foot .foot-lab { flex-wrap: wrap; gap: 10px; }
@@ -611,9 +632,9 @@
   html:not(.tabs) .hero-toggle { display: none; }
 
   /* ---------- section tabs ----------
-     Four sections, one click apart, in the order the SEC numbers already run.
+     Five sections, one click apart, in the order the SEC numbers already run.
      Gated on html.tabs (set before first paint): with JS off the tabs would be
-     four dead buttons hiding three sections, so instead they vanish and the
+     five dead buttons hiding four sections, so instead they vanish and the
      page falls back to the one long scroll it has always been. The footer is
      outside .panels and therefore outside all of this — it is always on. */
   .wrap > .checker { margin-top: 22px; }
@@ -741,8 +762,11 @@
       flex: 1 1 50%; border-bottom: 1px solid var(--ink);
       letter-spacing: .05em; padding: 10px 4px; gap: 5px;
     }
-    .sec-tab:nth-child(2n) { border-right: none; }
-    .sec-tab:nth-child(n+3) { border-bottom: none; }
+    /* Five half-width tabs wrap as two rows of two and a fifth on its own —
+       which takes the whole row rather than leaving a hole beside it, and is
+       the only one with no row under it to be separated from. */
+    .sec-tab:nth-child(2n), .sec-tab:last-child { border-right: none; }
+    .sec-tab:last-child { flex-basis: 100%; border-bottom: none; }
   }
 </style>
 <script>
@@ -802,6 +826,7 @@
     <button class="sec-tab" type="button" role="tab" id="tab-program"     aria-controls="program"     aria-selected="false" tabindex="-1"><span class="n">02</span><span class="t">Program</span></button>
     <button class="sec-tab" type="button" role="tab" id="tab-ground-zero" aria-controls="ground-zero" aria-selected="false" tabindex="-1"><span class="n">03</span><span class="t">Ground Zero</span></button>
     <button class="sec-tab" type="button" role="tab" id="tab-submit-ad"   aria-controls="submit-ad"   aria-selected="false" tabindex="-1"><span class="n">04</span><span class="t">File a Spot</span></button>
+    <button class="sec-tab" type="button" role="tab" id="tab-rights"      aria-controls="rights"      aria-selected="false" tabindex="-1"><span class="n">05</span><span class="t">Rights Desk</span></button>
   </nav>
 
   <div class="panels" id="panels">
@@ -1072,6 +1097,72 @@
     </div>
   </section>
 
+  <!-- ============ SEC.05 RIGHTS DESK ============
+       Where the acquired half of the schedule came from, on what basis it is
+       aired, and the way out for anyone who thinks we got it wrong. The flag
+       card stamps the programme and the moment onto a mailto, because a viewer
+       has no way to name what they are looking at — see docs/archive-fetch.md,
+       whose manifest is the other end of that trace. -->
+  <section class="panel" id="rights" role="tabpanel" aria-labelledby="tab-rights" tabindex="0">
+    <div class="sec-head">
+      <span class="sec-no">SEC.05</span>
+      <span class="sec-title">Rights Desk</span>
+      <span class="sec-note">PUBLIC DOMAIN ONLY</span>
+    </div>
+    <div class="rights-grid">
+      <div class="spot-copy">
+        <p>Half of this channel is made here: Ground Zero, Lab Hour, the Neighbourhood Desk, the
+           sign-on and the sign-off, the idents and the intervals between programmes. The other
+           half was fetched from the <b>Internet Archive</b>, and every second of it carried a
+           public-domain licence mark before it was downloaded.</p>
+        <p>The intake tool never asks for anything else — the search itself is filtered to
+           public-domain-marked items, so material without a mark is never even a candidate. For
+           every file that lands, the station records the licence URL it matched and the
+           archive.org identifier it came from, and names the file after that identifier.
+           Anything you see on air can be traced back to the item it came from and the mark it
+           was aired under.</p>
+        <p class="fine">A licence mark is the uploader's claim, not a legal opinion. It is the
+           best signal the archive offers and it is the one this station acts on. If you hold
+           rights in something we are airing, use the desk — the programme comes off the
+           schedule while we check, not after.</p>
+      </div>
+
+      <div class="rights-desk">
+        <h3 class="rights-h">Not public domain? Flag it</h3>
+        <p class="fine">If what is on air right now shouldn't be, tell the desk.</p>
+        <p><a class="btn" id="flagMail"
+              href="mailto:ch0@ripostelabs.xyz?subject=Channel%20Z0%20%E2%80%94%20rights%20claim">FLAG THIS PROGRAMME ▸</a></p>
+        <p class="fine">A viewer has no way to name what they are looking at, so the page does
+           it: this goes with your message, stamped at the moment you click.</p>
+        <div class="speccard flag-card">
+          <div class="spec-head"><span>FLAGGING</span><span class="code" id="flagSrc">—</span></div>
+          <div class="spec-rows">
+            <div class="spec-row"><span class="k">PROGRAMME</span><span class="v" id="flagTitle">—</span></div>
+            <div class="spec-row"><span class="k">SLOT</span><span class="v" id="flagSlot">—</span></div>
+            <div class="spec-row"><span class="k">LOCAL</span><span class="v" id="flagLocal">—</span></div>
+            <div class="spec-row"><span class="k">UTC</span><span class="v" id="flagUtc">—</span></div>
+          </div>
+        </div>
+        <p class="fine">Opens your own mail app, filled in. Nothing leaves this page on its own,
+           and the station keeps no record of you.</p>
+      </div>
+    </div>
+
+    <div class="rights-src">
+      <h3 class="rights-h">Where the programming comes from</h3>
+      <table class="req-table" aria-label="Where the programming comes from">
+        <tr><td>OURS</td><td>Ground Zero, Lab Hour, the Desk, idents, intervals, test cards — made at the station</td></tr>
+        <tr><td>SHORTS</td><td>Prelinger Theatre, and the vintage PSAs between programmes — the Prelinger collection</td></tr>
+        <tr><td>CARTOONS</td><td>The Cartoon Block and Cartoon Carnival — archive.org <code>animationandcartoons</code></td></tr>
+        <tr><td>FEATURES</td><td>Noir, sci-fi, documentary, serials, classics, cult — archive.org <code>feature_films</code></td></tr>
+        <tr><td>SLOW TV</td><td>Scenic, travelogue and railway film, 1900–1985 — standing in until our own long takes exist</td></tr>
+        <tr><td>COMMERCIALS</td><td>Sent in by neighbours, who confirm they own everything in them (SEC.04)</td></tr>
+        <tr><td>THE MARK</td><td>Every fetched item matched <code>licenseurl:(*publicdomain*)</code>, recorded per file with its archive.org id</td></tr>
+      </table>
+    </div>
+
+  </section>
+
   </div><!-- /.panels -->
 
   <!-- ============ STATION FOOTER ============
@@ -1115,6 +1206,11 @@
      const WATCH_HOST = "watch.channelz0.tv";
      const AD_EMAIL   = "ads@channelz0.tv";
 
+   One address escapes this rule: SEC.05's flag link carries the mailbox in its
+   markup as well, so a viewer with JS off still has a way to file a rights
+   claim. JS overwrites it from CONFIG on boot; the hard-coded copy is only the
+   fallback, and it has to be changed by hand alongside these two.
+
    (Full checklist: docs/build-guide.md, Phase 4 → "When channelz0.tv goes live".)
    ====================================================================== */
 const WATCH_HOST = "watch.ch0.ripostelabs.xyz";   // the Owncast tower on the VPS
@@ -1128,6 +1224,9 @@ const CONFIG = {
   // Set WATCH_HOST to "" above to skip polling (chip then follows the player).
   OWNCAST_BASE: WATCH_HOST ? `https://${WATCH_HOST}` : "",
   AD_EMAIL,
+  // Rights claims from SEC.05 land in the same mailbox; the subject line is
+  // what separates them. Split it out here if the desk ever needs its own.
+  RIGHTS_EMAIL: AD_EMAIL,
   CHAT_URL:     WATCH_HOST ? `https://${WATCH_HOST}` : "",
 
   // --- Live chat ------------------------------------------------------------
@@ -1265,6 +1364,8 @@ const els = {
   tuneBtn: $("tuneBtn"), soundBtn: $("soundBtn"), pauseBtn: $("pauseBtn"), fsBtn: $("fsBtn"),
   volGroup: $("volGroup"), volSlider: $("volSlider"), volVal: $("volVal"),
   chatLink: $("chatLink"), adMail: $("adMail"), labLink: $("labLink"),
+  flagMail: $("flagMail"), flagSrc: $("flagSrc"), flagTitle: $("flagTitle"),
+  flagSlot: $("flagSlot"), flagLocal: $("flagLocal"), flagUtc: $("flagUtc"),
   chatLog: $("chatLog"), chatNote: $("chatNote"), chatState: $("chatState"),
   chatJump: $("chatJump"), chatUnread: $("chatUnread"),
   chatSay: $("chatSay"), chatName: $("chatName"), chatInput: $("chatInput"),
@@ -1691,6 +1792,7 @@ function tick() {
   const n = new Date();
   const p = (x) => String(x).padStart(2, "0");
   els.clock.textContent = `${p(n.getHours())}:${p(n.getMinutes())}:${p(n.getSeconds())}`;
+  updateFlagCard();
 }
 function minutesOf(t) { const [h, m] = t.split(":").map(Number); return h * 60 + m; }
 function currentSlotIndex(sched) {
@@ -1742,6 +1844,73 @@ function renderSchedule() {
   els.pvDate.textContent = viewingToday
     ? new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" }).toUpperCase()
     : DAY_FULL[selectedDay] + " · SCHEDULE";
+}
+
+/* ---------------- SEC.05 rights desk ----------------
+   A rights claim is only worth anything if it names the thing it is about, and
+   a viewer cannot name it — the picture carries no identifier. So the page does
+   it for them: the title master control set (or today's grid, when the tower
+   can't be reached), the slot that title belongs to, and the instant of the
+   click in both local time and UTC. That is enough for an operator to find the
+   one line in the intake manifest, where every fetched file sits next to its
+   archive.org id and the licence mark it was aired under (docs/archive-fetch.md).
+
+   Local time is written with its own UTC offset rather than through
+   toLocaleString(): a claim is read by someone in another timezone weeks later,
+   and "13:44:02" on its own is not a moment. */
+function flagStamp(now) {
+  const p = (x) => String(x).padStart(2, "0");
+  const off = -now.getTimezoneOffset();
+  const sign = off < 0 ? "-" : "+";
+  const tz = `${sign}${p(Math.floor(Math.abs(off) / 60))}:${p(Math.abs(off) % 60)}`;
+  return `${now.getFullYear()}-${p(now.getMonth() + 1)}-${p(now.getDate())} ` +
+         `${p(now.getHours())}:${p(now.getMinutes())}:${p(now.getSeconds())} UTC${tz}`;
+}
+
+function flagSnapshot() {
+  const now = new Date();
+  const sched = todaySchedule();
+  const slot = sched[currentSlotIndex(sched)];
+  const fromTower = !!state.streamTitle;
+  return {
+    // The tower's "CH0 · " prefix is chrome, not part of the programme's name.
+    title: (state.streamTitle || slot.name).replace(/^\s*CH0\s*·\s*/i, ""),
+    fromTower,
+    slot: `${DAY_FULL[now.getDay()]} ${slot.t} · ${slot.name}`,
+    local: flagStamp(now),
+    utc: now.toISOString(),
+  };
+}
+
+function flagMailto(s) {
+  return "mailto:" + CONFIG.RIGHTS_EMAIL +
+    "?subject=" + encodeURIComponent(`Channel Z0 — rights claim — ${s.title}`) +
+    "&body=" + encodeURIComponent(
+      "— STATION USE: captured by the page, please leave these lines in place —\n" +
+      `PROGRAMME:   ${s.title}\n` +
+      `TITLE FROM:  ${s.fromTower ? "the tower, live" : "today's schedule (tower unreachable)"}\n` +
+      `SLOT:        ${s.slot}\n` +
+      `FLAGGED:     ${s.local}\n` +
+      `FLAGGED UTC: ${s.utc}\n` +
+      `WATCHING:    ${state.tuned ? "yes" : "no"}\n` +
+      "\n— YOUR CLAIM —\n" +
+      "What is in this programme that is not in the public domain:\n\n" +
+      "The rights you hold, and how we can check them:\n\n" +
+      "Your name and how to reach you:\n");
+}
+
+/* Refreshed every second by tick() so the readout is never stale, and again on
+   pointerdown so the stamp that leaves with the message is the instant of the
+   click and not of the tick before it. */
+function updateFlagCard() {
+  if (!els.flagTitle) return;
+  const s = flagSnapshot();
+  els.flagTitle.textContent = s.title;
+  els.flagSrc.textContent = s.fromTower ? "FROM TOWER" : "FROM GRID";
+  els.flagSlot.textContent = s.slot;
+  els.flagLocal.textContent = s.local;
+  els.flagUtc.textContent = s.utc;
+  els.flagMail.href = flagMailto(s);
 }
 
 /* ---------------- section tabs ----------------
@@ -2250,6 +2419,7 @@ els.adMail.addEventListener("click", () => {
     "?subject=" + encodeURIComponent("Channel Z0 — ad submission") +
     "&body=" + encodeURIComponent("Business/name:\nSpot length (15/30/60s):\nLink to file (or attach):\nI own the rights to all video, audio, and music in this spot: YES\n");
 });
+els.flagMail.addEventListener("pointerdown", updateFlagCard);
 setInterval(tick, 1000); tick();
 armPeekOnTouch();
 renderSchedule(); setInterval(renderSchedule, 30 * 1000);

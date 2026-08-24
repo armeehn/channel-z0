@@ -36,7 +36,7 @@ const ok = (name, pass, detail = "") => { results.push({ name, pass, detail }); 
 const browser = await chromium.launch({ executablePath: CHROME, args: ["--no-sandbox", "--autoplay-policy=no-user-gesture-required"] });
 const SECTIONS = [
   ["live", "01", "Live Feed"], ["program", "02", "Program"], ["ground-zero", "03", "Ground Zero"],
-  ["submit-ad", "04", "File a Spot"],
+  ["submit-ad", "04", "File a Spot"], ["rights", "05", "Rights Desk"],
 ];
 
 const pageErrors = [];
@@ -58,7 +58,7 @@ const visible = (page) => page.evaluate(() =>
   await page.waitForTimeout(400);
 
   ok("tabs mode engages", await page.evaluate(() => document.documentElement.classList.contains("tabs")));
-  ok("four tabs rendered", (await page.$$(".sec-tab")).length === 4, `${(await page.$$(".sec-tab")).length}`);
+  ok("five tabs rendered", (await page.$$(".sec-tab")).length === 5, `${(await page.$$(".sec-tab")).length}`);
 
   // the merged footer: one element, outside the tab machinery, no heading
   const foot = await page.evaluate(() => {
@@ -143,7 +143,7 @@ const visible = (page) => page.evaluate(() =>
   await page.keyboard.press("End");
   await page.waitForTimeout(140);
   vis = await visible(page);
-  ok("End jumps to SEC.04", vis[0] === "submit-ad", vis.join(","));
+  ok("End jumps to SEC.05", vis[0] === "rights", vis.join(","));
   await page.keyboard.press("Home");
   await page.waitForTimeout(140);
   vis = await visible(page);
@@ -265,7 +265,8 @@ const visible = (page) => page.evaluate(() =>
     const ts = Array.from(document.querySelectorAll(".sec-tab"));
     return new Set(ts.map((t) => Math.round(t.getBoundingClientRect().top))).size;
   });
-  ok("phone tabs wrap to 2 rows", tabRows === 2, `${tabRows} rows`);
+  // five half-width tabs: two pairs and the fifth alone on a full-width row
+  ok("phone tabs wrap to 3 rows", tabRows === 3, `${tabRows} rows`);
   const noHorz = await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
   ok("phone: no horizontal scroll", noHorz);
   // the fold button must not squeeze the masthead into a column of one-word lines
@@ -292,7 +293,7 @@ const visible = (page) => page.evaluate(() =>
     navHidden: getComputedStyle(document.getElementById("secnav")).display === "none",
     scrolls: document.scrollingElement.scrollHeight > window.innerHeight,
   }));
-  ok("no JS: all four sections present", st.shown === 4, `${st.shown}`);
+  ok("no JS: all five sections present", st.shown === 5, `${st.shown}`);
   const noJsFoot = await page.evaluate(() => {
     const f = document.querySelector(".station-foot");
     const last = document.querySelectorAll(".panels > .panel");

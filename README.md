@@ -75,6 +75,7 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | `tools/test-broadcast.sh` | Fire a live test pattern at the tower (build guide, Phase 1.5) |
 | `tools/test-player-controls.mjs` | Drive the storefront player in a real browser — pause/resume-at-live, mute + volume, full screen (needs the channel on air) |
 | `tools/test-section-tabs.mjs` | Drive the storefront's section tabs in a real browser — one panel at a time, deep links, keyboard, and that nothing spills past the fold |
+| `tools/test-rights-flag.mjs` | Drive SEC.05 in a real browser — the provenance copy, and that the flag link carries the programme and a stamped moment into the mailto, tower up or down |
 | `tools/test-chat-panel.mjs` | Drive the rail's live chat in a real browser — the SPEC/CHAT switch, the wire to the tower, and the sanitiser against hostile message bodies |
 | `tools/test-chat-composer.mjs` | Drive the comment box in a real browser against a stubbed relay — every way it can say yes, no, and wait |
 | `tools/test-comment-relay.mjs` | Drive the relay Worker with no browser and no network — shape, rate limits, fail-closed moderation, the tower call |
