@@ -177,6 +177,25 @@ if (playing) {
   console.log("SKIP  live tune-in — the tower did not answer");
 }
 
+// ── the new wording fits the small screen ──────────────────────────────────
+// "ON AIR" is a character shorter than "OFF AIR", so the slab only ever
+// shrinks — but the sub line is longer than the one it replaced.
+await page.setViewportSize({ width: 390, height: 780 });
+await page.evaluate(() => { state.owncastOnline = true; state.tuned = false; showOffair(true); });
+await page.waitForTimeout(300);
+const fits = await page.evaluate(() => {
+  const f = document.querySelector(".screen-frame").getBoundingClientRect();
+  const inside = (id) => {
+    const r = document.getElementById(id).getBoundingClientRect();
+    return r.left >= f.left - 1 && r.right <= f.right + 1;
+  };
+  return { tag: inside("offairTag"), sub: inside("offairSub"),
+           overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth };
+});
+ok("card stays inside the frame at 390px", fits.tag && fits.sub);
+ok("no horizontal overflow at 390px", fits.overflow <= 0, `overflow=${fits.overflow}px`);
+await page.screenshot({ path: join(OUTDIR, "mobile.png") });
+
 ok("no uncaught page errors", pageErrors.length === 0, pageErrors.join(" | ").slice(0, 200));
 
 await browser.close();
