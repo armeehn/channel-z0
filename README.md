@@ -189,7 +189,7 @@ the storefront on every push on its own.
 ## The sponsor
 
 Channel Z0 is sponsored by **Riposte Laboratories**
-([ripostelabs.xyz](https://ripostelabs.xyz)) — an engineering company that
+([ripostelabs.xyz](https://ripostelabs.xyz)) — a design company that
 transforms discarded plastic and end-of-life battery cells into durable,
 modular products. Between programs, you'll see what the lab has been building
 lately. The storefront speaks the lab's design language: paper, ink, one red,

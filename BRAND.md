@@ -27,7 +27,7 @@ and Courier New rather than JetBrains Mono.
 
 This is correct and should not be "fixed". Channel Z0 is a simulation of an analogue local
 TV channel; the whole premise is that it looks like something transmitted in 1987. The
-Riposte brand is a *printed engineering document* — applying bone paper and harlequin bands
+Riposte brand is a *printed technical document* — applying bone paper and harlequin bands
 to a CRT sign-off card would destroy the conceit that makes the project work.
 
 The rule of thumb: **anything that represents the broadcast gets the phosphor treatment;
