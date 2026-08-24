@@ -406,6 +406,13 @@
     flex: none; border-top: 1px dashed #b9b4a6; padding: 8px 10px 6px;
     display: flex; flex-direction: column; gap: 6px;
   }
+  /* `hidden` is how initSay() keeps the box away until the relay says it is
+     open, but the rule above beats the UA stylesheet's [hidden] { display:
+     none } — any author display wins over it — so the form rendered anyway and
+     a closed relay still showed a box nobody could post from. Every other
+     element toggled by .hidden on this page happens to have no author display
+     rule; this one does, so it needs saying out loud. */
+  .chat-say[hidden] { display: none; }
   .chat-say-top { display: flex; align-items: center; gap: 8px; }
   .chat-say-lbl { font-size: 10px; letter-spacing: .18em; color: var(--ink-2); }
   .chat-name {
