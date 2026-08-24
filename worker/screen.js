@@ -1,0 +1,105 @@
+/* ==========================================================================
+   CHANNEL Z0 · comment relay — the cheap checks
+   --------------------------------------------------------------------------
+   Everything here is deterministic and costs nothing. It runs BEFORE the rate
+   limiter spends a viewer's quota and long before the model is asked anything,
+   because most of what a public comment box receives can be turned away on
+   shape alone.
+
+   This module is also the trust boundary pointing the OTHER way. The relay
+   takes text from a public web page and puts it into the station's chat room,
+   where Owncast renders it as markdown — so anything not escaped here is a
+   formatting, image or link injection into the room.
+   ========================================================================== */
+
+export const LIMITS = {
+  maxLength: 280,        // it is a chat line, not a letter
+  maxLines: 3,
+  maxLinks: 1,
+  maxNameLength: 24,
+  minLength: 1,
+};
+
+/* Never legitimate in a chat line, and the usual ingredients of a spoofed name
+   or a right-to-left override prank: C0/C1 controls, zero-width spaces and
+   joiners, the bidi overrides, and the byte-order mark.
+
+   Written as \u escapes and not as the characters themselves: literal control
+   bytes make this file BINARY to git, which turns the diff of the one module
+   that sanitises input into something nobody can review. */
+const CONTROL = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u200B-\u200F\u202A-\u202E\u2066-\u2069\uFEFF]/g;
+
+/** Tidy whitespace without destroying deliberate line breaks. */
+export function normalise(raw) {
+  return String(raw == null ? "" : raw)
+    .replace(CONTROL, "")
+    .replace(/\r\n?/g, "\n")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .split("\n").map((l) => l.trim()).join("\n")
+    .trim();
+}
+
+/* Owncast renders the body it is handed, so an unescaped image from a stranger
+   is a picture on everyone's screen, and a markdown link is a URL wearing
+   whatever text the sender likes. A backslash escape renders as the literal
+   character, so ordinary prose comes out unchanged. */
+const MD = /[\\`*_[\]()~|<>#+!-]/g;
+export function escapeMarkdown(text) {
+  return String(text)
+    .replace(MD, (c) => "\\" + c)
+    // a digit followed by a dot at the start of a line is an ordered list
+    .replace(/^(\s*\d+)\./gm, "$1\\.");
+}
+
+/** Names are decoration, not identity — see the note in the README. */
+export function cleanName(raw) {
+  const n = normalise(raw).replace(/\n/g, " ").replace(/[^\p{L}\p{N} ._-]/gu, "").trim();
+  return n.slice(0, LIMITS.maxNameLength) || "someone";
+}
+
+function countLinks(text) {
+  return (text.match(/\b(?:https?:\/\/|www\.)\S+/gi) || []).length;
+}
+
+/* Shouting, and the same character forty times over. Both are thresholds, set
+   where a real chat line does not trip them and a wall of noise does. */
+function looksLikeNoise(text) {
+  if (/(.)\1{9,}/.test(text)) return "the same character over and over";
+  const letters = text.replace(/[^\p{L}]/gu, "");
+  if (letters.length >= 20) {
+    const caps = (letters.match(/\p{Lu}/gu) || []).length;
+    if (caps / letters.length > 0.8) return "all capitals";
+  }
+  return null;
+}
+
+/**
+ * Shape-check a comment. Returns { ok: true, body, name } or
+ * { ok: false, reason, detail } — `reason` is a stable machine code, `detail`
+ * is the sentence the viewer is shown.
+ */
+export function screen(rawBody, rawName) {
+  const body = normalise(rawBody);
+  const name = cleanName(rawName);
+
+  if (body.length < LIMITS.minLength) return { ok: false, reason: "empty", detail: "Say something first." };
+  if (body.length > LIMITS.maxLength) {
+    return { ok: false, reason: "too_long", detail: `Keep it under ${LIMITS.maxLength} characters — that was ${body.length}.` };
+  }
+  if (body.split("\n").length > LIMITS.maxLines) {
+    return { ok: false, reason: "too_many_lines", detail: `At most ${LIMITS.maxLines} lines.` };
+  }
+  if (countLinks(body) > LIMITS.maxLinks) {
+    return { ok: false, reason: "too_many_links", detail: "One link at a time." };
+  }
+  const noise = looksLikeNoise(body);
+  if (noise) return { ok: false, reason: "noise", detail: `That reads as ${noise}.` };
+
+  return { ok: true, body, name };
+}
+
+/** The line as the room will see it. The relay's token supplies the badge. */
+export function format(name, body) {
+  return `**${escapeMarkdown(name)}** · ${escapeMarkdown(body)}`;
+}
