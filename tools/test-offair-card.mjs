@@ -90,6 +90,9 @@ const card = () => page.evaluate(() => ({
   tag: document.getElementById("offairTag").textContent.trim(),
   sub: document.getElementById("offairSub").textContent.trim(),
   chipOn: document.getElementById("airChip").classList.contains("on"),
+  // What the chip READS, not what it is classed. visibility:hidden keeps the
+  // losing half of a .swap out of innerText, so this is the viewer's view.
+  chipText: document.getElementById("airChip").innerText.trim(),
 }));
 const poll = async () => { await page.evaluate(() => pollStatus()); await page.waitForTimeout(150); };
 
@@ -102,6 +105,7 @@ ok("card is up before anyone tunes in", c.shown);
 ok("a live channel does not read OFF AIR", c.tag === "ON AIR", `tag="${c.tag}"`);
 ok("it says how to watch instead", /TUNE IN/.test(c.sub), `sub="${c.sub}"`);
 ok("chip and card agree", c.chipOn === (c.tag === "ON AIR"), `chip=${c.chipOn} tag="${c.tag}"`);
+ok("the chip READS on air, not just paints it", c.chipText === "ON AIR", `chip reads "${c.chipText}"`);
 await page.screenshot({ path: join(OUTDIR, "live-untuned.png") });
 
 // ── the tower says the channel is down ─────────────────────────────────────
@@ -111,6 +115,7 @@ c = await card();
 ok("a channel that is down reads OFF AIR", c.tag === "OFF AIR", `tag="${c.tag}"`);
 ok("with the sign-off line", /RESUMES SHORTLY/.test(c.sub), `sub="${c.sub}"`);
 ok("chip and card agree off air", c.chipOn === false && c.tag === "OFF AIR");
+ok("and the chip reads OFF AIR", c.chipText === "OFF AIR", `chip reads "${c.chipText}"`);
 await page.screenshot({ path: join(OUTDIR, "genuinely-off.png") });
 
 // ── it comes back ───────────────────────────────────────────────────────────
@@ -118,6 +123,7 @@ tower = { online: true, streamTitle: "CH0 · BACK ON", viewerCount: 1 };
 await poll();
 c = await card();
 ok("sign-on repaints the card without a reload", c.tag === "ON AIR", `tag="${c.tag}"`);
+ok("and the chip swaps back with it", c.chipText === "ON AIR", `chip reads "${c.chipText}"`);
 
 // ── a tower we cannot reach claims nothing ─────────────────────────────────
 tower = "unreachable";
@@ -175,6 +181,39 @@ if (playing) {
   await page.screenshot({ path: join(OUTDIR, "tuned-in.png") });
 } else {
   console.log("SKIP  live tune-in — the tower did not answer");
+}
+
+// ── every .swap on the page actually swaps ─────────────────────────────────
+// The chip's .alt lands on the swap itself; a button's lands on the button
+// that wraps it. Both must work, and "works" means the text CHANGES — the
+// chip was red and reading OFF AIR at the same time for exactly this reason.
+// Measured from a KNOWN base, not from whatever the live tune-in above left
+// behind: the first draft of this block read the chip while it was already on
+// and pressed .alt onto a TUNE IN button that already had it, and called both
+// no-ops a failure.
+const swaps = await page.evaluate(() => {
+  const read = (id) => document.getElementById(id).innerText.trim();
+  const out = {};
+  setOnAir(false); out.chipOff  = read("airChip");
+  setOnAir(true);  out.chipOn   = read("airChip");
+  setOnAir(false); out.chipBack = read("airChip");
+  for (const id of ["tuneBtn", "soundBtn", "pauseBtn", "fsBtn"]) {
+    const el = document.getElementById(id);
+    const had = el.classList.contains("alt");
+    el.classList.remove("alt");
+    const before = el.innerText.trim();
+    el.classList.add("alt");
+    const after = el.innerText.trim();
+    el.classList.toggle("alt", had);
+    out[id] = { before, after, changed: before !== after && before.length > 0 && after.length > 0 };
+  }
+  return out;
+});
+ok("chip swaps to ON AIR and back", swaps.chipOn === "ON AIR" && swaps.chipOff === "OFF AIR" && swaps.chipBack === "OFF AIR",
+   `off="${swaps.chipOff}" on="${swaps.chipOn}" back="${swaps.chipBack}"`);
+for (const id of ["tuneBtn", "soundBtn", "pauseBtn", "fsBtn"]) {
+  ok(`#${id} swaps its label`, swaps[id].changed,
+     `"${swaps[id].before}" -> "${swaps[id].after}"`);
 }
 
 // ── the new wording fits the small screen ──────────────────────────────────

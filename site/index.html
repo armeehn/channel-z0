@@ -224,8 +224,14 @@
     justify-content: center; gap: 8px; white-space: nowrap;
   }
   .swap > .s-b { visibility: hidden; }
-  .alt .swap > .s-a { visibility: hidden; }
-  .alt .swap > .s-b { visibility: visible; }
+  /* .alt goes on whatever the JS has a handle to. For the four buttons that is
+     the <button>, which WRAPS its swap; for the ON AIR chip the handle is the
+     swap itself. A descendant combinator alone matches the first and silently
+     misses the second, which is how the chip came to be painted live-red while
+     still reading OFF AIR. Match both, so the mechanism cannot depend on which
+     element someone happened to hold. */
+  .alt .swap > .s-a, .swap.alt > .s-a { visibility: hidden; }
+  .alt .swap > .s-b, .swap.alt > .s-b { visibility: visible; }
 
   /* House-drawn control icons. A glyph like ⛶ arrives from whatever fallback
      font the machine happens to have, at whatever metrics it likes — which is
