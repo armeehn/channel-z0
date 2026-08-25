@@ -52,26 +52,31 @@ WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday",
 # the guide-on-the-wall and the guide disagree.
 WEEK = {
     "monday": dict(
+        lunch=("LUNCH LOOPS — WALTZ HOUR", "pl_lunch_waltz"),
         matinee=("THE AFTERNOON PICTURE SHOW", "docs"),
         prime=("MONDAY NIGHT NOIR", "noir"),
         late=("AFTER HOURS", "soundies"),
     ),
     "tuesday": dict(
+        lunch=("LUNCH LOOPS — POLKA HOUR", "pl_lunch_polka"),
         matinee=("THE AFTERNOON PICTURE SHOW", "features_short"),
         prime=("ATOMIC TUESDAY", "scifi"),
         late=("THE LATE TRANSMISSION", "science"),
     ),
     "wednesday": dict(
+        lunch=("LUNCH LOOPS — SONGS AND CHORUSES", "pl_lunch_song"),
         matinee=("THE AFTERNOON PICTURE SHOW", "classics"),
         prime=("WORKBENCH THEATRE", "docs"),
         late=("NIGHT PATTERN", "industrial"),
     ),
     "thursday": dict(
+        lunch=("LUNCH LOOPS — KOLOMYIKA HOUR", "pl_lunch_kolomyika"),
         matinee=("CHAPTER PLAY MATINEE", "serials"),
         prime=("SERIAL NIGHT", "serials"),
         late=("CHAPTER'S END", "cult"),
     ),
     "friday": dict(
+        lunch=("LUNCH LOOPS — POLKA PARTY", "pl_lunch_party"),
         matinee=("THE AFTERNOON PICTURE SHOW", "classics"),
         prime=("FRIDAY NIGHT FEATURE", "cult"),
         # The one slot the Z0-LATE material is scheduled into. Everything rated
@@ -82,6 +87,7 @@ WEEK = {
     ),
     "saturday": dict(
         morning="pl_saturday_morning",
+        lunch=("LUNCH LOOPS — WEDDING PARTY", "pl_lunch_wedding"),
         matinee=("SERIAL MATINEE", "pl_serial_matinee"),
         prime=("SATURDAY DOUBLE BILL", "classics"),
         # Saturday takes a second feature instead of the encore, per the bible.
@@ -90,6 +96,7 @@ WEEK = {
         # ends. See the pad_to_next note in day_plan().
     ),
     "sunday": dict(
+        lunch=("LUNCH LOOPS — PRAIRIE MIXED", "pl_lunch_mixed"),
         matinee=("THE VANCOUVER REEL", "vancouver_reel"),
         prime=("SUNDAY CINEMA", "classics"),
         late=("NIGHT PATTERN", "slowtv"),
@@ -261,7 +268,12 @@ def day_plan(name, spec):
     # music cards are 640x480 and cheap to decode.
     # Saturday's matinee is an hour earlier (13:00 MATINEE DOUBLE), so lunch is
     # an hour shorter. Every other day runs 12:00-14:00.
-    P += strand("LUNCH LOOPS", "pl_lunch_loops",
+    # Each day draws its own themed lunch hour -- the waltzes, the polka hour,
+    # the kolomyiky. A day whose WEEK entry names no `lunch` falls back to the
+    # generic playlist, which is what _content.yml's own comment promises.
+    lunch_title, lunch_content = spec.get("lunch",
+                                          ("LUNCH LOOPS", "pl_lunch_loops"))
+    P += strand(lunch_title, lunch_content,
                 "13:00" if name == "saturday" else "14:00")
 
     # ── Afternoon ─────────────────────────────────────────────────────────────
@@ -319,8 +331,12 @@ def day_plan(name, spec):
         P += strand("SHORT SUBJECTS", "pad_short", "22:00")
         P += coming_soon("GROUND ZERO ENCORE — COMING SOON",
                          "coming_soon_gnd", "23:00")
+        # No SHORT SUBJECTS strand after this break: the COMING SOON card
+        # above already pads to 23:00 with `trim`, so the clock is AT 23:00
+        # when the break starts and a `pad_until: 23:00` here would name a
+        # time already gone -- which schedules nothing at all rather than
+        # waiting. The late block below pads to 00:00 on its own.
         P.append({"sequence": "station_break"})
-        P += strand("SHORT SUBJECTS", "pad_short", "23:00")
 
     # ── The late block ────────────────────────────────────────────────────────
     # Themed per night.

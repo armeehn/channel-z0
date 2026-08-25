@@ -143,8 +143,8 @@ playout:
   - epg_group: true
   - pad_until: '13:58'
     tomorrow: false
-    content: 'pl_lunch_loops'
-    custom_title: 'LUNCH LOOPS'
+    content: 'pl_lunch_kolomyika'
+    custom_title: 'LUNCH LOOPS — KOLOMYIKA HOUR'
     discard_attempts: 6
   - epg_group: false
   - graphics_off: null
@@ -288,7 +288,7 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - pad_until: '23:00'
+  - pad_until: '22:56'
     tomorrow: false
     content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO ENCORE — COMING SOON'
@@ -298,23 +298,7 @@ playout:
   - sequence: 'station_break'
   - graphics_off: null
   - epg_group: true
-  - duration: '00:00:04'
-    content: 'generative'
-    trim: true
-    filler_kind: 'preroll'
-    custom_title: 'STATION INTERVAL'
-  - epg_group: false
-  - sequence: 'graphics_up'
-  - epg_group: true
-  - pad_until: '23:00'
-    tomorrow: false
-    content: 'pad_short'
-    custom_title: 'SHORT SUBJECTS'
-    discard_attempts: 6
-  - epg_group: false
-  - graphics_off: null
-  - epg_group: true
-  - duration: '00:00:04'
+  - duration: '00:04:00'
     content: 'generative'
     trim: true
     filler_kind: 'preroll'
@@ -509,8 +493,8 @@ playout:
   - epg_group: true
   - pad_until: '13:58'
     tomorrow: false
-    content: 'pl_lunch_loops'
-    custom_title: 'LUNCH LOOPS'
+    content: 'pl_lunch_party'
+    custom_title: 'LUNCH LOOPS — POLKA PARTY'
     discard_attempts: 6
   - epg_group: false
   - graphics_off: null
@@ -654,7 +638,7 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - pad_until: '23:00'
+  - pad_until: '22:56'
     tomorrow: false
     content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO ENCORE — COMING SOON'
@@ -664,23 +648,7 @@ playout:
   - sequence: 'station_break'
   - graphics_off: null
   - epg_group: true
-  - duration: '00:00:04'
-    content: 'generative'
-    trim: true
-    filler_kind: 'preroll'
-    custom_title: 'STATION INTERVAL'
-  - epg_group: false
-  - sequence: 'graphics_up'
-  - epg_group: true
-  - pad_until: '23:00'
-    tomorrow: false
-    content: 'pad_short'
-    custom_title: 'SHORT SUBJECTS'
-    discard_attempts: 6
-  - epg_group: false
-  - graphics_off: null
-  - epg_group: true
-  - duration: '00:00:04'
+  - duration: '00:04:00'
     content: 'generative'
     trim: true
     filler_kind: 'preroll'
@@ -859,8 +827,8 @@ playout:
   - epg_group: true
   - pad_until: '12:58'
     tomorrow: false
-    content: 'pl_lunch_loops'
-    custom_title: 'LUNCH LOOPS'
+    content: 'pl_lunch_wedding'
+    custom_title: 'LUNCH LOOPS — WEDDING PARTY'
     discard_attempts: 6
   - epg_group: false
   - graphics_off: null
@@ -1194,8 +1162,8 @@ playout:
   - epg_group: true
   - pad_until: '13:58'
     tomorrow: false
-    content: 'pl_lunch_loops'
-    custom_title: 'LUNCH LOOPS'
+    content: 'pl_lunch_mixed'
+    custom_title: 'LUNCH LOOPS — PRAIRIE MIXED'
     discard_attempts: 6
   - epg_group: false
   - graphics_off: null
@@ -1527,8 +1495,8 @@ playout:
   - epg_group: true
   - pad_until: '13:58'
     tomorrow: false
-    content: 'pl_lunch_loops'
-    custom_title: 'LUNCH LOOPS'
+    content: 'pl_lunch_waltz'
+    custom_title: 'LUNCH LOOPS — WALTZ HOUR'
     discard_attempts: 6
   - epg_group: false
   - graphics_off: null
@@ -1672,7 +1640,7 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - pad_until: '23:00'
+  - pad_until: '22:56'
     tomorrow: false
     content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO ENCORE — COMING SOON'
@@ -1682,23 +1650,7 @@ playout:
   - sequence: 'station_break'
   - graphics_off: null
   - epg_group: true
-  - duration: '00:00:04'
-    content: 'generative'
-    trim: true
-    filler_kind: 'preroll'
-    custom_title: 'STATION INTERVAL'
-  - epg_group: false
-  - sequence: 'graphics_up'
-  - epg_group: true
-  - pad_until: '23:00'
-    tomorrow: false
-    content: 'pad_short'
-    custom_title: 'SHORT SUBJECTS'
-    discard_attempts: 6
-  - epg_group: false
-  - graphics_off: null
-  - epg_group: true
-  - duration: '00:00:04'
+  - duration: '00:04:00'
     content: 'generative'
     trim: true
     filler_kind: 'preroll'
@@ -1893,8 +1845,8 @@ playout:
   - epg_group: true
   - pad_until: '13:58'
     tomorrow: false
-    content: 'pl_lunch_loops'
-    custom_title: 'LUNCH LOOPS'
+    content: 'pl_lunch_polka'
+    custom_title: 'LUNCH LOOPS — POLKA HOUR'
     discard_attempts: 6
   - epg_group: false
   - graphics_off: null
@@ -2038,7 +1990,7 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - pad_until: '23:00'
+  - pad_until: '22:56'
     tomorrow: false
     content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO ENCORE — COMING SOON'
@@ -2048,23 +2000,7 @@ playout:
   - sequence: 'station_break'
   - graphics_off: null
   - epg_group: true
-  - duration: '00:00:04'
-    content: 'generative'
-    trim: true
-    filler_kind: 'preroll'
-    custom_title: 'STATION INTERVAL'
-  - epg_group: false
-  - sequence: 'graphics_up'
-  - epg_group: true
-  - pad_until: '23:00'
-    tomorrow: false
-    content: 'pad_short'
-    custom_title: 'SHORT SUBJECTS'
-    discard_attempts: 6
-  - epg_group: false
-  - graphics_off: null
-  - epg_group: true
-  - duration: '00:00:04'
+  - duration: '00:04:00'
     content: 'generative'
     trim: true
     filler_kind: 'preroll'
@@ -2259,8 +2195,8 @@ playout:
   - epg_group: true
   - pad_until: '13:58'
     tomorrow: false
-    content: 'pl_lunch_loops'
-    custom_title: 'LUNCH LOOPS'
+    content: 'pl_lunch_song'
+    custom_title: 'LUNCH LOOPS — SONGS AND CHORUSES'
     discard_attempts: 6
   - epg_group: false
   - graphics_off: null
@@ -2404,7 +2340,7 @@ playout:
   - epg_group: false
   - sequence: 'graphics_up'
   - epg_group: true
-  - pad_until: '23:00'
+  - pad_until: '22:56'
     tomorrow: false
     content: 'coming_soon_gnd'
     custom_title: 'GROUND ZERO ENCORE — COMING SOON'
@@ -2414,23 +2350,7 @@ playout:
   - sequence: 'station_break'
   - graphics_off: null
   - epg_group: true
-  - duration: '00:00:04'
-    content: 'generative'
-    trim: true
-    filler_kind: 'preroll'
-    custom_title: 'STATION INTERVAL'
-  - epg_group: false
-  - sequence: 'graphics_up'
-  - epg_group: true
-  - pad_until: '23:00'
-    tomorrow: false
-    content: 'pad_short'
-    custom_title: 'SHORT SUBJECTS'
-    discard_attempts: 6
-  - epg_group: false
-  - graphics_off: null
-  - epg_group: true
-  - duration: '00:00:04'
+  - duration: '00:04:00'
     content: 'generative'
     trim: true
     filler_kind: 'preroll'

@@ -63,8 +63,8 @@ people who are home, and add a second feature.
 | 07:00 | **CARTOON BLOCK** | Public-domain toons, drawn before your grandparents met |
 | 09:00 | **PRELINGER THEATRE** | Vintage PSAs & educational shorts; trust the narrator |
 | 11:00 | **LAB HOUR** | What Riposte Labs is building this week, sometimes live |
-| 12:00 | **LUNCH LOOPS** | Music + the community bulletin board — the `Lunch Loops` playlist, prairie dance-band records interleaved with one 10–30 min film per cycle |
-| 14:00 | **AFTERNOON PICTURE SHOW** | A matinee feature older than streaming |
+| 12:00 | **LUNCH LOOPS** | Music + the community bulletin board. **One themed hour per day** — waltzes (Mon), polka (Tue), songs and choruses (Wed), kolomyiky (Thu), polka party (Fri), weddings (Sat), prairie mixed (Sun) — prairie dance-band records interleaved with one 10–30 min film per cycle |
+| 14:00 | **AFTERNOON PICTURE SHOW** | A matinee feature older than streaming. Thursday is the exception: it runs **CHAPTER PLAY MATINEE** from the serial pool, ahead of that night’s SERIAL NIGHT |
 | 16:00 | **CARTOON BLOCK II** | The toons return, as toons do |
 | 18:00 | **NEIGHBOURHOOD DESK** | Notices, events, found cats, lost causes — the `The Neighbourhood Desk` playlist: BC archive film + prairie records |
 | **19:00** | **▸ GROUND ZERO** | Alien street interviews via baguette — the flagship |
@@ -86,7 +86,7 @@ different evenings.
 | **WED** | **WORKBENCH THEATRE** — how-things-are-made, docs | **NIGHT PATTERN** — ambient | Prelinger industrials, PD docs |
 | **THU** | **SERIAL NIGHT** — a chapter, a cliffhanger | **CHAPTER'S END** — the recap loop | PD adventure serials |
 | **FRI** | **FRIDAY NIGHT FEATURE** — the prestige pick | **THE LATE LATE SHOW** — cult & camp | Your best PD feature; the weird one |
-| **SAT** | **SATURDAY DOUBLE BILL** — feature one | *(→ into feature two, ~00:30 sign-off)* | Two crowd-pleasers |
+| **SAT** | **SATURDAY DOUBLE BILL** — feature one | *(→ **SATURDAY DOUBLE BILL — SECOND FEATURE**, ~00:30 sign-off)* | Two crowd-pleasers |
 | **SUN** | **SUNDAY CINEMA** — a classic, unhurried | **NIGHT PATTERN** — early wind-down | PD classics / drama |
 
 ### Weekends (Sat & Sun)
@@ -108,7 +108,7 @@ forward and run long (the **Cartoon Carnival**); the afternoon opens up.
 | 18:00 | NEIGHBOURHOOD DESK — the weekend edition |
 | **19:00** | **▸ GROUND ZERO** |
 | 20:00 | **SATURDAY DOUBLE BILL** — feature one |
-| 22:30 | **SATURDAY DOUBLE BILL** — feature two |
+| 22:30 | **SATURDAY DOUBLE BILL — SECOND FEATURE** |
 | ~00:30 | SIGN-OFF *(Saturday runs late; the one night it does)* |
 
 **Sunday** — the quiet one. A slower morning, an earlier settle.
