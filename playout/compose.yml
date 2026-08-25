@@ -25,10 +25,18 @@ services:
     volumes:
       - ./ersatztv-config:/config
       - ${Z0_MEDIA_ROOT:-/media/channelz0}:/media:ro
-    devices:
-      - /dev/dri:/dev/dri           # the hardware encoder (Intel Quick Sync / VAAPI)
-    # NVENC boxes: set ERSATZTV_TAG=latest-nvidia and swap the block above for
-    # `runtime: nvidia`; software-only boxes: ERSATZTV_TAG=latest and drop devices.
+    # No hardware block here on purpose.
+    #
+    # A device passthrough cannot be selected by variable, so hardcoding
+    # /dev/dri here makes this file fail outright on an NVENC box — and the tag
+    # is NOT the knob either: one image serves every accelerator, and the old
+    # latest-nvidia / latest-vaapi tags are abandoned upstream (nothing after
+    # v25.2.0 for nvidia), which is how a node ends up on a frozen image with no
+    # graphics engine and silently no gutter rails.
+    #
+    # tools/bootstrap-node.sh detects the GPU and writes compose.hwaccel.yml,
+    # and sets COMPOSE_FILE in .env so both files are always used together.
+    # See compose.hwaccel.yml.example. Without it you get software encoding.
 
   # --- Uplink: one ffmpeg -c copy relay, ErsatzTV -> Owncast --------------
   # No re-encode; pure plumbing. Restarts forever, exactly like the systemd

@@ -1,0 +1,31 @@
+# Channel Z0 — per-machine hardware wiring.
+#
+# tools/bootstrap-node.sh GENERATES this file as compose.hwaccel.yml after
+# detecting the GPU, and sets COMPOSE_FILE=compose.yml:compose.hwaccel.yml in
+# .env so both are always used together. Copy this by hand only if you are not
+# using bootstrap.
+#
+# Why it is a separate file: a device passthrough or a container runtime cannot
+# be chosen by variable inside one compose file, and the ErsatzTV image tag is
+# NOT the knob — one image serves every accelerator.
+
+# ── NVENC ────────────────────────────────────────────────────────────────────
+services:
+  ersatztv:
+    runtime: nvidia
+    environment:
+      # A UUID rather than "all", so a multi-GPU box stays on one card across
+      # reboots: nvidia-smi --query-gpu=uuid --format=csv,noheader
+      NVIDIA_VISIBLE_DEVICES: GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility,video
+      ETV_DISABLE_VULKAN: "1"
+
+# ── VAAPI / Quick Sync — use this block instead ──────────────────────────────
+# services:
+#   ersatztv:
+#     devices:
+#       - /dev/dri:/dev/dri
+#
+# ── Software — no passthrough at all; expect a fully occupied CPU ────────────
+# services:
+#   ersatztv: {}

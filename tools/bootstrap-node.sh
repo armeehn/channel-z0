@@ -28,6 +28,17 @@ REPO="$(cd "${DIR}/.." && pwd)"
 
 ROLE=""; NODE_ID=""; MEDIA=""; CLUSTER=""; WATCH_DOMAIN=""; SITE_DOMAIN=""
 STREAM_KEY=""; TAG=""; NFS=""; ASSUME_YES=0; DRY=0; CHECK_ONLY=0; INSTALL_DOCKER=0
+STATION_IMAGE=""; MEDIA_PEER=""; HWACCEL=""; CHANNEL=""; BWLIMIT=""
+
+# The ErsatzTV image is PINNED, not floating.
+#
+# The tags this script used to choose between — latest-vaapi, latest-nvidia —
+# are abandoned upstream: there has been no -nvidia build since v25.2.0, so the
+# "latest" nvidia tag is frozen years back and has no graphics engine. A node
+# bootstrapped onto it comes up looking healthy and silently cannot render the
+# gutter rails the station's whole on-air look now lives in. Hardware selection
+# belongs in the compose override below, not in the tag.
+DEFAULT_TAG="v26.7.1"
 
 usage() { sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-0}"; }
 
@@ -41,6 +52,11 @@ while [[ $# -gt 0 ]]; do
     --site-domain)    SITE_DOMAIN="$2"; shift 2 ;;
     --stream-key)     STREAM_KEY="$2"; shift 2 ;;
     --tag)            TAG="$2"; shift 2 ;;
+    --station-image)  STATION_IMAGE="$2"; shift 2 ;;
+    --media-peer)     MEDIA_PEER="$2"; shift 2 ;;
+    --hwaccel)        HWACCEL="$2"; shift 2 ;;
+    --channel)        CHANNEL="$2"; shift 2 ;;
+    --bwlimit)        BWLIMIT="$2"; shift 2 ;;
     --nfs)            NFS="$2"; shift 2 ;;
     --install-docker) INSTALL_DOCKER=1; shift ;;
     --yes|-y)         ASSUME_YES=1; INSTALL_DOCKER=1; shift ;;
@@ -96,15 +112,20 @@ fi
 
 # GPU decides the ErsatzTV image tag, which is the single most consequential
 # setting on a playout node — software encoding a 1080p channel will eat a CPU.
-GPU="software"; DETECTED_TAG="latest"
-if [[ -e /dev/dri/renderD128 ]]; then
-  GPU="vaapi"; DETECTED_TAG="latest-vaapi"; ok "gpu: /dev/dri present — VAAPI / Quick Sync"
-elif command -v nvidia-smi >/dev/null 2>&1 && nvidia-smi -L >/dev/null 2>&1; then
-  GPU="nvidia"; DETECTED_TAG="latest-nvidia"; ok "gpu: $(nvidia-smi -L 2>/dev/null | head -1)"
+GPU="software"; NVIDIA_UUID=""
+if command -v nvidia-smi >/dev/null 2>&1 && nvidia-smi -L >/dev/null 2>&1; then
+  GPU="nvenc"
+  # Pinning the UUID rather than "all" keeps the container on one card when the
+  # box has several, and survives a reorder across reboots.
+  NVIDIA_UUID="$(nvidia-smi --query-gpu=uuid --format=csv,noheader 2>/dev/null | head -1 | tr -d ' ')"
+  ok "gpu: $(nvidia-smi -L 2>/dev/null | head -1)"
+elif [[ -e /dev/dri/renderD128 ]]; then
+  GPU="vaapi"; ok "gpu: /dev/dri present — VAAPI / Quick Sync"
 else
   warn "gpu: none detected — falling back to software encoding (expect high CPU)"
 fi
-[[ -z "$TAG" ]] && TAG="$DETECTED_TAG"
+[[ -z "$HWACCEL" ]] && HWACCEL="$GPU"
+[[ -z "$TAG"     ]] && TAG="$DEFAULT_TAG"
 
 for t in ffmpeg ffprobe curl jq; do
   command -v "$t" >/dev/null && ok "tool: ${t}" || warn "tool: ${t} missing (needed by tools/, not by the containers)"
@@ -185,7 +206,10 @@ cat <<PLAN
   node id         ${NODE_ID}
   media root      ${MEDIA}
   cluster dir     ${CLUSTER}
-  ersatztv tag    ${TAG}   (gpu: ${GPU})
+  ersatztv image  ghcr.io/ersatztv/legacy:${TAG}
+  encoder         ${HWACCEL}   (detected: ${GPU})
+  station image   ${STATION_IMAGE:-— none: this node will have NO channel}
+  media peer      ${MEDIA_PEER:-— none: library not synced}
   tower           ${WATCH_DOMAIN:-—}
   site            ${SITE_DOMAIN:-—}
 PLAN
@@ -245,6 +269,40 @@ case "$ROLE" in
     ;;
 esac
 
+# ── Stock the library ────────────────────────────────────────────────────────
+# fetch-archive.sh builds *a* library from search queries; it cannot rebuild
+# THIS one, and about a fifth of the station has no recipe at all. Mirroring a
+# peer is the only way a new node airs the same channel.
+if [[ -n "$MEDIA_PEER" && "$ROLE" != "tower" ]]; then
+  step "Syncing the library from ${MEDIA_PEER}"
+  SYNC=( bash "${DIR}/z0-media-sync.sh" --from-peer "$MEDIA_PEER" --to "$MEDIA" )
+  [[ -n "$BWLIMIT" ]] && SYNC+=( --bwlimit "$BWLIMIT" )
+  (( DRY )) && SYNC+=( --dry-run )
+  "${SYNC[@]}" || err "media sync did not complete — re-run it, it resumes"
+fi
+
+# ── Pour in the station ──────────────────────────────────────────────────────
+if [[ "$ROLE" == "playout" ]]; then
+  CONFIG_DIR="${REPO}/playout/ersatztv-config"
+  if [[ -n "$STATION_IMAGE" ]]; then
+    step "Restoring the station image"
+    IMG=( bash "${DIR}/z0-station-image.sh" --restore "$STATION_IMAGE"
+          --config "$CONFIG_DIR" --hwaccel "$HWACCEL" --force )
+    (( DRY )) && IMG+=( --dry-run )
+    "${IMG[@]}" || err "station image restore failed"
+    # The channel number comes from the image, not from an assumption. This
+    # station is channel 0; /iptv/channel/1.ts on it is a 404.
+    if (( ! DRY )) && [[ -f "${CONFIG_DIR}/ersatztv.sqlite3" ]] && command -v sqlite3 >/dev/null; then
+      FOUND="$(sqlite3 "${CONFIG_DIR}/ersatztv.sqlite3" 'SELECT Number FROM Channel ORDER BY Id LIMIT 1;' 2>/dev/null)"
+      [[ -n "$FOUND" ]] && CHANNEL="$FOUND" && ok "channel number from image: ${CHANNEL}"
+    fi
+  else
+    warn "no --station-image: ErsatzTV will come up EMPTY — no profile, no"
+    warn "  libraries, no collections, no channel. Capture one from a running"
+    warn "  node first:  tools/z0-station-image.sh --capture --from <node>:/config --out z0.tgz"
+  fi
+fi
+
 if [[ "$ROLE" == "playout" ]]; then
   ENV_FILE="${REPO}/playout/.env"
   step "Writing ${ENV_FILE}"
@@ -260,7 +318,12 @@ Z0_SITE_DOMAIN=${SITE_DOMAIN:-}
 Z0_WATCH_DOMAIN=${WATCH_DOMAIN}
 Z0_STREAM_KEY=${STREAM_KEY}
 
-Z0_CHANNEL_URL=http://127.0.0.1:8409/iptv/channel/1.ts
+# The channel NUMBER, not an index. ErsatzTV serves /iptv/channel/<number>.ts
+# and the number is whatever the station was built with — this one is 0, and
+# channel/1.ts on it returns 404. A wrong number here produces a node that
+# passes every health check and publishes nothing.
+Z0_CHANNEL_NUMBER=${CHANNEL:-0}
+Z0_CHANNEL_URL=http://127.0.0.1:8409/iptv/channel/${CHANNEL:-0}.ts
 Z0_CHANNEL_XMLTV=http://127.0.0.1:8409/iptv/xmltv.xml
 Z0_MEDIA_ROOT=${MEDIA}
 
@@ -270,14 +333,63 @@ Z0_MEDIA_ROOT=${MEDIA}
 Z0_NODE_ID=${NODE_ID}
 Z0_CLUSTER_DIR_HOST=${CLUSTER}
 
+# Pinned. See DEFAULT_TAG at the top of bootstrap-node.sh for why this is not
+# a "latest" tag.
 ERSATZTV_TAG=${TAG}
+Z0_HWACCEL=${HWACCEL}
+
+# Hardware wiring lives in a generated override, because devices and runtimes
+# cannot be selected by variable inside a single compose file.
+COMPOSE_FILE=compose.yml:compose.hwaccel.yml
 ENV
     chmod 600 "$ENV_FILE"
     ok "wrote .env (mode 600 — it holds the stream key)"
   fi
 
+  # ── the hardware override ──────────────────────────────────────────────────
+  HW_FILE="${REPO}/playout/compose.hwaccel.yml"
+  step "Writing ${HW_FILE} (${HWACCEL})"
+  if (( DRY )); then
+    say "  would write a ${HWACCEL} override"
+  else
+    case "$HWACCEL" in
+      nvenc|nvidia)
+        cat > "$HW_FILE" <<HW
+# generated by tools/bootstrap-node.sh — NVENC
+services:
+  ersatztv:
+    runtime: nvidia
+    environment:
+      NVIDIA_VISIBLE_DEVICES: ${NVIDIA_UUID:-all}
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility,video
+      ETV_DISABLE_VULKAN: "1"
+HW
+        ;;
+      vaapi|qsv)
+        cat > "$HW_FILE" <<HW
+# generated by tools/bootstrap-node.sh — VAAPI / Quick Sync
+services:
+  ersatztv:
+    devices:
+      - /dev/dri:/dev/dri
+HW
+        ;;
+      *)
+        cat > "$HW_FILE" <<HW
+# generated by tools/bootstrap-node.sh — software encoding
+# No device is passed through. This WILL be slow: software-encoding a channel
+# occupies a CPU more or less permanently.
+services:
+  ersatztv: {}
+HW
+        ;;
+    esac
+    ok "hardware override written"
+  fi
+
   step "Starting the stack"
-  run docker compose -f "${REPO}/playout/compose.yml" --project-directory "${REPO}/playout" up -d \
+  run docker compose -f "${REPO}/playout/compose.yml" -f "$HW_FILE" \
+    --project-directory "${REPO}/playout" up -d \
     && ok_real "ersatztv + uplink up" || err "compose up failed"
 fi
 
@@ -295,13 +407,47 @@ fi
 # ── Verify ────────────────────────────────────────────────────────────────────
 if [[ "$ROLE" == "playout" ]] && (( ! DRY )); then
   step "Verifying"
-  for i in $(seq 1 30); do
+  for i in $(seq 1 45); do
     curl -fsS -m 3 -o /dev/null "http://127.0.0.1:8409" 2>/dev/null && break
     sleep 2
   done
-  curl -fsS -m 3 -o /dev/null "http://127.0.0.1:8409" 2>/dev/null \
-    && ok "ErsatzTV answering on :8409" \
-    || warn "ErsatzTV not answering yet — 'docker logs z0-ersatztv' will say why"
+  if curl -fsS -m 3 -o /dev/null "http://127.0.0.1:8409" 2>/dev/null; then
+    ok "ErsatzTV answering on :8409"
+  else
+    err "ErsatzTV not answering — 'docker logs z0-ersatztv' will say why"
+  fi
+
+  # An HTTP 200 is not proof of a channel.
+  #
+  # ErsatzTV answers on :8409 with no libraries, no channel and nothing to air.
+  # It also answers while wedged. The station's own failover logic already knows
+  # this — a node ffprobes itself before standing for election, precisely so a
+  # broken node does not win and broadcast silence. Bootstrap should hold itself
+  # to the same standard rather than reporting success for a web server.
+  CHNUM="${CHANNEL:-0}"
+  if curl -fsS -m 10 "http://127.0.0.1:8409/iptv/channels.m3u" 2>/dev/null \
+       | grep -q "channel-number=\"${CHNUM}\""; then
+    ok "channel ${CHNUM} is published in the guide"
+  else
+    err "channel ${CHNUM} is NOT in /iptv/channels.m3u — the uplink would publish nothing"
+  fi
+
+  if command -v ffprobe >/dev/null 2>&1; then
+    say "  probing the channel for decodable video (up to 30s)…"
+    PROBE="$(ffprobe -v error -analyzeduration 15M -probesize 15M \
+              -select_streams v:0 -show_entries stream=codec_name,width,height \
+              -of csv=p=0 -i "http://127.0.0.1:8409/iptv/channel/${CHNUM}.ts" 2>/dev/null | head -1)"
+    if [[ -n "$PROBE" ]]; then
+      ok "on air: ${PROBE}"
+    else
+      err "the channel produced no decodable video — it is NOT on air."
+      say "     Usual causes, in order: the library was never scanned; the search"
+      say "     index is stale so every tag query resolves empty; or the playout"
+      say "     has not been built yet."
+    fi
+  else
+    warn "ffprobe not installed — cannot prove the channel actually decodes"
+  fi
 
   say ""
   bash "${REPO}/playout/z0-leader.sh" --status 2>/dev/null || true
@@ -311,9 +457,13 @@ fi
 step "Done — ${ROLE} node '${NODE_ID}'"
 case "$ROLE" in
   playout) cat <<NEXT
-  1. Open http://$(host_name):8409 and build the channel (build-guide Phase 2.3):
-     FFmpeg profile, libraries, collections, filler presets, schedule.
-  2. Stock the library:   tools/fetch-archive.sh --all
+  1. Scan the library, then REBUILD THE SEARCH INDEX. A scan alone leaves the
+     index stale, and a stale index makes every tag query return nothing while
+     the folders all look correctly full.
+  2. Build the playout:   tools/z0-day-align.py --redeploy
+     (never drop a regenerated schedule in by hand — the playout anchor stores
+     an instruction index into the deployed file, and the two must change
+     together or the week resumes mid-block, subtly wrong.)
   3. Add another node:    run this script on a second box with a different
      --node-id and the SAME shared --media. It comes up as a standby.
   4. Prove failover:      tools/test-failover.sh
@@ -321,9 +471,18 @@ case "$ROLE" in
 NEXT
   ;;
   tower) cat <<NEXT
-  1. Point DNS at this box: ${WATCH_DOMAIN} (A/AAAA), and open :1935 for RTMP.
-  2. Change the Owncast admin password and stream key.
-  3. Bring up a playout node with --watch-domain ${WATCH_DOMAIN}.
+  1. Configure and PROVE the tower — password, stream key, and passthrough:
+       Z0_OWNCAST_ADMIN_PASS=… tools/z0-tower-config.sh \\
+         --watch-domain ${WATCH_DOMAIN} --admin-pass NEW --stream-key KEY
+     Passthrough is the one that matters: with it off, a small VPS re-encodes
+     and the public stream falls ~6s behind every minute, forever, while
+     /api/status keeps saying online:true.
+  2. Point DNS at this box (grey cloud — a proxy cannot carry RTMP):
+       tools/z0-tower-config.sh --watch-domain ${WATCH_DOMAIN} --dns-a <ip>
+  3. Open :1935 for RTMP. On Oracle's Ubuntu images the VCN security list is
+     not enough — the instance ships its own iptables REJECT, so add the OS
+     rule too and netfilter-persistent save.
+  4. Bring up a playout node with --watch-domain ${WATCH_DOMAIN}.
 NEXT
   ;;
   worker) cat <<NEXT

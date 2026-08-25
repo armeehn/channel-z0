@@ -91,29 +91,100 @@ tools/bootstrap-node.sh --check
 tools/bootstrap-node.sh --role tower \
   --watch-domain watch.ch0.example --site-domain ch0.example --yes
 
-# First playout node
+# First playout node — with the station and the library it needs to air anything
 tools/bootstrap-node.sh --role playout --node-id playout-a \
   --watch-domain watch.ch0.example --stream-key "$KEY" \
+  --station-image /tmp/z0-station.tgz \
+  --media-peer root@nas:/mnt/main-data/channelz0 \
   --media /mnt/z0 --yes
 
 # Second playout node — same command, different id, SAME shared media
 tools/bootstrap-node.sh --role playout --node-id playout-b \
   --watch-domain watch.ch0.example --stream-key "$KEY" \
+  --station-image /tmp/z0-station.tgz \
   --media /mnt/z0 --nfs nas:/export/z0 --yes
 ```
 
-It detects the GPU and picks the ErsatzTV tag accordingly (`latest-vaapi` for
-Quick Sync, `latest-nvidia` for NVENC, `latest` for software with a warning,
-because software-encoding a 1080p channel will eat a CPU alive). `--dry-run`
-prints every action without taking it. It's idempotent — re-run it after
-changing a flag and it reconciles, backing up any existing `.env` first, since
-that file holds the one secret.
+`--dry-run` prints every action without taking it. It's idempotent — re-run it
+after changing a flag and it reconciles, backing up any existing `.env` first,
+since that file holds the one secret.
 
 The only thing it won't do quietly is install Docker: that means piping a remote
 script into a shell, so it tells you the exact command and waits for
 `--install-docker` (or `--yes`).
 
----
+### The two flags that decide whether the node is a station or an empty box
+
+**`--station-image`** is the difference between "ErsatzTV is running" and "the
+channel is on air". Everything that makes this station *this station* — the
+FFmpeg profile, the libraries, the smart collections, the filler presets, the
+channel and its watermark, the graphics elements, the playout — is configured
+through the web UI and stored in one SQLite file. There is no config API:
+`/api/…` serves the SPA, not JSON. So the only faithful way to reproduce a
+station is to carry its database across.
+
+```bash
+# On the machine that is on air (read-only; safe against a live station):
+tools/z0-station-image.sh --capture \
+  --from root@vile:/mnt/solid-state/ersatztv --out /tmp/z0-station.tgz
+
+tools/z0-station-image.sh --inspect /tmp/z0-station.tgz
+```
+
+The image is a few megabytes. Restoring it re-points three things at the new
+machine, and each one is a trap if you skip it:
+
+| It rewrites | Because otherwise |
+|---|---|
+| the FFmpeg profile's hardware accel **and its name** | the profile says `h264_nvenc` on a VAAPI box, silently falls back to software, and eats a CPU |
+| Plex / Jellyfin / Emby sources — deleted | the new node inherits dead libraries pointing at a host it cannot reach. None of Z0's smart collections use them; every one is `type:other_video` against the local library |
+| the playout anchor — cleared | an anchor stores an **instruction index** into the flattened schedule. Restored elsewhere it still looks valid and points at a different instruction. The week doesn't fail, it resumes mid-block and the only symptom is a day that looks subtly wrong |
+
+It also drops the search index, because a stale index makes every tag query
+resolve to nothing while the folders all look correctly full.
+
+**`--media-peer`** mirrors the library. Reach for `fetch-archive.sh` here and
+you will get *a* library, not *this* one: it runs search queries, so a rebuild
+returns different titles with different tags, and its manifest only ever skips
+what is already down — it cannot replay a library. About a fifth of the station
+has no recipe at all (schoolroom, the Canadian and BC sets, the music cards,
+everything generated). Copy it:
+
+```bash
+tools/z0-media-sync.sh --from-peer root@vile:/mnt/main-data/channelz0 \
+  --bwlimit 20000        # the station is broadcasting over this same line
+tools/z0-media-sync.sh --from-peer root@vile:/mnt/main-data/channelz0 --verify
+```
+
+It never copies `.z0-cluster`. That directory *is* the lease — copy it and the
+new box starts up believing it is already on air, which is the exact
+double-publish everything below exists to prevent.
+
+### Prove the tools before you trust them with a machine
+
+```bash
+tools/test-spawn.sh      # ~5 seconds, no station, no media, no GPU
+```
+
+It builds a synthetic station in a scratch database and asserts the properties
+that decide whether a spawned node airs the right thing: the encoder is
+re-pointed, the remote libraries don't travel, the playout anchor is cleared,
+the index is dropped, the channel number is read rather than assumed, and the
+lease is never copied.
+
+### The channel number is not 1
+
+ErsatzTV publishes at `/iptv/channel/<number>.ts`, and the number is whatever
+the station was built with. **Channel Z0 is number 0** — `/iptv/channel/1.ts`
+returns 404 on it. Bootstrap reads the real number out of the station image and
+writes it into `.env`; it used to hardcode 1, which produced a node that passed
+every health check and published nothing.
+
+That is also why bootstrap's verification `ffprobe`s the channel for decodable
+video instead of accepting an HTTP 200 from ErsatzTV. ErsatzTV answers on :8409
+with no libraries, no channel, and nothing to air — and it answers while wedged.
+The failover logic already knew this; a node ffprobes itself before standing for
+election precisely so a broken node doesn't win and broadcast silence.
 
 ## How exactly-one-on-air works
 

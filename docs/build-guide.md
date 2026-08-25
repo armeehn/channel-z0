@@ -110,6 +110,33 @@ Caddy fetches TLS certificates on its own. `https://watch.channelz0.example` now
 
 ### 1.4 Lock the doors
 
+Rather than clicking through the admin UI, do all three at once — and note the
+third, which the checklist never used to mention and which matters more than
+the other two:
+
+```bash
+Z0_OWNCAST_ADMIN_PASS=<current> tools/z0-tower-config.sh \
+  --watch-domain watch.channelz0.example \
+  --admin-pass <new> --stream-key <long-random>
+
+# and afterwards, any time you suspect drift:
+tools/z0-tower-config.sh --watch-domain watch.channelz0.example --check
+```
+
+**Video passthrough must be on.** It is the whole reason a 1 GB free-tier box
+can carry a television channel. With it off, Owncast software-encodes the
+incoming stream; on a micro shape that runs at about 0.93x realtime, so the
+public stream falls behind roughly six seconds per minute — forever, because
+the uplink is capped at 1.0x and every second lost is lost. It does not present
+as an encoder fault. It presents as "the stream is a couple of minutes behind",
+then ten, while `/api/status` says `online:true` throughout.
+
+Changing it does **not** restart the running transcode: Owncast only builds a
+new pipeline when a new RTMP session starts, so the config reads back correct
+while the old ffmpeg keeps going. Restart the uplink on the playout node
+(`docker restart z0-uplink`) to make it take.
+
+
 Open `https://watch.channelz0.example/admin` (default login is `admin` / `abc123` on current builds — the console log tells you if it differs) and immediately:
 
 1. **Change the admin password and the stream key.** The stream key is the only thing standing between the world and your airwaves. Make it long and random.
@@ -193,6 +220,25 @@ Notes, as of this writing: `latest-vaapi` is the right tag for Intel Quick Sync 
 
 ### 2.3 Configure the station
 
+**If a Channel Z0 already exists somewhere, do not do any of this by hand.**
+Capture that station and pour it into this box — it carries the profile, the
+libraries, the collections, the filler presets, the channel, the watermark, the
+graphics elements and the playout, and it re-points the encoder at whatever
+hardware this machine has:
+
+```bash
+# on the machine that is on air — read-only, safe against a live station
+tools/z0-station-image.sh --capture --from root@<node>:/config --out /tmp/z0-station.tgz
+# on the new box
+tools/bootstrap-node.sh --role playout --station-image /tmp/z0-station.tgz …
+```
+
+See [clustering](clustering.md#standing-up-a-node). There is no config API to
+script instead — ErsatzTV's `/api/…` serves the SPA, not JSON — so the database
+is the station.
+
+The steps below are how you build the **first** one, from nothing.
+
 In the ErsatzTV web UI, in order:
 
 1. **FFmpeg profile** (Settings → FFmpeg Profiles): one profile, `Z0 Broadcast` — 1920×1080, H.264 hardware encode (VAAPI/QSV), ~4500 kbps video, AAC 128 kbps audio, normalize framerate on. If your uplink is a true 10 *megabits*, make it 1280×720 at 3000–3500 kbps instead and leave headroom for the household. This one profile is the master encode — everything downstream just copies it.
@@ -210,7 +256,7 @@ In the ErsatzTV web UI, in order:
    - 20:00: prime movie · 23:00: mellow late block
    - 📦 *In this repo:* [`docs/programming.md`](programming.md) turns that rhythm into the whole week — every block defined, the themed nights, the show bible, and the exact ErsatzTV mapping (collections, fixed-start anchors, weekend schedule). It's the twin of the storefront's program grid; build from it.
    - **00:00 — SIGN-OFF**: a nightly ritual item (anthem, station sign-off card — [`tools/make-signoff.sh`](../tools/make-signoff.sh) generates the card-into-bars close), then `Colour Bars` until the 06:00 sign-on. Deeply on-brand, and it costs nothing.
-7. Sanity-check locally: open `http://playout-pc:8409/iptv/channel/1.ts` in VLC. You should be watching Channel Z0. (ErsatzTV also serves an XMLTV guide at `/iptv/xmltv.xml` — useful later for generating the website's schedule.)
+7. Sanity-check locally: open `http://playout-pc:8409/iptv/channel/<number>.ts` in VLC — **the channel number you set in step 5, not 1**. Channel Z0 is number 0, and `/iptv/channel/1.ts` returns 404 on it; a wrong number here gives you a node that answers every health check and publishes nothing. You should be watching Channel Z0. (ErsatzTV also serves an XMLTV guide at `/iptv/xmltv.xml` — useful later for generating the website's schedule.)
 
 ---
 
