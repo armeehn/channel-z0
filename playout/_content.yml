@@ -324,6 +324,37 @@ content:
     playlist_group: Channel Z0
     key: pl_lunch_loops
 
+  # One lunch per weekday; see lists/z0-lists.yml. `pl_lunch_loops` above stays
+  # as the default for any day whose WEEK entry has no `lunch` key.
+
+  - playlist: Lunch Loops Waltzes
+    playlist_group: Channel Z0
+    key: pl_lunch_waltz
+
+  - playlist: Lunch Loops Polka Hour
+    playlist_group: Channel Z0
+    key: pl_lunch_polka
+
+  - playlist: Lunch Loops Songs
+    playlist_group: Channel Z0
+    key: pl_lunch_song
+
+  - playlist: Lunch Loops Kolomyiky
+    playlist_group: Channel Z0
+    key: pl_lunch_kolomyika
+
+  - playlist: Lunch Loops Polka Party
+    playlist_group: Channel Z0
+    key: pl_lunch_party
+
+  - playlist: Lunch Loops Weddings
+    playlist_group: Channel Z0
+    key: pl_lunch_wedding
+
+  - playlist: Lunch Loops Prairie Mixed
+    playlist_group: Channel Z0
+    key: pl_lunch_mixed
+
   - playlist: Polka Party
     playlist_group: Channel Z0
     key: pl_polka_party

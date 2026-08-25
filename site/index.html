@@ -1286,7 +1286,13 @@ const CONFIG = {
 const GROUND_ZERO = { t: "19:00", name: "GROUND ZERO", desc: "Alien street interviews via baguette — flagship transmission", flagship: true };
 
 /* one weekday, given the night's prime feature + late block */
-function weekday(prime, late) {
+function weekday(prime, late, matinee) {
+  /* Thursday is the one weekday whose matinee is not the picture show: it runs
+     the chapter play, from the same serial pool as that night's prime. Kept on
+     one line deliberately -- a multi-line object literal here would close with
+     a line starting `}`, and the estate monitor reads this function with a sed
+     range that stops at exactly that. */
+  const MATINEE = matinee || { name: "AFTERNOON PICTURE SHOW", desc: "A feature film older than the concept of streaming" };
   return [
     { t: "06:00", name: "SIGN-ON · MORNING PATTERN", desc: "Anthem, test card, and the day begins" },
     { t: "06:30", name: "STRETCH & COFFEE",          desc: "Slow television from around the neighbourhood" },
@@ -1294,7 +1300,7 @@ function weekday(prime, late) {
     { t: "09:00", name: "PRELINGER THEATRE",         desc: "Vintage PSAs & educational shorts — trust the narrator" },
     { t: "11:00", name: "LAB HOUR",                  desc: "What Riposte Labs is building this week, sometimes live" },
     { t: "12:00", name: "LUNCH LOOPS",               desc: "Music + the community bulletin board" },
-    { t: "14:00", name: "AFTERNOON PICTURE SHOW",    desc: "A feature film older than the concept of streaming" },
+    { t: "14:00", name: MATINEE.name,                desc: MATINEE.desc },
     { t: "16:00", name: "CARTOON BLOCK II",          desc: "The toons return, as toons do" },
     { t: "18:00", name: "NEIGHBOURHOOD DESK",        desc: "Notices, events, found cats, lost causes" },
     GROUND_ZERO,
@@ -1314,7 +1320,8 @@ const WEEK = {
   3: weekday({ name: "WORKBENCH THEATRE",       desc: "How things are made — documentaries and industrials" },
              { name: "NIGHT PATTERN",           desc: "Ambient signals; wind it down" }),
   4: weekday({ name: "SERIAL NIGHT",            desc: "A chapter, a cliffhanger, a promise to return" },
-             { name: "CHAPTER'S END",           desc: "Tonight's recap, on a loop" }),
+             { name: "CHAPTER'S END",           desc: "Tonight's recap, on a loop" },
+             { name: "CHAPTER PLAY MATINEE",    desc: "The chapter play, ahead of the night's serial" }),
   5: weekday({ name: "FRIDAY NIGHT FEATURE",    desc: "The prestige pick, with local ad breaks as nature intended" },
              { name: "THE LATE LATE SHOW",      desc: "Cult and camp for the night owls" }),
   6: [ /* Saturday — the big night: cartoons come forward, a double bill, a late sign-off */
@@ -1328,7 +1335,7 @@ const WEEK = {
     { t: "18:00", name: "NEIGHBOURHOOD DESK",     desc: "Notices, events, found cats — the weekend edition" },
     GROUND_ZERO,
     { t: "20:00", name: "SATURDAY DOUBLE BILL",   desc: "Feature one; the big night begins" },
-    { t: "22:30", name: "DOUBLE BILL — FEATURE TWO", desc: "The second picture, for the committed" },
+    { t: "22:30", name: "SATURDAY DOUBLE BILL — SECOND FEATURE", desc: "The second picture, for the committed" },
     { t: "00:30", name: "SIGN-OFF",               desc: "Saturday runs late. Goodnight, locals." },
   ],
   0: [ /* Sunday — the quiet one: a slower morning, an earlier settle */
