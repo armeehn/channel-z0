@@ -41,13 +41,11 @@ playout:
   - epg_group: false
 
   # The whole Vancouver reel, in order, as one guide entry.
-  - sequence: 'strip_down'
   - epg_group: true
   - all: null
     content: 'vancouver_reel'
     custom_title: 'THE VANCOUVER REEL'
   - epg_group: false
-  - sequence: 'strip_up'
 
   - epg_group: true
   - pad_until: '12:00'
@@ -101,7 +99,6 @@ playout:
     discard_attempts: 6
   - epg_group: false
 
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -116,7 +113,6 @@ playout:
   - epg_group: false
   - pre_roll: false
   - post_roll: false
-  - sequence: 'strip_up'
 
   - epg_group: true
   - pad_until: '22:00'
@@ -144,7 +140,6 @@ playout:
 
   - sequence: 'weather_break'
   - sequence: 'sign_off'
-  - sequence: 'strip_down'
 
   - epg_group: true
   - pad_until: '05:30'
@@ -160,6 +155,5 @@ playout:
     content: 'colorbars'
     custom_title: 'COLOUR BARS'
   - epg_group: false
-  - sequence: 'strip_up'
 
   - repeat: true
