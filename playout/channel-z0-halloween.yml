@@ -71,10 +71,6 @@ playout:
   - epg_group: false
 
   # ── Prime: the double bill ────────────────────────────────────────────────
-  # Strip down for both features. The bottom strip is a subtitle element and
-  # re-renders every frame; two back-to-back features is exactly when the
-  # channel has the least headroom to spare.
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - post_roll: true
@@ -120,6 +116,5 @@ playout:
     content: 'colorbars'
     custom_title: 'COLOUR BARS'
   - epg_group: false
-  - sequence: 'strip_up'
 
   - repeat: true
