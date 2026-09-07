@@ -4,10 +4,6 @@
 #   ./build.sh                 render + encode into $GZ_WORK
 #   ./build.sh --install       ...and copy it onto the playout machine
 #
-# Render anywhere; run --install from **x**.  LXC 111 has the checkout and the
-# toolchain but no SSH trust to vile (Host key verification failed), so the
-# install half of this script only works from the node.
-#
 # Everything is deterministic: no seeds, no clock, no network.  The same
 # checkout produces the same 1800 frames and the same 60 s of audio, so the
 # master can always be regenerated rather than archived.
@@ -25,6 +21,12 @@ VILE="${VILE:-root@10.0.1.222}"
 DEST="/mnt/main-data/channelz0/opens/groundzero"
 
 mkdir -p "$WORK"
+
+echo "── audio checks"
+# Run before rendering, not after.  All three of these have been wrong at some
+# point — the echo unit silent, the pan law clamped so the mix was mono, a
+# voice off its note — and none of them is visible in a waveform.
+python3 test_audio.py
 
 echo "── score"
 python3 gzaudio.py "$WORK/open.wav"

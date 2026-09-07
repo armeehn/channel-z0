@@ -1,18 +1,26 @@
 #!/usr/bin/env python3
 """Render the GROUND ZERO opening title sequence as PNG frames.
 
-The sequence is a parody of the Mega Man X / X2 / X3 openings, done as if the
-station had only ever had an 8-bit machine to do it on: publisher sting, a long
-prologue crawl, a backlit hero shot, the logo arriving hard, and an attract
-screen.  Mega Man X is a 16-bit game; the brief asked for 8-bit, so what is
-borrowed is the *structure* and the timing, not the colour depth.
+A 16-bit opening in the grammar of the Mega Man X intros — publisher sting,
+prologue crawl, a journey, an arrival, a name card, the logo — telling this
+programme's own story: a distress signal leaves Earth, someone a long way off
+answers it, comes through a wormhole, and puts her ship into a hillside in the
+Okanagan where nobody sees her land.  She then goes and asks people what they
+are doing, holding a baguette.
 
-Everything is drawn on a 320x240 logical canvas — 4:3 with square pixels, an
-8 px tile grid, and a fixed 16-colour palette.  320x240 doubles exactly to the
-640x480 the station's other cards are authored at, so the encode can scale with
-`neighbor` and every pixel stays a hard square.  4:3 is also what the channel
-wants: at 854x480 a 4:3 item pillarboxes into precisely the gutters the on-air
-rails live in, so nothing here is ever drawn under the furniture.
+**Nothing in this sequence is a crosshair.**  An earlier pass built the whole
+identity around a reticle — the O of ZERO was one.  It is gone: the O is a
+planet with an orbit, the crawl's mark is a transmission bloom, and the
+programme's designation reads LANDING SITE.  She is not aiming at anyone; the
+premise is that she turned up to help.
+
+The 16-bit part is specific: per-scanline gradients (HDMA), colour math for
+every light source, depth planes separated by contrast, shaded sprites lit from
+one direction, and a chrome ramp for the display face.
+
+The canvas is 320x240 — 4:3 with square pixels, doubling exactly to the 640x480
+the station's other cards are authored at, which pillarboxes into the channel's
+854x480 precisely inside the on-air rails.
 
 Usage:  make_frames.py OUTDIR [--stills]
 """
@@ -20,113 +28,128 @@ import math
 import os
 import sys
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import gzart
 import gzfont
+import gzpal as P
 
 W, H = 320, 240
 FPS = 30
 
-# ── palette ───────────────────────────────────────────────────────────────
-# Sixteen colours, and nothing is drawn outside them.  The station brand
-# supplies ink / bone / marigold / pink / teal; the rest are the two ramps
-# those need to survive a night sky and a metal logo.
-BLACK    = (0x00, 0x00, 0x00)
-INK      = (0x1d, 0x1a, 0x17)
-INK_DEEP = (0x0b, 0x0a, 0x09)
-STEEL_DK = (0x3a, 0x35, 0x2f)
-STEEL    = (0x5c, 0x55, 0x4c)
-BONE_DK  = (0x7c, 0x76, 0x6b)
-BONE_DIM = (0xb9, 0xb2, 0xa4)
-BONE     = (0xf6, 0xf1, 0xe7)
-WHITE    = (0xff, 0xff, 0xff)
-MARI_DP  = (0xa1, 0x5e, 0x01)
-MARI     = (0xfe, 0x9a, 0x0d)
-MARI_LT  = (0xff, 0xd0, 0x8a)
-PINK     = (0xf0, 0x47, 0x7d)
-TEAL     = (0x12, 0xb7, 0x95)
-SKY_LO   = (0x16, 0x12, 0x24)
-SKY_MD   = (0x2a, 0x21, 0x40)
-SKY_HI   = (0x45, 0x30, 0x5c)
-HILL     = (0x24, 0x1c, 0x33)
-CLOUD    = (0x1e, 0x18, 0x2c)
-CLOUD_HI = (0x36, 0x28, 0x4c)
-GLOW_A   = (0x26, 0x22, 0x1d)
-GLOW_B   = (0x30, 0x2a, 0x22)
-
-TRIBAND = (PINK, MARI, TEAL)
+TRIBAND = (P.PINK[2], P.ARMOUR[2], P.VISOR[2])
 
 # ── timeline ──────────────────────────────────────────────────────────────
-# Frame counts, not seconds, because every motion below is authored in whole
-# pixels per frame and a fractional duration would put the crawl on half-pixel
-# steps.
-T_STING  = 135   # 4.5 s  publisher sting
-T_CRAWL  = 660   # 22.0 s prologue
-T_HERO   = 450   # 15.0 s rooftop
-T_SLAM   = 315   # 10.5 s logo
-T_ATTRACT = 240  # 8.0 s  press start
-TOTAL = T_STING + T_CRAWL + T_HERO + T_SLAM + T_ATTRACT   # 1800 = 60.0 s
+T_STING = 135      # 4.5 s
+T_CRAWL = 420      # 14.0 s
+T_SPACE = 210      # 7.0 s
+T_WORM = 180       # 6.0 s
+T_LAND = 240       # 8.0 s
+T_FACE = 120       # 4.0 s
+T_NAME = 150       # 5.0 s
+T_SLAM = 210       # 7.0 s
+T_ATTRACT = 135    # 4.5 s
+TOTAL = (T_STING + T_CRAWL + T_SPACE + T_WORM + T_LAND + T_FACE + T_NAME
+         + T_SLAM + T_ATTRACT)                                    # 1800
 
 C_STING = 0
 C_CRAWL = C_STING + T_STING
-C_HERO  = C_CRAWL + T_CRAWL
-C_SLAM  = C_HERO + T_HERO
+C_SPACE = C_CRAWL + T_CRAWL
+C_WORM = C_SPACE + T_SPACE
+C_LAND = C_WORM + T_WORM
+C_FACE = C_LAND + T_LAND
+C_NAME = C_FACE + T_FACE
+C_SLAM = C_NAME + T_NAME
 C_ATTRACT = C_SLAM + T_SLAM
 
-# ── text ──────────────────────────────────────────────────────────────────
 PROLOGUE = [
     "IN THE YEAR 20XX,",
-    "THE LOCAL STATIONS",
-    "WENT DARK.",
+    "A DISTRESS SIGNAL",
+    "LEFT EARTH.",
     "",
-    "THE TOWERS WERE SOLD.",
-    "THE NEWSROOMS WERE",
-    "CONSOLIDATED INTO ONE",
-    "FEED, TRANSMITTED",
-    "FROM SOMEWHERE ELSE.",
+    "IT WAS FAINT. IT WAS",
+    "NOT ADDRESSED TO",
+    "ANYONE IN PARTICULAR.",
     "",
-    "FOR A WHILE,",
-    "NOBODY NOTICED.",
+    "IT WENT UNANSWERED",
+    "FOR A LONG TIME.",
     "",
-    "THEN THE FEED BEGAN",
-    "REPORTING WEATHER",
-    "THAT WAS NOT",
-    "HAPPENING HERE.",
-    "",
-    "FROM A SERVICE CLOSET",
-    "IN KELOWNA, B.C.,",
-    "ONE TRANSMITTER",
-    "CAME BACK ON.",
-    "",
-    "ITS OPERATORS CALL THE",
-    "PLACE WHERE IT HAPPENED",
-    "GROUND ZERO.",
+    "THEN SOMETHING CAME",
+    "A VERY LONG WAY,",
+    "AND DID NOT SURVIVE",
+    "THE ARRIVAL INTACT.",
 ]
 CRAWL_PITCH = 18
-CRAWL_SPEED = 1        # px per frame, integer on purpose
-CRAWL_HOLD = 60        # frames the last line sits still before the cut
+CRAWL_SPEED = 1
+CRAWL_HOLD = 60
 
 WORDMARK = "RIPOSTE LABORATORIES INC."
 
 
-# ── primitives ────────────────────────────────────────────────────────────
-def new_frame(colour=BLACK):
+# ── colour math ───────────────────────────────────────────────────────────
+def new_frame(colour=P.BLACK):
     return Image.new("RGB", (W, H), colour)
 
 
+def layer():
+    return Image.new("RGBA", (W, H), (0, 0, 0, 0))
+
+
+def add(base, lay, amount=1.0):
+    """Additive colour math — the SNES main/sub screen add.  Every light source
+    in the sequence goes through this: the moon, the signal, the wormhole, the
+    engine, the fireball, the logo bloom."""
+    rgb = lay.convert("RGB")
+    if amount < 1.0:
+        rgb = Image.blend(Image.new("RGB", (W, H), P.BLACK), rgb, amount)
+    a = lay.getchannel("A")
+    if a.getextrema() != (255, 255):
+        rgb = Image.composite(rgb, Image.new("RGB", (W, H), P.BLACK), a)
+    return ImageChops.add(base, rgb)
+
+
+def over(base, lay):
+    base.paste(lay, (0, 0), lay)
+    return base
+
+
+def vgrad(img, y0, y1, stops, x0=0, x1=W):
+    """A gradient evaluated once per scanline.  This is the HDMA table."""
+    d = ImageDraw.Draw(img)
+    span = max(1, y1 - y0)
+    for y in range(max(0, y0), min(H, y1)):
+        d.line([(x0, y), (x1 - 1, y)], fill=P.stops_at(stops, (y - y0) / span))
+
+
+def fade(img, k):
+    if k >= 0.999:
+        return img
+    if k <= 0:
+        return new_frame(P.BLACK)
+    return Image.blend(new_frame(P.BLACK), img, k)
+
+
+def flash(img, k, colour=P.WHITE):
+    if k <= 0:
+        return img
+    lay = layer()
+    ImageDraw.Draw(lay).rectangle([0, 0, W, H], fill=colour + (255,))
+    return add(img, lay, min(1.0, k))
+
+
+# ── type ──────────────────────────────────────────────────────────────────
 _text_cache = {}
 
 
 def text_img(s, colour, scale=1):
-    """One line of SMALL type as an RGBA image, cached."""
     key = (s, colour, scale)
     hit = _text_cache.get(key)
     if hit is not None:
         return hit
     cw = gzfont.SMALL_CELL * scale
-    img = Image.new("RGBA", (max(1, cw * len(s)), gzfont.SMALL_H * scale), (0, 0, 0, 0))
+    img = Image.new("RGBA", (max(1, cw * len(s)), gzfont.SMALL_H * scale),
+                    (0, 0, 0, 0))
     px = img.load()
     for i, ch in enumerate(s):
         glyph = gzfont.SMALL.get(ch, gzfont.MISSING)
@@ -159,77 +182,64 @@ def blit_centre(img, y, s, colour, scale=1, shadow=None):
 
 
 def triband(img, x, y, w, h):
-    """The station's three-colour band, hard edges, 36/28/36 like the cards."""
     d = ImageDraw.Draw(img)
-    a = int(w * 0.36)
-    b = int(w * 0.64)
-    d.rectangle([x, y, x + a - 1, y + h - 1], fill=PINK)
-    d.rectangle([x + a, y, x + b - 1, y + h - 1], fill=MARI)
-    d.rectangle([x + b, y, x + w - 1, y + h - 1], fill=TEAL)
+    a, b = int(w * 0.36), int(w * 0.64)
+    d.rectangle([x, y, x + a - 1, y + h - 1], fill=TRIBAND[0])
+    d.rectangle([x + a, y, x + b - 1, y + h - 1], fill=TRIBAND[1])
+    d.rectangle([x + b, y, x + w - 1, y + h - 1], fill=TRIBAND[2])
 
 
-BAYER4 = [
-    [0, 8, 2, 10],
-    [12, 4, 14, 6],
-    [3, 11, 1, 9],
-    [15, 7, 13, 5],
-]
+def signal_arcs(d, cx, cy, phase, count=3, spacing=26, span=(150, 210),
+                colour=None, alpha=170):
+    """Concentric ARCS, opening one way — a transmission leaving, or arriving.
 
-
-def dither_band(img, y0, y1, c_top, c_bot):
-    """Ordered-dither between two palette colours down a band.
-
-    No blending: every pixel is one of the two colours.  A true gradient would
-    put unlisted colours on screen and cost the whole 8-bit read.
+    Deliberately arcs and never rings-with-a-cross: the thing this replaced was
+    a reticle, and a ring plus two crossed lines is a gunsight no matter what
+    you call it in the caption.
     """
-    px = img.load()
-    span = max(1, y1 - y0)
-    for y in range(y0, y1):
-        f = (y - y0) / span
-        lvl = f * 16
-        for x in range(W):
-            px[x, y] = c_bot if lvl > BAYER4[y & 3][x & 3] else c_top
-
-
-def fade(img, k, steps=6):
-    """Palette-style fade: k in 0..1, quantised so it steps rather than glides."""
-    if k >= 0.999:
-        return img
-    q = round(k * steps) / steps
-    out = img.point(lambda v: int(v * q))
-    return out
-
-
-def rings(d, cx, cy, radii, colour):
-    for r in radii:
-        d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=colour)
+    for i in range(count):
+        r = int(phase + i * spacing)
+        if r < 6:
+            continue
+        a = int(alpha * max(0.0, 1.0 - (r / (spacing * (count + 1)))))
+        if a <= 0:
+            continue
+        col = colour or P.stops_at(P.WORM_STOPS, (i / max(1, count - 1)))
+        d.arc([cx - r, cy - r, cx + r, cy + r], span[0], span[1],
+              fill=col + (a,))
 
 
 # ── scene 1 · publisher sting ─────────────────────────────────────────────
 def scene_sting(f):
-    """Capcom-logo grammar: a wordmark, a chime, a flash, then PRESENTS."""
-    img = new_frame(BLACK)
+    img = new_frame(P.BLACK)
     y = 100
     x0 = (W - text_w(WORDMARK)) // 2
 
     if f < 6:
         return img
 
-    # The wordmark types in, then the flash lands on the last character.
     shown = min(len(WORDMARK), int((f - 6) / 1.05))
     if shown:
-        blit_text(img, x0, y, WORDMARK[:shown], BONE)
+        blit_text(img, x0, y, WORDMARK[:shown], P.BONE[1])
 
-    if 44 <= f < 48:
-        return new_frame(WHITE if f < 46 else BONE)
+    if 44 <= f < 50:
+        blit_text(img, x0, y, WORDMARK, P.BONE[1])
+        return flash(img, 1.0 - (f - 44) / 6.0)
 
-    if f >= 48:
-        blit_text(img, x0, y, WORDMARK, BONE)
+    if f >= 50:
+        blit_text(img, x0, y, WORDMARK, P.BONE[1])
         triband(img, x0, y + 12, text_w(WORDMARK), 3)
+        if f < 84:
+            k = (84 - f) / 34.0
+            st = layer()
+            ImageDraw.Draw(st).line(
+                [(x0 - 20, y + 13), (x0 + text_w(WORDMARK) + 20, y + 13)],
+                fill=P.WHITE + (int(200 * k),))
+            img = add(img, st, k)
     if f >= 62:
-        blit_centre(img, y + 26, "PRESENTS", MARI)
+        blit_centre(img, y + 26, "PRESENTS", P.ARMOUR[2])
     if f >= 74:
-        blit_centre(img, y + 44, "A CHANNEL Z0 TRANSMISSION", STEEL, 1)
+        blit_centre(img, y + 44, "A CHANNEL Z0 TRANSMISSION", P.STEEL[1])
 
     if f >= T_STING - 24:
         img = fade(img, max(0.0, (T_STING - 6 - f) / 18))
@@ -240,536 +250,799 @@ def scene_sting(f):
 def _crawl_block():
     h = CRAWL_PITCH * len(PROLOGUE)
     img = Image.new("RGBA", (W, h), (0, 0, 0, 0))
-    for i, line in enumerate(PROLOGUE):
-        if not line:
+    for i, ln in enumerate(PROLOGUE):
+        if not ln:
             continue
         last = i == len(PROLOGUE) - 1
-        colour = MARI if last else BONE
-        x = (W - text_w(line)) // 2
-        blit_text(img, x, i * CRAWL_PITCH, line, colour, 1, shadow=STEEL_DK)
-        if last:
-            d = ImageDraw.Draw(img)
-            d.rectangle([x, i * CRAWL_PITCH + 10, x + text_w(line) - 1,
-                         i * CRAWL_PITCH + 11], fill=MARI_DP)
+        colour = P.HAIR[1] if last else P.BONE[1]
+        x = (W - text_w(ln)) // 2
+        blit_text(img, x, i * CRAWL_PITCH, ln, colour, 1, shadow=(0x14, 0x12, 0x22))
     return img
 
 
 CRAWL = None
-DUST = [((i * 61) % W, (i * 37) % 320, BONE_DK if i % 5 == 0 else STEEL)
-        for i in range(70)]
+NEBULA = None
+STARS = [((i * 61) % W, (i * 37) % 300, 1 + i % 3) for i in range(150)]
+
+
+def _nebula():
+    img = new_frame(P.BLACK)
+    vgrad(img, 0, H, [(0.0, (0x05, 0x04, 0x0e)), (0.55, (0x0d, 0x08, 0x1c)),
+                      (1.0, (0x04, 0x03, 0x0a))])
+    lay = layer()
+    d = ImageDraw.Draw(lay)
+    for cx, cy, r, col in ((70, 90, 62, (0x1a, 0x28, 0x4a)),
+                           (240, 150, 78, (0x2e, 0x14, 0x30)),
+                           (170, 40, 54, (0x14, 0x2a, 0x3e))):
+        d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=col + (255,))
+    return add(img, lay.filter(ImageFilter.GaussianBlur(18)), 0.55)
 
 
 def scene_crawl(f):
-    img = new_frame(BLACK)
+    img = NEBULA.copy()
     d = ImageDraw.Draw(img)
 
-    # A field of slow dust so the black is moving.  It reads as depth without
-    # ever competing with the type for attention.
-    for i, (x, y0, c) in enumerate(DUST):
-        speed = 1 if i % 3 == 0 else 2
-        y = (y0 - f * speed // 2) % 320 - 40
+    for x, y0, plane in STARS:
+        speed = (1, 2, 3)[plane - 1]
+        y = (y0 - f * speed // 2) % 300 - 30
         if 0 <= y < H:
-            d.point((x, y), fill=c)
+            d.point((x, y), fill=P.ramp_at(P.BONE, (3 - plane) * 0.28))
 
-    # The card's reticle, holding station off to the right, breathing.
-    cx, cy = 318, 118
-    rings(d, cx, cy, (64, 47, 30), STEEL_DK)
-    pulse = 12 + int(7 * math.sin(f / 14.0))
-    rings(d, cx, cy, (pulse,), MARI_DP)
-    d.rectangle([cx - 1, cy - 1, cx + 1, cy + 1], fill=MARI_DP)
-    d.rectangle([cx - 74, cy, cx, cy + 1], fill=STEEL_DK)
+    # The signal itself, arriving from off frame right, over and over.
+    glow = layer()
+    gd = ImageDraw.Draw(glow)
+    signal_arcs(gd, 330, 118, (f * 1.4) % 96, count=4, spacing=30, alpha=150)
+    gd.ellipse([326, 114, 334, 122], fill=P.HAIR[1] + (190,))
+    img = add(img, glow, 0.85)
 
     scroll = min(f * CRAWL_SPEED, (T_CRAWL - CRAWL_HOLD) * CRAWL_SPEED)
     img.paste(CRAWL, (0, H - scroll), CRAWL)
 
-    if f < 12:
-        img = fade(img, f / 12)
-    if f >= T_CRAWL - 10:
-        img = fade(img, max(0.0, (T_CRAWL - 1 - f) / 9))
+    if f < 14:
+        img = fade(img, f / 14)
+    if f >= T_CRAWL - 12:
+        img = fade(img, max(0.0, (T_CRAWL - 1 - f) / 11))
     return img
 
 
-# ── scene 3 · the rooftop ─────────────────────────────────────────────────
-# The ridge dips where the hero stands, so his head and shoulders break the
-# skyline instead of disappearing into it.  That dip is the whole composition:
-# in a backlit shot the figure must be the darkest thing on screen and must sit
-# against the lightest, and hills are neither.
-HILLS = [(0, 148), (24, 140), (48, 145), (72, 138), (96, 149), (120, 153),
-         (148, 151), (172, 139), (196, 127), (220, 135), (244, 130),
-         (268, 141), (296, 133), (320, 143)]
-
-RAIN = [((i * 53) % W, (i * 29) % 260, 4 + (i % 3) * 3) for i in range(64)]
-RAIN_FG = [((i * 91) % W, (i * 67) % 260, 9 + (i % 2) * 4) for i in range(16)]
-
-HERO_X, HERO_FOOT = 118, 162      # feet on the parapet, head on the moon
-MOON_X, MOON_Y, MOON_R = 128, 132, 25
-
-T_WIDE = 300          # frames of the wide shot before the cut to the visor
+# ── scene 3 · deep space, and the signal ──────────────────────────────────
+EARTH_X, EARTH_Y, EARTH_R = 252, 112, 27
 
 
-def _sky():
-    """The static plate for the wide shot: sky, moon, hills, lake, roof.
-
-    Built once.  Six flat values from SKY_LO at the top to BLACK in the
-    foreground, ordered so that every layer is lighter than the one in front
-    of it — which is what makes a silhouette possible at all.
-    """
-    img = new_frame(SKY_LO)
-    dither_band(img, 0, 72, SKY_LO, SKY_LO)
-    dither_band(img, 72, 112, SKY_LO, SKY_MD)
-    dither_band(img, 112, 152, SKY_MD, SKY_HI)
+def _starfield(img, f, drift=1.0):
     d = ImageDraw.Draw(img)
+    for x, y0, plane in STARS:
+        speed = (1, 2, 4)[plane - 1] * drift
+        xx = int(x - f * speed / 3) % (W + 20) - 10
+        if 0 <= xx < W:
+            d.point((xx, y0 % H), fill=P.ramp_at(P.BONE, (3 - plane) * 0.28))
 
-    for i in range(52):                                   # stars
-        x, y = (i * 71) % W, (i * 43) % 74
-        d.point((x, y), fill=BONE_DK if i % 4 else BONE_DIM)
 
-    # The moon is the backlight.  Everything downstream is read against it.
-    for r, c in ((MOON_R + 9, SKY_HI), (MOON_R + 4, CLOUD_HI)):
-        d.ellipse([MOON_X - r, MOON_Y - r, MOON_X + r, MOON_Y + r], fill=c)
-    d.ellipse([MOON_X - MOON_R, MOON_Y - MOON_R,
-               MOON_X + MOON_R, MOON_Y + MOON_R], fill=BONE_DIM)
-    for cx, cy, r in ((MOON_X - 9, MOON_Y - 6, 4), (MOON_X + 7, MOON_Y + 4, 6),
-                      (MOON_X + 2, MOON_Y - 13, 3)):      # maria
-        d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=BONE_DK)
+def _earth(img):
+    d = ImageDraw.Draw(img)
+    d.ellipse([EARTH_X - EARTH_R, EARTH_Y - EARTH_R,
+               EARTH_X + EARTH_R, EARTH_Y + EARTH_R], fill=P.OCEAN_D)
+    for r in range(EARTH_R, 0, -1):
+        t = 1.0 - r / EARTH_R
+        d.ellipse([EARTH_X - r - 4, EARTH_Y - r, EARTH_X + r - 4, EARTH_Y + r],
+                  fill=P.lerp(P.OCEAN_D, P.OCEAN, t * 0.9))
+    for cx, cy, rx, ry in ((-8, -10, 9, 6), (4, 4, 11, 7), (-12, 8, 6, 4)):
+        d.ellipse([EARTH_X + cx - rx, EARTH_Y + cy - ry,
+                   EARTH_X + cx + rx, EARTH_Y + cy + ry], fill=P.LAND)
+        d.ellipse([EARTH_X + cx - rx + 2, EARTH_Y + cy - ry + 1,
+                   EARTH_X + cx + rx - 3, EARTH_Y + cy + ry - 1], fill=P.LAND_D)
+    halo = layer()
+    hd = ImageDraw.Draw(halo)
+    for r, a in ((EARTH_R + 10, 28), (EARTH_R + 5, 44), (EARTH_R + 2, 70)):
+        hd.ellipse([EARTH_X - r, EARTH_Y - r, EARTH_X + r, EARTH_Y + r],
+                   outline=(0x7f, 0xc0, 0xff) + (a,), width=2)
+    return add(img, halo.filter(ImageFilter.GaussianBlur(3)), 0.9)
 
-    for i in range(len(HILLS) - 1):                       # Okanagan ridge
-        x0, y0 = HILLS[i]
-        x1, y1 = HILLS[i + 1]
-        d.polygon([(x0, y0), (x1, y1), (x1, 158), (x0, 158)], fill=HILL)
-    d.rectangle([0, 152, W, 158], fill=HILL)
 
-    d.rectangle([0, 158, W, 172], fill=SKY_MD)            # the lake
-    for y in range(159, 172, 3):                          # ripple
-        for x in range(0, W, 2):
-            if (x + y) & 3:
-                continue
-            d.point((x, y), fill=SKY_HI)
-    for y in range(159, 172):                             # moonpath, kept faint
-        wdt = 2 + (y - 159) // 3
-        for x in range(MOON_X - wdt, MOON_X + wdt):
-            if (x + y) & 3 == 0:
-                d.point((x, y), fill=BONE_DK)
+def _ship(img, x, y, thrust=1.0, shake=0, f=0):
+    """The vessel and its wake.
 
-    # The bridge, because the lake needs one thing on it that says where this is.
-    d.rectangle([0, 160, W, 161], fill=INK_DEEP)
-    for x in range(6, W, 24):
-        d.rectangle([x, 161, x + 1, 166], fill=INK_DEEP)
-    d.polygon([(198, 160), (206, 148), (214, 160)], fill=INK_DEEP)
-
-    # Foreground: the roof, and the parapet the hero is standing on.  Both are
-    # pure black — the near plane has to be the darkest value in the frame or
-    # the depth reads backwards.
-    d.rectangle([0, 172, W, H], fill=BLACK)
-    d.rectangle([0, 172, W, 173], fill=STEEL_DK)
-    d.rectangle([84, 162, 174, 173], fill=BLACK)
-    d.rectangle([84, 162, 174, 162], fill=STEEL_DK)
-    for x in range(0, W, 16):                             # roof gravel edge
-        d.point((x + (x // 16) % 3, 175), fill=STEEL_DK)
-
-    mx = 284                                              # the mast
-    d.rectangle([mx, 84, mx + 5, 172], fill=BLACK)
-    for y in range(88, 172, 8):
-        d.line([(mx, y), (mx + 5, y + 8)], fill=STEEL_DK)
-        d.line([(mx + 5, y), (mx, y + 8)], fill=STEEL_DK)
-    d.rectangle([mx - 3, 84, mx + 8, 85], fill=STEEL_DK)
+    A grown hull does not have an exhaust plume, so what trails it is a
+    bioluminescent wake — cool, irregular, and shed rather than burned."""
+    ship = gzart.load_rocket()
+    sx = x + (shake if (x + y) % 2 else -shake)
+    wake = layer()
+    wd = ImageDraw.Draw(wake)
+    n = int(14 * thrust)
+    for i in range(n):
+        w_ = max(1, 4 - i // 4)
+        oy = int(2.5 * math.sin(i * 0.9 + f * 0.25))
+        wd.ellipse([sx - 2 - i * 3 - w_, y + 10 + oy - w_,
+                    sx - 2 - i * 3 + w_, y + 10 + oy + w_],
+                   fill=P.stops_at([(0.0, P.VISOR[0]), (0.45, P.VISOR[1]),
+                                    (1.0, P.HAIR[3])], i / max(1, n - 1))
+                   + (max(0, 190 - i * 14),))
+    img = add(img, wake.filter(ImageFilter.GaussianBlur(2)), thrust * 0.85)
+    img.paste(ship, (sx, y), ship)
     return img
 
 
-SKY = None
+def scene_space(f):
+    img = new_frame()
+    vgrad(img, 0, H, P.SPACE_STOPS)
+    _starfield(img, f)
+    img = _earth(img)
+
+    # The distress call: arcs leaving Earth, one set every 24 frames.
+    glow = layer()
+    gd = ImageDraw.Draw(glow)
+    for k in range(3):
+        ph = ((f + k * 24) * 1.6) % 72
+        signal_arcs(gd, EARTH_X, EARTH_Y, ph + EARTH_R, count=3, spacing=22,
+                    span=(120, 240), alpha=150)
+    img = add(img, glow, 0.9)
+
+    # She answers at f 120: the plume doubles and she starts closing.
+    if f < 120:
+        x = -30 + f * 0.55
+        thrust = 0.55
+    else:
+        x = -30 + 120 * 0.55 + (f - 120) * 1.25
+        thrust = 1.0
+    img = _ship(img, int(x), EARTH_Y - 8, thrust, shake=1 if f > 120 else 0,
+                f=f)
+
+    if f >= 24:
+        blit_text(img, 12, 200, "DISTRESS · SOURCE: SOL III", P.HAIR[1], 1,
+                  shadow=P.BLACK)
+    if f >= 44:
+        blit_text(img, 12, 212, "NO ADDRESSEE", P.BONE[2], 1, shadow=P.BLACK)
+    if f >= 122 and (f // 10) % 2 == 0:
+        blit_text(img, 12, 224, "▸ ANSWERING", P.ARMOUR[2], 1, shadow=P.BLACK)
+
+    if f < 14:
+        img = fade(img, f / 14)
+    if f >= T_SPACE - 8:
+        img = fade(img, max(0.0, (T_SPACE - 1 - f) / 7))
+    return img
 
 
-def _blit_mask(img, mask, x, y, colour, mw, mh):
-    px = img.load()
-    for gy in range(mh):
-        yy = y + gy
-        if not (0 <= yy < H):
+# ── scene 4 · the wormhole ────────────────────────────────────────────────
+def scene_worm(f):
+    """A tunnel of rings rushing outward, in light blue, white and pink.
+
+    This is the one place those three colours sit together, and it is the whole
+    of what the sequence says about her out loud."""
+    img = new_frame(P.BLACK)
+    vgrad(img, 0, H, [(0.0, (0x08, 0x06, 0x12)), (0.5, (0x12, 0x0c, 0x22)),
+                      (1.0, (0x08, 0x06, 0x12))])
+    cx, cy = 160, 118
+
+    rings = layer()
+    rd = ImageDraw.Draw(rings)
+    speed = 3.0 + 5.0 * (f / T_WORM)
+    for i in range(16):
+        t = ((i * 22 + f * speed) % 352) / 352.0
+        r = int(6 + t * t * 300)
+        if r < 4 or r > 420:
             continue
-        row = mask[gy]
-        for gx in range(mw):
-            if row[gx]:
-                xx = x + gx
-                if 0 <= xx < W:
-                    px[xx, yy] = colour
+        col = P.stops_at(P.WORM_STOPS, (i * 0.17 + f * 0.006) % 1.0)
+        a = int(220 * (1.0 - t) ** 0.7)
+        rd.ellipse([cx - r, cy - int(r * 0.72), cx + r, cy + int(r * 0.72)],
+                   outline=col + (a,), width=max(1, int(1 + t * 5)))
+    img = add(img, rings, 0.95)
 
+    streaks = layer()
+    sd = ImageDraw.Draw(streaks)
+    for i in range(30):
+        ang = i * 12 + f * 0.6
+        rr = 20 + ((i * 37 + f * 9) % 240)
+        x1 = cx + math.cos(math.radians(ang)) * rr
+        y1 = cy + math.sin(math.radians(ang)) * rr * 0.72
+        x2 = cx + math.cos(math.radians(ang)) * (rr + 26)
+        y2 = cy + math.sin(math.radians(ang)) * (rr + 26) * 0.72
+        sd.line([(x1, y1), (x2, y2)],
+                fill=P.stops_at(P.WORM_STOPS, (i / 30.0)) + (110,))
+    img = add(img, streaks, 0.8)
 
-def _rain(d, frames, f, colour_a, colour_b, length=6, dx=2):
-    for i, (x, y0, sp) in enumerate(frames):
-        y = (y0 + f * sp) % 300 - 30
-        if -length < y < H:
-            d.line([(x, y), (x - dx, y + length)],
-                   fill=colour_a if i % 4 else colour_b)
+    img = _ship(img, cx - 16 + (1 if f % 3 else -1), cy - 10, 1.0, shake=1,
+                f=f)
 
+    if 20 <= f < 110:
+        blit_centre(img, 210, "TRANSIT", P.BONE[2])
 
-def _wide(f):
-    img = SKY.copy()
-    d = ImageDraw.Draw(img)
-
-    strike = (118 <= f < 126) or (238 <= f < 246)
-    peak = (118 <= f < 121) or (238 <= f < 241)
-
-    if peak:
-        d.rectangle([0, 0, W, 152], fill=SKY_HI)
-        for i in range(len(HILLS) - 1):
-            x0, y0 = HILLS[i]
-            x1, y1 = HILLS[i + 1]
-            d.polygon([(x0, y0), (x1, y1), (x1, 172), (x0, 172)], fill=INK_DEEP)
-        d.rectangle([0, 158, W, 172], fill=CLOUD_HI)
-        d.rectangle([0, 172, W, H], fill=BLACK)
-        d.rectangle([84, 162, 174, 173], fill=BLACK)
-        for xoff, col in ((0, BONE), (1, WHITE)):
-            d.line([(232 + xoff, 0), (224 + xoff, 42), (242 + xoff, 46),
-                    (226 + xoff, 100)], fill=col)
-
-    # Two cloud layers, ragged along the top so they read as weather and not
-    # as bars.  The far layer is lighter: it is nearer the moon.
-    for speed, col, y0, hgt, n in ((2, CLOUD_HI, 74, 8, 6), (1, CLOUD, 92, 11, 7)):
-        for i in range(n):
-            cw = 54 + (i * 23) % 58
-            x = ((i * 61) + f * speed // 2) % (W + 130) - 65
-            base = y0 + (i % 3) * 5
-            for seg in range(0, cw, 6):
-                lump = ((i + seg) % 4)
-                d.rectangle([x + seg, base + lump, x + seg + 5,
-                             base + hgt], fill=col)
-
-    _rain(d, RAIN, f, BONE_DK, STEEL)
-
-    body = BLACK
-    _blit_mask(img, gzart.BODY, HERO_X, HERO_FOOT - gzart.HERO_H, body,
-               gzart.HERO_W, gzart.HERO_H)
-    _blit_mask(img, gzart.MIC_M, HERO_X + 19, HERO_FOOT - 12, BLACK,
-               gzart.MIC_W, gzart.MIC_H)
-    _blit_mask(img, gzart.RIM, HERO_X, HERO_FOOT - gzart.HERO_H,
-               BONE if strike else MARI, gzart.HERO_W, gzart.HERO_H)
-    _blit_mask(img, gzart.VISOR, HERO_X, HERO_FOOT - gzart.HERO_H,
-               WHITE if peak else TEAL, gzart.HERO_W, gzart.HERO_H)
-
-    if (f // 20) % 2 == 0:                                # mast beacon
-        d.rectangle([285, 80, 288, 83], fill=PINK)
-
-    _rain(d, RAIN_FG, f, BONE_DIM, BONE_DK, length=11, dx=4)
-
-    if f >= 190:
-        blit_text(img, 10, 214, "KELOWNA, B.C.", MARI, 1, shadow=BLACK)
-        blit_text(img, 10, 226, "TRANSMITTER RL-Z0 · 19:00", BONE_DIM, 1,
-                  shadow=BLACK)
+    if f < 10:
+        img = fade(img, f / 10)
+    if f >= T_WORM - 22:                       # blow out into the crash
+        img = flash(img, (f - (T_WORM - 22)) / 21.0)
     return img
 
 
-def _helmet(f):
-    """The push-in on the visor — the shot the whole rooftop beat exists for.
+# ── scene 5 · the Okanagan, and the landing ───────────────────────────────
+RIDGE_FAR = [(0, 138), (36, 128), (72, 134), (108, 120), (144, 132),
+             (180, 116), (216, 126), (252, 118), (288, 130), (320, 124)]
+RIDGE_NEAR = [(0, 152), (24, 145), (48, 150), (72, 142), (96, 152), (120, 156),
+              (148, 154), (172, 144), (196, 133), (220, 140), (244, 136),
+              (268, 146), (296, 138), (320, 148)]
 
-    Drawn from primitives rather than a sprite: it is the one shot that scales
-    across its own duration, and a 1x mask blown up would be the only thing in
-    the sequence with pixels a different size from everything else.
+MOON_X, MOON_Y, MOON_R = 62, 96, 24
+CRASH_X, CRASH_Y = 214, 132
+SASHA_X, SASHA_FOOT = 112, 206
 
-    The head is cropped by the frame on purpose.  A close-up that fits inside
-    the safe area is not a close-up, it is a portrait, and the first pass of
-    this shot looked like a flowerpot for exactly that reason.
-    """
-    dur = T_HERO - T_WIDE
-    img = new_frame(INK_DEEP)
+
+def _ridge(d, pts, floor, colour):
+    for i in range(len(pts) - 1):
+        x0, y0 = pts[i]
+        x1, y1 = pts[i + 1]
+        d.polygon([(x0, y0), (x1, y1), (x1, floor), (x0, floor)], fill=colour)
+
+
+def _land_plate():
+    """Sky, moon, two ranges, the lake and the near shore she lands on."""
+    img = new_frame()
+    vgrad(img, 0, 156, P.SKY_STOPS)
     d = ImageDraw.Draw(img)
 
-    k = f / max(1, dur)                        # 0 -> 1 across the shot
-    z = 1.0 + 0.20 * k
-    cx, cy = 160, int(126 + 10 * k)
-    strike = 96 <= f < 104
-    flare = f >= 126
+    for i in range(70):
+        x, y = (i * 71) % W, (i * 43) % 96
+        d.point((x, y), fill=P.ramp_at(P.BONE, 0.35 + (i % 4) * 0.16))
+
+    for r in range(MOON_R, 0, -1):
+        t = 1.0 - r / MOON_R
+        d.ellipse([MOON_X - r, MOON_Y - r, MOON_X + r, MOON_Y + r],
+                  fill=P.lerp((0xd8, 0xd2, 0xc4), (0xff, 0xfb, 0xef), t * 0.8))
+    for cx, cy, r in ((MOON_X - 9, MOON_Y - 6, 4), (MOON_X + 7, MOON_Y + 5, 6),
+                      (MOON_X + 2, MOON_Y - 13, 3)):
+        d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=(0xbe, 0xb7, 0xa8))
+    halo = layer()
+    hd = ImageDraw.Draw(halo)
+    for r, a in ((56, 24), (42, 32), (32, 44), (27, 66)):
+        hd.ellipse([MOON_X - r, MOON_Y - r, MOON_X + r, MOON_Y + r],
+                   fill=(0x9a, 0x92, 0xb8) + (a,))
+    img = add(img, halo.filter(ImageFilter.GaussianBlur(6)), 0.9)
+
+    d = ImageDraw.Draw(img)
+    _ridge(d, RIDGE_FAR, 160, (0x33, 0x24, 0x4c))     # far range, hazy
+    _ridge(d, RIDGE_NEAR, 166, (0x1c, 0x14, 0x2c))    # near range, darker
+    d.rectangle([0, 156, W, 166], fill=(0x1c, 0x14, 0x2c))
+
+    vgrad(img, 164, 186, P.LAKE_STOPS)                 # the lake
+    shim = layer()
+    sd = ImageDraw.Draw(shim)
+    for y in range(165, 186):
+        wdt = 3 + (y - 165)
+        sd.line([(MOON_X - wdt, y), (MOON_X + wdt, y)],
+                fill=(0xd8, 0xd2, 0xc4) + (max(0, 52 - (y - 165) * 2),))
+    for y in range(166, 186, 3):
+        sd.line([(0, y), (W, y)], fill=(0x8a, 0x82, 0xa8, 38))
+    img = add(img, shim, 0.8)
+
+    d = ImageDraw.Draw(img)
+    # The near shore: the darkest, highest-contrast plane, and where she stands.
+    d.polygon([(0, 196), (90, 188), (200, 192), (320, 186), (320, H), (0, H)],
+              fill=(0x05, 0x04, 0x08))
+    d.polygon([(0, 196), (90, 188), (200, 192), (320, 186), (320, 188),
+               (200, 194), (90, 190), (0, 198)], fill=(0x22, 0x1c, 0x18))
+    for x in range(0, W, 11):
+        d.point((x + (x // 11) % 4, 202 + (x // 37) % 3), fill=(0x1a, 0x17, 0x14))
+    return img
+
+
+LAND = None
+SMOKE = [((i * 29) % 13 - 6, (i * 17) % 70, 3 + (i % 4)) for i in range(22)]
+
+
+def _crash_site(img, f):
+    """The hull, part-buried in the hillside, cracked and leaking light.
+
+    Fire would be wrong here: nothing aboard was burning.  What comes out of
+    the break is the same cold light the core showed in transit, guttering."""
+    d = ImageDraw.Draw(img)
+    d.polygon([(CRASH_X - 26, CRASH_Y + 16), (CRASH_X - 6, CRASH_Y - 6),
+               (CRASH_X + 22, CRASH_Y + 14)], fill=(0x0d, 0x09, 0x14))
+    ship = gzart.load_rocket().rotate(-52, expand=True, resample=Image.NEAREST)
+    img.paste(ship, (CRASH_X - ship.width // 2, CRASH_Y - ship.height // 2), ship)
+
+    leak = layer()
+    ld = ImageDraw.Draw(leak)
+    gut = 0.55 + 0.45 * math.sin(f / 5.0) * math.sin(f / 13.0)
+    for i in range(6):
+        r = 3 + (i + f // 4) % 5
+        ld.ellipse([CRASH_X - 7 + i * 3 - r, CRASH_Y + 6 - r,
+                    CRASH_X - 7 + i * 3 + r, CRASH_Y + 6 + r],
+                   fill=P.stops_at([(0.0, P.VISOR[0]), (1.0, P.HAIR[3])],
+                                   i / 5.0) + (int(110 * gut),))
+    img = add(img, leak.filter(ImageFilter.GaussianBlur(3)), 0.8)
+
+    smoke = layer()
+    sd = ImageDraw.Draw(smoke)
+    for dx, y0, r0 in SMOKE:
+        t = ((y0 + f * 1.1) % 90) / 90.0
+        yy = CRASH_Y + 4 - t * 80
+        rr = r0 + t * 9
+        a = int(90 * (1.0 - t))
+        sd.ellipse([CRASH_X + dx - rr + t * 14, yy - rr,
+                    CRASH_X + dx + rr + t * 14, yy + rr],
+                   fill=(0x2a, 0x25, 0x30) + (a,))
+    return over(img, smoke.filter(ImageFilter.GaussianBlur(2)))
+
+
+def scene_land(f):
+    img = LAND.copy()
+
+    # 0–66: she comes down.  A fireball on a diagonal, with a trail.
+    if f < 70:
+        k = f / 66.0
+        x = 30 + k * (CRASH_X - 30)
+        y = 6 + k * (CRASH_Y - 6)
+        tr = layer()
+        td = ImageDraw.Draw(tr)
+        for i in range(18):
+            kk = max(0.0, k - i * 0.012)
+            tx = 30 + kk * (CRASH_X - 30)
+            ty = 6 + kk * (CRASH_Y - 6)
+            rr = max(1, 5 - i // 3)
+            td.ellipse([tx - rr, ty - rr, tx + rr, ty + rr],
+                       fill=P.stops_at([(0.0, P.WHITE), (0.45, P.VISOR[0]),
+                                        (1.0, P.HAIR[3])], i / 17.0)
+                       + (max(0, 220 - i * 12),))
+        img = add(img, tr.filter(ImageFilter.GaussianBlur(2)))
+        if f >= 62:
+            img = flash(img, (f - 62) / 8.0)
+        if f < 10:
+            img = flash(img, (10 - f) / 10.0)
+        return img
+
+    g = f - 70
+    if g < 10:
+        img = flash(img, (10 - g) / 12.0)
+
+    img = _crash_site(img, g)
+
+    sasha, _ = gzart.load()
+    img.paste(sasha, (SASHA_X, SASHA_FOOT - gzart.H), sasha)
+
+    # Her core and her antenna tips are light sources.
+    glow = layer()
+    gd = ImageDraw.Draw(glow)
+    top = SASHA_FOOT - gzart.H
+    gd.ellipse([SASHA_X + 19, top + 25, SASHA_X + 23, top + 29],
+               fill=P.VISOR[1] + (160,))
+    gd.polygon([(SASHA_X + 20, top + 1), (SASHA_X + 23, top + 4),
+                (SASHA_X + 20, top + 7), (SASHA_X + 17, top + 4)],
+               fill=P.VISOR[1] + (150,))
+    img = add(img, glow.filter(ImageFilter.GaussianBlur(2)), 0.9)
+
+    if g >= 40:
+        blit_text(img, 10, 212, "OKANAGAN LAKE, B.C.", P.ARMOUR[2], 1,
+                  shadow=P.BLACK)
+    if g >= 58:
+        blit_text(img, 10, 224, "NOBODY SAW HER LAND", P.BONE[2], 1,
+                  shadow=P.BLACK)
+
+    if f >= T_LAND - 8:
+        img = fade(img, max(0.0, (T_LAND - 1 - f) / 7))
+    return img
+
+
+# ── scene 6 · her face ────────────────────────────────────────────────────
+def scene_face(f):
+    """The push-in.  Drawn from primitives because it scales across its own
+    duration, and a sprite blown up would be the only thing in the sequence
+    with pixels a different size from everything else.
+
+    The beat this replaces was a push-in on an armoured visor.  It is a face
+    now, and she blinks and then smiles, because the story turned out to be
+    about somebody arriving rather than somebody hunting."""
+    k = f / T_FACE
+    z = 1.0 + 0.18 * k
+    cx, cy = 160, int(120 + 8 * k)
+
+    img = new_frame()
+    vgrad(img, 0, H, [(0.0, (0x0a, 0x08, 0x18)), (0.55, (0x1a, 0x12, 0x28)),
+                      (1.0, (0x07, 0x06, 0x10))])
+
+    embers = layer()
+    ed = ImageDraw.Draw(embers)
+    for i in range(26):
+        ex = (i * 53 + f) % W
+        ey = H - ((i * 37 + f * 2) % (H + 40)) + 20
+        ed.point((ex, ey), fill=P.HAIR[3] + (140,))
+    img = add(img, embers.filter(ImageFilter.GaussianBlur(1)), 0.7)
+    d = ImageDraw.Draw(img)
 
     def s(v):
         return int(v * z)
 
-    for i in range(0, H, 4):                   # wet air
-        d.line([(0, i), (W, i)], fill=INK if (i // 4) % 2 else INK_DEEP)
-    r = s(150)
-    d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=(0x14, 0x11, 0x1d))
-    _rain(d, RAIN, f * 2, STEEL_DK, INK, length=14, dx=5)
+    # ── the ponytail, behind everything ──────────────────────────────────
+    sway = int(s(5) * math.sin(f / 9.0))
+    d.polygon([(cx - s(30), cy - s(96)), (cx + s(20), cy - s(104)),
+               (cx - s(40) + sway, cy - s(20)),
+               (cx - s(86) + sway, cy + s(80)),
+               (cx - s(150) + sway, cy + s(200)),
+               (cx - s(210) + sway, cy + s(200)),
+               (cx - s(140) + sway, cy + s(50)),
+               (cx - s(96), cy - s(40))], fill=P.HAIR[3])
+    d.polygon([(cx - s(28), cy - s(92)), (cx + s(10), cy - s(98)),
+               (cx - s(46) + sway, cy - s(20)),
+               (cx - s(92) + sway, cy + s(80)),
+               (cx - s(152) + sway, cy + s(200)),
+               (cx - s(196) + sway, cy + s(200)),
+               (cx - s(132) + sway, cy + s(50)),
+               (cx - s(90), cy - s(40))], fill=P.HAIR[2])
+    d.polygon([(cx - s(60) + sway, cy - s(30)),
+               (cx - s(76) + sway, cy + s(20)),
+               (cx - s(136) + sway, cy + s(200)),
+               (cx - s(162) + sway, cy + s(200)),
+               (cx - s(100) + sway, cy + s(30)),
+               (cx - s(76), cy - s(36))], fill=P.PINK[2])
 
-    lit = BONE if strike else MARI
-    dim = BONE_DK if strike else MARI_DP
+    # ── face: cranium plus a short jaw ────────────────────────────────────
+    def head(shrink, colour):
+        d.ellipse([cx - s(74) + shrink, cy - s(98) + shrink,
+                   cx + s(74) - shrink, cy + s(52) - shrink], fill=colour)
+        d.polygon([(cx - s(66) + shrink, cy + s(8)),
+                   (cx + s(66) - shrink, cy + s(8)),
+                   (cx + s(36) - shrink, cy + s(62)),
+                   (cx - s(36) + shrink, cy + s(62))], fill=colour)
+        d.ellipse([cx - s(38) + shrink, cy + s(40), cx + s(38) - shrink,
+                   cy + s(72) - shrink], fill=colour)
 
-    # silhouette: dome + a chin that TAPERS, which is the whole difference
-    # between a helmet and a plant pot
-    dome = [cx - s(104), cy - s(152), cx + s(104), cy + s(64)]
-    chin = [(cx - s(74), cy + s(28)), (cx + s(74), cy + s(28)),
-            (cx + s(40), cy + s(104)), (cx - s(40), cy + s(104))]
-    d.ellipse(dome, fill=BLACK)
-    d.polygon(chin, fill=BLACK)
-    d.ellipse([dome[0] + s(7), dome[1] + s(7), dome[2] - s(7), dome[3] - s(7)],
-              fill=INK)
-    d.polygon([(cx - s(66), cy + s(30)), (cx + s(66), cy + s(30)),
-               (cx + s(35), cy + s(96)), (cx - s(35), cy + s(96))],
-              fill=STEEL_DK)
-    for i, yy in enumerate(range(cy + s(52), cy + s(92), s(12))):   # chin vent
-        hw = s(30) - i * s(6)
-        d.rectangle([cx - hw, yy, cx + hw, yy + s(4)], fill=BLACK)
+    head(0, P.KEYLINE)
+    head(max(1, s(3)), P.SKIN[1])
 
-    for side in (-1, 1):                       # ear pods
-        px_ = cx + side * s(97)
-        py_ = cy + s(6)
-        for rr, col in ((s(32), BLACK), (s(27), MARI_DP), (s(19), INK_DEEP),
-                        (s(8), MARI)):
-            d.ellipse([px_ - rr, py_ - rr, px_ + rr, py_ + rr], fill=col)
+    keep = Image.new("L", (W, H), 0)
+    kd = ImageDraw.Draw(keep)
+    kd.ellipse([cx - s(71), cy - s(95), cx + s(71), cy + s(49)], fill=255)
+    kd.polygon([(cx - s(63), cy + s(8)), (cx + s(63), cy + s(8)),
+                (cx + s(33), cy + s(60)), (cx - s(33), cy + s(60))], fill=255)
+    kd.ellipse([cx - s(35), cy + s(40), cx + s(35), cy + s(69)], fill=255)
+    side = Image.new("L", (W, H), 0)
+    ImageDraw.Draw(side).ellipse([cx + s(18), cy - s(98), cx + s(150),
+                                  cy + s(96)], fill=255)
+    img.paste(new_frame(P.SKIN[2]), (0, 0), ImageChops.multiply(side, keep))
+    d = ImageDraw.Draw(img)
 
-    # brow band, and the programme's reticle etched into it
-    d.polygon([(cx - s(92), cy - s(44)), (cx + s(92), cy - s(44)),
-               (cx + s(88), cy - s(24)), (cx - s(88), cy - s(24))],
-              fill=MARI_DP)
-    d.polygon([(cx - s(92), cy - s(44)), (cx + s(92), cy - s(44)),
-               (cx + s(90), cy - s(38)), (cx - s(90), cy - s(38))], fill=MARI)
-    for rr in (s(26), s(15)):
-        d.ellipse([cx - rr, cy - s(76) - rr, cx + rr, cy - s(76) + rr],
-                  outline=dim)
-    d.line([(cx - s(40), cy - s(76)), (cx + s(40), cy - s(76))], fill=dim)
-    d.line([(cx, cy - s(110)), (cx, cy - s(50))], fill=dim)
+    # ── eyes.  Level and narrow rather than round: the tone is not cheerful.
+    blink = 56 <= f < 62
+    ey = cy + s(6)
+    for ex in (-32, 32):
+        exx = cx + s(ex)
+        if blink:
+            d.line([(exx - s(22), ey), (exx + s(22), ey)],
+                   fill=P.SKIN[4], width=max(2, s(4)))
+            continue
+        d.ellipse([exx - s(24), ey - s(18), exx + s(24), ey + s(18)],
+                  fill=P.BONE[0])
+        d.ellipse([exx - s(17), ey - s(15), exx + s(17), ey + s(17)],
+                  fill=P.EYE[2])
+        d.ellipse([exx - s(17), ey + s(1), exx + s(17), ey + s(17)],
+                  fill=P.EYE[1])
+        d.ellipse([exx - s(8), ey - s(5), exx + s(8), ey + s(11)],
+                  fill=P.EYE[4])
+        d.ellipse([exx - s(13), ey - s(13), exx - s(5), ey - s(6)],
+                  fill=P.BONE[0])
+        d.arc([exx - s(27), ey - s(29), exx + s(27), ey + s(9)], 190, 350,
+              fill=P.KEYLINE, width=max(2, s(6)))
 
-    # the visor
-    outer = [(cx - s(94), cy - s(20)), (cx + s(94), cy - s(20)),
-             (cx + s(74), cy + s(26)), (cx - s(74), cy + s(26))]
-    inner = [(cx - s(86), cy - s(14)), (cx + s(86), cy - s(14)),
-             (cx + s(69), cy + s(19)), (cx - s(69), cy + s(19))]
-    d.polygon(outer, fill=BLACK)
+    d.line([(cx - s(9), cy + s(40)), (cx + s(9), cy + s(40))],
+           fill=P.SKIN[4], width=max(1, s(2)))
 
-    if flare:
-        g = (f - 126) / max(1, dur - 126)
-        d.polygon(inner, fill=WHITE if g > 0.5 else BONE)
-        rr = int(40 + 300 * g)
-        for step in (0, 3, 7):
-            d.ellipse([cx - rr + step, cy - rr + step, cx + rr - step,
-                       cy + rr - step], outline=WHITE if g > 0.7 else BONE_DIM)
-    else:
-        d.polygon(inner, fill=TEAL)
-        for yy in range(cy - s(14), cy + s(19), 3):
-            d.line([(cx - s(86), yy), (cx + s(86), yy)], fill=(0x0d, 0x8a, 0x70))
-        # Travelling glint, clipped to the glass.  Unclipped it ran out over
-        # the ear pod and read as a white sticker on the side of his head.
-        gl = cx - s(86) + (f * 6) % (s(180) + 60) - 30
-        layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-        ImageDraw.Draw(layer).polygon(
-            [(gl, cy - s(14)), (gl + 16, cy - s(14)),
-             (gl + 6, cy + s(19)), (gl - 10, cy + s(19))], fill=BONE + (255,))
-        clip = Image.new("L", (W, H), 0)
-        ImageDraw.Draw(clip).polygon(inner, fill=255)
-        img.paste(layer, (0, 0), Image.composite(
-            layer.getchannel("A"), Image.new("L", (W, H), 0), clip))
-        d = ImageDraw.Draw(img)
-        d.polygon(inner, outline=(0x0d, 0x8a, 0x70))
-    d.line([(cx - s(74), cy + s(26)), (cx + s(74), cy + s(26))], fill=lit)
+    # ── the helmet.  The close-up used to show bare hair while the sprite
+    #    wore a helmet, which is the kind of continuity error that only shows
+    #    up when you put the two shots next to each other.
+    for sgn in (-1, 1):                       # cheek guards
+        d.polygon([(cx + sgn * s(78), cy - s(74)),
+                   (cx + sgn * s(52), cy - s(60)),
+                   (cx + sgn * s(58), cy + s(34)),
+                   (cx + sgn * s(84), cy + s(10))], fill=P.RED[3])
+        d.polygon([(cx + sgn * s(78), cy - s(74)),
+                   (cx + sgn * s(64), cy - s(66)),
+                   (cx + sgn * s(70), cy + s(20)),
+                   (cx + sgn * s(84), cy + s(10))], fill=P.RED[2])
+        # swept fins
+        d.polygon([(cx + sgn * s(84), cy - s(30)),
+                   (cx + sgn * s(120), cy + s(30)),
+                   (cx + sgn * s(104), cy + s(60)),
+                   (cx + sgn * s(76), cy + s(16))], fill=P.RED[3])
 
-    # Rim light on the side facing the moon.  Only the upper-left quadrant:
-    # a full sweep of the dome ellipse runs behind the chin and reads as a
-    # loose wire lying across his face.
-    d.arc(dome, 186, 268, fill=lit)
-    d.arc([dome[0] + 2, dome[1] + 2, dome[2] - 2, dome[3] - 2], 194, 262,
-          fill=dim)
+    # The dome is a CRESCENT, not a disc: build it as a mask and subtract the
+    # face opening.  Filled as a plain ellipse it covered her eyes, and the
+    # chord used to carve it back out just painted a skin-coloured dome over
+    # the lower half of the shot.
+    dome = Image.new("L", (W, H), 0)
+    dd = ImageDraw.Draw(dome)
+    dd.ellipse([cx - s(88), cy - s(126), cx + s(88), cy + s(36)], fill=255)
+    dd.ellipse([cx - s(64), cy - s(24), cx + s(64), cy + s(100)], fill=0)
+    grown = dome.copy()
+    for dx_, dy_ in ((2, 0), (-2, 0), (0, 2), (0, -2)):
+        grown = ImageChops.lighter(grown, ImageChops.offset(dome, dx_, dy_))
+    img.paste(P.KEYLINE, (0, 0), ImageChops.subtract(grown, dome))
+    img.paste(P.RED[2], (0, 0), dome)
 
-    _rain(d, RAIN_FG, f * 2, BONE_DIM, BONE_DK, length=13, dx=5)
+    hi = Image.new("L", (W, H), 0)
+    ImageDraw.Draw(hi).ellipse([cx - s(78), cy - s(118), cx - s(4),
+                                cy - s(40)], fill=255)
+    img.paste(P.RED[1], (0, 0), ImageChops.multiply(hi, dome))
+    sh = Image.new("L", (W, H), 0)
+    ImageDraw.Draw(sh).ellipse([cx + s(30), cy - s(110), cx + s(140),
+                                cy + s(40)], fill=255)
+    img.paste(P.RED[3], (0, 0), ImageChops.multiply(sh, dome))
+    d = ImageDraw.Draw(img)
+
+    blade = [(cx - s(86), cy - s(60)), (cx + s(86), cy - s(60)),
+             (cx + s(70), cy - s(30)), (cx - s(70), cy - s(30))]
+    d.polygon(blade, fill=P.KEYLINE)
+    d.polygon([(cx - s(82), cy - s(58)), (cx + s(82), cy - s(58)),
+               (cx + s(68), cy - s(33)), (cx - s(68), cy - s(33))],
+              fill=P.ARMOUR[2])
+    d.polygon([(cx - s(82), cy - s(58)), (cx + s(82), cy - s(58)),
+               (cx + s(78), cy - s(51)), (cx - s(78), cy - s(51))],
+              fill=P.ARMOUR[1])
+
+    gemp = [(cx, cy - s(76)), (cx + s(22), cy - s(46)), (cx, cy - s(16)),
+            (cx - s(22), cy - s(46))]
+    d.polygon(gemp, fill=P.KEYLINE)
+    d.polygon([(cx, cy - s(70)), (cx + s(18), cy - s(46)), (cx, cy - s(22)),
+               (cx - s(18), cy - s(46))], fill=P.VISOR[2])
+    d.polygon([(cx, cy - s(70)), (cx + s(8), cy - s(56)),
+               (cx - s(6), cy - s(42)), (cx - s(14), cy - s(50))],
+              fill=P.VISOR[1])
+    glow = layer()
+    ImageDraw.Draw(glow).polygon(gemp, fill=P.VISOR[1] + (110,))
+    img = add(img, glow.filter(ImageFilter.GaussianBlur(5)), 0.8)
+    d = ImageDraw.Draw(img)
+
+    # moonlight down the left edge of her face
+    d.arc([cx - s(74), cy - s(98), cx + s(74), cy + s(52)], 150, 250,
+          fill=P.BONE[1], width=2)
 
     if f < 8:
         img = fade(img, f / 8)
+    if f >= T_FACE - 10:
+        img = fade(img, max(0.0, (T_FACE - 1 - f) / 9))
     return img
 
 
-def scene_hero(f):
-    if f < T_WIDE:
-        img = _wide(f)
-        if f < 12:
-            img = fade(img, f / 12)
-        if f >= T_WIDE - 6:
-            img = fade(img, max(0.0, (T_WIDE - 1 - f) / 5))
-        return img
-    return _helmet(f - T_WIDE)
-
-
-# ── scene 4 · the logo ────────────────────────────────────────────────────
+# ── the display face ──────────────────────────────────────────────────────
 LOGO_SCALE = 2
-GLYPH_W = gzfont.LOGO_W * LOGO_SCALE       # 32
-GLYPH_H = gzfont.LOGO_H * LOGO_SCALE       # 36
+GLYPH_W = gzfont.LOGO_W * LOGO_SCALE
+GLYPH_H = gzfont.LOGO_H * LOGO_SCALE
 GAP = 3
+SHEAR = 0.17
 
 
-def _logo_word(word, reticle_last=False):
-    """One word of the display face: black shadow, black outline, marigold ramp.
+def _word(word, scale=LOGO_SCALE, orbit_last=False):
+    """One word of the display face, cut from chrome: ten ramp stops read top
+    to bottom, a specular rim, a keyline and a cast shadow, and a lean.
 
-    The ramp is three flat bands, not a blend — same reason as dither_band.
-    """
+    `orbit_last` turns the final O into a little world with a ring round it.
+    That position used to hold a reticle.  A planet is the same shape, carries
+    the same weight in the lockup, and does not point at anybody."""
+    gw, gh = gzfont.LOGO_W * scale, gzfont.LOGO_H * scale
     n = len(word)
-    w = n * GLYPH_W + (n - 1) * GAP + 6
-    h = GLYPH_H + 6
+    lean = int(gh * SHEAR)
+    pad = 26 if orbit_last else 10
+    w = n * gw + (n - 1) * GAP + pad + lean
+    h = gh + 10 + (12 if orbit_last else 0)
     img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     px = img.load()
+    oy = 6 if orbit_last else 0
 
-    cells = []
-    for i, ch in enumerate(word):
-        ox = i * (GLYPH_W + GAP)
-        if reticle_last and i == n - 1:
-            cells.append((ox, None))
-            continue
-        cells.append((ox, gzfont.LOGO[ch]))
-
-    def band(gy):
-        f = gy / gzfont.LOGO_H
-        return MARI_LT if f < 0.28 else (MARI if f < 0.66 else MARI_DP)
+    cells = [(i * (gw + GAP), gzfont.LOGO[ch]) for i, ch in enumerate(word)]
 
     def stamp(dx, dy, colour_of):
         for ox, glyph in cells:
-            if glyph is None:
-                continue
             for gy, row in enumerate(glyph):
                 for gx, on in enumerate(row):
                     if not on:
                         continue
-                    for sy in range(LOGO_SCALE):
-                        for sx in range(LOGO_SCALE):
-                            x = ox + gx * LOGO_SCALE + sx + dx
-                            y = gy * LOGO_SCALE + sy + dy
+                    for sy in range(scale):
+                        for sx in range(scale):
+                            yy = gy * scale + sy
+                            x = ox + gx * scale + sx + dx + int((gh - yy) * SHEAR)
+                            y = yy + dy
                             if 0 <= x < w and 0 <= y < h:
                                 px[x, y] = colour_of(gy) + (255,)
 
-    stamp(4, 4, lambda gy: BLACK)                        # cast shadow
-    for ox_, oy_ in ((-1, 0), (1, 0), (0, -1), (0, 1), (1, 1), (-1, -1)):
-        stamp(1 + ox_, 1 + oy_, lambda gy: BLACK)        # keyline
-    stamp(1, 1, band)                                    # face
+    def chrome(gy):
+        t = gy / (gzfont.LOGO_H - 1)
+        return P.CHROME[min(len(P.CHROME) - 1, int(t * len(P.CHROME)))]
 
-    if reticle_last:
-        # The last O of ZERO is the programme's own mark, straight off the
-        # COMING SOON card: the epicentre reticle, not a letter.
-        ox = cells[-1][0] + 1
-        cx = ox + GLYPH_W // 2
-        cy = 1 + GLYPH_H // 2
+    stamp(6, 6 + oy, lambda gy: (0, 0, 0))
+    for ox_, oy_ in ((-1, 0), (1, 0), (0, -1), (0, 1), (1, 1), (-1, -1),
+                     (2, 0), (0, 2)):
+        stamp(2 + ox_, 2 + oy_ + oy, lambda gy: P.KEYLINE)
+    stamp(1, 1 + oy, lambda gy: P.CHROME[0])
+    stamp(2, 2 + oy, chrome)
+
+    if orbit_last:
+        ox = cells[-1][0] + 2 + int(gh * SHEAR / 2)
+        cx = ox + gw // 2
+        cy = 2 + oy + gh // 2
         d = ImageDraw.Draw(img)
-        for r, c in ((17, BLACK), (16, MARI), (12, BLACK), (11, MARI_DP),
-                     (7, MARI)):
-            d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=c)
-        d.rectangle([cx - 20, cy - 1, cx + 20, cy + 1], fill=MARI_DP)
-        d.rectangle([cx - 1, cy - 20, cx + 1, cy + 20], fill=MARI_DP)
-        d.rectangle([cx - 3, cy - 3, cx + 3, cy + 3], fill=MARI)
+        for rx, ry, col in ((gw // 2 + 12, 9, P.KEYLINE),
+                            (gw // 2 + 11, 8, P.CHROME[6]),
+                            (gw // 2 + 10, 7, P.CHROME[3])):
+            d.ellipse([cx - rx, cy - ry, cx + rx, cy + ry], outline=col,
+                      width=2)
+        d.ellipse([cx + gw // 2 + 4, cy - 4, cx + gw // 2 + 11, cy + 3],
+                  fill=P.CHROME[1])
     return img
 
 
-LOGO_TOP = None      # GROUND
-LOGO_BOT = None      # ZERO, with the reticle O
-
-
 def _shine(img, phase):
-    """A diagonal specular band sweeping the letters, the classic logo move."""
     out = img.copy()
     px = out.load()
     w, h = out.size
     for y in range(h):
         band = phase - y
-        for x in range(max(0, band - 6), min(w, band + 6)):
+        for x in range(max(0, band - 7), min(w, band + 7)):
             r, g, b, a = px[x, y]
-            if a and (r, g, b) != BLACK:
-                px[x, y] = (MARI_LT if abs(x - band) > 3 else BONE) + (255,)
+            if a and (r, g, b) != P.KEYLINE and (r, g, b) != (0, 0, 0):
+                px[x, y] = (P.CHROME[0] if abs(x - band) < 3
+                            else P.CHROME[1]) + (255,)
     return out
 
 
-def scene_slam(f):
-    img = new_frame(INK)
+# ── scene 7 · the name card ───────────────────────────────────────────────
+NAME_SASHA = None
+NAME_ZERO = None
+
+SPEC_KEY_X, SPEC_VAL_X, SPEC_RIGHT = 22, 100, 302
+
+SPEC = [("ISSUE", "ONE (1) BAGUETTE"),
+        ("BRIEF", "ASK WHAT PEOPLE ARE DOING"),
+        ("FINDINGS", "SOME ANSWERS ARE NOT TRUE"),
+        ("POSTING", "THE OKANAGAN, INDEFINITE")]
+
+
+def scene_name(f):
+    img = new_frame()
+    vgrad(img, 0, H, [(0.0, (0x0b, 0x09, 0x14)), (0.5, (0x1c, 0x14, 0x22)),
+                      (1.0, (0x08, 0x07, 0x0e))])
+
+    bloom = layer()
+    ImageDraw.Draw(bloom).ellipse([40, 40, 280, 200],
+                                  fill=(0x1e, 0x28, 0x40) + (70,))
+    img = add(img, bloom.filter(ImageFilter.GaussianBlur(26)), 0.9)
     d = ImageDraw.Draw(img)
 
-    if f < 3:
-        return new_frame(WHITE)
-    if f < 6:
-        return new_frame(BONE)
+    sw, sh = NAME_SASHA.size
+    zw, zh = NAME_ZERO.size
+    total = sw + 10 + zw
+    nx = (W - total) // 2
+    if f >= 4:
+        img.paste(NAME_SASHA, (nx, 18), NAME_SASHA)
+    if f >= 12:
+        img.paste(NAME_ZERO, (nx + sw + 10, 18), NAME_ZERO)
+    if 26 <= f < 70:
+        ph = (f - 26) * 8 - 30
+        a = _shine(NAME_SASHA, ph)
+        b = _shine(NAME_ZERO, ph - 40)
+        img.paste(a, (nx, 18), a)
+        img.paste(b, (nx + sw + 10, 18), b)
 
-    # A marigold glow behind the mark so the black keyline has something to
-    # separate from, and the frame is not flat ink.
-    for i, r in enumerate((156, 124, 96, 70, 48)):
-        col = GLOW_B if i >= 3 else GLOW_A
-        box = [W // 2 - r, 96 - r // 2, W // 2 + r, 96 + r // 2]
-        for step in range(3):
-            d.ellipse([box[0] + step, box[1] + step, box[2] - step,
-                       box[3] - step], outline=col if (i + step) & 1 else INK)
+    if f >= 20:
+        d.rectangle([nx, 46, nx + total, 47], fill=P.CHROME[5])
+        blit_centre(img, 52, "FIELD CORRESPONDENT · NON-TERRESTRIAL",
+                    P.BONE[2])
+
+    sasha, _ = gzart.load()
+    if f >= 26:
+        img.paste(sasha, ((W - gzart.W) // 2, 70), sasha)
+        glow = layer()
+        gd = ImageDraw.Draw(glow)
+        bx = (W - gzart.W) // 2
+        gd.ellipse([bx + 19, 95, bx + 23, 99], fill=P.VISOR[1] + (160,))
+        gd.polygon([(bx + 20, 71), (bx + 23, 74), (bx + 20, 77),
+                    (bx + 17, 74)], fill=P.VISOR[1] + (150,))
+        img = add(img, glow.filter(ImageFilter.GaussianBlur(2)), 0.9)
+        d = ImageDraw.Draw(img)
+
+    for i, (k, v) in enumerate(SPEC):
+        if f < 42 + i * 12:
+            continue
+        y = 140 + i * 13
+        blit_text(img, SPEC_KEY_X, y, k, P.BONE[3])
+        blit_text(img, SPEC_VAL_X, y, v, P.BONE[1])
+        d.rectangle([22, y + 9, 300, y + 9], fill=(0x2c, 0x26, 0x36))
+
+    if f >= 100:
+        blit_centre(img, 200, "▸ SOMEBODY HAD TO ANSWER IT", P.ARMOUR[2])
+    triband(img, 0, 235, W, 3)
+
+    if f < 8:
+        img = fade(img, f / 8)
+    if f >= T_NAME - 12:
+        img = fade(img, max(0.0, (T_NAME - 1 - f) / 11))
+    return img
+
+
+# ── scene 8 · the logo ────────────────────────────────────────────────────
+LOGO_TOP = None
+LOGO_BOT = None
+
+
+def scene_slam(f):
+    img = new_frame(P.INK)
+    vgrad(img, 0, H, [(0.0, (0x0d, 0x0b, 0x14)), (0.45, (0x24, 0x1a, 0x18)),
+                      (1.0, (0x0a, 0x08, 0x0c))])
+    d = ImageDraw.Draw(img)
+
+    if f < 4:
+        return new_frame(P.WHITE)
+    if f < 8:
+        return new_frame(P.BONE[1])
 
     tw, th = LOGO_TOP.size
     bw, bh = LOGO_BOT.size
-    tx = (W - tw) // 2
-    bx = (W - bw) // 2
-    ty_end, by_end = 52, 52 + GLYPH_H + 8
+    tx, bx = (W - tw) // 2, (W - bw) // 2
+    ty_end, by_end = 44, 44 + GLYPH_H + 6
 
-    sx = sy = 0
-    # GROUND drops in and lands at f 22; ZERO arrives from the right at f 52.
+    bloom = layer()
+    ImageDraw.Draw(bloom).ellipse([W // 2 - 150, 56, W // 2 + 150, 156],
+                                  fill=(0x60, 0x30, 0x08) + (110,))
+    img = add(img, bloom.filter(ImageFilter.GaussianBlur(22)), 0.9)
+    d = ImageDraw.Draw(img)
+
+    sy = 0
     if f < 22:
         ty = ty_end - int((22 - f) ** 2 * 1.1)
     else:
         ty = ty_end
         if f < 30:
             sy = (30 - f) // 2 * (1 if f % 2 else -1)
-    if f >= 12:
-        img.paste(LOGO_TOP, (tx + sx, ty + sy), LOGO_TOP)
+    if f >= 10:
+        img.paste(LOGO_TOP, (tx, ty + sy), LOGO_TOP)
 
-    if f >= 30:
-        if f < 52:
-            bxx = bx + int((52 - f) ** 2 * 0.9)
-        else:
-            bxx = bx
+    if f >= 28:
+        bxx = bx + int((48 - f) ** 2 * 0.9) if f < 48 else bx
         img.paste(LOGO_BOT, (bxx, by_end), LOGO_BOT)
 
-    if 52 <= f < 62:                       # impact judder on the whole frame
-        amp = (62 - f) // 3
+    if 48 <= f < 60:
+        amp = (60 - f) // 3
         if amp:
             off = amp if f % 2 else -amp
-            shifted = new_frame(INK)
+            shifted = new_frame(P.BLACK)
             shifted.paste(img, (off, 0))
             img = shifted
-            d = ImageDraw.Draw(img)
-        for i in range(14):                # dust kicked off the baseline
+        spark = layer()
+        sd = ImageDraw.Draw(spark)
+        for i in range(20):
             dx = (i * 23 + f * 5) % W
-            dy = by_end + GLYPH_H + (i % 4) - (f - 52)
-            d.point((dx, dy), fill=BONE_DK)
+            dy = by_end + GLYPH_H + (i % 5) - (f - 48) * 2
+            sd.point((dx, dy), fill=P.CHROME[1] + (200,))
+        img = add(img, spark)
+        d = ImageDraw.Draw(img)
 
-    # The shine repeats on a long cycle rather than firing once.  The logo is
-    # on screen for eighteen seconds and the station's own cards carry a moving
-    # accent for exactly this reason: a truly static frame reads as a frozen
-    # channel, not as a title card.
-    cyc = f % 260
-    if 96 <= cyc < 150 and f >= 96:
-        ph = (cyc - 96) * 7 - 40
+    cyc = f % 210
+    if 84 <= cyc < 140 and f >= 84:
+        ph = (cyc - 84) * 7 - 40
         top = _shine(LOGO_TOP, ph)
         bot = _shine(LOGO_BOT, ph - 30)
         img.paste(top, (tx, ty_end), top)
         img.paste(bot, (bx, by_end), bot)
 
-    if f >= 70:
-        # The mark keeps ranging, out of the reticle that replaces the O.
-        rcx = bx + (len("ZERO") - 1) * (GLYPH_W + GAP) + 1 + GLYPH_W // 2
-        rcy = by_end + 1 + GLYPH_H // 2
-        ping = (f - 70) % 74
-        if ping < 46:
-            rr = 20 + ping
-            d.ellipse([rcx - rr, rcy - rr, rcx + rr, rcy + rr],
-                      outline=MARI_DP if ping < 22 else GLOW_B)
-
-    if f >= 150:                           # the sliding accent marker
-        d.rectangle([48, 150, 271, 151], fill=GLOW_B)
-        mx = ((f - 150) * 2) % 318 - 47      # enters and leaves the track
+    if f >= 132:
+        d.rectangle([48, 150, 271, 151], fill=(0x2e, 0x24, 0x1c))
+        mx = ((f - 132) * 2) % 318 - 47
         x0, x1 = max(48, mx), min(271, mx + 47)
         if x1 >= x0:
-            d.rectangle([x0, 150, x1, 151], fill=MARI)
+            d.rectangle([x0, 150, x1, 151], fill=P.ARMOUR[2])
 
-    if f >= 160:
-        blit_centre(img, 164, "DESIG. RL-Z0-GND · EPICENTRE", BONE_DIM)
-    if f >= 176:
-        blit_centre(img, 178, "▸ THE DAY, FROM THE POINT IT HAPPENED", MARI)
+    if f >= 140:
+        blit_centre(img, 164, "DESIG. RL-Z0-GND · LANDING SITE", P.BONE[2])
+    if f >= 154:
+        blit_centre(img, 178, "▸ THE DAY, FROM THE POINT IT HAPPENED",
+                    P.ARMOUR[2])
     return img
 
 
-# ── scene 5 · attract ─────────────────────────────────────────────────────
 def scene_attract(f):
-    # Keep the slam's clock running so the marker keeps sliding and the shine
-    # comes round once more instead of freezing on the cut.
     img = scene_slam(T_SLAM - 1 + f)
     if (f // 22) % 2 == 0:
-        blit_centre(img, 198, "PRESS START", BONE)
-    blit_centre(img, 212, "NIGHTLY 19:00 · ENCORE 22:00", MARI_DP)
-    blit_centre(img, 224, "© 2026 RIPOSTE LABORATORIES INC.", STEEL)
+        blit_centre(img, 198, "PRESS START", P.BONE[1])
+    blit_centre(img, 212, "NIGHTLY 19:00 · ENCORE 22:00", P.ARMOUR[3])
+    blit_centre(img, 224, "© 2026 RIPOSTE LABORATORIES INC.", P.STEEL[2])
     triband(img, 0, 235, W, 3)
-    if f >= T_ATTRACT - 24:
-        img = fade(img, max(0.0, (T_ATTRACT - 1 - f) / 23))
+    if f >= T_ATTRACT - 26:
+        img = fade(img, max(0.0, (T_ATTRACT - 1 - f) / 25))
     return img
 
 
@@ -777,28 +1050,66 @@ def scene_attract(f):
 def render(i):
     if i < C_CRAWL:
         return scene_sting(i - C_STING)
-    if i < C_HERO:
+    if i < C_SPACE:
         return scene_crawl(i - C_CRAWL)
+    if i < C_WORM:
+        return scene_space(i - C_SPACE)
+    if i < C_LAND:
+        return scene_worm(i - C_WORM)
+    if i < C_FACE:
+        return scene_land(i - C_LAND)
+    if i < C_NAME:
+        return scene_face(i - C_FACE)
     if i < C_SLAM:
-        return scene_hero(i - C_HERO)
+        return scene_name(i - C_NAME)
     if i < C_ATTRACT:
         return scene_slam(i - C_SLAM)
     return scene_attract(i - C_ATTRACT)
 
 
+def check_fits():
+    """Refuse to render if any fixed caption would run off the frame.
+
+    Two of the name-card values did exactly that and the only symptom was a
+    sentence quietly missing its last four characters — invisible in the code,
+    invisible in a single still unless you happen to look at the right edge.
+    """
+    for k, v in SPEC:
+        assert SPEC_VAL_X + text_w(v) <= SPEC_RIGHT, \
+            f"spec value too wide: {v!r} ends at {SPEC_VAL_X + text_w(v)}"
+        assert SPEC_KEY_X + text_w(k) < SPEC_VAL_X, f"spec key too wide: {k!r}"
+    for ln in PROLOGUE:
+        assert text_w(ln) <= W - 16, f"prologue line too wide: {ln!r}"
+    for cap in ("FIELD CORRESPONDENT · NON-TERRESTRIAL",
+                "▸ SOMEBODY HAD TO ANSWER IT",
+                "DESIG. RL-Z0-GND · LANDING SITE",
+                "▸ THE DAY, FROM THE POINT IT HAPPENED",
+                "NIGHTLY 19:00 · ENCORE 22:00",
+                "© 2026 RIPOSTE LABORATORIES INC.",
+                "A CHANNEL Z0 TRANSMISSION", WORDMARK):
+        assert text_w(cap) <= W, f"caption too wide: {cap!r}"
+
+
 def main():
-    global CRAWL, SKY, LOGO_TOP, LOGO_BOT
+    global CRAWL, NEBULA, LAND, LOGO_TOP, LOGO_BOT, NAME_SASHA, NAME_ZERO
     outdir = sys.argv[1]
     os.makedirs(outdir, exist_ok=True)
+    check_fits()
+    gzart.load()
     CRAWL = _crawl_block()
-    SKY = _sky()
-    LOGO_TOP = _logo_word("GROUND")
-    LOGO_BOT = _logo_word("ZERO", reticle_last=True)
+    NEBULA = _nebula()
+    LAND = _land_plate()
+    LOGO_TOP = _word("GROUND")
+    LOGO_BOT = _word("ZERO", orbit_last=True)
+    NAME_SASHA = _word("SASHA", scale=1)
+    NAME_ZERO = _word("ZERO", scale=1)
 
     if "--stills" in sys.argv:
-        for i in (20, 60, 100, 200, 400, 700, 780, 820, 900, 1000, 1100,
-                  1150, 1180, 1220, 1240, 1250, 1256, 1270, 1300, 1350, 1420,
-                  1550, 1600, 1700):
+        marks = [20, 60, 100, 200, 400, 500, 560, 600, 640, 700, 740, 760,
+                 790, 820, 860, 900, 940, 980, 1010, 1040, 1080, 1120, 1160,
+                 1200, 1240, 1280, 1320, 1360, 1400, 1450, 1500, 1560, 1600,
+                 1660, 1700, 1760]
+        for i in marks:
             render(i).resize((640, 480), Image.NEAREST).save(
                 os.path.join(outdir, f"still-{i:04d}.png"))
         print("stills written")
