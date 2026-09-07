@@ -34,7 +34,6 @@ playout:
   - sequence: 'sign_on'
 
   # ── Betty Boop, all fourteen ──────────────────────────────────────────────
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'advert_break'
   - epg_group: true
@@ -43,7 +42,6 @@ playout:
     custom_title: 'THE BETTY BOOP MARATHON'
   - epg_group: false
   - pre_roll: false
-  - sequence: 'strip_up'
 
   - epg_group: true
   - pad_until: '10:00'
@@ -54,13 +52,11 @@ playout:
   - epg_group: false
 
   # ── The Fleischer Superman set ────────────────────────────────────────────
-  - sequence: 'strip_down'
   - epg_group: true
   - all: null
     content: 'superman'
     custom_title: 'SUPERMAN — THE COMPLETE SET'
   - epg_group: false
-  - sequence: 'strip_up'
 
   - epg_group: true
   - pad_until: '12:00'
@@ -73,13 +69,11 @@ playout:
   - sequence: 'weather_break'
 
   # ── Bosko and the Harman-Ising shorts ─────────────────────────────────────
-  - sequence: 'strip_down'
   - epg_group: true
   - all: null
     content: 'harman_ising'
     custom_title: 'HARMAN AND ISING — THE EARLY SOUND CARTOONS'
   - epg_group: false
-  - sequence: 'strip_up'
 
   - epg_group: true
   - pad_until: '15:00'
@@ -93,13 +87,11 @@ playout:
   # The sidecars put a zero-padded chapter number in each file's sort title, so
   # `order: chronological` on this pool plays Chapter 3 before Chapter 10
   # rather than after it.
-  - sequence: 'strip_down'
   - epg_group: true
   - all: null
     content: 'serials'
     custom_title: 'THE CHAPTER PLAY MARATHON'
   - epg_group: false
-  - sequence: 'strip_up'
 
   - epg_group: true
   - pad_until: '19:00'
@@ -112,7 +104,6 @@ playout:
   - sequence: 'weather_break'
 
   # ── Why We Fight, in order ────────────────────────────────────────────────
-  - sequence: 'strip_down'
   - pre_roll: true
     sequence: 'feature_break'
   - epg_group: true
@@ -121,7 +112,6 @@ playout:
     custom_title: 'WHY WE FIGHT'
   - epg_group: false
   - pre_roll: false
-  - sequence: 'strip_up'
 
   - epg_group: true
   - pad_until: '00:00'
@@ -132,7 +122,6 @@ playout:
   - epg_group: false
 
   - sequence: 'sign_off'
-  - sequence: 'strip_down'
   - epg_group: true
   - pad_until: '05:30'
     tomorrow: true
@@ -147,6 +136,5 @@ playout:
     content: 'colorbars'
     custom_title: 'COLOUR BARS'
   - epg_group: false
-  - sequence: 'strip_up'
 
   - repeat: true
