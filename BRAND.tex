@@ -1,0 +1,85 @@
+% DOC NO. RL-Z0-A · REV. A
+%
+% This file IS the document. Edit it directly - ripdoc compiles it
+% as it stands and stamps the provenance line at build time.
+%
+%   ripdoc build --only brand
+%
+% Promoted from BRAND.md on 2026-09-07 by `ripdoc promote`.
+\documentclass[fontpath=fonts/,logopath=logo/]{riposte-doc}
+\usepackage{riposte-md}
+
+\title{Brand conformance}
+\author{Riposte Laboratories}
+\date{}
+\ripdocno{RL-Z0-A}
+\riprev{A}
+\ripstrapline{Channel Z0 is a Riposte Laboratories transmission and follows the Riposte design system — published at ripostelabs.xyz/brand — with one large, deliberate exception documented below.}
+\riprunningtitle{Brand conformance}
+
+\begin{document}
+
+\ripmakehead
+
+\riptoc
+
+
+\ripsection{\ripmdhead{Conforms}}
+
+\begin{ripmdtable}{X[0.55,l]X[1.74,l]}
+\ripmdth{SURFACE} & \ripmdth{STATUS} \\
+README & Already spec-sheet shaped: the \ripmono{CH 0 · DESIG RL-\allowbreak{}Z0} titleblock is the document-chrome register done correctly \\
+Doc control & \ripmono{DESIG RL-Z0} predates this guide and is retained as the canonical designation \\
+Voice & Concrete, deadpan, wit from precision. "A local channel, for locals" is the register exactly \\
+\ripmono{docs/*.md} & Tables over prose, sentence-case headings, numbers bolded \\
+Monospace throughout & \ripmono{--mono} variable, no proportional face in the chrome \\
+\end{ripmdtable}
+
+
+\ripsection{\ripmdhead{Deliberately diverges — the CRT exception}}
+
+\textbf{\ripmono{site/retro/} and the playout bumpers use a broadcast-phosphor palette, not the Riposte palette.} Amber \ripmono{\#ffb000}, phosphor red \ripmono{\#ff2d2d}, near-black \ripmono{\#0d0d0d}/\ripmono{\#141414}/\ripmono{\#1f1f1f}, and Courier New rather than JetBrains Mono.
+
+This is correct and should not be "fixed". Channel Z0 is a simulation of an analogue local TV channel; the whole premise is that it looks like something transmitted in 1987. The Riposte brand is a \riphi{printed technical document} — applying bone paper and harlequin bands to a CRT sign-off card would destroy the conceit that makes the project work.
+
+The rule of thumb: \textbf{anything that represents the broadcast gets the phosphor treatment; anything that represents Riposte operating the broadcast gets the brand.}
+
+\begin{ripmdtable}{X[1.32,l]X[0.68,l]}
+\ripmdth{SURFACE} & \ripmdth{PALETTE} \\
+\ripmono{site/retro/}, bumpers, sign-off, on-air graphics & Phosphor. Courier. CRT. \\
+\ripmono{site/\allowbreak{}index.\allowbreak{}html} (the public-facing station page) & \textbf{Riposte brand} — queued below \\
+\ripmono{docs/}, README, schedules, ad standards & Riposte brand \\
+\end{ripmdtable}
+
+
+\ripsection{\ripmdhead{Queued}}
+
+\begin{riptodolist}
+\riptodo Bring \ripmono{site/\allowbreak{}index.\allowbreak{}html} onto \ripmono{riposte-\allowbreak{}brand.\allowbreak{}css}. It is the station's front door — the page a submitter or advertiser lands on — so it should read as a Riposte property that happens to run a retro channel, with the phosphor aesthetic quarantined behind \ripmono{/retro/}. Currently it uses a neutral dark palette (\ripmono{\#1f1f1f}, \ripmono{\#141414}, \ripmono{\#b9b4a6}) that is neither.
+\riptodo Add the standard \ripmono{footer.\allowbreak{}colophon} to \ripmono{site/\allowbreak{}index.\allowbreak{}html}, linking \ripmono{/brand/}.
+\riptodo \ripmono{docs/\allowbreak{}ad-\allowbreak{}standards.\allowbreak{}md} should carry \ripmono{SEC.NN} numbering — it is a specification and would read better filed as one.
+\end{riptodolist}
+
+
+\ripsection{\ripmdhead{Quick reference}}
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+ink      #1d1a17      pink     #f0477d   (bone text; display only, 3.16:1)
+bone     #f6f1e7      marigold #fe9a0d   (INK text; 8.12:1, safe for prose)
+bone-dim #eae4d6      teal     #12b795   (bone text; fills only, 2.27:1)
+
+deep, for accent fills that carry a sentence:
+pink-deep #d81150   marigold-deep #a15e01   teal-deep #0c7a63
+
+font     JetBrains Mono 400 / 700 / 800
+spacing  4 8 12 16 24 34 48 64 72     radius 0     rules 2px solid / 1px dashed
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+Full guide: \url{https://github.com/armeehn/riposte-brand}
+
+\ripend
+
+\end{document}

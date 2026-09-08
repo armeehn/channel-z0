@@ -1,0 +1,234 @@
+% DOC NO. RL-Z0-INTERVALS · REV. A
+%
+% This file IS the document. Edit it directly - ripdoc compiles it
+% as it stands and stamps the provenance line at build time.
+%
+%   ripdoc build --only docs-intervals
+%
+% Promoted from docs/intervals.md on 2026-09-07 by `ripdoc promote`.
+\documentclass[fontpath=fonts/,logopath=logo/]{riposte-doc}
+\usepackage{riposte-md}
+
+\title{Station intervals — generative art between the programmes}
+\author{Riposte Laboratories}
+\date{}
+\ripdocno{RL-Z0-INTERVALS}
+\riprev{A}
+\ripstrapline{Channel Z0 puts a piece of generative art at every junction in the schedule. The art is made by Glitchsheet — the same chain-of-typed-ops engine that makes the vinyl-cutter stickers — driven headlessly as a library rather than through its studio UI.}
+\riprunningtitle{Station intervals — generative art between the programmes}
+
+\begin{document}
+
+\ripmakehead
+
+\riptoc
+
+Roughly \textbf{40 minutes a day}, across \textbf{168 junctions} in the seven-day cycle.
+
+A second family shares this pool: the \textbf{L-system specimens} in \ripdocref{lsystems.md}{RL-Z0-LSYSTEMS}, where the program that drew the picture is on screen beside it. They carry the same \ripmono{generative} tag, so they join the same shuffle and need no schedule change.
+
+
+\ripsection{\ripmdhead{What is on screen}}
+
+A \riphi{chain}: a numpy source generator, a palette, usually a form or colour treatment, and — about half the time — an \textbf{ffglitch codec pass}, which is real datamosh: the frames are encoded to MPEG-2, the motion vectors or quantisers are edited, and the damaged bitstream is decoded back. That is the part that makes these look like Glitchsheet and not like a screensaver.
+
+Each clip is one \riphi{piece}: the recipe (source, palette, stack) is fixed for its whole length while the seed and one parameter are \textbf{swept} across it, so a clip evolves rather than cutting between unrelated images. That sweep is Glitchsheet's own idea, borrowed directly from its variants panel.
+
+Everything is seeded. The same \ripmono{--seed} renders the same intervals, byte for byte, and every clip's exact chain is recorded in \ripmono{manifest.json} next to it — so any interval on air can be traced back to the chain that made it and re-rendered at will.
+
+
+\ripsection{\ripmdhead{How long each interval is}}
+
+The ask was that the first and last four minutes of every segment become generative art. Two properties of this schedule shaped how that is delivered.
+
+\textbf{Adjacent segments touch.} Taken literally, the tail of one segment and the head of the next are eight unbroken minutes at every junction — about 1.9 hours a day. So each junction gets \textbf{one} interval, shared: still the last four minutes of the segment before and the first four of the segment after, counted once rather than twice.
+
+\textbf{Segments are wildly different lengths.} CARTOON BLOCK runs two hours; THE WEATHER DESK is exactly two minutes and SIGN-OFF is thirty-five seconds. A flat four minutes would erase the short ones. So an interval is \textbf{12.5\% of the shorter of the two segments it separates, capped at four minutes}:
+
+\begin{ripmdtable}{X[0.55,l]X[0.55,l]X[2.06,l]}
+\ripmdth{INTERVAL} & \ripmdth{COUNT PER CYCLE} & \ripmdth{WHERE} \\
+\textbf{4:00} & 35 & between the long blocks — cartoons, Prelinger, the features \\
+3:45 / 3:37 & 21 & blocks a little under half an hour \\
+1:52 / 1:15 & 37 & either side of the shorter strands \\
+0:15 & 35 & either side of THE WEATHER DESK (2:00) \\
+0:08 / 0:04 & 40 & around SIGN-ON and SIGN-OFF (0:35) \\
+\end{ripmdtable}
+
+168 intervals per seven-day cycle, \textbf{40 min a day}.
+
+One pool of \textasciitilde{}55-second clips serves all of them, because \ripmono{duration:} + \ripmono{trim: true} fills an exact wall-clock span and cuts the last item at the boundary.
+
+\textbf{The clock is preserved.} Where the segment before a junction ends on a \ripmono{pad\_until}, that target is pulled BACK by the interval length, so the segment after still starts at the time the guide and the storefront advertise — CARTOON BLOCK now pads to 08:56, the interval runs 08:56–09:00, and PRELINGER THEATRE still opens at 09:00. Where it ends on a fixed \ripmono{count:} item (the weather, the sign-off, a feature) there is nothing to pull back and the following pad absorbs the shift. Intervals under a minute are never pulled back, because \ripmono{pad\_until} targets are only HH:MM.
+
+\textbf{Graphics go down for the interval} and come back after it. The bug and the weather card over abstract art look like a mistake — and the bottom strip is a subtitle element, the one that is re-rendered every frame and that took the channel off air 27 times in a morning. An hour or two a day where the compositor is idle is a saving, not a cost.
+
+Intervals are \textbf{silent}, like the channel's own colour bars and test card.
+
+
+\ripsection{\ripmdhead{The pipeline}}
+
+Three hosts, because no single one can do all of it.
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+LXC 114 (glitchsheet)          LXC 111 (claude)              vile
+  numpy + ffglitch               ffmpeg + libx264              ErsatzTV
+  no ffmpeg at all               idle, 4 GB                    live channel
+        │                              │                          │
+   z0-generative.py  ──chunks──►  z0-interval-assemble.py ──►  /media/generative/
+   320x240, 4s, xvid              640x480, 55s, h264            tag: generative
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+
+\ripsubsection{\ripmdhead{1. Render — \NoCaseChange{\ripmono{tools/\allowbreak{}z0-\allowbreak{}generative.\allowbreak{}py}} (LXC 114)}}
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+pct exec 114 -- python3 /tmp/z0-generative.py \
+    --clips 32 --chunks 18 --out /var/lib/z0gen/chunks
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+Chunks are \textbf{120 frames at 320x240}, and both numbers are forced:
+
+\begin{ripbullets}
+\item \textbf{320x240} doubles to the channel's 640x480 by an exact integer nearest-neighbour scale, so no interpolation softens the block edges the codec ops exist to create.
+\item \textbf{120 frames} is a memory ceiling, not the engine's 240-frame cap. Peak RSS is about \ripmono{83 MB + 5.\allowbreak{}9 MB per frame} at this size — 767 MB at 120 frames, 1137 MB at 180 — and the treatment stack lands on top of that in a 2 GB container that is also running the live studio. The heaviest stack renders at 120 and is OOM-killed at 150.
+\end{ripbullets}
+
+Each chunk renders in \textbf{its own subprocess}. numpy does not return freed arrays to the OS, so evaluating several chains in one interpreter stacks their peaks and the OOM killer takes the whole batch — exit 137, no traceback, no partial manifest. A subprocess per chunk turns an OOM into one lost chunk.
+
+Roughly \textbf{20 s per chunk}; a 32-clip batch is about three hours. It resumes: clips already in \ripmono{manifest.json} are skipped.
+
+
+\ripsubsection{\ripmdhead{2. Assemble — \NoCaseChange{\ripmono{tools/\allowbreak{}z0-\allowbreak{}interval-\allowbreak{}assemble.\allowbreak{}py}} (LXC 111)}}
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+pct exec 111 -- python3 /tmp/z0-interval-assemble.py \
+    --chunks-dir /root/z0gen/chunks --out-dir /root/z0gen/intervals
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+Crossfades the chunks (1 s, transition varied per clip), upscales 2x with \ripmono{flags=\allowbreak{}neighbor}, adds a silent stereo 48 kHz AAC track and encodes H.264 at 3000k. Output is \ripmono{4 + (N-1)x3} seconds — \textbf{55.0 s} for 18 chunks — and there is a length guard that refuses to install a file more than a second off, in the spirit of \ripmono{tools/\allowbreak{}z0-\allowbreak{}weather.\allowbreak{}sh}.
+
+Assembling on 111 rather than vile is deliberate: vile's live transcode runs at \ripmono{-\allowbreak{}readrate 1.\allowbreak{}05}, a 5\% margin, and x has 20 cores at load 0.5 against vile's 12 threads at load 2.2–3.0.
+
+
+\ripsubsection{\ripmdhead{3. Install (from \NoCaseChange{\ripmono{x}})}}
+
+Clips go to \ripmono{/\allowbreak{}media/\allowbreak{}generative/\allowbreak{}} on vile, which makes their tag \ripmono{generative} (ErsatzTV tags Other Videos by folder). Install with write-temp + \ripmono{mv -f}, never straight onto a live filename. Then let the app rescan — do NOT run the scanner yourself, it populates the DB but not the search index:
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+sqlite3 /mnt/solid-state/ersatztv/ersatztv.sqlite3 \
+  "UPDATE LibraryPath SET LastScan = NULL WHERE Path = '/media';"
+# then restart the app
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\textbf{A brand-new tag needs the search index REBUILT, not just a scan.} The pool is a \ripmono{search:} key, so it is answered by Lucene rather than by the database. The first install here scanned cleanly — 30 rows, \ripmono{Tag} populated, \ripmono{LastScan} set — and the intervals still came out as zero items, because the index did not have the new \ripmono{generative} tag. There is no error for this: an empty content pool is silently skipped, so it looks like the \ripmono{duration:} instruction is unsupported.
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+rm -rf /mnt/solid-state/ersatztv/search-index   # then restart; it reindexes
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\textbf{Topping the pool up needs no schedule change.} Drop more clips in the folder, rescan, and they join the shuffle.
+
+
+\ripsection{\ripmdhead{The schedule}}
+
+Intervals are part of the \textbf{generated} week. \ripmono{tools/\allowbreak{}z0-\allowbreak{}build-\allowbreak{}schedule.\allowbreak{}py} builds the seven days; \ripmono{tools/\allowbreak{}z0\_\allowbreak{}intervals.\allowbreak{}py} splices an interval into each day's finished instruction list, and the generator calls it unless you pass \ripmono{-\allowbreak{}-\allowbreak{}no-\allowbreak{}intervals}.
+
+Splicing afterwards rather than emitting inline from \ripmono{day\_plan()} is deliberate: an interval's length depends on \textbf{both} segments it sits between, which is only knowable once the day is complete.
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{8.25}{12.78}
+\begin{ripcodeblock}
+tools/z0-build-schedule.py --start-day thursday --out playout/channel-z0.yml
+tools/validate-schedule.py playout/channel-z0.yml playout/sequential-schedule.schema.json
+tools/validate-schedule.py playout/_content.yml  playout/sequential-schedule-import.schema.json
+tools/check-schedule-clock.py playout/channel-z0.yml
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+Build for \textbf{the day you are going to reset on} — the generator's \ripmono{--start-day} handles the rotation, and a reset is mandatory after any change that shifts instruction indices, because \ripmono{PlayoutAnchor} pins \ripmono{NextInstructionIndex} and a Context \ripmono{InstructionIndex} into the old list.
+
+Validate the imported \ripmono{\_content.yml} separately: the main file no longer carries the content keys, so a schema check of it alone will not see them.
+
+The last two checks are not ceremony:
+
+\begin{ripbullets}
+\item \textbf{\ripmono{validate-\allowbreak{}schedule.\allowbreak{}py}} checks the file against ErsatzTV's own schema, pulled from \ripmono{/\allowbreak{}app/\allowbreak{}Resources/\allowbreak{}sequential-\allowbreak{}schedule.\allowbreak{}schema.\allowbreak{}json} in the container. Every object is \ripmono{additionalProperties:\allowbreak{} false}, and a failed validation makes \ripmono{SequentialPlayoutBuilder} return \ripmono{None} — the playout does not build \textbf{at all}, invisibly, while the items already built keep airing.
+\item \textbf{\ripmono{check-\allowbreak{}schedule-\allowbreak{}clock.\allowbreak{}py}} walks the wall clock through the week and checks something the schema cannot: that every \ripmono{pad\_until} target is still in the future when the clock reaches it. A pad whose target has passed schedules \textbf{nothing} — a hole, not an error. It also reports the week's total pad span, which must stay at \textbf{167.5 h}; if it jumps by 24 h a target has rolled into the next day.
+\end{ripbullets}
+
+Also reset \textbf{early in the day}. A \ripmono{pad\_until} whose target is already past is skipped, so a mid-afternoon reset drops every morning block and the day starts wherever the clock has got to.
+
+
+\ripsubsection{\ripmdhead{A rebuild needs a CONTENT change, not a touch}}
+
+ErsatzTV resets the playout by itself when the schedule file's \textbf{contents} change — \ripmono{NextInstructionIndex} goes back to 0 and the week rebuilds on the next restart. \ripmono{touch}ing the file is not enough; the mtime alone does not trigger it. Worth knowing, because the alternative is deleting \ripmono{PlayoutItem}, \ripmono{PlayoutAnchor} and \ripmono{PlayoutHistory} by hand.
+
+
+\ripsection{\ripmdhead{Verifying it is actually on air}}
+
+The channel has a long history of every status surface looking healthy while something else is on screen, so check the picture, not the database.
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+# 1. the pool is not empty — an empty pool is silently skipped, leaving a hole
+sqlite3 /mnt/solid-state/ersatztv/ersatztv.sqlite3 \
+  "SELECT COUNT(*) FROM Tag WHERE Name='generative';"
+
+# 2. intervals actually reached the playout
+sqlite3 /mnt/solid-state/ersatztv/ersatztv.sqlite3 \
+  "SELECT COUNT(*) FROM PlayoutItem WHERE CustomTitle='STATION INTERVAL';"
+
+# 3. look at the live edge — NOT the playlist, which starts at the OLDEST
+#    segment and will happily hand you minutes-old colour bars
+B=https://watch.ch0.ripostelabs.xyz
+V=$(curl -s $B/hls/stream.m3u8 | grep -v '^#' | head -1)
+SEG=$(curl -s $B/hls/$V | grep -v '^#' | tail -1)
+ffmpeg -i "$B/hls/$(dirname $V)/$SEG" -frames:v 1 out.png
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+And after any ErsatzTV restart, \textbf{restart \ripmono{z0-uplink} too} — it does not recover on its own, and Owncast will keep reporting \ripmono{online: true} with a frozen picture.
+
+
+\ripsection{\ripmdhead{Tuning}}
+
+All in \ripmono{tools/\allowbreak{}z0-\allowbreak{}generative.\allowbreak{}py}:
+
+\begin{ripmdtable}{X[0.55,l]X[1.51,l]}
+\ripmdth{WANT} & \ripmdth{CHANGE} \\
+Calmer / busier & the probabilities in \ripmono{build\_\allowbreak{}recipe()} \\
+Less / more damage & the \ripmono{CODEC\_SOFT} probability (0.45) and \ripmono{CODEC\_HARD} (0.12) \\
+Gentler parameters overall & \ripmono{lo\_frac}/\ripmono{hi\_frac} in \ripmono{random\_\allowbreak{}params()} (currently the bottom half of every range) \\
+Different palettes & \ripmono{PALETTES} — the 10 in use are Glitchsheet's, minus \ripmono{as-is} \\
+Longer clips & \ripmono{--chunks} (each adds 3 s), not \ripmono{--frames} \\
+\end{ripmdtable}
+
+\ripmono{codec.storm} and \ripmono{codec.bleed} are deliberately excluded. On a clean posterized base both produce structureless static at \textasciitilde{}8 Mbps — no form survives them, and at the channel's 1200 kbps they arrive as grey mud. \ripmono{codec.freeze} holds macroblocks instead of injecting noise and is the one heavy op kept.
+
+Interval lengths are in \ripmono{tools/\allowbreak{}z0\_\allowbreak{}intervals.\allowbreak{}py}: \ripmono{MAX\_INTERVAL} (240 s), \ripmono{MIN\_INTERVAL} (4 s) and \ripmono{FRACTION} (0.125 of the shorter neighbour). The \ripmono{CONTENT\_\allowbreak{}SECONDS} / \ripmono{SEQUENCE\_\allowbreak{}SECONDS} tables there are used \textbf{only} to size intervals — those numbers never reach the schedule, so being a minute out on a feature changes nothing.
+
+\ripend
+
+\end{document}
