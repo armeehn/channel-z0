@@ -16,13 +16,13 @@ day the first segment does.
 
 **GROUND ZERO** — the 16-bit vocabulary of the opening title
 (`docs/ground-zero-open.md`), 320x240 doubled to 640x480 with no
-interpolation. A stage-select band slides in from the right, the ZERØ mark
-lands from the left, the segment name types itself in the title's bitmap face
-with a marigold block cursor, and the strap line follows. The station's
-tri-band (pink, marigold, teal) holds the foot of the frame. A chip sting from
-`gzaudio.py`: kick, crash, orchestra hit, a four-note brass phrase on the
-segment's chord, a bell to close. Chords cycle Am, F, G, E, Dm by segment
-number; breaks take Dm.
+interpolation. A gradient plate with lit rules slides in from the right, the
+ZERØ mark lands from the left in its own warm light, the segment name types
+itself in ramp-cut type with a keyline and a marigold block cursor, and the
+strap line follows. The station's tri-band (pink, marigold, teal) holds the
+foot of the frame. The sting is the title cue's own vocabulary from
+`gzaudio.py`: a pulse, a short string swell on the segment's chord, a bell.
+No drums. Chords cycle Am, F, G, E, Dm by segment number; breaks take Dm.
 
 **LAB HOUR** — a drawing sheet. Bone paper wipes down over the ink with a
 20 px drafting grid; a title block sits bottom-right the way a sheet carries

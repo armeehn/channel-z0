@@ -9,9 +9,10 @@ the day the first segment does.
 
 Three grammars, one generator, one manifest (segments.json):
 
-    gz    GROUND ZERO.   320x240 pixel art doubled to 640x480, the 16-bit
-          vocabulary of the opening title: a stage-select panel slides in,
-          the ZERØ mark lands, the segment name types itself, a chip sting.
+    gz    GROUND ZERO.   320x240 doubled to 640x480, the 16-bit vocabulary
+          of the opening title: a gradient plate with lit rules slides in,
+          the ZERØ mark lands in its own light, the segment name types
+          itself in ramp-cut type with a keyline, a sting.
     lab   LAB HOUR.      A drawing sheet.  Paper, a drafting grid, a title
           block, and the segment name revealed by a red cursor then
           DIMENSIONED — the width of the word, in millimetres, because in
@@ -38,7 +39,7 @@ import sys
 import wave
 from array import array
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 GZ_DIR = os.path.join(os.path.dirname(HERE), "z0-gz-open")
@@ -205,27 +206,37 @@ def gz_frame(show, seg, f):
     img = MF.new_frame(P.INK)
     MF.vgrad(img, 0, H, [(0.0, (0x0d, 0x0b, 0x14)), (0.45, (0x24, 0x1a, 0x18)),
                          (1.0, (0x0a, 0x08, 0x0c))])
-    d = ImageDraw.Draw(img)
     y0, y1 = GZ_PANEL
 
-    # The band slides in from the right and stops flush.
+    # The band slides in from the right and stops flush: a gradient plate
+    # with lit rules, not a flat box.
     t = ease_out(f / 14)
     px = int((W + 8) * (1 - t))
     if px < W:
-        d.rectangle([px, y0, W, y1], fill=(0x12, 0x0e, 0x18))
+        MF.vgrad(img, y0, y1, [(0.0, (0x1a, 0x14, 0x22)), (0.5, (0x10, 0x0c, 0x16)),
+                               (1.0, (0x1a, 0x14, 0x22))], x0=px, x1=W)
+        d = ImageDraw.Draw(img)
         d.rectangle([px, y0, W, y0 + 1], fill=P.ARMOUR[2])
         d.rectangle([px, y1 - 1, W, y1], fill=P.ARMOUR[2])
+        rule = MF.layer()
+        rd = ImageDraw.Draw(rule)
+        rd.rectangle([px, y0, W, y0 + 1], fill=P.ARMOUR[1] + (255,))
+        rd.rectangle([px, y1 - 1, W, y1], fill=P.ARMOUR[1] + (255,))
+        img = MF.add(img, rule.filter(ImageFilter.GaussianBlur(2.2)), 0.55)
 
-    # The mark comes the other way and lands.
+    # The mark comes the other way, lands, and has a warm light behind it.
     if f >= 6:
         m = _mark()
         mt = ease_out((f - 6) / 16)
         mx = int(-m.size[0] + (GZ_MARK_X + m.size[0]) * mt)
         my = (y0 + y1) // 2 - m.size[1] // 2
+        img = MF.bloom(img, mx + m.size[0] // 2, my + m.size[1] // 2, 22,
+                       (0x48, 0x22, 0x06), 0.8 * mt, 14)
         img.paste(m, (mx, my), m)
 
     if f >= 14:
-        MF.blit_text(img, GZ_TEXT_X, y0 + 12, gz_header(show, seg), P.BONE[3])
+        MF.blit_text(img, GZ_TEXT_X, y0 + 12, gz_header(show, seg), P.BONE, 1, 0.75,
+                     keyline=False)
 
     # The name types itself, one cell every two frames, block cursor.
     if f >= 24:
@@ -236,8 +247,7 @@ def gz_frame(show, seg, f):
         cursor = None
         for ln in seg["lines"]:
             part = ln[:max(0, left)]
-            MF.blit_text(img, GZ_TEXT_X, y, part, P.BONE[1], scale=2,
-                         shadow=P.INK_DEEP)
+            MF.blit_text(img, GZ_TEXT_X, y, part, P.BONE, 2)
             if left < len(ln) or ln is seg["lines"][-1]:
                 cursor = (GZ_TEXT_X + len(part) * gzfont.SMALL_CELL * 2, y)
             if left < len(ln):
@@ -246,10 +256,10 @@ def gz_frame(show, seg, f):
             y += gzfont.SMALL_H * 2 + 4
         y = y0 + 28 + (len(seg["lines"]) - 1) * (gzfont.SMALL_H * 2 + 4)
         if cursor and (shown < total or (f // 8) % 2 == 0):
-            MF.blit_text(img, cursor[0], cursor[1], "█", P.ARMOUR[2], scale=2)
+            MF.blit_text(img, cursor[0], cursor[1], "█", P.ARMOUR, 2, keyline=False)
         if shown >= total + 3:
             MF.blit_text(img, GZ_TEXT_X, y + gzfont.SMALL_H * 2 + 8,
-                         "▸ " + seg["sub"], P.ARMOUR[2])
+                         "▸ " + seg["sub"], P.ARMOUR, 1, keyline=False)
 
     if f >= 14:
         MF.triband(img, 0, H - 4, W, 4)
@@ -468,18 +478,15 @@ def _clear():
 
 
 def gz_sting(seg):
+    """The title cue's own vocabulary: a pulse, a short string swell on the
+    segment's chord, a bell.  No drums, no fanfare."""
     chord = "Dm" if seg["kind"] != "segment" else GZ_CHORDS[(seg["number"] - 1) % len(GZ_CHORDS)]
-    root = A.ROOTS[chord]
-    A.kick(0.0, 0.42)
-    A.crash(0.0, 0.16)
-    A.stab(0.0, 0.26, root[:-1] + "3")
-    A.pad(0.25, 2.7, chord, 0.045)
+    A.pulse(0.0, 0.20)
+    A.voice(0.0, 2.6, A.ROOTS[chord], "bass", 0.12, atk=0.05, dec=0.3, sus=0.8, rel=0.6)
+    A.pad(0.05, 2.6, chord, 0.05, atk=0.35, rel=0.8)
     tones = A.PADS[chord]
-    notes = [(tones[0], 2), (tones[1], 2), (tones[2], 2), (tones[0][:-1] + str(int(tones[0][-1]) + 1), 6)]
-    A.line(0.30, notes, vol=0.12, wave_name="brass", pan=-0.1, sus=0.7, echo=0.3, detune=8.0)
-    A.hat(0.36, 0.05)
-    A.hat(0.72, 0.05)
-    A.voice(2.9, 0.7, tones[2], "bell", 0.07, pan=0.2, atk=0.004, dec=0.2, sus=0.3, rel=0.4, echo=0.4)
+    A.bell(0.55, tones[2], 0.06, -0.2, dur=1.0)
+    A.bell(2.6, tones[0][:-1] + str(int(tones[0][-1]) + 1), 0.045, 0.2, dur=0.9)
 
 
 def lab_sting(seg):
