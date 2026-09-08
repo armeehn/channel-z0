@@ -1,0 +1,45 @@
+{
+  "groundzero": {
+    "title": "GROUND ZERO",
+    "grammar": "gz",
+    "sheet": "RL-Z0-GND",
+    "segments": [
+      {"slug": "contact",       "lines": ["CONTACT"],               "sub": "TONIGHT'S SUBJECT, FOUND"},
+      {"slug": "interview",     "lines": ["THE", "INTERVIEW"],      "sub": "WHAT NOBODY ELSE ASKS"},
+      {"slug": "baguette-test", "lines": ["THE BAGUETTE", "TEST"], "sub": "MIC CHECK. IT IS BREAD."},
+      {"slug": "field-notes",   "lines": ["FIELD NOTES"],           "sub": "WHAT SHE WROTE DOWN"},
+      {"slug": "verdict",       "lines": ["THE VERDICT"],           "sub": "DEFINITELY HUMAN"},
+      {"slug": "break-out",     "kind": "break", "lines": ["BACK IN", "A MOMENT"],  "sub": "CONTACT RESUMES SHORTLY"},
+      {"slug": "break-in",      "kind": "break", "lines": ["CONTACT", "RESUMED"],   "sub": "SHE IS STILL HERE"},
+      {"slug": "next-contact",  "kind": "close", "lines": ["NEXT", "CONTACT"],      "sub": "TOMORROW · 19:00"}
+    ]
+  },
+  "labhour": {
+    "title": "LAB HOUR",
+    "grammar": "lab",
+    "sheet": "RL-LAB",
+    "segments": [
+      {"slug": "bench",     "lines": ["THE BENCH"],  "sub": "WHAT IS ON IT THIS WEEK"},
+      {"slug": "materials", "lines": ["MATERIALS"],  "sub": "RECYCLED PLASTIC · SPENT CELLS"},
+      {"slug": "build",     "lines": ["THE BUILD"],  "sub": "MEASURE TWICE. THEN AGAIN."},
+      {"slug": "test",      "lines": ["THE TEST"],   "sub": "DOES IT WORK"},
+      {"slug": "ship-it",   "lines": ["SHIP IT"],    "sub": "OR DO NOT. BOTH ARE RESULTS."},
+      {"slug": "break-out", "kind": "break", "lines": ["BACK AFTER THIS"],  "sub": "THE GLUE IS DRYING"},
+      {"slug": "break-in",  "kind": "break", "lines": ["AT THE BENCH"],      "sub": "THE GLUE HAS DRIED"}
+    ]
+  },
+  "desk": {
+    "title": "NEIGHBOURHOOD DESK",
+    "grammar": "desk",
+    "sheet": "RL-DESK",
+    "segments": [
+      {"slug": "notices",   "lines": ["NOTICES"],       "sub": "FILED THIS WEEK"},
+      {"slug": "lost-found","lines": ["LOST & FOUND"],  "sub": "CATS, MOSTLY"},
+      {"slug": "events",    "lines": ["EVENTS"],        "sub": "NEARBY · SOON"},
+      {"slug": "for-sale",  "lines": ["FOR SALE"],      "sub": "GARAGE, MOSTLY"},
+      {"slug": "casserole", "lines": ["THE CASSEROLE"], "sub": "STILL UNATTENDED"},
+      {"slug": "break-out", "kind": "break", "lines": ["BACK AFTER THIS"], "sub": "THE DESK STAYS OPEN"},
+      {"slug": "break-in",  "kind": "break", "lines": ["THE DESK IS BACK"], "sub": "WHERE WERE WE"}
+    ]
+  }
+}

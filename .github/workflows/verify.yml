@@ -66,6 +66,28 @@ jobs:
       - name: Comment relay
         run: npm run test:relay
 
+  titles:
+    name: titles and transition cards
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+
+      # Pinned for the same reason as the validator: a Pillow bump that
+      # changes text rasterisation would read as a broken card.
+      - name: Install Pillow
+        run: python3 -m pip install --quiet "pillow==12.3.0"
+
+      # The lockup's crosshair check and the transition manifest, sidecars
+      # and stings. The two TTF grammars' picture checks skip here (no
+      # monospace face on the runner) and run for real in build.sh.
+      - name: Lockup
+        run: python3 tools/z0-gz-open/test_logo.py
+      - name: Transition cards
+        run: python3 tools/z0-transitions/test_transitions.py
+
 # Not run here, and each for a reason rather than an oversight:
 #
 #   z0-lists.py --check   needs --db, a live ErsatzTV SQLite database on vile.
