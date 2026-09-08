@@ -1,0 +1,271 @@
+% DOC NO. RL-Z0-PROGRAMMING · REV. A
+%
+% This file IS the document. Edit it directly - ripdoc compiles it
+% as it stands and stamps the provenance line at build time.
+%
+%   ripdoc build --only docs-programming
+%
+% Promoted from docs/programming.md on 2026-09-07 by `ripdoc promote`.
+\documentclass[fontpath=fonts/,logopath=logo/]{riposte-doc}
+\usepackage{riposte-md}
+
+\title{CHANNEL Z0 — Programming Guide (Station Bulletin № 3)}
+\author{Riposte Laboratories}
+\date{}
+\ripdocno{RL-Z0-PROGRAMMING}
+\riprev{A}
+\riprunningtitle{CHANNEL Z0 — Programming Guide (Station Bulletin № 3)}
+
+\begin{document}
+
+\ripmakehead
+
+\riptoc
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+┌───────────────────────────────────────────────────────────┐
+│   CHANNEL Z0 · CH 0 · DESIG RL-Z0                         │
+│   THE BROADCAST WEEK — sign-on 06:00, sign-off 00:00      │
+│   colour bars until sunrise, exactly as intended          │
+└───────────────────────────────────────────────────────────┘
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+The \ripdocref{build guide}{RL-Z0-BUILD-GUIDE} gives master control a \riphi{starting rhythm} — one paragraph of dayparts — and then hands you an empty ErsatzTV. This is the rest of the sentence: the actual \textbf{programming}. A full broadcast week, every block defined, the show bible for what's ours, and the exact ErsatzTV mapping so the schedule on paper becomes the schedule on air.
+
+It is deliberately buildable from public-domain material and local submissions alone. Nothing here needs a rights cheque. See \ripdocref{\ripmono{docs/\allowbreak{}ad-\allowbreak{}standards.\allowbreak{}md}}{RL-Z0-AD-STANDARDS} for the one rule that keeps it that way: \riphi{air only what's yours to air.}
+
+\begin{ripnote}
+\textbf{The storefront reads this.} The program grid at \ripmdpath{\ripmono{site/\allowbreak{}index.\allowbreak{}html}} is the machine-readable twin of the table below; the two are meant to say the same thing. Edit the schedule there and here together, or the guide and the guide-on-the-wall drift apart.
+\end{ripnote}
+
+
+\ripsection{\ripmdhead{The shape of a broadcast day}}
+
+Old television had a \riphi{shape} — you could tell the time by what was on. Z0 keeps it. Five dayparts, a protected flagship, a hard midnight sign-off, and an overnight strand so the signal never goes to black.
+
+\begin{ripmdtable}{X[0.59,l]X[0.56,l]X[1.11,l]X[1.74,l]}
+\ripmdth{DAYPART} & \ripmdth{HOURS} & \ripmdth{MOOD} & \ripmdth{FED MOSTLY BY} \\
+\textbf{Sign-on \& morning} & 06:00 – 11:00 & Gentle; the day clears its throat & Slow TV, cartoons, Prelinger shorts \\
+\textbf{Midday} & 11:00 – 14:00 & Working hours, on in the background & Lab Hour, music loops, the bulletin \\
+\textbf{Afternoon} & 14:00 – 18:00 & Matinee and the after-school return & A feature, then cartoons again \\
+\textbf{Prime} & 18:00 – 22:00 & Lean in; the neighbourhood is home & The Desk, \textbf{Ground Zero}, the night's feature \\
+\textbf{Late \& sign-off} & 22:00 – 00:00 & Wind down; last ones awake & Encore, a mellow block, the sign-off ritual \\
+\riphi{(overnight)} & 00:00 – 05:30 & Dark, but not empty & \textbf{THE ALL-NIGHT SHOW} — rail, civic and industrial film \\
+\riphi{(bars)} & 05:30 – 06:00 & Dark & \textbf{Colour bars}, trimmed, into sign-on \\
+\end{ripmdtable}
+
+The two fixed points that never move: \textbf{19:00 GROUND ZERO} (the flagship — protect the slot) and \textbf{00:00 SIGN-OFF} (the ritual close). Everything else can flex; those two are the station's heartbeat.
+
+
+\ripsection{\ripmdhead{The weekly grid}}
+
+The weekday spine is the same Monday through Friday; the \textbf{20:00 feature} and the \textbf{23:00 late block} are themed by night, which is what gives the week a memory ("it's Tuesday, so it's a monster movie"). Weekends restructure the mornings for people who are home, and add a second feature.
+
+
+\ripsubsection{\ripmdhead{Weekdays (Mon – Fri)}}
+
+\begin{ripmdtable}{X[0.55,l]X[0.55,l]X[2.46,l]}
+\ripmdth{TIME} & \ripmdth{PROGRAMME} & \ripmdth{WHAT IT IS} \\
+06:00 & \textbf{SIGN-ON · MORNING PATTERN} & Anthem, test card, the day begins \\
+06:30 & \textbf{STRETCH \& COFFEE} & Slow television from around the neighbourhood \\
+07:00 & \textbf{CARTOON BLOCK} & Public-domain toons, drawn before your grandparents met \\
+09:00 & \textbf{PRELINGER THEATRE} & Vintage PSAs \& educational shorts; trust the narrator \\
+11:00 & \textbf{LAB HOUR} & What Riposte Labs is building this week, sometimes live \\
+12:00 & \textbf{LUNCH LOOPS} & Music + the community bulletin board. \textbf{One themed hour per day} — waltzes (Mon), polka (Tue), songs and choruses (Wed), kolomyiky (Thu), polka party (Fri), weddings (Sat), prairie mixed (Sun) — prairie dance-band records interleaved with one 10–30 min film per cycle \\
+14:00 & \textbf{AFTERNOON PICTURE SHOW} & A matinee feature older than streaming. Thursday is the exception: it runs \textbf{CHAPTER PLAY MATINEE} from the serial pool, ahead of that night’s SERIAL NIGHT \\
+16:00 & \textbf{CARTOON BLOCK II} & The toons return, as toons do \\
+18:00 & \textbf{NEIGHBOURHOOD DESK} & Notices, events, found cats, lost causes — the \ripmono{The Neighbourhood Desk} playlist: BC archive film + prairie records \\
+\textbf{19:00} & \textbf{▸ GROUND ZERO} & Alien street interviews via baguette — the flagship \\
+20:00 & \textbf{PRIME FEATURE} \riphi{(themed, below)} & The big picture, local ad breaks as nature intended \\
+22:00 & \textbf{GROUND ZERO — ENCORE} & Tonight's contact, retransmitted for the late crowd \\
+23:00 & \textbf{LATE BLOCK} \riphi{(themed, below)} & Mellow signals for the last ones awake \\
+\textbf{00:00} & \textbf{SIGN-OFF} & The ritual close, then colour bars until sunrise \\
+\end{ripmdtable}
+
+
+\ripsubsection{\ripmdhead{The themed nights}}
+
+The spine above stays put; only the \textbf{20:00} and \textbf{23:00} identities change. This is the cheapest possible way to make seven identical loops feel like seven different evenings.
+
+\begin{ripmdtable}{X[0.55,l]X[1.51,l]X[1.39,l]X[0.85,l]}
+\ripmdth{NIGHT} & \ripmdth{20:00 PRIME FEATURE} & \ripmdth{23:00 LATE BLOCK} & \ripmdth{PULL FROM} \\
+\textbf{MON} & \textbf{MONDAY NIGHT NOIR} — crime, shadows, a hat & \textbf{AFTER HOURS} — jazz loop + bulletin & PD noir \& crime features \\
+\textbf{TUE} & \textbf{ATOMIC TUESDAY} — sci-fi, monsters, rockets & \textbf{THE LATE TRANSMISSION} — vintage sci-fi shorts & PD sci-fi / creature features \\
+\textbf{WED} & \textbf{WORKBENCH THEATRE} — how-things-are-made, docs & \textbf{NIGHT PATTERN} — ambient & Prelinger industrials, PD docs \\
+\textbf{THU} & \textbf{SERIAL NIGHT} — a chapter, a cliffhanger & \textbf{CHAPTER'S END} — the recap loop & PD adventure serials \\
+\textbf{FRI} & \textbf{FRIDAY NIGHT FEATURE} — the prestige pick & \textbf{THE LATE LATE SHOW} — cult \& camp & Your best PD feature; the weird one \\
+\textbf{SAT} & \textbf{SATURDAY DOUBLE BILL} — feature one & \riphi{(→ \textbf{SATURDAY DOUBLE BILL — SECOND FEATURE}, \textasciitilde{}00:30 sign-off)} & Two crowd-pleasers \\
+\textbf{SUN} & \textbf{SUNDAY CINEMA} — a classic, unhurried & \textbf{NIGHT PATTERN} — early wind-down & PD classics / drama \\
+\end{ripmdtable}
+
+
+\ripsubsection{\ripmdhead{Weekends (Sat \& Sun)}}
+
+Mornings shift for a house that's awake early and off the clock. Cartoons come forward and run long (the \textbf{Cartoon Carnival}); the afternoon opens up.
+
+\textbf{Saturday} — the big night.
+
+\begin{ripmdtable}{X[0.55,l]X[1.70,l]}
+\ripmdth{TIME} & \ripmdth{PROGRAMME} \\
+06:00 & SIGN-ON · MORNING PATTERN \\
+07:00 & \textbf{CARTOON CARNIVAL} — the long block, three hours of toons \\
+10:00 & PRELINGER THEATRE \\
+11:00 & LAB HOUR \\
+12:00 & LUNCH LOOPS \\
+13:00 & \textbf{SERIAL MATINEE} — a chapter play and an afternoon feature \\
+16:00 & CARTOON BLOCK II \\
+18:00 & NEIGHBOURHOOD DESK — the weekend edition \\
+\textbf{19:00} & \textbf{▸ GROUND ZERO} \\
+20:00 & \textbf{SATURDAY DOUBLE BILL} — feature one \\
+22:30 & \textbf{SATURDAY DOUBLE BILL — SECOND FEATURE} \\
+\textasciitilde{}00:30 & SIGN-OFF \riphi{(Saturday runs late; the one night it does)} \\
+\end{ripmdtable}
+
+\textbf{Sunday} — the quiet one. A slower morning, an earlier settle.
+
+\begin{ripmdtable}{X[0.55,l]X[1.69,l]}
+\ripmdth{TIME} & \ripmdth{PROGRAMME} \\
+06:00 & SIGN-ON · MORNING PATTERN \\
+06:30 & \textbf{SUNDAY SERVICE} — slow TV, long takes, the neighbourhood at rest \\
+09:00 & CARTOON CARNIVAL \\
+11:00 & PRELINGER THEATRE \\
+12:00 & LUNCH LOOPS \\
+14:00 & \textbf{THE VANCOUVER REEL} — archive film from the city \\
+16:00 & CARTOON BLOCK II \\
+18:00 & \textbf{CANADA NIGHT} — Canadian archive programming \\
+\textbf{19:00} & \textbf{▸ GROUND ZERO} — the week-in-review contact \\
+20:00 & \textbf{SUNDAY CINEMA} — the unhurried classic \\
+22:30 & NIGHT PATTERN — the early wind-down \\
+\textbf{00:00} & SIGN-OFF \\
+\end{ripmdtable}
+
+
+\ripsection{\ripmdhead{The programme bible}}
+
+Every recurring block, defined once. Duration is a target; the \textbf{\ripmono{Pad to :\allowbreak{}00/\allowbreak{}:\allowbreak{}30}} filler (build guide, Phase 2.3) stretches the ad break to make each slot land on the clock, exactly like 1994. "Source" is what fills it; "Collection" is the ErsatzTV collection the schedule item points at.
+
+
+\ripsubsection{\ripmdhead{The originals — ours, and only ours}}
+
+\begin{ripbullets}
+\item \textbf{GROUND ZERO} \riphi{(nightly 19:00, 30 min, flagship)} Alien street interviews conducted via baguette. Our correspondent picked up Earth's distress signal, opened a wormhole, and came to check on us — wearing a very convincing human skin, armed with a bread microphone. They study us; they do not fully understand us; they are trying. Filed nightly. \riphi{The dossier lives on the storefront (\ripmdpath{\ripmono{site/\allowbreak{}index.\allowbreak{}html}}, SEC.03).} Protect this slot above all others; the whole channel points at it. \textbf{Collection:} \ripmono{Ground Zero} (show library). \textbf{Encore} at 22:00.
+\item \textbf{LAB HOUR} \riphi{(daily 11:00, 60 min)} What Riposte Laboratories is building this week — recycled-plastic and end-of-life-cell products, in progress. Sometimes a pre-recorded workshop tour, sometimes live from the bench (see build guide, Phase 5). The sponsor \riphi{is} the programming here, and that's allowed; it's the lab's channel. \textbf{Collection:} \ripmono{Lab Hour} (show library) + \ripmono{Lab Promos} filler.
+\item \textbf{NEIGHBOURHOOD DESK} \riphi{(nightly 18:00, 60 min)} The cheapest community television ever made: local notices, events, found cats, lost causes, the school play, the casserole left unattended. Runs as a card loop or a slow scroll over music. The content is the neighbourhood; the Desk just points a camera at it. \riphi{(Roadmap: a \ripmono{bulletin.json} the storefront renders as a ticker — see \ripdocref{\ripmono{docs/ideas.md}}{RL-Z0-IDEAS}.)} \textbf{Collection:} \ripmono{Neighbourhood Desk} (interstitials / card loop).
+\item \textbf{SIGN-ON / SIGN-OFF} \riphi{(06:00 / 00:00, \textasciitilde{}2 min each)} The rituals that bracket the day. Sign-on: the anthem and the test card as the station wakes. Sign-off: the RL-Z0 card, a slow pan over the lab, goodnight — then colour bars until 06:00. Generate the cards with \ripmdpath{\ripmono{tools/\allowbreak{}make-\allowbreak{}slate.\allowbreak{}sh}}; the overnight bars with \ripmdpath{\ripmono{tools/\allowbreak{}make-\allowbreak{}colorbars.\allowbreak{}sh}}. \textbf{Collection:} \ripmono{Sign-\allowbreak{}Off Ritual} → \ripmono{Colour Bars} (as \ripmono{Dead Air} filler).
+\end{ripbullets}
+
+
+\ripsubsection{\ripmdhead{The acquired — public domain, curated}}
+
+\begin{ripnote}
+\ripmarker{} \riphi{In this repo:} \ripmdpath{\ripmono{tools/\allowbreak{}fetch-\allowbreak{}archive.\allowbreak{}sh}} fetches every block below straight into the folders ErsatzTV watches — one slot per collection named here, public-domain-marked items only. See \ripdocref{\ripmono{docs/\allowbreak{}archive-\allowbreak{}fetch.\allowbreak{}md}}{RL-Z0-ARCHIVE-FETCH} for the recipes and the manifest.
+\end{ripnote}
+
+\begin{ripbullets}
+\item \textbf{CARTOON BLOCK / BLOCK II / CARNIVAL} \riphi{(mornings, afternoons, weekend long-form)} Public-domain animation — the pre-1964 well is deep (early theatrical shorts, the ones whose copyrights lapsed). The Carnival is just the Block, scheduled long, for weekend mornings. \textbf{Collection:} \ripmono{Cartoons}.
+\item \textbf{PRELINGER THEATRE} \riphi{(mornings, 60–120 min)} The Internet Archive's \href{https://archive.org/details/prelinger}{Prelinger collection}: educational films, PSAs, industrial shorts, mid-century strangeness. Exactly the texture an old channel needs, and legally spotless. \textbf{Collection:} \ripmono{Prelinger}.
+\item \textbf{THE FEATURES} \riphi{(matinee 14:00, prime 20:00, themed by night)} Public-domain features, sorted into the themed nights above. The move is to keep a few themed sub-collections so the schedule can ask for "a noir" or "a monster movie" by name. \textbf{Collections:} \ripmono{Features · Noir}, \ripmono{Features · SciFi}, \ripmono{Features · Docs}, \ripmono{Features · Serials}, \ripmono{Features · Classics}, \ripmono{Features · Cult}.
+\item \textbf{STRETCH \& COFFEE / SUNDAY SERVICE / NIGHT PATTERN} \riphi{(the slow blocks)} Long-take "slow television" — a fixed camera on something calm, or a music loop over a still. Ambient by design; on in the background of a kitchen. Owns-your- rights music only (or silence with a nice picture). \textbf{Collection:} \ripmono{Slow TV}.
+\item \textbf{LUNCH LOOPS / AFTER HOURS} \riphi{(midday \& late music)} Music you own, looped, over the bulletin or a still card. The daytime version carries the Neighbourhood Desk crawl; the late version is just the jazz. \textbf{Collection:} \ripmono{Music Loops}.
+\end{ripbullets}
+
+
+\ripsubsection{\ripmdhead{The connective tissue — filler, always running}}
+
+These aren't scheduled; they're \textbf{filler presets} that the pad-to-the-half-hour machine deals between and around everything above. This is the layer that turns a playlist into a \riphi{station}.
+
+\begin{ripmdtable}{X[0.55,l]X[1.34,l]X[1.17,l]}
+\ripmdth{FILLER PRESET} & \ripmdth{DRAWS FROM} & \ripmdth{WHEN} \\
+\ripmono{Ad Break} & \ripmono{Local Ads} + \ripmono{Lab Promos} + \ripmono{Vintage PSAs} & Mid-roll, padded to :00/:30 \\
+\ripmono{Station ID} & \ripmono{Bumpers} (from \ripmdpath{\ripmono{make-ident.sh}}) & Pre/post-roll around each show \\
+\ripmono{Dead Air} & \ripmono{Colour Bars} & Fallback if a slot ever runs dry, and overnight \\
+\end{ripmdtable}
+
+The \textbf{channel bug} (the RL-Z0 watermark from \ripmdpath{\ripmono{make-bug.sh}}) rides over all of it, always on, never explained. Old-TV physics.
+
+
+\ripsection{\ripmdhead{Building it in ErsatzTV}}
+
+The grid above maps onto ErsatzTV's model cleanly. In order:
+
+\begin{ripnumbers}
+\item \textbf{Libraries \& collections.} Beyond the build guide's basics, add the themed feature sub-collections (\ripmono{Features · Noir}, \ripmono{· SciFi}, \ripmono{· Docs}, \ripmono{· Serials}, \ripmono{· Classics}, \ripmono{· Cult}), plus \ripmono{Cartoons}, \ripmono{Prelinger}, \ripmono{Slow TV}, \ripmono{Music Loops}, \ripmono{Neighbourhood Desk}. Tag-based collections work well: tag a film \ripmono{noir} and it flows into Monday night on its own.
+\item \textbf{One schedule per day-type, or one big rotation.} Simplest is a single \textbf{weekly} schedule where each item declares its day. ErsatzTV's schedule items run in order and loop; use the \textbf{fixed start time} option on the anchors (06:00 sign-on, 11:00 Lab Hour, \textbf{19:00 Ground Zero}, 20:00 feature, 00:00 sign-off) so the tentpoles never drift, and let the flexible blocks fill between them. Pad every item to :00/:30.
+\item \textbf{Protect 19:00.} Give Ground Zero a fixed start and enough runtime that no overrun upstream can push it. If a feature runs long, the \riphi{feature} gets cut by the next fixed anchor — never the flagship.
+\item \textbf{Themed nights = collection swaps.} The 20:00 and 23:00 items point at a different themed collection per weekday. In ErsatzTV that's seven schedule items (one per night) or a smart collection filtered by weekday — either way, Tuesday pulls \ripmono{Features · SciFi} and Friday pulls \ripmono{Features · Cult}.
+\item \textbf{Weekends = a second schedule.} Sat/Sun differ enough (earlier cartoons, the double bill, the late Saturday) to warrant their own schedule, activated by day-of-week. Keep the anchors (sign-on, Ground Zero, sign-off) identical so the station still feels like itself on a Saturday.
+\item \textbf{Overnight is not scheduled.} Don't program 00:00–06:00. Let the \ripmono{Dead Air} filler (\ripmono{Colour Bars}) hold the signal until the 06:00 sign-on item fires. The station is \riphi{closed}; that's the point.
+\end{ripnumbers}
+
+Sanity-check the whole thing in VLC against \ripmono{http:\allowbreak{}/\allowbreak{}/\allowbreak{}playout-\allowbreak{}pc:\allowbreak{}8409/\allowbreak{}iptv/\allowbreak{}channel/\allowbreak{}1.\allowbreak{}ts}, and confirm ErsatzTV's guide at \ripmono{/\allowbreak{}iptv/\allowbreak{}xmltv.\allowbreak{}xml} shows the tentpoles at the right times — that guide is what \ripmdpath{\ripmono{playout/\allowbreak{}nowplaying.\allowbreak{}py}} reads to tell the storefront what's on.
+
+
+\ripsection{\ripmdhead{The playout file}}
+
+The mapping above describes the schedule the way you would \riphi{build} it in the ErsatzTV UI — collections, schedule items, fixed start times. It is still the clearest way to think about the week, but it is no longer the only way to get there: \ripmdpath{\ripmono{playout/\allowbreak{}channel-\allowbreak{}z0.\allowbreak{}yml}} is the same week expressed as an \textbf{ErsatzTV YAML playout}, which means the schedule is a file in this repo rather than an afternoon of clicking.
+
+\textbf{That file is now GENERATED} — by \ripmono{tools/\allowbreak{}z0-\allowbreak{}build-\allowbreak{}schedule.\allowbreak{}py}, from a seven day plan, importing \ripmono{playout/\allowbreak{}\_\allowbreak{}content.\allowbreak{}yml} and \ripmono{playout/\allowbreak{}\_\allowbreak{}sequences.\allowbreak{}yml}. Do not edit it by hand; edit the generator and re-run, or your change is lost the next time the week is rotated. Rotation itself is a flag now (\ripmono{-\allowbreak{}-\allowbreak{}start-\allowbreak{}day thursday}), which is what stops the channel airing Monday's programming on a Wednesday.
+
+The full picture — metadata sidecars, the named pools, the seasonal schedules, and the deploy sequence — is in \ripdocref{\ripmono{docs/\allowbreak{}programming-\allowbreak{}library.\allowbreak{}md}}{RL-Z0-PROGRAMMING-LIBRARY}.
+
+Point a playout at it: \riphi{Playouts → Add}, choose the Channel Z0 channel, playout type \textbf{YAML}, and select the file. ErsatzTV stores the path, so editing the file and rebuilding the playout is how you change what airs.
+
+It originally needed no collections at all: the \ripmono{/media} tree is a single \textbf{Other Videos} library path, and ErsatzTV tags Other Videos with the folder names above them — so a file in \ripmono{movies/noir/} carries the tag \ripmono{noir}. That still works, but the schedule now names pools (\ripmono{Z0 Features Noir}) rather than raw queries, so a pool is defined once and is visible in the UI. See \ripmono{lists/\allowbreak{}z0-\allowbreak{}lists.\allowbreak{}yml}. The original mechanism, for reference — the playout asks for it with \ripmono{tag:noir}. Adding a film to a themed night is dropping it in a folder and rescanning.
+
+Three things about that file are worth knowing before you edit it:
+
+\begin{ripbullets}
+\item \textbf{The week is a seven-day cycle, not a calendar.} YAML playouts have no day-of-week primitive. The seven day blocks run in order and \ripmono{repeat: true} returns to Monday, so which block lands on which weekday is decided entirely by the day the playout is first built or reset. \textbf{Build or reset it early on a Monday, before 06:00} and the themed nights match the grid on the storefront; do it on a Thursday and the channel is three days out of phase with its own guide, silently. The hour matters as well as the day: a playout built mid afternoon starts at instruction one with every morning \ripmono{pad\_until} already in the past, so they collapse to nothing and the evening stretches to fill the day. It rights itself at the next sign-on.
+\item \textbf{Overnight \riphi{is} scheduled here}, which contradicts point 6 above. Leaving 00:00–06:00 empty relies on the channel's fallback filler, and this station has no filler preset configured — an unscheduled gap would be dead air rather than colour bars. The overnight block is the one place items are allowed to be cut mid-way (\ripmono{trim: true}), because a static test pattern can be, and that is what makes the next sign-on land exactly on 06:00 instead of drifting later each day.
+\item \textbf{The \ripmono{(STANDBY)} slots are placeholders.} Ground Zero, Lab Hour and the Neighbourhood Desk have no footage yet, so their slots keep the right times but play vintage shorts. Never point a slot at a content key that resolves to zero media items: an empty enumerator has nothing to schedule, and the build stalls on it rather than skipping it.
+\end{ripbullets}
+
+
+\ripsection{\ripmdhead{Keeping the day blocks on the calendar}}
+
+The cycle-not-a-calendar problem above is not theoretical and it does not announce itself. On \textbf{2026-08-15} a pre-sign-on playout reset was run at 05:15 on a Saturday against a file rotated to start on \textbf{FRIDAY}. From that moment the channel aired Friday's programming on Saturday, Saturday's on Sunday, and so on — for four days, until someone noticed that the storefront's Wednesday tab promised WORKBENCH THEATRE while the transmitter was showing ATOMIC TUESDAY. Nothing reported it. The playout was healthy, the guide was self-consistent with the playout, \ripmono{/api/status} was green, and the picture was fine. Only the \riphi{grid on the wall} disagreed.
+
+\ripmono{tools/\allowbreak{}z0-\allowbreak{}day-\allowbreak{}align.\allowbreak{}py} is the answer to that, and it runs on vile from cron every day at 05:05:
+
+z0-day-align.py            \# check; prints a table, exits 1 if misaligned z0-day-align.py --apply    \# check, and repair at the next usable seam
+
+\textbf{What it compares.} Every broadcast day (06:00 → 06:00, which is exactly one day block) carries a 20:00 tentpole whose name is unique to its weekday. It reads those names out of \ripmono{z0-\allowbreak{}build-\allowbreak{}schedule.\allowbreak{}py}'s own \ripmono{WEEK} table — the same table this document and the storefront grid are written from — so the test is literally "is the channel showing what the site says it is showing".
+
+\textbf{How it repairs.} Not with a reset. It cuts at a 06:00 block boundary, regenerates the file with \ripmono{--start-day} for that boundary's weekday, deletes the playout items and history at and after it, and points the anchor at the boundary with instruction index 0. Everything already scheduled before the seam keeps airing untouched.
+
+Two things it learned the hard way, both measured on a screener replica rather than on air:
+
+\begin{ripbullets}
+\item \textbf{The seam must be the LAST 06:00 inside what has already been built, not the first one after now.} ErsatzTV keeps the playout about two days ahead and extends it a little at a time. Cut at tomorrow's 06:00 and the next build has to lay down a day and a half in one pass — and the overnight \ripmono{pad\_until} in that pass does not stop at 05:26. It ran to 09:16, 10:15 and 11:27 in three separate trials, each time swallowing the morning behind it: no sign-on, no cartoon block, straight from THE ALL-NIGHT SHOW to PRELINGER THEATRE at 09:20. Only the first night after such a cut does it. Cutting inside the frontier keeps every rebuild short and every night laid down by the same ordinary incremental extension that has been getting them right all along. The price is that a repair lands one broadcast day later than you would like.
+\item \textbf{A \ripmono{pad\_until} reached after midnight eats the day.} Its target is a time on the day the instruction is \riphi{reached} and it does not roll forward, so a Saturday second feature that ends at 00:03 leaves the next instruction padding to "23:00 today" — twenty-three hours away. It fills it: 251 items of SHORT SUBJECTS across the whole of Sunday, after which Sunday's block airs on Monday and the entire week is one day late for ever. This is why Saturday's tail now uses \ripmono{pad\_\allowbreak{}to\_\allowbreak{}next:\allowbreak{} 30} (bounded by construction, and it lands on the 00:30 sign-off the grid promises) and why Saturday has no late block: the double bill's second picture \riphi{is} the late block, exactly as the grid below says.
+\end{ripbullets}
+
+\textbf{Changing the schedule file itself is \ripmono{z0-\allowbreak{}day-\allowbreak{}align.\allowbreak{}py -\allowbreak{}-\allowbreak{}redeploy}, not a copy.} There is no safe way to swap \ripmono{channel-\allowbreak{}z0.\allowbreak{}yml} under a running playout by hand: the anchor stores an instruction \riphi{index} into the deployed file — into the flattened list, with \ripmono{sequence:} expanded, so you cannot compute it — and a file with a different number of instructions leaves that index pointing at a different instruction. The week does not fail; it resumes somewhere else, mid-block, and the only symptom is a day that looks subtly wrong. \ripmono{--redeploy} regenerates, deploys, cuts at the seam and re-enters at instruction 0, so the file and the index change together. Run it after any change to the generator.
+
+\textbf{The aligner regenerates from the copy of the generator ON VILE}, at \ripmono{/\allowbreak{}mnt/\allowbreak{}main-\allowbreak{}data/\allowbreak{}channelz0/\allowbreak{}.\allowbreak{}z0tools/\allowbreak{}tools/\allowbreak{}}, not from this repo — vile has no checkout. Nothing syncs them. So a change to \ripmono{z0-\allowbreak{}build-\allowbreak{}schedule.\allowbreak{}py} that is merged here but not copied across means the next automatic repair quietly deploys a schedule built from the \riphi{old} generator, undoing whatever the merge changed. Copy \ripmono{z0-\allowbreak{}build-\allowbreak{}schedule.\allowbreak{}py} and \ripmono{z0\_\allowbreak{}intervals.\allowbreak{}py} across whenever either changes, and check the pair with \ripmono{md5sum} on both sides — this already happened once, on 2026-08-19, when the graphics rework landed while the vile copies still emitted the deleted \ripmono{strip\_down} / \ripmono{strip\_up} sequences.
+
+If the checker ever reports an OVERRUN, that is this bug or a relative of it — some pad has been reached later than the generator assumed. Fix the shape in the generator; realigning the week only moves the symptom.
+
+
+\ripsection{\ripmdhead{Keeping the guide and the air in sync}}
+
+Three places describe the schedule; keep them saying the same thing:
+
+\begin{ripnumbers}
+\item \textbf{This file} — the human-readable programme bible (edit first).
+\item \textbf{\ripmdpath{\ripmono{site/\allowbreak{}index.\allowbreak{}html}}} — the \ripmono{WEEK} schedule object the storefront renders as the program grid. It's the same grid, as data.
+\item \textbf{ErsatzTV} — the actual playout, built per the mapping above. Its XMLTV guide is the \riphi{truth} on air; the live "NOW SHOWING" line on the site comes from there, not from the grid, so a schedule item can slip and the marquee still tells no lies.
+\end{ripnumbers}
+
+When the air and the grid disagree, the air wins and the grid is the promise. Keep the promise small enough to keep.
+
+\ripdashrule
+
+\riphi{Programming is just a shape you put on time. Ours has a flagship at seven and the lights off at midnight. Build the rest to make the neighbourhood lean in.}
+
+\ripend
+
+\end{document}

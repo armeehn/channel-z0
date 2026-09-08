@@ -1,0 +1,365 @@
+% DOC NO. RL-Z0-PROGRAMMING-LIBRARY · REV. A
+%
+% This file IS the document. Edit it directly - ripdoc compiles it
+% as it stands and stamps the provenance line at build time.
+%
+%   ripdoc build --only docs-programming-library
+%
+% Promoted from docs/programming-library.md on 2026-09-07 by `ripdoc promote`.
+\documentclass[fontpath=fonts/,logopath=logo/]{riposte-doc}
+\usepackage{riposte-md}
+
+\title{The Channel Z0 programming library}
+\author{Riposte Laboratories}
+\date{}
+\ripdocno{RL-Z0-PROGRAMMING-LIBRARY}
+\riprev{A}
+\ripstrapline{How the channel decides what to play, and how to change it.}
+\riprunningtitle{The Channel Z0 programming library}
+
+\begin{document}
+
+\ripmakehead
+
+\riptoc
+
+There are three layers, and they are edited in three different places:
+
+\begin{ripmdtable}{X[1.05,l]X[0.84,l]X[1.10,l]}
+\ripmdth{LAYER} & \ripmdth{LIVES IN} & \ripmdth{APPLIED BY} \\
+\textbf{Metadata} — what each file \riphi{is} & \ripmono{.nfo} sidecars next to the media & \ripmono{tools/\allowbreak{}z0-\allowbreak{}nfo.\allowbreak{}py}, then a rescan \\
+\textbf{Lists} — named pools and rundowns & \ripmono{lists/\allowbreak{}z0-\allowbreak{}lists.\allowbreak{}yml} & \ripmono{tools/\allowbreak{}z0-\allowbreak{}lists.\allowbreak{}py} \\
+\textbf{Schedules} — what plays when & \ripmono{playout/\allowbreak{}schedule/\allowbreak{}*.\allowbreak{}yml} & \ripmono{tools/\allowbreak{}z0-\allowbreak{}build-\allowbreak{}schedule.\allowbreak{}py}, then a playout reset \\
+\end{ripmdtable}
+
+Each layer only knows about the one above it. A schedule asks for \ripmono{noir}; the list layer decides that means \ripmono{tag:noir}; the metadata layer decides which files carry that tag. Change the bottom and the top follows automatically.
+
+
+\ripsection{\ripmdhead{1. Metadata — \NoCaseChange{\ripmono{tools/\allowbreak{}z0-\allowbreak{}nfo.\allowbreak{}py}}}}
+
+ErsatzTV gives an \textbf{Other Video} almost nothing: the title is the raw file stem, and Year, Genre, Studio, Director and Plot are all empty. Channel Z0's library is one Other Videos library path, so before this existed the guide read
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+Betty Boop Barnacle Bill (1930) [BettyBoopBarnacleBill1930]
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+and no query could ask for "a 1930s cartoon", because nothing knew what year it was.
+
+ErsatzTV \riphi{does} read an NFO sidecar for Other Videos, so \ripmono{z0-nfo.py} writes one \ripmono{<file>.nfo} per media file with a cleaned title, a year, genres, studios, directors, tags, a content rating and a short outline.
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+# after any download run
+python3 z0-nfo.py --inventory inventory.json --scan-fs \
+                  --media-root /mnt/main-data/channelz0
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripmono{--inventory} is a JSON export of the current library (see the header of the script); \ripmono{--scan-fs} additionally walks the filesystem so files that have never been scanned are covered too. Use both.
+
+
+\ripsubsection{\ripmdhead{⚠ The trap: folder tags and NFO tags are the same field, and the NFO wins}}
+
+With no sidecar, ErsatzTV tags an Other Video with the folder names above it, so \ripmono{movies/\allowbreak{}noir/\allowbreak{}x.\allowbreak{}mp4} carries \ripmono{media}, \ripmono{movies}, \ripmono{noir}. \textbf{The moment a sidecar appears, \ripmono{LocalMetadataProvider.\allowbreak{}ApplyMetadataUpdate} calls \ripmono{UpdateMetadataCollections}, which removes every existing tag the incoming metadata does not list.} The folder-derived fallback (\ripmono{RefreshFallbackMetadata}) only runs when there is \riphi{no} \ripmono{.nfo} at all.
+
+So a sidecar that forgets \ripmono{<tag>noir</\allowbreak{}tag>} silently deletes the tag the whole schedule is built on. \ripmono{tag:noir} then matches nothing, the pool is empty, and an empty pool is skipped in silence — a hole in the playout, not an error.
+
+\ripmono{z0-nfo.py} reads the current tags out of the database and re-emits every one of them verbatim before adding its own, and \textbf{refuses to run} if any file would lose a tag. Never hand-write these files.
+
+
+\ripsubsection{\ripmdhead{What it derives}}
+
+\begin{ripbullets}
+\item \textbf{Title} — brackets and archive.org identifiers stripped, \ripmono{Arctic Giant,\allowbreak{} The} flipped to \ripmono{The Arctic Giant}.
+\item \textbf{Year} — from a parenthesised year in the file name, which beats the false positives (\ripmono{Chapter 10}, \ripmono{DVD-6605}, \ripmono{\#5530}). \textasciitilde{}217 of 349 files resolve; the rest are left blank rather than guessed.
+\item \textbf{Sort title} — for serials, a zero-padded chapter number, so \ripmono{order:\allowbreak{} chronological} plays Chapter 3 before Chapter 10 instead of after it.
+\item \textbf{Series} — Betty Boop, Bosko, Felix, Popeye, Superman, Merrie Melodies, Ub Iwerks, Private Snafu, Why We Fight, the newsreel series, and thirteen serials.
+\item \textbf{Studio} — only where the file name states it or the attribution is unambiguous for the whole run. Popeye and Superman both moved from Fleischer to Famous Studios in 1942, so \textbf{no studio is claimed for either} — a wrong credit on screen is worse than a missing one.
+\item \textbf{Content rating} — used purely as a daypart gate, not as a ratings board:
+\begin{ripbullets}
+\item \ripmono{Z0-GENERAL} — anything, any time.
+\item \ripmono{Z0-LATE} — 23:00 and later only. The four burlesque reels and the exploitation "square-up" features. \textbf{Before the sidecars existed these were indistinguishable from any other short and were airing inside the 06:30 and 16:00 daytime blocks.}
+\item \ripmono{Z0-STATION} — idents, bars, test card, the weather segment.
+\item \ripmono{Z0-REVIEW} — nothing schedules this. See below.
+\end{ripbullets}
+
+\end{ripbullets}
+
+
+\ripsubsection{\ripmdhead{The review queue}}
+
+\ripmono{Z0-REVIEW} / \ripmono{tag:\allowbreak{}review-\allowbreak{}nonpd} is how material stays in the library without being airable:
+
+\begin{ripbullets}
+\item \textbf{\textasciitilde{}22 modern fan-animation files} (Warrior Cats "MAP"/"PMV" edits and friends) that arrived in a bulk download. Not public domain, not vintage.
+\item \textbf{The five NFB shorts} (\ripmono{tag:nfb}). As a federal agency, Crown copyright (s.12, 50 years) should make everything the NFB published before 1976 public domain in Canada — but no court has ruled and the NFB actively asserts and licenses that exact catalogue. \textbf{The question is open with the user.} Every Canadian pool also carries an explicit \ripmono{NOT tag:nfb}, so the exclusion holds even if someone forgets one of the two mechanisms.
+\end{ripbullets}
+
+Neither is deleted. The decision stays the operator's.
+
+
+\ripsubsection{\ripmdhead{No AI-generated or AI-"restored" material}}
+
+This channel does not air AI upscales, AI colourisations or AI-generated footage. Two files were deleted on 2026-08-13 under this rule:
+
+\begin{ripbullets}
+\item \ripmono{bc/\allowbreak{}victoria/\allowbreak{}Victoria Streetcar Ride (1907) restored.\allowbreak{}mp4} — 2160x2160 VP9, a square AI upscale by its uploader rather than an archival transfer. It was going to be the oldest title in the library, and it still went.
+\item \ripmono{movies/\allowbreak{}noir/\allowbreak{}He Walked by Night (restored,\allowbreak{} colorized) …} — an AI colourisation of a 1948 black-and-white noir, and the worst of the three copies of that film already present (854x480 against a clean 1472x1072 transfer).
+\end{ripbullets}
+
+\textbf{Two more are unresolved and still in the library}, both the only copy of their title, both carrying the same "restored / quality upgrade / 720p-hd / imdb score in the filename" signature of a re-upload rather than a transfer:
+
+\begin{ripbullets}
+\item \ripmono{movies/\allowbreak{}noir/\allowbreak{}Trapped (restored) (1949 …) [trapped-\allowbreak{}1949-\allowbreak{}restored-\allowbreak{}movie-\allowbreak{}720p-\allowbreak{}hd]}
+\item \ripmono{movies/\allowbreak{}cult/\allowbreak{}THE GIANT GILA MONSTER widescreen \& quality upgrade} — 720x406, i.e. cropped to fake widescreen from a 1959 film shot 4:3.
+\end{ripbullets}
+
+Deleting either loses the title outright, so they are flagged here rather than removed. The filename signature is the thing to grep for when new material arrives:
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+find /mnt/main-data/channelz0 -type f ! -name '*.nfo' \
+  \( -iname '*coloriz*' -o -iname '*restored*' -o -iname '*upscal*' \
+     -o -iname '*remaster*' -o -iname '*quality upgrade*' -o -iname '*720p-hd*' \)
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+A resolution far above the source era is the other tell — a 1907 actuality does not survive at 2160x2160, and a 1959 second feature is not natively widescreen.
+
+
+\ripsection{\ripmdhead{2. Lists — \NoCaseChange{\ripmono{lists/\allowbreak{}z0-\allowbreak{}lists.\allowbreak{}yml}}}}
+
+ErsatzTV has \textbf{no management API} (\ripmono{/api/*} and \ripmono{/swagger} answer only through the Blazor SPA catch-all, and a POST to an unrouted path returns 400, so a 400 from \ripmono{/graphql} proves nothing). \ripmono{tools/\allowbreak{}z0-\allowbreak{}lists.\allowbreak{}py} therefore writes the rows directly.
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+python3 z0-lists.py --db /mnt/solid-state/ersatztv/ersatztv.sqlite3 \
+                    --manifest z0-lists.yml --check
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+It is idempotent, matches on name, and only touches rows prefixed \ripmono{Z0}. \textbf{Take a database backup first} — there is no undo.
+
+\ripmono{--check} evaluates every smart-collection query against the database and reports the match count, failing if any pool is empty. This is worth running every time: an empty pool is the single most common way to break this channel and it fails silently on air.
+
+
+\ripsubsection{\ripmdhead{What's in it}}
+
+\begin{ripbullets}
+\item \textbf{57 smart collections} — the pools. Genre, era, series, studio, subject, season, duration band, and the daypart gates.
+\item \textbf{13 collections} — hand-picked and, where it matters, hand-ordered (\ripmono{custom\_\allowbreak{}order:\allowbreak{} true}): the sign-on and sign-off packages, the Vancouver reel in chronological order, Why We Fight in order.
+\item \textbf{5 multi-collections} — pools of pools.
+\item \textbf{12 playlists} in 3 groups — small rundowns with their own per-item counts, ordering and guide flags.
+\item \textbf{11 filler presets} — pre-roll, mid-roll, post-roll, tail and fallback.
+\item \textbf{3 watermarks} and \textbf{3 decos} with a deco template.
+\end{ripbullets}
+
+
+\ripsubsection{\ripmdhead{Query notes}}
+
+\begin{ripbullets}
+\item The title analyser \textbf{does not split on hyphens}: \ripmono{title:\allowbreak{}colorbars} will never match \ripmono{colorbars-60m}. Quote the whole title.
+\item \ripmono{minutes} / \ripmono{seconds} / \ripmono{chapters} / \ripmono{height} / \ripmono{width} are numeric and only work in range syntax — \ripmono{minutes:\allowbreak{}[10 TO 30]}. Written bare they parse as terms and match nothing.
+\item Smart collections \textbf{can reference each other} — \ripmono{smart\_\allowbreak{}collection:\allowbreak{}"Z0 Cartoons"} — with cycle detection. \textbf{Quotes are required}; without them the substitution silently does not happen and the query means something else.
+\item Names are \ripmono{varchar(50)}.
+\end{ripbullets}
+
+
+\ripsubsection{\ripmdhead{⚠ Two shapes that kill the entire playout build}}
+
+Both of these produce a database that looks perfectly fine, and a channel that quietly falls back. The only symptom is one line in the ErsatzTV log: \ripmono{[WRN] Unable to build playout 1:\allowbreak{} .\allowbreak{}.\allowbreak{}.\allowbreak{}}.
+
+\begin{ripnumbers}
+\item \textbf{A playlist may not name the same collection twice.} \ripmono{PlaylistEnumerator} keys its map on \ripmono{(ContentKey,\allowbreak{} CollectionKey)}, so a repeat throws \riphi{"An item with the same key has already been added"}.
+\item \textbf{A multi-collection member with \ripmono{group: true} must be \ripmono{chronological} or \ripmono{season\_\allowbreak{}episode}.} \ripmono{MultiCollectionGroup}'s constructor throws \ripmono{NotSupportedException:\allowbreak{} Unsupported MultiCollection PlaybackOrder:\allowbreak{} Shuffle}. Shuffle the \riphi{groups} instead, via the \ripmono{multi\_\allowbreak{}collection} content key's own \ripmono{order}.
+\end{ripnumbers}
+
+\ripmono{z0-lists.py} now refuses to apply either, with an explanation.
+
+
+\ripsection{\ripmdhead{3. Schedules — \NoCaseChange{\ripmono{playout/\allowbreak{}schedule/\allowbreak{}}}}}
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+_content.yml                  content keys      (import fragment)
+_sequences.yml                reusable sequences (import fragment)
+channel-z0.yml                the week          — GENERATED
+channel-z0-halloween.yml      seasonal
+channel-z0-christmas.yml      seasonal
+channel-z0-canada-day.yml     seasonal
+channel-z0-marathon.yml       special
+channel-z0-testpattern.yml    engineering
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+Imports are resolved relative to the importing file's directory, and \textbf{the importing file wins on any key collision} — which is how a seasonal schedule overrides a single strand without copying the week.
+
+
+\ripsubsection{\ripmdhead{The week is generated}}
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+python3 z0-build-schedule.py --start-day thursday --out channel-z0.yml
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+ErsatzTV's sequential scheduler has \textbf{no day-of-week primitive}. The seven day blocks run in order and \ripmono{repeat: true} returns to the first; which block lands on which weekday is decided entirely by the day the playout is built or \textbf{reset} on. Nothing detects a mismatch and nothing reports it — the channel simply airs Monday Night Noir on a Wednesday while the storefront promises Workbench Theatre.
+
+So rotation is a flag. \textbf{Build for the day you are going to reset on}, and build \riphi{early} in that day: a playout built mid-afternoon starts at instruction one with every morning \ripmono{pad\_until} already in the past, so they collapse to nothing and the evening stretches to cover the day. It rights itself at the next sign-on.
+
+(Day-of-week and seasonal switching \riphi{do} exist in ErsatzTV, as \ripmono{PlayoutTemplate} rows with \ripmono{DaysOfWeek} / \ripmono{MonthsOfYear} / date ranges — but only \textbf{block} playouts read them. Channel Z0 runs a sequential playout, which is what buys the graphics control, the pre-roll sequences and everything else in \ripmono{\_\allowbreak{}sequences.\allowbreak{}yml}.)
+
+
+\ripsubsection{\ripmdhead{Validate before you deploy}}
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+python3 z0-validate-schedule.py channel-z0.yml \
+        --graphics-root /mnt/solid-state/ersatztv/templates/graphics-elements
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+Runs ErsatzTV's own JSON schema (the same validation the app runs — when it fails, \ripmono{SequentialPlayoutBuilder} returns \ripmono{None} and the playout does not build \textbf{at all}), then the Z0 trap list:
+
+\begin{ripbullets}
+\item \ripmono{search:} used as a human label — the schema declares it \ripmono{\{"type":\allowbreak{} "null"\}}; a value there fails validation and the playout silently does not build.
+\item \ripmono{pad\_until} without an explicit \ripmono{tomorrow:} — 26.x changed \ripmono{Tomorrow} from bool to string so it can hold an expression, and the handler evaluates it with no null check, so NCalc throws and the build dies. Dormant until the first rebuild later in the day than the earliest morning block.
+\item Unbalanced \ripmono{epg\_group} — \ripmono{LockGuideGroup} is a no-op while already locked, so two \ripmono{true} in a row merge two programmes into one guide row.
+\item A content key referenced but not defined.
+\item Padding from a pool of seconds-long items (\textasciitilde{}300 items, four stings on a loop).
+\item A \ripmono{graphics\_on} target that does not exist on disk.
+\end{ripbullets}
+
+\ripmono{jsonschema} is installed on \textbf{vile}, not on x, so run the validator on vile or the schema layer is skipped (it says so when it skips).
+
+
+\ripsubsection{\ripmdhead{The vocabulary actually in use}}
+
+\ripmono{import}, \ripmono{sequence}, \ripmono{shuffle\_\allowbreak{}sequence}, \ripmono{pre\_roll}, \ripmono{post\_roll}, \ripmono{mid\_roll}, \ripmono{watermark}, \ripmono{graphics\_on}/\ripmono{graphics\_off}, \ripmono{epg\_group}, \ripmono{all}, \ripmono{count}, \ripmono{duration}, \ripmono{pad\_until}, \ripmono{pad\_to\_next}, \ripmono{filler\_kind}, \ripmono{trim}, \ripmono{discard\_\allowbreak{}attempts}, \ripmono{offline\_tail}, \ripmono{repeat}, and the \ripmono{collection}, \ripmono{smart\_\allowbreak{}collection}, \ripmono{multi\_\allowbreak{}collection}, \ripmono{playlist} and \ripmono{search} content types.
+
+Three things are deliberately \textbf{not} used:
+
+\begin{ripbullets}
+\item \textbf{\ripmono{marathon:}} — groups by show / season / artist / album, none of which an Other Video has. Every item would land in one degenerate group. \ripmono{all:} over an ordered collection is the honest version, and is what \ripmono{channel-\allowbreak{}z0-\allowbreak{}marathon.\allowbreak{}yml} does. (The C\# enum also has a Director option the YAML schema doesn't expose, which would have worked for the Harman-Ising shorts.)
+\item \textbf{\ripmono{rewind:}} — a handler and a model exist, but the instruction is not in the schema's \ripmono{oneOf} list for either \ripmono{playout} or \ripmono{sequence}, so it cannot be used.
+\item \textbf{\ripmono{skip\_to\_item:}} — requires season and episode numbers.
+\end{ripbullets}
+
+\ripmono{mid\_roll} \riphi{is} wired up but will almost never fire: a mid-roll sequence is inserted at an item's \textbf{chapter markers}, and only 7 files in this library have two or more chapters.
+
+
+\ripsubsection{\ripmdhead{pre\_roll / post\_roll only wrap some instructions}}
+
+The roll handlers are invoked from the \ripmono{all}, \ripmono{count} and \ripmono{duration} handlers \textbf{only} — \ripmono{pad\_until} and \ripmono{pad\_to\_next} do not emit them. That is why features are scheduled with \ripmono{count:} and why the day still calls \ripmono{sequence:\allowbreak{} station\_\allowbreak{}break} explicitly in a few places.
+
+Because the roll handlers push a \ripmono{FillerKind}, everything inside a roll sequence is automatically dropped from the programme guide. A sequence invoked \riphi{directly} is plain content and \textbf{will} appear in the guide unless you set \ripmono{filler\_kind} on it — which is why \ripmono{station\_break} carries \ripmono{filler\_\allowbreak{}kind:\allowbreak{} preroll}.
+
+
+\ripsection{\ripmdhead{Deploying a change}}
+
+Order matters, and every step here has bitten someone.
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{8.61}{13.34}
+\begin{ripcodeblock}
+# 0. back up
+sqlite3 'file:…/ersatztv.sqlite3?mode=ro' ".backup '…/ersatztv.sqlite3.bak'"
+cp …/channel-z0.yml …/channel-z0.yml.bak
+
+# 1. metadata, if files changed
+python3 z0-nfo.py --inventory inventory.json --scan-fs --media-root …
+
+# 2. lists
+python3 z0-lists.py --db … --manifest z0-lists.yml --check
+
+# 3. schedule
+python3 z0-build-schedule.py --start-day <today> --out channel-z0.yml
+python3 z0-validate-schedule.py channel-z0.yml --graphics-root …
+cp _content.yml _sequences.yml channel-z0.yml /mnt/solid-state/ersatztv/
+
+# 4. force a rescan if metadata changed
+sqlite3 … "UPDATE LibraryPath SET LastScan=NULL WHERE Path='/media';"
+
+# 5. reset the playout — REQUIRED for element and schedule changes
+sqlite3 … "delete from PlayoutItem; delete from PlayoutAnchor; delete from PlayoutHistory;"
+
+# 6. restart BOTH, in this order
+docker restart z0-ersatztv
+sleep 45
+docker restart z0-uplink
+
+# 7. prove it
+sqlite3 … "select count(*) from PlayoutItem"          # must be > 0
+docker logs --since 3m z0-ersatztv | grep -i 'unable to build'
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\textbf{Why each restart:}
+
+\begin{ripbullets}
+\item A stale \ripmono{PlayoutAnchor} pins the position and every later build does nothing, so a failed build stays failed until the anchor is cleared.
+\item Graphics elements attach to playout \textbf{items} at build time; existing items never gain them. And at startup ErsatzTV builds playouts \riphi{before} refreshing graphics elements, so a brand-new element file needs one restart to register and a second build to be attached.
+\item \textbf{The uplink does not recover from an ErsatzTV restart.} Its \ripmono{ffmpeg -\allowbreak{}c copy} holds a frozen RTMP session; Owncast keeps reporting \ripmono{online: true} with the right title and \ripmono{lastConnectTime} pinned at the old timestamp. Two frames grabbed a minute apart being byte-identical is the tell.
+\end{ripbullets}
+
+
+\ripsubsection{\ripmdhead{Prove it with a picture, not a status code}}
+
+\ripmono{/api/status}, the guide and the database have all reported perfect health while the channel was transmitting something else. Grab a frame from the \textbf{live edge} — \ripmono{ffmpeg -\allowbreak{}i …/\allowbreak{}stream.\allowbreak{}m3u8} starts at the \riphi{oldest} segment in the playlist and will happily return minutes-old colour bars:
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+B=https://watch.ch0.ripostelabs.xyz
+V=$(curl -s $B/hls/stream.m3u8 | grep -v '^#' | head -1)
+SEG=$(curl -s $B/hls/$V | grep -v '^#' | tail -1)
+ffmpeg -i "$B/hls/$(dirname $V)/$SEG" -frames:v 1 out.png
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripmono{curl -\allowbreak{}o /\allowbreak{}dev/\allowbreak{}null … \&\& echo ok} proves nothing — curl exits 0 on a 404, and the tower 404s \ripmono{/\allowbreak{}hls/\allowbreak{}stream.\allowbreak{}m3u8} entirely while offline.
+
+
+\ripsection{\ripmdhead{Swapping in a seasonal schedule}}
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{8.7}{13.49}
+\begin{ripcodeblock}
+sqlite3 … "update Playout set ScheduleFile='/config/channel-z0-halloween.yml' where Id=1;"
+# then steps 5–7 above
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+and swap it back the same way. There is no calendar in the sequential scheduler, so this is a manual act on the day.
+
+\ripmono{channel-\allowbreak{}z0-\allowbreak{}testpattern.\allowbreak{}yml} is the one to reach for during maintenance: no subtitle element, no rolls, no playlists — the cheapest thing the channel can transmit, so that what you see is what the encoder did rather than what the scheduler chose.
+
+
+\ripsection{\ripmdhead{Why the channel is 640x480}}
+
+A \textbf{subtitle} graphics element is re-rendered every frame whether or not its content changed, and costs roughly 4x realtime at 1080p. The bottom strip is a subtitle element. At 1080p it took the channel off air 27 times in one morning: items carrying the strip transcoded at 0.254x, ErsatzTV logged \ripmono{[FTL] … NOT fast enough to support playback}, abandoned each one and cut to fallback filler — which carries no graphics at all.
+
+Image and text elements are rasterised once and reused, so they are nearly free. The cost is proportional to pixel count, which is why the schedule takes the strip down (\ripmono{sequence:\allowbreak{} strip\_\allowbreak{}down}) around every feature.
+
+\textbf{If the channel ever goes back to 720p or 1080p, the bottom strip must be removed.} And judge health by \ripmono{[FTL]} lines, not \ripmono{[WRN]} — the warning threshold is miscalibrated against the \ripmono{-readrate 1.0} cap and warns constantly at a perfectly healthy 1.01x.
+
+\ripend
+
+\end{document}

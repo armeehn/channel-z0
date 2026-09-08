@@ -14,91 +14,91 @@
   "documents": [
     {
       "id": "brand",
-      "source": "BRAND.md",
+      "source": "BRAND.tex",
       "docno": "RL-Z0-A",
       "rev": "A",
       "class": "riposte-doc"
     },
     {
       "id": "docs-ad-standards",
-      "source": "docs/ad-standards.md",
+      "source": "docs/ad-standards.tex",
       "docno": "RL-Z0-AD-STANDARDS",
       "rev": "A",
       "class": "riposte-doc"
     },
     {
       "id": "docs-archive-fetch",
-      "source": "docs/archive-fetch.md",
+      "source": "docs/archive-fetch.tex",
       "docno": "RL-Z0-ARCHIVE-FETCH",
       "rev": "A",
       "class": "riposte-doc"
     },
     {
       "id": "docs-build-guide",
-      "source": "docs/build-guide.md",
+      "source": "docs/build-guide.tex",
       "docno": "RL-Z0-BUILD-GUIDE",
       "rev": "A",
       "class": "riposte-doc"
     },
     {
       "id": "docs-clustering",
-      "source": "docs/clustering.md",
+      "source": "docs/clustering.tex",
       "docno": "RL-Z0-CLUSTERING",
       "rev": "A",
       "class": "riposte-doc"
     },
     {
       "id": "docs-gear-and-costs",
-      "source": "docs/gear-and-costs.md",
+      "source": "docs/gear-and-costs.tex",
       "docno": "RL-Z0-GEAR-AND-COSTS",
       "rev": "A",
       "class": "riposte-doc"
     },
     {
       "id": "docs-ideas",
-      "source": "docs/ideas.md",
+      "source": "docs/ideas.tex",
       "docno": "RL-Z0-IDEAS",
       "rev": "A",
       "class": "riposte-doc"
     },
     {
       "id": "docs-intervals",
-      "source": "docs/intervals.md",
+      "source": "docs/intervals.tex",
       "docno": "RL-Z0-INTERVALS",
       "rev": "A",
       "class": "riposte-doc"
     },
     {
       "id": "docs-lsystems",
-      "source": "docs/lsystems.md",
+      "source": "docs/lsystems.tex",
       "docno": "RL-Z0-LSYSTEMS",
       "rev": "A",
       "class": "riposte-doc"
     },
     {
       "id": "docs-programming",
-      "source": "docs/programming.md",
+      "source": "docs/programming.tex",
       "docno": "RL-Z0-PROGRAMMING",
       "rev": "A",
       "class": "riposte-doc"
     },
     {
       "id": "docs-programming-library",
-      "source": "docs/programming-library.md",
+      "source": "docs/programming-library.tex",
       "docno": "RL-Z0-PROGRAMMING-LIBRARY",
       "rev": "A",
       "class": "riposte-doc"
     },
     {
       "id": "docs-self-hosting",
-      "source": "docs/self-hosting.md",
+      "source": "docs/self-hosting.tex",
       "docno": "RL-Z0-SELF-HOSTING",
       "rev": "A",
       "class": "riposte-doc"
     },
     {
       "id": "docs-weather",
-      "source": "docs/weather.md",
+      "source": "docs/weather.tex",
       "docno": "RL-Z0-WEATHER",
       "rev": "A",
       "class": "riposte-doc"

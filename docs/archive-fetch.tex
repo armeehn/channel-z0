@@ -1,0 +1,317 @@
+% DOC NO. RL-Z0-ARCHIVE-FETCH · REV. A
+%
+% This file IS the document. Edit it directly - ripdoc compiles it
+% as it stands and stamps the provenance line at build time.
+%
+%   ripdoc build --only docs-archive-fetch
+%
+% Promoted from docs/archive-fetch.md on 2026-09-07 by `ripdoc promote`.
+\documentclass[fontpath=fonts/,logopath=logo/]{riposte-doc}
+\usepackage{riposte-md}
+
+\title{CHANNEL Z0 — Archive Intake (Station Bulletin № 4)}
+\author{Riposte Laboratories}
+\date{}
+\ripdocno{RL-Z0-ARCHIVE-FETCH}
+\riprev{A}
+\riprunningtitle{CHANNEL Z0 — Archive Intake (Station Bulletin № 4)}
+
+\begin{document}
+
+\ripmakehead
+
+\riptoc
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+┌───────────────────────────────────────────────────────────┐
+│   CHANNEL Z0 · CH 0 · DESIG RL-Z0                         │
+│   ARCHIVE INTAKE — stocking the library from archive.org  │
+│   public domain only, verified on the way in              │
+└───────────────────────────────────────────────────────────┘
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripdocref{\ripmono{docs/\allowbreak{}programming.\allowbreak{}md}}{RL-Z0-PROGRAMMING} defines a full broadcast week and splits it into two halves: \textbf{the ours} (Ground Zero, Lab Hour, the Desk, the sign-off) and \textbf{the acquired} (Prelinger Theatre, the Cartoon Block, the themed feature nights). This bulletin is about the second half — how \ripmdpath{\ripmono{tools/\allowbreak{}fetch-\allowbreak{}archive.\allowbreak{}sh}} fills those folders from the Internet Archive, and how to pick the job up where it was left.
+
+
+\ripsection{\ripmdhead{The one rule}}
+
+\textbf{Only items carrying a public-domain licence mark are ever downloaded.}
+
+This is not decoration. archive.org is a library, not a rights clearinghouse, and some of its collections are a minefield. The obvious candidate for the ad break — \ripmono{collection:\allowbreak{}(classic\_\allowbreak{}tv\_\allowbreak{}commercials)}, 7,985 items — contains, among other things, a \textbf{2007 FedEx Kinko's television commercial}. Of those 7,985 items only \textbf{421} carry a public-domain licence.
+
+So every recipe in the script appends \ripmono{licenseurl:\allowbreak{}(*publicdomain*)}, and the matched licence URL is written into the manifest for each file, so any item on the channel can be traced back to the mark it was aired under. This keeps the station where \ripdocref{\ripmono{docs/\allowbreak{}ad-\allowbreak{}standards.\allowbreak{}md}}{RL-Z0-AD-STANDARDS} wants it: \riphi{air only what's yours to air.}
+
+A licence mark is an uploader's claim, not a legal opinion. It is the best signal the platform offers and it is what this tool trusts. Spot-check anything you plan to put in a tentpole slot.
+
+
+\ripsection{\ripmdhead{Quick start}}
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+tools/make-media-tree.sh            # creates the destinations (idempotent)
+tools/fetch-archive.sh --list       # the recipes
+tools/fetch-archive.sh --dry-run --all
+tools/fetch-archive.sh --all        # go
+tools/fetch-archive.sh --status     # how full is the library
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+Requires \ripmono{curl}, \ripmono{jq}, and \ripmono{ffprobe} (ffmpeg). Nothing else — no \ripmono{ia} CLI, no API key, no account.
+
+Useful knobs, all environment variables:
+
+\begin{ripmdtable}{X[0.71,l]X[0.55,l]X[1.83,l]}
+\ripmdth{VARIABLE} & \ripmdth{DEFAULT} & \ripmdth{WHAT} \\
+\ripmono{Z0\_MEDIA\_ROOT} & \ripmono{/\allowbreak{}media/\allowbreak{}channelz0} & Where the library lives \\
+\ripmono{Z0\_RATE\_LIMIT} & \riphi{(none)} & e.g. \ripmono{2M} — caps download rate so intake doesn't fight the uplink \\
+\ripmono{Z0\_\allowbreak{}FETCH\_\allowbreak{}SLEEP} & \ripmono{2} & Seconds between items; be a good guest \\
+\ripmono{Z0\_MAX\_MB} & \ripmono{3000} & Skip any single file bigger than this \\
+\end{ripmdtable}
+
+\textbf{Run intake during the overnight colour-bar block.} The playout PC is sharing a residential line with the thing that is actually on air; a feature is a few hundred megabytes and \ripmono{--all} is tens of gigabytes. \ripmono{Z0\_\allowbreak{}RATE\_\allowbreak{}LIMIT=\allowbreak{}2M} and a sign-off-to-sunrise window is the polite shape.
+
+
+\ripsection{\ripmdhead{The recipes}}
+
+Each slot is \ripmono{destination}, a duration window, a default count, and a query. The duration window is what separates a filler PSA from a feature and is a first-class part of the recipe, not a post-filter.
+
+\begin{ripmdtable}{X[0.55,l]X[0.90,l]X[0.63,l]X[1.63,l]X[1.32,l]}
+\ripmdth{SLOT} & \ripmdth{→ DESTINATION} & \ripmdth{DURATION} & \ripmdth{ERSATZTV COLLECTION} & \ripmdth{SOURCE} \\
+\ripmono{psas} & \ripmono{psas/} & 20–300 s & \ripmono{Vintage PSAs} (ad-break filler) & Prelinger \\
+\ripmono{prelinger} & \ripmono{prelinger/} & 5–40 min & \ripmono{Prelinger} (Prelinger Theatre) & Prelinger \\
+\ripmono{cartoons} & \ripmono{cartoons/} & 1–20 min & \ripmono{Cartoons} (Cartoon Block) & \ripmono{animationandcartoons} \\
+\ripmono{slowtv} & \ripmono{slowtv/} & 15 min–3 h & \ripmono{Slow TV} (Stretch \& Coffee, Night Pattern) & subject + year bound \\
+\ripmono{noir} & \ripmono{movies/noir/} & 40 min–3 h & \ripmono{Features · Noir} & \ripmono{feature\_films} + subject \\
+\ripmono{scifi} & \ripmono{movies/scifi/} & 40 min–3 h & \ripmono{Features · SciFi} & \ripmono{feature\_films} + subject \\
+\ripmono{docs} & \ripmono{movies/docs/} & 40 min–3 h & \ripmono{Features · Docs} & \ripmono{feature\_films} + subject \\
+\ripmono{serials} & \ripmono{movies/\allowbreak{}serials/\allowbreak{}} & 10–60 min & \ripmono{Features · Serials} & subject + year bound \\
+\ripmono{classics} & \ripmono{movies/\allowbreak{}classics/\allowbreak{}} & 40 min–3 h & \ripmono{Features · Classics} & \ripmono{feature\_films} + subject \\
+\ripmono{cult} & \ripmono{movies/cult/} & 40 min–3 h & \ripmono{Features · Cult} & \ripmono{feature\_films} + subject \\
+\end{ripmdtable}
+
+Pool sizes measured 2026-08-06, public-domain-marked only:
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+prelinger  1875      animationandcartoons  719
+noir  137   scifi  424   docs  45   serials  12   classics  1210   cult  36
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripmono{cult} (36) is \textbf{thin} — the script will report \ripmono{pool exhausted} rather than silently under-delivering. Widen that query if the themed night needs more; see \riphi{Editing the recipes} below.
+
+\ripmono{serials} used to be thin for a different reason: the recipe asked \ripmono{collection:\allowbreak{}(feature\_\allowbreak{}films)} for \ripmono{subject:\allowbreak{}(serial)}, and the whole of archive.org only answers that with \textbf{12} items, which is why SERIAL NIGHT could never be stocked more than five chapters deep. Dropping the collection filter and accepting \ripmono{serials}/\ripmono{cliffhanger}/\ripmono{chapter play} as well takes the pool to \textbf{404}.
+
+\textbf{On the year bound.} \ripmono{serials} and \ripmono{slowtv} both end in \ripmono{year:\allowbreak{}[1900 TO 1985]}. The public-domain licence mark is also worn by present-day CC0 uploads, so an undated subject query returns 2020s explainer videos next to the mid-century material — legally fine, tonally wrong for a channel that is pretending to be older than streaming. The other slots don't need it: their collections are already vintage by construction.
+
+One block in \ripmono{programming.\allowbreak{}md} is still deliberately \textbf{not} fetched: \ripmono{Music Loops} wants rights-owned music, and there is no honest query for that.
+
+\ripmono{slowtv} \textbf{is} fetched, but read this before trusting it. What Stretch \& Coffee and Sunday Service actually want is \riphi{your own} long takes of the neighbourhood, and no query returns those. The recipe fetches vintage scenic, travelogue and railroad film instead — the same texture, the same era, and public-domain-marked, but it is a \textbf{stand-in}, not the real thing. Replace it with your own footage when you have some. \ripmono{bumpers/} is not fetched either — those come from \ripmdpath{\ripmono{make-ident.sh}}.
+
+
+\ripsection{\ripmdhead{How it works, and what was verified}}
+
+Everything below was checked against the live API on \textbf{2026-08-06} before being written into the script.
+
+\textbf{1 · Discovery — \ripmono{advancedsearch.\allowbreak{}php} with \ripmono{sort[]=random}.} The important detail. Walking results in identifier order gives you a library where every title starts with "A", because these collections are large and we only ever take the first few dozen. \ripmono{sort[]=random} samples the whole corpus — a 300-row page spreads properly across the alphabet. It is stable between calls (so resuming sees the same order) but is \riphi{not} a stable total order across pages: \textbf{pages overlap by roughly a sixth}, so candidates are deduped by identifier, preserving first-seen order. Window limit is 10,000 results (page × rows), far past what a station needs.
+
+\begin{ripnote}
+The newer \ripmono{services/\allowbreak{}search/\allowbreak{}v1/\allowbreak{}scrape} endpoint has cursor paging and no window limit, but \textbf{rejects \ripmono{count} below 100} and offers no random sort — which is exactly the ordering problem above. It was tried and rejected for this job.
+\end{ripnote}
+
+\textbf{2 · Selection — \ripmono{/\allowbreak{}metadata/\allowbreak{}<identifier>}.} Returns every file in the item. The script picks the first available of:
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+h.264  →  512Kb MPEG4  →  MPEG4  →  HiRes MPEG4  →  Ogg Video
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripmono{h.264} first is deliberate: it is the web-sized derivative. The \ripmono{MPEG4} entry is often the preservation master — one twelve-minute Prelinger short lists a \textbf{723 MB} \ripmono{.m4v} next to an \textbf{80 MB} \ripmono{.mp4} of the same film. \ripmono{Z0\_MAX\_MB} catches the rest.
+
+Durations come from the file's \ripmono{length} field, which archive.org reports either as seconds (\ripmono{768.54}) or as a clock (\ripmono{12:48}, \ripmono{1:02:33}). Both are parsed.
+
+\textbf{3 · Download — \ripmono{https:\allowbreak{}/\allowbreak{}/\allowbreak{}archive.\allowbreak{}org/\allowbreak{}download/\allowbreak{}<id>/\allowbreak{}<url-\allowbreak{}encoded filename>}.} Filenames contain spaces and parentheses, so they are \ripmono{@uri}-encoded through \ripmono{jq}. Downloads land in \ripmono{<name>.part} and are \ripmono{curl -C -} resumable; a killed run continues mid-file rather than starting over.
+
+\textbf{4 · Verification — \ripmono{ffprobe}.} Nothing is accepted into the library until ffprobe can read a duration from it. A file that won't probe is deleted and logged \ripmono{failed-probe}. An unplayable file is a black hole in the broadcast day, and the schedule is unattended by design.
+
+\textbf{5 · Filing.} \ripmono{Title (Year) [identifier].\allowbreak{}ext}. Close enough to Plex naming that ErsatzTV's scanner files features correctly — it ignores the trailing bracket — and the identifier keeps every file traceable to its archive.org item.
+
+
+\ripsection{\ripmdhead{Picking up where this left off}}
+
+State lives with the media, not in git (\ripmono{media/} is gitignored, and the library belongs to the playout PC):
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+$Z0_MEDIA_ROOT/.z0-archive/
+├── manifest.jsonl        one line per item ever attempted — the source of truth
+└── candidates/<slot>.jsonl   cached search results per slot
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\textbf{\ripmono{manifest.\allowbreak{}jsonl}} is append-only JSONL. One line per attempt:
+
+\ripcodeopen
+\ripcodehead{json}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+{"slot":"psas","identifier":"tupperware_2","title":"Tupperware Commercial #2",
+ "year":"","file":"/media/channelz0/psas/Tupperware Commercial #2 [tupperware_2].mp4",
+ "format":"h.264","bytes":8303733,"duration":80,
+ "licenseurl":"http://creativecommons.org/licenses/publicdomain/","status":"ok"}
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripmono{status} is \ripmono{ok}, \ripmono{failed-\allowbreak{}download}, or \ripmono{failed-probe}. \textbf{Any identifier already in the manifest is skipped on the next run}, successes and failures alike — so a re-run always makes forward progress and never re-fetches. That is the entire resume mechanism; it is deliberately boring.
+
+To inspect:
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{8.42}{13.06}
+\begin{ripcodeblock}
+tools/fetch-archive.sh --status                      # per-slot counts + hours on disk
+jq -r 'select(.status=="ok")|.file' .z0-archive/manifest.jsonl
+jq -r 'select(.status|startswith("failed"))|.identifier' .z0-archive/manifest.jsonl
+jq -rs 'group_by(.licenseurl)|map({(.[0].licenseurl):length})|add' .z0-archive/manifest.jsonl
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+To \textbf{retry} failures, delete those lines from the manifest and re-run. To \textbf{re-roll} a slot's candidate pool (different films, same query), delete \ripmono{candidates/\allowbreak{}<slot>.\allowbreak{}jsonl}. To \textbf{replace} an item you don't want on air, delete the file \riphi{and} its manifest line.
+
+\ripmono{--status} reports hours-per-slot. Aim at what the grid actually consumes: the Cartoon Block and Prelinger Theatre run daily, so a few hours each is thin — treat the default counts as a first pass and raise \ripmono{--count} on the slots the schedule leans on.
+
+
+\ripsubsection{\ripmdhead{State of play, 2026-08-06}}
+
+The script is finished and verified end to end. \textbf{No library has been stocked} — all runs so far were against a scratch media root, not a real playout PC. What was proven, with live downloads:
+
+\begin{ripbullets}
+\item \ripmono{psas} fetched 3 real files (Rohm \& Haas Plexiglas 1947, a Crest ad, a Tupperware ad), all ffprobe-clean at 279 s / 41 s / 80 s, manifest written correctly.
+\item Resume verified: a second run skipped all three and offered three different items.
+\item \ripmono{noir} dry run surfaced \riphi{Detour} (1945), \riphi{The Second Woman} (1951), \riphi{The Scar} — genuine public-domain noir, correctly duration-filtered.
+\item \ripmono{serials} correctly reported \ripmono{pool exhausted} at 6 of 20 requested.
+\end{ripbullets}
+
+The next operator should run \ripmono{tools/\allowbreak{}make-\allowbreak{}media-\allowbreak{}tree.\allowbreak{}sh} then \ripmono{tools/\allowbreak{}fetch-\allowbreak{}archive.\allowbreak{}sh -\allowbreak{}-\allowbreak{}all} on the actual playout PC, overnight, with \ripmono{Z0\_RATE\_LIMIT} set.
+
+
+\ripsubsection{\ripmdhead{Known gaps, honestly}}
+
+\begin{ripbullets}
+\item \textbf{Thin pools.} \ripmono{serials} (12) and \ripmono{cult} (36) can't fill a themed night on their own. Either widen the subject terms or accept heavy repetition.
+\item \textbf{Subject tags are uneven.} archive.org subjects are uploader-supplied, so the themed queries are approximate — a noir may land in \ripmono{classics}. Re-file by hand; the schedule won't notice, but you will.
+\item \textbf{No transcode on intake.} Files arrive at whatever resolution the derivative is; ErsatzTV's \ripmono{Z0 Broadcast} profile normalises at play-out. Loudness is \riphi{not} normalised — \ripmdpath{\ripmono{normalize-\allowbreak{}ad.\allowbreak{}sh}} exists for submitted spots, and vintage material varies wildly. If the Cartoon Block is noticeably louder than the feature, that is why.
+\item \textbf{Nothing fills \ripmono{slowtv/}, \ripmono{bumpers/}, or \ripmono{commercials/\allowbreak{}local}.} By design.
+\item \textbf{No dedupe by title.} Two uploads of the same film have different identifiers and both land (the \ripmono{serials} dry run pulled both \ripmono{Tih-Minh} and \ripmono{Tin-Minh-1918}).
+\end{ripbullets}
+
+
+\ripsection{\ripmdhead{When a viewer flags something}}
+
+The intake policy is public. \ripmono{site/\allowbreak{}index.\allowbreak{}html} carries it as \textbf{SEC.05, the Rights Desk}: where the acquired half of the schedule came from, that only public-domain-marked items are ever fetched, and — in as many words — that a mark is an uploader's claim rather than a ruling. Under it sits a flag link, a \ripmono{mailto:} the page fills in on the viewer's behalf, because a viewer cannot name what they are looking at. The picture carries no identifier; the page knows one.
+
+A claim arrives with these lines above whatever the sender wrote:
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+PROGRAMME:   THE VANCOUVER REEL
+TITLE FROM:  the tower, live
+SLOT:        SUNDAY 14:00 · THE VANCOUVER REEL
+FLAGGED:     2026-08-24 14:07:31 UTC-07:00
+FLAGGED UTC: 2026-08-24T21:07:31.412Z
+WATCHING:    yes
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\textbf{Read \ripmono{TITLE FROM} first.} \riphi{The tower, live} is the title master control actually set, which names a programme. \riphi{Today's schedule} means the page could not reach Owncast and fell back to its own copy of the grid — the claim then points at a \textbf{slot}, not a file, and the two timestamps are what narrow it down. Both are always sent: local time carries its UTC offset because a claim is read in another timezone weeks later, and a bare wall clock is not a moment.
+
+To act on one:
+
+\begin{ripnumbers}
+\item \textbf{Find the item.} \ripmono{PROGRAMME} matches the on-air title; the file is \ripmono{Title (Year) [identifier].\allowbreak{}ext} and the identifier is the archive.org item. \ripmono{bash jq -\allowbreak{}r 'select(.\allowbreak{}title|test("vancouver";"i"))' .\allowbreak{}z0-\allowbreak{}archive/\allowbreak{}manifest.\allowbreak{}jsonl}
+\item \textbf{Read its manifest line.} \ripmono{licenseurl} is the mark it was aired under — that, not a memory of the query, is what the station acted on.
+\item \textbf{Take it off air, then check.} Delete the file, and \riphi{keep} the manifest line: \ripmono{already\_\allowbreak{}have()} skips any identifier that appears in the manifest at all, whatever its \ripmono{status}, so the line is what stops the next \ripmono{--all} from fetching it straight back. Set its \ripmono{status} to \ripmono{withdrawn} while you are in there; nothing reads the value, and the next operator will read it. (The \riphi{replace} recipe above deletes both, on purpose — that is for an item you merely didn't want, and which may be fetched again.)
+\item \textbf{Say so at the source} if the mark itself was wrong. The next station to run this script reads the same field off the same item.
+\end{ripnumbers}
+
+Claims land in the same mailbox as spot submissions; the subject line (\ripmono{Channel Z0 — rights claim — …}) is what separates them.
+
+
+\ripsection{\ripmdhead{Testing without the bytes}}
+
+A stocked library is tens of gigabytes and one feature is a few hundred megabytes, which makes \riphi{"does my schedule actually work"} an expensive question — especially on a playout PC that is also the thing on air.
+
+\ripmdpath{\ripmono{tools/\allowbreak{}make-\allowbreak{}proxies.\allowbreak{}sh}} mirrors the library into stand-ins: same tree, same filenames, \textbf{same durations}, a fraction of a percent of the bytes.
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+tools/make-proxies.sh                    # low-res transcodes of everything
+tools/make-proxies.sh --placeholder      # labelled cards instead of video
+tools/make-proxies.sh psas/ movies/noir/ # just these
+tools/make-proxies.sh --dry-run
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+Output goes to \ripmono{\$Z0\_\allowbreak{}MEDIA\_\allowbreak{}ROOT-\allowbreak{}test} (override with \ripmono{--out} or \ripmono{Z0\_PROXY\_ROOT}). Point a throwaway ErsatzTV channel at it and the broadcast day behaves exactly as it will on air — it just looks like a webcam from 1998.
+
+\textbf{Duration is the whole point.} Schedules, pad-to-the-half-hour, and the protected 19:00 anchor are arithmetic on runtimes, so proxies keep runtimes exact. \ripmono{--seconds N} trims for a fast smoke test and deliberately breaks that property; the script says so when you use it.
+
+\begin{ripmdtable}{X[0.56,l]X[1.65,l]X[0.79,l]}
+\ripmdth{MODE} & \ripmdth{WHAT YOU GET} & \ripmdth{MEASURED} \\
+transcode \riphi{(default)} & 320px, crf 40, mono audio — the actual content & \textbf{6.9\%} of source bytes \\
+\ripmono{--placeholder} & a Z0 card naming the title and the runtime it stands in for & \textbf{0.6\%} of source bytes \\
+\end{ripmdtable}
+
+Useful options: \ripmono{--width}, \ripmono{--crf}, \ripmono{--jobs N} (default 4), \ripmono{--force}, \ripmono{--dry-run}. Re-runs skip anything already built, so it resumes like the fetcher does.
+
+Two things worth knowing if you touch the placeholder path:
+
+\begin{ripbullets}
+\item \textbf{The cost is the audio, not the video.} A static frame is nearly free to x264; AAC-encoding 90 minutes of \riphi{silence} at 48k stereo measured 38 s against 6 s for the video. The silence is 22050 mono for that reason, which takes a feature-length card from \textasciitilde{}43 s to \textasciitilde{}24 s. Framerate barely matters.
+\item \textbf{The label is never escaped, it is handed over out-of-band.} A runtime like \ripmono{1:30:00} reads as the next filter option and kills the filtergraph, and a title like \ripmono{Kelowna's Own} closes drawtext's quote early and drops every drawtext after it. This used to be handled by flattening the title to a safe charset, which is worse than it sounds: the card rendered fine, exit 0, right duration, and quietly said \ripmono{KELOWNAS OWN} — and the label is the only thing a placeholder is \riphi{for}. Both the title and the runtime now go through \ripmono{z0\_text} from \ripmdpath{\ripmono{z0-lib.sh}}, which writes the words to a file and points drawtext at it with \ripmono{textfile=\allowbreak{}.\allowbreak{}.\allowbreak{}.\allowbreak{}:\allowbreak{}expansion=\allowbreak{}none}. There is no escaping layer left to get wrong. Only newlines and tabs are still stripped, because those break the card's \riphi{layout}, not its parsing.
+\end{ripbullets}
+
+
+\ripsection{\ripmdhead{Editing the recipes}}
+
+The \ripmono{RECIPES} array near the top of the script is the whole configuration:
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+slot | destination | min secs | max secs | default count | query
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+Add a themed night by adding a line — a \ripmono{Features · Westerns} slot is \ripmono{westerns|movies/\allowbreak{}westerns|2400|10800|10|collection:\allowbreak{}(feature\_\allowbreak{}films) AND mediatype:\allowbreak{}(movies) AND licenseurl:\allowbreak{}(*publicdomain*) AND subject:\allowbreak{}(western)}. Keep \ripmono{licenseurl:\allowbreak{}(*publicdomain*)} in any query you add. Check the pool size first:
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+curl -s -G 'https://archive.org/advancedsearch.php' \
+  --data-urlencode 'q=<your query>' --data-urlencode 'rows=0' \
+  --data-urlencode 'output=json' | jq '.response.numFound'
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripdashrule
+
+\riphi{Intake runs overnight, between the sign-off and the sunrise. The bars don't mind.}
+
+\ripend
+
+\end{document}

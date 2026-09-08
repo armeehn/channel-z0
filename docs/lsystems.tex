@@ -1,0 +1,208 @@
+% DOC NO. RL-Z0-LSYSTEMS · REV. A
+%
+% This file IS the document. Edit it directly - ripdoc compiles it
+% as it stands and stamps the provenance line at build time.
+%
+%   ripdoc build --only docs-lsystems
+%
+% Promoted from docs/lsystems.md on 2026-09-07 by `ripdoc promote`.
+\documentclass[fontpath=fonts/,logopath=logo/]{riposte-doc}
+\usepackage{riposte-md}
+
+\title{L-system intervals — the picture, and the program that made it}
+\author{Riposte Laboratories}
+\date{}
+\ripdocno{RL-Z0-LSYSTEMS}
+\riprev{A}
+\ripstrapline{A second family of station intervals, alongside the Glitchsheet ones in intervals.md. Each clip is a \NoCaseChange{\textbf{Lindenmayer system}}: a handful of rewriting rules, expanded, read back as turtle orders, and drawn — with its own source code set beside it on screen.}
+\riprunningtitle{L-system intervals — the picture, and the program that made it}
+
+\begin{document}
+
+\ripmakehead
+
+\riptoc
+
+The two halves of the frame cannot disagree, because they are the same file.
+
+
+\ripsection{\ripmdhead{One file, three jobs}}
+
+Every specimen in \ripmono{tools/\allowbreak{}z0-\allowbreak{}lsys/\allowbreak{}specimens/\allowbreak{}} is a self-contained JavaScript file, used three times over:
+
+\begin{ripmdtable}{X[0.60,l]X[0.55,l]X[2.05,l]}
+\ripmdth{USED BY} & \ripmdth{AS} & \ripmdth{WHAT IT DOES} \\
+\ripmono{qjs lsys-\allowbreak{}emit.\allowbreak{}js} & an ES module & walks the turtle; the renderer draws those strokes as the ink \\
+\ripmono{ffedit -\allowbreak{}f mv -\allowbreak{}s <file>} & an FFglitch script & replaces \textbf{every motion vector} with the heading of the branch crossing that macroblock \\
+the renderer & text & prints it, verbatim, into the panel on the right \\
+\end{ripmdtable}
+
+So the code on screen is not an illustration of the algorithm. It is the algorithm — the same bytes that \ripmono{ffedit} ran, with the sha1 shown in the footer alongside the exact command and its \ripmono{-sp} payload.
+
+\textbf{Nothing is hidden behind an import.} That is the whole claim, and it is why the machinery is duplicated into all sixteen files rather than shared. The files are therefore \textbf{output}: edit \ripmono{specimen.\allowbreak{}template.\allowbreak{}js} or the \ripmono{SYSTEMS} table in \ripmono{make-\allowbreak{}specimens.\allowbreak{}py} and regenerate. Hand-edits to \ripmono{specimens/\allowbreak{}*.\allowbreak{}js} are lost.
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+tools/z0-lsys/make-specimens.py
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+The generator enforces a \textbf{52-column limit} and refuses to write anything if a single line is over it. That is not style: the panel is 406 px wide and the listing is set at 12 px, so a longer line is a line nobody can read. It checks every file before writing any of them — validating on the way out once left the over-wide file on disk next to the complaint about it, and the render used it regardless.
+
+
+\ripsection{\ripmdhead{What is on screen}}
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
++---------------------------+-------------------------+
+|                           | CH 0  STATION INTERVAL  |
+|   448 x 480               | FERN                    |
+|   the L-system, drawn      | six rewrites of one     |
+|   stroke by stroke and     | ------------------------|
+|   smeared by its own       | export const SYS = {    |
+|   motion vectors           |   axiom: "X",           |
+|                           |   rules: { X: "F+[[X..  |
+|                           |   ...                   |
+|                           | ------------------------|
+|                           | F+[[X]-X]-F[-FX]+X ...  |  <- the live string
+|                           | $ ffedit -f mv -s ...   |
+|                           | gen 6  25,159 symbols   |
++---------------------------+-------------------------+
+        854 x 480, the channel's own frame — nothing is pillarboxed
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+The clip has an arc, because an interval is cut at an arbitrary boundary and has to be worth joining at any point:
+
+\begin{ripmdtable}{X[0.55,l]X[1.76,l]}
+\ripmdth{SHARE OF CLIP} & \ripmdth{WHAT HAPPENS} \\
+0–3\% & the specimen card: name, rules, an empty frame \\
+3–85\% & the turtle draws, and a \textbf{wave of motion travels the branches in the order they were drawn} \\
+85–100\% & the drawing is finished and drifts, smearing along its own tangents \\
+\end{ripmdtable}
+
+The source pages through itself \textbf{exactly once per clip}, however long the file is: the renderer takes the fewest pages that hold it and then spreads the lines evenly, so the last page is not two lines and eight seconds of empty panel.
+
+The strip under the listing is the real expanded L-string, windowed at the turtle's current position — 147 lines of program above, and the 25,159 symbols it produced running past below.
+
+
+\ripsection{\ripmdhead{The specimens}}
+
+\begin{ripmdtable}{X[1.17,l]X[0.97,l]X[3.00,l]X[0.55,l]X[0.55,l]X[0.55,l]X[0.71,l]}
+\ripmdth{SLUG} & \ripmdth{NAME} & \ripmdth{RULES} & \ripmdth{ANGLE} & \ripmdth{GENS} & \ripmdth{PUSH} & \ripmdth{PHOSPHOR} \\
+\ripmono{fern} & FERN & \ripmono{X→F+[[X]-\allowbreak{}X]-\allowbreak{}F[-\allowbreak{}FX]+X}, \ripmono{F→FF} & 25° & 6 & 30 & amber \\
+\ripmono{dragon} & DRAGON & \ripmono{X→X+YF+}, \ripmono{Y→-FX-Y} & 90° & 12 & 15 & green \\
+\ripmono{hilbert} & HILBERT & \ripmono{A→+BF-AFA-FB+}, \ripmono{B→-AF+BFB+FA-} & 90° & 6 & 10 & bone \\
+\ripmono{koch} & KOCH ISLAND & \ripmono{F→F+F-\allowbreak{}F-\allowbreak{}FF+F+F-\allowbreak{}F} & 90° & 3 & 16 & red \\
+\ripmono{sierpinski} & SIERPINSKI & \ripmono{F→F-G+F+G-F}, \ripmono{G→GG} & 120° & 6 & 30 & amber \\
+\ripmono{levy} & LEVY C & \ripmono{F→+F--F+} & 45° & 14 & 15 & green \\
+\ripmono{bush} & BUSH & \ripmono{F→FF-\allowbreak{}[-\allowbreak{}F+F+F]+[+F-\allowbreak{}F-\allowbreak{}F]} & 22.5° & 5 & 28 & amber \\
+\ripmono{crystal} & CRYSTAL & \ripmono{F→FF+F+F+F+FF} & 90° & 4 & 22 & bone \\
+\ripmono{peano} & PEANO & \ripmono{F→F+F-\allowbreak{}F-\allowbreak{}F-\allowbreak{}F+F+F+F-\allowbreak{}F} & 90° & 4 & 10 & amber \\
+\ripmono{gosper} & GOSPER & \ripmono{F→F-\allowbreak{}G-\allowbreak{}-\allowbreak{}G+F++FF+G-\allowbreak{}}, \ripmono{G→+F-\allowbreak{}GG-\allowbreak{}-\allowbreak{}G-\allowbreak{}F++F+G} & 60° & 4 & 14 & green \\
+\ripmono{moore} & MOORE & \ripmono{L→-RF+LFL+FR-}, \ripmono{R→+LF-RFR-FL+} & 90° & 5 & 10 & bone \\
+\ripmono{tree} & TREE & \ripmono{F→F[+F]F[-\allowbreak{}F][F]} & 20° & 5 & 26 & amber \\
+\ripmono{snowflake} & SNOWFLAKE & \ripmono{F→F-F++F-F} & 60° & 5 & 18 & red \\
+\ripmono{terdragon} & TERDRAGON & \ripmono{F→F+F-F} & 120° & 9 & 16 & green \\
+\ripmono{seaweed} & SEAWEED & \ripmono{F→FF-\allowbreak{}[-\allowbreak{}F+F]+[+F-\allowbreak{}F]} & 22° & 5 & 28 & amber \\
+\ripmono{board} & BOARD & \ripmono{F→FF+F+F+F+F+F-\allowbreak{}F} & 90° & 3 & 18 & bone \\
+\end{ripmdtable}
+
+The specimen's header numbers it but does \textbf{not} carry a total: a count in every file means appending a seventeenth specimen rewrites the other sixteen, and every clip already on air would be showing a listing that no longer matches the repo.
+
+\ripmono{push} is per specimen and lives in \ripmono{SYS}, on screen, because it has to be: \textbf{a space-filling curve fills every macroblock, so the shove that animates a fern turns a Hilbert curve to mud.} Hilbert takes a third of the fern's.
+
+The palette is the phosphor set from \ripdocref{BRAND.md}{RL-Z0-A} — amber \ripmono{\#ffb000}, phosphor red \ripmono{\#ff2d2d}, green \ripmono{\#33ff66}, bone \ripmono{\#cfcabc} on \ripmono{\#0d0d0d}. An interval represents the broadcast, so it gets the CRT treatment, not the Riposte brand.
+
+
+\ripsection{\ripmdhead{The pipeline — one host, unlike the Glitchsheet intervals}}
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+LXC 111 (claude)
+  qjs      -> the turtle, as geometry
+  PIL      -> the ink, frame by frame, over a pipe
+  ffgac    -> MPEG-2 carrier          +nopimb +forcemv, one GOP
+  ffedit   -> the same specimen file, over the motion vectors
+  ffgac    -> decode
+  PIL      -> the source panel beside it
+  ffmpeg   -> H.264 854x480, silent stereo AAC
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{8.9}{13.8}
+\begin{ripcodeblock}
+pct exec 111 -- su - user -c \
+  'cd ~/channel-z0/tools/z0-lsys && python3 z0-lsys-render.py --out-dir /tmp/z0lsys/out'
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+Sixteen 55-second clips in about \textbf{105 seconds}, all told.
+
+\ripmono{tools/\allowbreak{}z0-\allowbreak{}generative.\allowbreak{}py} needs three hosts because Glitchsheet's engine and numpy live in LXC 114, which has no ffmpeg at all. Nothing here needs either: LXC 111 has \ripmono{ffgac}, \ripmono{ffedit} and \ripmono{qjs} under \ripmono{/opt/ffglitch} \textbf{and} a real ffmpeg with libx264. (numpy in LXC 111 is in fact broken — built against a newer glibc than the container has — so PIL does all the raster work.)
+
+
+\ripsection{\ripmdhead{Why the picture moves at all}}
+
+The carrier is a \textbf{still} as far as the encoder is concerned. New strokes appear, so those macroblocks get a residual; everything already drawn is predicted from the previous frame with a zero residual. A block with no residual is \riphi{whatever its motion vector fetched} — and the motion vectors are the L-system. So the decoder becomes the paint engine.
+
+That only works because of the encode flags:
+
+\begin{ripmdtable}{X[0.55,l]X[1.50,l]}
+\ripmdth{FLAG} & \ripmdth{WHY} \\
+\ripmono{+forcemv} & writes a vector for every macroblock even where the encoder wants none \\
+\ripmono{+nopimb} & keeps intra blocks out of P frames, so nothing scrubs itself clean \\
+\ripmono{-qscale:v 1}, \ripmono{-g <all>}, \ripmono{-\allowbreak{}sc\_\allowbreak{}threshold max} & one I frame at the top; damage propagates for the whole clip \\
+448x480 & 28x30 \textbf{whole} macroblocks — a partial block column at the edge breaks the grid, and the grid is the aesthetic \\
+\end{ripmdtable}
+
+
+\ripsection{\ripmdhead{Traps}}
+
+\begin{ripbullets}
+\item \textbf{A motion vector that fetches from outside the frame decodes as flat saturated green.} The specimens fade their field out over the last three macroblocks at every edge for that reason alone. It is in the code on screen, and it is not a taste decision.
+\item \textbf{\ripmono{-sp} takes integers only.} ffedit's JSON parser rejects a float outright and then writes no output file at all, which reads exactly like a crash. Fractions travel percent-scaled and are divided inside the script.
+\item \textbf{Comparing the two bitstreams proves nothing.} ffedit re-codes a vector it was handed even when the value is unchanged, so a script that sets every vector to zero still writes a \riphi{different file} while the picture stands perfectly still. The render guards on the real thing instead: it decodes the untouched carrier alongside the glitched one and refuses a clip whose pictures differ by less than \ripmono{--min-motion}. Same encoder, same quantiser, so with the vectors left alone the measure is exactly zero. \ripmono{--trim 0} is the negative test, and it is refused.
+\item \textbf{Watching the glitched clip on its own says little more}, because the drawing is moving anyway — the turtle is still drawing it.
+\item Every clip is checked for length within a second of 55.0 s before it is installed, in the spirit of \ripmono{tools/\allowbreak{}z0-\allowbreak{}weather.\allowbreak{}sh}.
+\end{ripbullets}
+
+
+\ripsection{\ripmdhead{Getting them on air}}
+
+The clips carry the \ripmono{generative} tag in their \ripmono{.nfo}, so they join the existing interval pool and \textbf{need no schedule change}. Drop them in and let the library refresh:
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+scp z0-lsys-*.mp4 z0-lsys-*.nfo root@10.0.1.222:/mnt/main-data/channelz0/generative/
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\textbf{The NFO's tags replace the folder's tags}, so \ripmono{<tag>generative</\allowbreak{}tag>} has to be in the file — that is what the renderer writes, alongside \ripmono{media}.
+
+The library refreshes on \ripmono{scanner.\allowbreak{}library\_\allowbreak{}refresh\_\allowbreak{}interval} (6 hours), so they join the shuffle on their own. To have them sooner, scan the library from the ErsatzTV UI. A \textbf{new} tag would need more — the pool is a \ripmono{search:} key answered by Lucene, and an unindexed tag silently yields an empty pool — but \ripmono{generative} already exists and is already indexed.
+
+
+\ripsection{\ripmdhead{Tuning}}
+
+\begin{ripmdtable}{X[0.66,l]X[1.34,l]}
+\ripmdth{WANT} & \ripmdth{CHANGE} \\
+A different system & \ripmono{SYSTEMS} in \ripmono{make-\allowbreak{}specimens.\allowbreak{}py}, then regenerate \\
+Calmer or wilder & that specimen's \ripmono{push} (it is per specimen for a reason) \\
+Everything calmer & \ripmono{--trim}, a global percentage over every \ripmono{push} \\
+More or less drift at the end & \ripmono{--bloom} \\
+A narrower travelling wave & \ripmono{--win}, in \% of the string \\
+Longer clips & \ripmono{--seconds}; the source still pages through exactly once \\
+\end{ripmdtable}
+
+\ripend
+
+\end{document}
