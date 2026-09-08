@@ -1101,7 +1101,7 @@
        Where the acquired half of the schedule came from, on what basis it is
        aired, and the way out for anyone who thinks we got it wrong. The flag
        card stamps the programme and the moment onto a mailto, because a viewer
-       has no way to name what they are looking at — see docs/archive-fetch.md,
+       has no way to name what they are looking at — see docs/pdf/docs-archive-fetch.pdf,
        whose manifest is the other end of that trace. -->
   <section class="panel" id="rights" role="tabpanel" aria-labelledby="tab-rights" tabindex="0">
     <div class="sec-head">
@@ -1211,7 +1211,7 @@
    claim. JS overwrites it from CONFIG on boot; the hard-coded copy is only the
    fallback, and it has to be changed by hand alongside these two.
 
-   (Full checklist: docs/build-guide.md, Phase 4 → "When channelz0.tv goes live".)
+   (Full checklist: docs/pdf/docs-build-guide.pdf, Phase 4 → "When channelz0.tv goes live".)
    ====================================================================== */
 const WATCH_HOST = "watch.ch0.ripostelabs.xyz";   // the Owncast tower on the VPS
 const AD_EMAIL   = "ch0@ripostelabs.xyz";          // where spot submissions land
@@ -1278,11 +1278,11 @@ const CONFIG = {
   PEERTUBE_EMBED: "",
 };
 
-/* ---- the broadcast week (the storefront twin of docs/programming.md) ----
+/* ---- the broadcast week (the storefront twin of docs/pdf/docs-programming.pdf) ----
    The weekday spine is shared Mon–Fri; only the 20:00 feature and 23:00 late
    block change identity per night (the "themed nights"). Weekends restructure
    the mornings and add a second feature. Times are 24h local. Edit here and in
-   docs/programming.md together so the guide and the guide-on-the-wall agree. */
+   docs/pdf/docs-programming.pdf together so the guide and the guide-on-the-wall agree. */
 const GROUND_ZERO = { t: "19:00", name: "GROUND ZERO", desc: "Alien street interviews via baguette — flagship transmission", flagship: true };
 
 /* one weekday, given the night's prime feature + late block */
@@ -1860,7 +1860,7 @@ function renderSchedule() {
    can't be reached), the slot that title belongs to, and the instant of the
    click in both local time and UTC. That is enough for an operator to find the
    one line in the intake manifest, where every fetched file sits next to its
-   archive.org id and the licence mark it was aired under (docs/archive-fetch.md).
+   archive.org id and the licence mark it was aired under (docs/pdf/docs-archive-fetch.pdf).
 
    Local time is written with its own UTC offset rather than through
    toLocaleString(): a claim is read by someone in another timezone weeks later,
