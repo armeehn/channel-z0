@@ -9,14 +9,14 @@ Okanagan where nobody sees her land.  She then goes and asks people what they
 are doing, holding a baguette.
 
 **Nothing in this sequence is a crosshair.**  An earlier pass built the whole
-identity around a reticle — the O of ZERO was one.  It is gone: the O is a
-planet with an orbit, the crawl's mark is a transmission bloom, and the
-programme's designation reads LANDING SITE.  She is not aiming at anyone; the
-premise is that she turned up to help.
+identity around a reticle — the O of ZERO was one.  It is gone: the zero of
+ZERØ is crossed by the baguette (gzlogo.py), the crawl's mark is a
+transmission bloom, and the programme's designation reads LANDING SITE.  She
+is not aiming at anyone; the premise is that she turned up with bread.
 
 The 16-bit part is specific: per-scanline gradients (HDMA), colour math for
 every light source, depth planes separated by contrast, shaded sprites lit from
-one direction, and a chrome ramp for the display face.
+one direction, and a flat top-lit lockup for the display face.
 
 The canvas is 320x240 — 4:3 with square pixels, doubling exactly to the 640x480
 the station's other cards are authored at, which pillarboxes into the channel's
@@ -33,6 +33,7 @@ from PIL import Image, ImageChops, ImageDraw, ImageFilter
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import gzart
 import gzfont
+import gzlogo
 import gzpal as P
 
 W, H = 320, 240
@@ -799,73 +800,6 @@ def scene_face(f):
     return img
 
 
-# ── the display face ──────────────────────────────────────────────────────
-LOGO_SCALE = 2
-GLYPH_W = gzfont.LOGO_W * LOGO_SCALE
-GLYPH_H = gzfont.LOGO_H * LOGO_SCALE
-GAP = 3
-SHEAR = 0.17
-
-
-def _word(word, scale=LOGO_SCALE, orbit_last=False):
-    """One word of the display face, cut from chrome: ten ramp stops read top
-    to bottom, a specular rim, a keyline and a cast shadow, and a lean.
-
-    `orbit_last` turns the final O into a little world with a ring round it.
-    That position used to hold a reticle.  A planet is the same shape, carries
-    the same weight in the lockup, and does not point at anybody."""
-    gw, gh = gzfont.LOGO_W * scale, gzfont.LOGO_H * scale
-    n = len(word)
-    lean = int(gh * SHEAR)
-    pad = 26 if orbit_last else 10
-    w = n * gw + (n - 1) * GAP + pad + lean
-    h = gh + 10 + (12 if orbit_last else 0)
-    img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    px = img.load()
-    oy = 6 if orbit_last else 0
-
-    cells = [(i * (gw + GAP), gzfont.LOGO[ch]) for i, ch in enumerate(word)]
-
-    def stamp(dx, dy, colour_of):
-        for ox, glyph in cells:
-            for gy, row in enumerate(glyph):
-                for gx, on in enumerate(row):
-                    if not on:
-                        continue
-                    for sy in range(scale):
-                        for sx in range(scale):
-                            yy = gy * scale + sy
-                            x = ox + gx * scale + sx + dx + int((gh - yy) * SHEAR)
-                            y = yy + dy
-                            if 0 <= x < w and 0 <= y < h:
-                                px[x, y] = colour_of(gy) + (255,)
-
-    def chrome(gy):
-        t = gy / (gzfont.LOGO_H - 1)
-        return P.CHROME[min(len(P.CHROME) - 1, int(t * len(P.CHROME)))]
-
-    stamp(6, 6 + oy, lambda gy: (0, 0, 0))
-    for ox_, oy_ in ((-1, 0), (1, 0), (0, -1), (0, 1), (1, 1), (-1, -1),
-                     (2, 0), (0, 2)):
-        stamp(2 + ox_, 2 + oy_ + oy, lambda gy: P.KEYLINE)
-    stamp(1, 1 + oy, lambda gy: P.CHROME[0])
-    stamp(2, 2 + oy, chrome)
-
-    if orbit_last:
-        ox = cells[-1][0] + 2 + int(gh * SHEAR / 2)
-        cx = ox + gw // 2
-        cy = 2 + oy + gh // 2
-        d = ImageDraw.Draw(img)
-        for rx, ry, col in ((gw // 2 + 12, 9, P.KEYLINE),
-                            (gw // 2 + 11, 8, P.CHROME[6]),
-                            (gw // 2 + 10, 7, P.CHROME[3])):
-            d.ellipse([cx - rx, cy - ry, cx + rx, cy + ry], outline=col,
-                      width=2)
-        d.ellipse([cx + gw // 2 + 4, cy - 4, cx + gw // 2 + 11, cy + 3],
-                  fill=P.CHROME[1])
-    return img
-
-
 def _shine(img, phase):
     out = img.copy()
     px = out.load()
@@ -874,9 +808,9 @@ def _shine(img, phase):
         band = phase - y
         for x in range(max(0, band - 7), min(w, band + 7)):
             r, g, b, a = px[x, y]
-            if a and (r, g, b) != P.KEYLINE and (r, g, b) != (0, 0, 0):
-                px[x, y] = (P.CHROME[0] if abs(x - band) < 3
-                            else P.CHROME[1]) + (255,)
+            if a and (r, g, b) not in (P.KEYLINE, P.INK_DEEP, (0, 0, 0)):
+                px[x, y] = (P.WHITE if abs(x - band) < 3
+                            else P.ARMOUR[0]) + (255,)
     return out
 
 
@@ -919,7 +853,7 @@ def scene_name(f):
         img.paste(b, (nx + sw + 10, 18), b)
 
     if f >= 20:
-        d.rectangle([nx, 46, nx + total, 47], fill=P.CHROME[5])
+        d.rectangle([nx, 46, nx + total, 47], fill=P.ARMOUR[3])
         blit_centre(img, 52, "FIELD CORRESPONDENT · NON-TERRESTRIAL",
                     P.BONE[2])
 
@@ -957,6 +891,8 @@ def scene_name(f):
 # ── scene 8 · the logo ────────────────────────────────────────────────────
 LOGO_TOP = None
 LOGO_BOT = None
+LOGO_DX = 0          # x offset of GROUND so its letters align with ZERO's
+LOGO_Y = 54          # where GROUND's letters sit; ZERO hangs 5 px under them
 
 
 def scene_slam(f):
@@ -970,10 +906,16 @@ def scene_slam(f):
     if f < 8:
         return new_frame(P.BONE[1])
 
-    tw, th = LOGO_TOP.size
     bw, bh = LOGO_BOT.size
-    tx, bx = (W - tw) // 2, (W - bw) // 2
-    ty_end, by_end = 44, 44 + GLYPH_H + 6
+    tlx, tly, tlw, tlh = LOGO_TOP.info["letters"]
+    blx, bly, blw, blh = LOGO_BOT.info["letters"]
+    # Lay out by the letters, not the images: the bottom word carries the
+    # baguette's overhang as transparent padding on every side.
+    bx = (W - blw) // 2 - blx
+    tx = bx + LOGO_DX
+    ty_end = LOGO_Y - tly
+    by_end = LOGO_Y + tlh + 5 - bly
+    zero_cx = bx + blx + blw - gzlogo.last_cell_w() * 3 // 2
 
     bloom = layer()
     ImageDraw.Draw(bloom).ellipse([W // 2 - 150, 56, W // 2 + 150, 156],
@@ -1006,13 +948,14 @@ def scene_slam(f):
         sd = ImageDraw.Draw(spark)
         for i in range(20):
             dx = (i * 23 + f * 5) % W
-            dy = by_end + GLYPH_H + (i % 5) - (f - 48) * 2
-            sd.point((dx, dy), fill=P.CHROME[1] + (200,))
+            dy = by_end + bly + blh + (i % 5) - (f - 48) * 2
+            sd.point((dx, dy), fill=P.ARMOUR[0] + (200,))
         img = add(img, spark)
         d = ImageDraw.Draw(img)
 
+    # The shine is a bevel effect; a flat mark gets the judder and no gloss.
     cyc = f % 210
-    if 84 <= cyc < 140 and f >= 84:
+    if gzlogo.VARIANT != "bos" and 84 <= cyc < 140 and f >= 84:
         ph = (cyc - 84) * 7 - 40
         top = _shine(LOGO_TOP, ph)
         bot = _shine(LOGO_BOT, ph - 30)
@@ -1020,11 +963,16 @@ def scene_slam(f):
         img.paste(bot, (bx, by_end), bot)
 
     if f >= 132:
-        d.rectangle([48, 150, 271, 151], fill=(0x2e, 0x24, 0x1c))
+        # The horizon, with the landing dent under the zero.  The signal
+        # still travels along it, but only along the ground: it drops out
+        # over the hole.
+        gzlogo.horizon(d, 48, 271, 150, zero_cx, 30, 6, (0x2e, 0x24, 0x1c),
+                       P.INK_DEEP)
         mx = ((f - 132) * 2) % 318 - 47
-        x0, x1 = max(48, mx), min(271, mx + 47)
-        if x1 >= x0:
-            d.rectangle([x0, 150, x1, 151], fill=P.ARMOUR[2])
+        for x0, x1 in ((48, zero_cx - 15), (zero_cx + 15, 271)):
+            a0, a1 = max(x0, mx), min(x1, mx + 47)
+            if a1 >= a0:
+                d.rectangle([a0, 150, a1, 151], fill=P.ARMOUR[2])
 
     if f >= 140:
         blit_centre(img, 164, "DESIG. RL-Z0-GND · LANDING SITE", P.BONE[2])
@@ -1091,7 +1039,8 @@ def check_fits():
 
 
 def main():
-    global CRAWL, NEBULA, LAND, LOGO_TOP, LOGO_BOT, NAME_SASHA, NAME_ZERO
+    global CRAWL, NEBULA, LAND, LOGO_TOP, LOGO_BOT, LOGO_DX
+    global NAME_SASHA, NAME_ZERO
     outdir = sys.argv[1]
     os.makedirs(outdir, exist_ok=True)
     check_fits()
@@ -1099,10 +1048,10 @@ def main():
     CRAWL = _crawl_block()
     NEBULA = _nebula()
     LAND = _land_plate()
-    LOGO_TOP = _word("GROUND")
-    LOGO_BOT = _word("ZERO", orbit_last=True)
-    NAME_SASHA = _word("SASHA", scale=1)
-    NAME_ZERO = _word("ZERO", scale=1)
+    LOGO_TOP, LOGO_BOT, LOGO_DX = gzlogo.lockup(1)
+    # She is the zero: the surname takes the programme's colour.
+    NAME_SASHA = gzlogo.word("SASHA", scale=1, ramp=P.BONE)
+    NAME_ZERO = gzlogo.word("ZERO", scale=1, ramp=P.ARMOUR)
 
     if "--stills" in sys.argv:
         marks = [20, 60, 100, 200, 400, 500, 560, 600, 640, 700, 740, 760,

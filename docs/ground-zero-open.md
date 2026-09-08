@@ -1,6 +1,6 @@
 # GROUND ZERO — opening titles
 
-**DOC NO. RL-Z0-GND-B · REV. D**
+**DOC NO. RL-Z0-GND-B · REV. E**
 
 A 60-second opening title sequence for the nightly GROUND ZERO slot, in the
 grammar of the *Mega Man X* intros and telling the programme's own story: a
@@ -33,8 +33,8 @@ fonts, no samples, no stock art, no network.
 | 765–944 | 0:25.5 | **The wormhole.** A tunnel of rings in light blue, white and pink. |
 | 945–1184 | 0:31.5 | **The landing.** A fireball down the diagonal, an impact, and then the Okanagan: two ranges, the lake, the moon — and the ship nose-down in the hillside, burning, with Sasha standing on the near shore. `NOBODY SAW HER LAND`. |
 | 1185–1304 | 0:39.5 | **Her face.** A push-in. She blinks and holds. She does not smile — she has just been brought down a long way from home. |
-| 1305–1454 | 0:43.5 | **SASHA ZERO.** The name in chrome, and her posting. |
-| 1455–1664 | 0:48.5 | **Logo.** `GROUND` drops, `ZERO` arrives from the right, the frame judders, and a shine sweeps the chrome. |
+| 1305–1454 | 0:43.5 | **SASHA ZERO.** The name in the display face — SASHA in bone, ZERO in marigold — and her posting. |
+| 1455–1664 | 0:48.5 | **Logo.** `GROUND` drops, `ZERØ` arrives from the right, the frame judders, and the horizon draws in with the landing dent under the zero. |
 | 1665–1799 | 0:55.5 | **Attract.** `PRESS START`, the transmission times, the copyright. |
 
 The prologue is played completely straight. What it is grave about is a local
@@ -48,13 +48,42 @@ it is gone, deliberately:
 
 | Was | Is |
 |---|---|
-| The O of ZERO as a targeting reticle | a small world with a ring round it — same shape, same weight in the lockup, points at nobody |
+| The O of ZERO as a targeting reticle | the zero of ZERØ: a ring and ONE bar, the slashed zero — `test_logo.py` proves the midlines inside the ring are empty |
 | A reticle holding station in the crawl | a **transmission bloom**: concentric *arcs*, opening one way |
 | `DESIG. RL-Z0-GND · EPICENTRE` | `DESIG. RL-Z0-GND · LANDING SITE` |
 
 `signal_arcs()` draws arcs and never rings-with-a-cross, and the docstring says
 why: a ring plus two crossed lines is a gunsight whatever the caption calls it.
 The premise is that she turned up to help.
+
+## The lockup
+
+Redesigned 2026-09-08, after Ben Bos. The first identity was a ten-stop chrome
+pastiche of the *Mega Man X* title card: it said "16-bit" and nothing else.
+`gzlogo.py` now draws the logo from data, and the opening, the name card and
+the segment transition cards all take it from there:
+
+    GROUND   small, tracked to the width of the word below, bone. The place.
+    ZERØ     large, marigold. The zero is a ring and a bar on the face's own
+             grid — three units of stroke, the stem weight of the letters,
+             forty-five degrees, ends cut square. A slashed zero: this is a
+             nought, not an O. The baguette survives as a proportion, not a
+             picture.
+
+Flat. No bevel, no shadow, no keyline, no shine (the judder stays; gloss on a
+flat mark is the wrong decade). The face is new too: a 14x16 heavy grotesque
+with one-pixel chamfers, squarer than the rounded 16x18 it replaces, so it
+holds at the 107-px rail sizes the channel airs at. Eleven glyphs — the ones
+GROUND ZERO and SASHA need — and nothing else.
+
+Two other readings are kept behind `GZ_LOGO_VARIANT`: `slash`, the same
+lockup with a top-lit bevel and the loaf drawn as a loaf (crust, scores,
+tips), and `orbit`, the ring painted through the wormhole. Neither is the
+logo. `python3 gzlogo.py OUT.png --variant …` renders any of them for review.
+
+Under the title, the horizon: one rule with a dent where the ship went in,
+and the signal still travelling along the ground — it drops out over the
+hole.
 
 ## Sasha Zero
 
@@ -106,7 +135,7 @@ weather card.
 of ordered dither; **colour math**, so the moon, the signal, the engine, the
 fireball, the wormhole and the logo bloom all add rather than replace; depth
 planes separated by *contrast*; shaded sprites lit from one direction; and a
-ten-stop chrome ramp for the display face.
+flat, one-weight lockup for the display face (below).
 
 **Ramps, not a fixed palette.** `gzpal.py` holds light-to-dark ramps and
 gradient stop lists. Sprites index the ramps by position — highlight edge,
@@ -227,13 +256,14 @@ content pool is skipped in silence — it does not error, it leaves a hole.
 > **Note.** The COMING SOON card in `playout/cards/ground-zero.html` still
 > carries the old reticle mark. It is a separate artefact, currently on air,
 > and it was left alone rather than re-rendered under a live slot — but it no
-> longer matches the programme's identity and should be reworked.
+> longer matches the programme's identity and should be reworked to the ZERØ
+> lockup above.
 
 ---
 
 <table>
 <tr>
-<td><b>DOC NO. RL-Z0-GND-B</b><br>REV. C · EST. 2026</td>
+<td><b>DOC NO. RL-Z0-GND-B</b><br>REV. E · EST. 2026</td>
 <td align="right"><b>PARRY ♻ RIPOSTE ♻ RECYCLE ♻ REPEAT</b><br>Riposte Laboratories Inc.</td>
 </tr>
 </table>

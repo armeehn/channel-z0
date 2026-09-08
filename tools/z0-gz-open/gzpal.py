@@ -30,14 +30,6 @@ BONE   = [(0xff, 0xff, 0xff), (0xf6, 0xf1, 0xe7), (0xd6, 0xcf, 0xc0),
 PINK   = [(0xff, 0xb0, 0xcb), (0xf6, 0x77, 0x9d), (0xf0, 0x47, 0x7d),
           (0xb0, 0x22, 0x53), (0x6a, 0x0f, 0x30)]
 
-# The chrome the logo is cut from: a full metal ramp, not a three-band fake.
-# Reading top to bottom it is sky-reflection, hot specular, body, core shadow,
-# then the warm bounce a metal letter picks up off whatever it is standing on.
-CHROME = [(0xff, 0xff, 0xff), (0xff, 0xf3, 0xd4), (0xff, 0xd9, 0x8f),
-          (0xff, 0xb4, 0x3a), (0xfe, 0x9a, 0x0d), (0xd8, 0x7c, 0x06),
-          (0xa1, 0x5a, 0x03), (0x6b, 0x39, 0x02), (0x8a, 0x4d, 0x0a),
-          (0xc2, 0x74, 0x14)]
-
 # Zero's red, with gold trim — the Mega Man Zero scheme, and the gold happens
 # to be the station's marigold, so the reference and the brand land on the same
 # colour without either having to give way.
@@ -131,7 +123,7 @@ def mix(c, target, t):
 # which is what the hardware would have done and what keeps the strike frames
 # from costing more than any other frame.
 FLASH_MAP = {}
-for _r in (ARMOUR, SUIT, STEEL, VISOR, BONE, PINK, CHROME):
+for _r in (ARMOUR, SUIT, STEEL, VISOR, BONE, PINK, BREAD):
     for _c in _r:
         FLASH_MAP[_c] = mix(_c, WHITE, 0.55)
 FLASH_MAP[KEYLINE] = (0x1a, 0x1a, 0x28)
