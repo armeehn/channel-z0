@@ -66,6 +66,23 @@ jobs:
       - name: Comment relay
         run: npm run test:relay
 
+  gramophone:
+    name: gramophone interval renders
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+
+      # Pillow only. The ffmpeg-backed test skips itself where there is no
+      # ffmpeg, and the picture tests skip without the Liberation fonts.
+      - name: Install Pillow
+        run: python3 -m pip install --quiet "pillow==12.3.0"
+
+      - name: Gramophone tests
+        run: python3 tools/z0-gramo/test_gramo.py
+
 # Not run here, and each for a reason rather than an oversight:
 #
 #   z0-lists.py --check   needs --db, a live ErsatzTV SQLite database on vile.

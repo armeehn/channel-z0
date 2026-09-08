@@ -1,0 +1,17 @@
+[
+  {
+    "id": "14397",
+    "title": "On est canayen ou ben on l'est pas",
+    "short": "On est canayen",
+    "performer": "La Bolduc (Mme Édouard Bolduc) with E. Daignault",
+    "persons": [
+      "Bolduc, Édouard, Mme, 1894-1941",
+      "Daignault, Eugène, 1895-1960"
+    ],
+    "persons_display": "Mary Travers 1894-1941 wrote it. Daignault 1895-1960",
+    "feeds": ["The Virtual Gramophone: La Bolduc"],
+    "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14397.mp3",
+    "bytes": 1807459,
+    "why_clear": "LAC Virtual Gramophone; feed declares Library and Archives Canada/Music Collection (c) Public Domain. Disc fixed 1900-1950: recording PD under s.23 (2015 extension non-retroactive, <=1964 permanently out). La Bolduc wrote her own songs, so performer and composer are one person, d.1941; the credited second voice d.1960; both <=1971, so the musical work is PD under s.6 (2022 extension non-retroactive). Selected from /root/z0/content/canada-round3-stage.json on x, tier STAGE."
+  }
+]
