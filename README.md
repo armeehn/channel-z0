@@ -40,15 +40,15 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 
 | Path | What it is |
 |---|---|
-| [`docs/build-guide.md`](docs/build-guide.md) | **Start here.** The full station build, Phase 0 → on-air |
-| [`docs/programming.md`](docs/programming.md) | **The broadcast week.** The full schedule, the show bible, and the ErsatzTV mapping |
-| [`docs/archive-fetch.md`](docs/archive-fetch.md) | **Stocking the library.** Public-domain intake from the Internet Archive |
-| [`docs/clustering.md`](docs/clustering.md) | **More than one machine.** Node roles, failover, and what can't be load-balanced |
-| [`docs/self-hosting.md`](docs/self-hosting.md) | Run master control on a homelab — Proxmox & TrueNAS, GPU passthrough, tips |
-| [`docs/gear-and-costs.md`](docs/gear-and-costs.md) | Hardware picks, VPS comparison, bandwidth math, budgets |
-| [`docs/weather.md`](docs/weather.md) | **On-air graphics.** The bug, the weather desk, the crawl, and the traps in ErsatzTV’s graphics engine |
-| [`docs/ad-standards.md`](docs/ad-standards.md) | The one-page rulebook for locally submitted commercials |
-| [`docs/ideas.md`](docs/ideas.md) | The writers' room — what's shipped, what's next |
+| [`docs/pdf/docs-build-guide.pdf`](docs/pdf/docs-build-guide.pdf) | **Start here.** The full station build, Phase 0 → on-air |
+| [`docs/pdf/docs-programming.pdf`](docs/pdf/docs-programming.pdf) | **The broadcast week.** The full schedule, the show bible, and the ErsatzTV mapping |
+| [`docs/pdf/docs-archive-fetch.pdf`](docs/pdf/docs-archive-fetch.pdf) | **Stocking the library.** Public-domain intake from the Internet Archive |
+| [`docs/pdf/docs-clustering.pdf`](docs/pdf/docs-clustering.pdf) | **More than one machine.** Node roles, failover, and what can't be load-balanced |
+| [`docs/pdf/docs-self-hosting.pdf`](docs/pdf/docs-self-hosting.pdf) | Run master control on a homelab — Proxmox & TrueNAS, GPU passthrough, tips |
+| [`docs/pdf/docs-gear-and-costs.pdf`](docs/pdf/docs-gear-and-costs.pdf) | Hardware picks, VPS comparison, bandwidth math, budgets |
+| [`docs/pdf/docs-weather.pdf`](docs/pdf/docs-weather.pdf) | **On-air graphics.** The bug, the weather desk, the crawl, and the traps in ErsatzTV’s graphics engine |
+| [`docs/pdf/docs-ad-standards.pdf`](docs/pdf/docs-ad-standards.pdf) | The one-page rulebook for locally submitted commercials |
+| [`docs/pdf/docs-ideas.pdf`](docs/pdf/docs-ideas.pdf) | The writers' room — what's shipped, what's next |
 | [`docs/comment-relay.md`](docs/comment-relay.md) | **The comment relay.** How a viewer's comment gets from the storefront into the chat room: shape, allowance, house rules, post |
 | [`site/index.html`](site/index.html) | The storefront — tabbed sections pinned to the window, live player (pause, volume, full screen), the tower's live chat in the rail, program grid, ad submissions (Riposte Labs design language) |
 | [`site/retro/index.html`](site/retro/index.html) | The original CRT-and-wood-cabinet version, preserved |
@@ -64,11 +64,11 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 
 | Script | Job |
 |---|---|
-| `tools/bootstrap-node.sh` | Stand up a node from a bare machine — playout, tower, or worker ([manual](docs/clustering.md)) |
+| `tools/bootstrap-node.sh` | Stand up a node from a bare machine — playout, tower, or worker ([manual](docs/pdf/docs-clustering.pdf)) |
 | `tools/make-media-tree.sh` | Create the media library layout on the playout PC |
-| `tools/z0-weather.sh` | The weather desk — renders the corner card, the crawl and the forecast segment ([manual](docs/weather.md)) |
-| `tools/wire-graphics.py` | Wires the graphics elements and forecast slots into the broadcast week ([manual](docs/weather.md)) |
-| `tools/fetch-archive.sh` | Stock the library from archive.org — public domain only, resumable ([manual](docs/archive-fetch.md)) |
+| `tools/z0-weather.sh` | The weather desk — renders the corner card, the crawl and the forecast segment ([manual](docs/pdf/docs-weather.pdf)) |
+| `tools/wire-graphics.py` | Wires the graphics elements and forecast slots into the broadcast week ([manual](docs/pdf/docs-weather.pdf)) |
+| `tools/fetch-archive.sh` | Stock the library from archive.org — public domain only, resumable ([manual](docs/pdf/docs-archive-fetch.pdf)) |
 | `tools/make-proxies.sh` | Build a test library — tiny stand-ins with identical runtimes, for trying schedules |
 | `tools/test-failover.sh` | Prove the cluster fails over and never double-publishes |
 | `tools/test-generators.sh` | Prove the card generators still make cards — arguments, text, 1080p/30 conformance |
@@ -90,18 +90,18 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 
 ## Quickstart
 
-The short version — the [build guide](docs/build-guide.md) has every command.
+The short version — the [build guide](docs/pdf/docs-build-guide.pdf) has every command.
 
 1. **Phase 0 — names.** A domain, a VPS, two DNS records. See
-   [gear-and-costs](docs/gear-and-costs.md) for picking the VPS (spoiler: it
+   [gear-and-costs](docs/pdf/docs-gear-and-costs.pdf) for picking the VPS (spoiler: it
    can be $0).
 2. **Phase 1 — the tower.** On the VPS: `vps/docker-compose.yml` up, Caddy
    configured, then immediately change Owncast's default admin password and
    stream key. Prove the pipe with `tools/test-broadcast.sh`.
 3. **Phase 2 — master control.** On the playout PC (or a homelab box — see
-   [self-hosting](docs/self-hosting.md)): `tools/make-media-tree.sh`, fill the
+   [self-hosting](docs/pdf/docs-self-hosting.pdf)): `tools/make-media-tree.sh`, fill the
    library (`tools/fetch-archive.sh --all` stocks the public-domain half —
-   see [archive-fetch](docs/archive-fetch.md)), then either
+   see [archive-fetch](docs/pdf/docs-archive-fetch.pdf)), then either
    `playout/ersatztv.sh` or the whole containerized stack
    with `cd playout && docker compose up -d`. Build the schedule and ad-break
    filler in the ErsatzTV UI.
@@ -121,7 +121,7 @@ The short version — the [build guide](docs/build-guide.md) has every command.
    node from a bare box in one command, and a second playout node on the same
    shared media becomes a standby that takes over if the first dies. Note what
    this does and doesn't buy you — a linear channel can't be load-balanced, only
-   made redundant. See [clustering](docs/clustering.md).
+   made redundant. See [clustering](docs/pdf/docs-clustering.pdf).
 
 ## Configuration, all of it
 
@@ -205,7 +205,7 @@ names, show concepts, and the Riposte Laboratories marks and brand language
 are not granted by the licence — build your own station with this plumbing,
 but make it yours. (The Prelinger Archive material the guide points at is
 public domain; anything you air still has to be yours to air. See
-[`docs/ad-standards.md`](docs/ad-standards.md).)
+[`docs/pdf/docs-ad-standards.pdf`](docs/pdf/docs-ad-standards.pdf).)
 
 ---
 
@@ -216,7 +216,7 @@ public domain; anything you air still has to be yours to air. See
 ## Brand
 
 This project follows the [Riposte Laboratories design system](https://github.com/armeehn/riposte-brand) — published at
-[ripostelabs.xyz/brand](https://ripostelabs.xyz/brand/). See [`BRAND.md`](BRAND.md) for what
+[ripostelabs.xyz/brand](https://ripostelabs.xyz/brand/). See [`docs/pdf/brand.pdf`](docs/pdf/brand.pdf) for what
 conforms, what deliberately diverges, and why.
 
 <table>

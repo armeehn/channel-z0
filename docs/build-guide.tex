@@ -1,0 +1,531 @@
+% DOC NO. RL-Z0-BUILD-GUIDE · REV. A
+%
+% This file IS the document. Edit it directly - ripdoc compiles it
+% as it stands and stamps the provenance line at build time.
+%
+%   ripdoc build --only docs-build-guide
+%
+% Promoted from docs/build-guide.md on 2026-09-07 by `ripdoc promote`.
+\documentclass[fontpath=fonts/,logopath=logo/]{riposte-doc}
+\usepackage{riposte-md}
+
+\title{CHANNEL Z0 — Station Build Guide}
+\author{Riposte Laboratories}
+\date{}
+\ripdocno{RL-Z0-BUILD-GUIDE}
+\riprev{A}
+\ripstrapline{\NoCaseChange{\riphi{A local channel, for locals. Broadcasting from a house, relayed through a small server, watchable by everyone.}}}
+\riprunningtitle{CHANNEL Z0 — Station Build Guide}
+
+\begin{document}
+
+\ripmakehead
+
+\riptoc
+
+\begin{ripnote}
+This guide lives inside the Channel Z0 repository. Every config it builds by hand also ships as a ready-made file — look for the \textbf{\ripmarker{} in this repo} notes — and the station scripts referenced throughout are in \ripmdpath{\ripmono{tools/}}.
+\end{ripnote}
+
+
+\ripsection{\ripmdhead{What you're building}}
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+ YOUR HOUSE (10 Mbps+ up)              CHEAP VPS ($0–8/mo)              EVERYONE ELSE
+┌─────────────────────────┐          ┌──────────────────────┐        ┌──────────────┐
+│  Playout PC (24/7)      │          │  Owncast             │        │ Browsers     │
+│  ┌───────────────────┐  │  ONE     │  ┌────────────────┐  │  HLS   │ Phones       │
+│  │ ErsatzTV          │  │  STREAM  │  │ RTMP in :1935  │──┼───────▶│ Smart TVs    │
+│  │ (schedules, ads,  │──┼─────────▶│  │ HLS out :8080  │  │        │ The lab      │
+│  │  filler, bug)     │  │  RTMP    │  └────────────────┘  │        │ Someone's    │
+│  └───────────────────┘  │  ~5 Mbps │  + Caddy (HTTPS)     │        │ house, all   │
+│  + OBS for live shows   │          │  + channelz0 website │        │ day long     │
+└─────────────────────────┘          └──────────────────────┘        └──────────────┘
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+The entire trick of the station is in the middle column: \textbf{exactly one stream ever leaves your house.} The VPS does the crowd work. Your upload never sees viewer number two.
+
+Why not WebRTC: it's built for sub-second, two-way calls, and every viewer would cost you upload bandwidth. A linear channel doesn't care about 20 seconds of delay — HLS trades latency you don't need for compatibility and scale you do. Old-style TV, boring modern plumbing.
+
+\textbf{The software, all free and open source:}
+
+\begin{ripmdtable}{X[0.72,l]X[0.55,l]X[1.88,l]}
+\ripmdth{PIECE} & \ripmdth{RUNS WHERE} & \ripmdth{JOB} \\
+\href{https://ersatztv.org}{ErsatzTV} & Playout PC at home & Turns folders of video into a scheduled linear channel with ad breaks and a channel bug \\
+FFmpeg & Playout PC at home & Relays the channel to the VPS, and preps submitted ads \\
+\href{https://owncast.online}{Owncast} & VPS & Accepts your one RTMP stream, serves HLS to everyone, ready-made watch page + chat \\
+\href{https://caddyserver.com}{Caddy} & VPS & HTTPS, hosts the Channel Z0 website \\
+OBS Studio & Home / the lab & Live segments — Ground Zero remotes, lab shows \\
+\end{ripmdtable}
+
+\riphi{(Alternative playout: \href{https://tunarr.com}{Tunarr} does the same job as ErsatzTV; pick whichever UI you vibe with. This guide assumes ErsatzTV.)}
+
+Build order matters: \textbf{tower first, then master control.} Get the VPS receiving and re-serving video on day one with a junk test stream; build the actual channel second. You'll always have a working end-to-end path to test against.
+
+
+\ripsection{\ripmdhead{Phase 0 — Names and accounts (30 minutes)}}
+
+\begin{ripnumbers}
+\item \textbf{Domain.} \ripmono{channelz0.tv} is the dream (\textasciitilde{}\$30–40/yr); \ripmono{channelz0.org} or \ripmono{.net} is \textasciitilde{}\$12–15/yr and just as functional. Any registrar (Cloudflare, Porkbun, Namecheap).
+\item \textbf{VPS.} See the companion \riphi{Gear \& Cost Plan} for the comparison. Short version: Oracle Cloud's Always Free ARM tier (\$0, 10 TB/mo egress) or a \textasciitilde{}\$6/mo box with a big traffic allowance. 1–2 vCPU and 2 GB RAM is plenty because the VPS never transcodes — it just repackages your already-encoded stream.
+\item \textbf{DNS.} Point two records at the VPS IP:
+\begin{ripbullets}
+\item \ripmono{channelz0.\allowbreak{}example} → A record → VPS IP (the website)
+\item \ripmono{watch.\allowbreak{}channelz0.\allowbreak{}example} → A record → VPS IP (Owncast)
+\end{ripbullets}
+
+\end{ripnumbers}
+
+\riphi{(Everywhere below, replace \ripmono{channelz0.\allowbreak{}example} with your real domain.)}
+
+
+\ripsection{\ripmdhead{Phase 1 — The tower (VPS: Owncast + Caddy)}}
+
+SSH into a fresh Ubuntu/Debian VPS.
+
+
+\ripsubsection{\ripmdhead{1.1 Install Docker and Caddy}}
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+curl -fsSL https://get.docker.com | sh
+sudo apt install -y caddy
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+
+\ripsubsection{\ripmdhead{1.2 Owncast}}
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+mkdir -p /opt/owncast && cd /opt/owncast
+cat > docker-compose.yml <<'EOF'
+services:
+  owncast:
+    image: owncast/owncast:latest
+    container_name: owncast
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"   # web + HLS, kept behind Caddy
+      - "1935:1935"             # RTMP ingest, open to the world (key-protected)
+    volumes:
+      - ./data:/app/data
+EOF
+docker compose up -d
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripmarker{} \riphi{In this repo:} \ripmdpath{\ripmono{vps/\allowbreak{}docker-\allowbreak{}compose.\allowbreak{}yml}} — \ripmono{scp} it up instead of typing.
+
+
+\ripsubsection{\ripmdhead{1.3 Caddy (HTTPS for free, automatically)}}
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+cat > /etc/caddy/Caddyfile <<'EOF'
+channelz0.example {
+    root * /srv/channelz0
+    file_server
+}
+
+watch.channelz0.example {
+    reverse_proxy 127.0.0.1:8080
+}
+EOF
+mkdir -p /srv/channelz0
+sudo systemctl reload caddy
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripmarker{} \riphi{In this repo:} \ripmdpath{\ripmono{vps/Caddyfile}}.
+
+Caddy fetches TLS certificates on its own. \ripmono{https:\allowbreak{}/\allowbreak{}/\allowbreak{}watch.\allowbreak{}channelz0.\allowbreak{}example} now shows Owncast's page (offline, for the moment). Drop the \ripmono{channel-\allowbreak{}z0-\allowbreak{}site.\allowbreak{}html} file in as \ripmono{/\allowbreak{}srv/\allowbreak{}channelz0/\allowbreak{}index.\allowbreak{}html} when you're ready — that's the storefront (Phase 4).
+
+
+\ripsubsection{\ripmdhead{1.4 Lock the doors}}
+
+Rather than clicking through the admin UI, do all three at once — and note the third, which the checklist never used to mention and which matters more than the other two:
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+Z0_OWNCAST_ADMIN_PASS=<current> tools/z0-tower-config.sh \
+  --watch-domain watch.channelz0.example \
+  --admin-pass <new> --stream-key <long-random>
+
+# and afterwards, any time you suspect drift:
+tools/z0-tower-config.sh --watch-domain watch.channelz0.example --check
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\textbf{Video passthrough must be on.} It is the whole reason a 1 GB free-tier box can carry a television channel. With it off, Owncast software-encodes the incoming stream; on a micro shape that runs at about 0.93x realtime, so the public stream falls behind roughly six seconds per minute — forever, because the uplink is capped at 1.0x and every second lost is lost. It does not present as an encoder fault. It presents as "the stream is a couple of minutes behind", then ten, while \ripmono{/api/status} says \ripmono{online:true} throughout.
+
+Changing it does \textbf{not} restart the running transcode: Owncast only builds a new pipeline when a new RTMP session starts, so the config reads back correct while the old ffmpeg keeps going. Restart the uplink on the playout node (\ripmono{docker restart z0-\allowbreak{}uplink}) to make it take.
+
+Open \ripmono{https:\allowbreak{}/\allowbreak{}/\allowbreak{}watch.\allowbreak{}channelz0.\allowbreak{}example/\allowbreak{}admin} (default login is \ripmono{admin} / \ripmono{abc123} on current builds — the console log tells you if it differs) and immediately:
+
+\begin{ripnumbers}
+\item \textbf{Change the admin password and the stream key.} The stream key is the only thing standing between the world and your airwaves. Make it long and random.
+\item Set the server name (\textbf{Channel Z0}), logo, and tags.
+\item Under video settings, set the output to a \textbf{single quality with video passthrough} — Owncast then repackages your incoming stream without re-encoding it, and the cheapest VPS never breaks a sweat. (Only add a transcoded lower rung later if phone viewers on bad connections complain — that's when you'd want 2+ vCPUs.)
+\item Set the \textbf{offline message} — this is what plays between transmissions: \riphi{"TRANSMISSION INTERRUPTED — Z0 RETURNS SHORTLY."}
+\item Firewall, if the host has one: allow 22, 80, 443, 1935.
+\end{ripnumbers}
+
+
+\ripsubsection{\ripmdhead{1.5 Prove the pipe works}}
+
+From any machine with FFmpeg, send colour bars at the tower:
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+ffmpeg -re \
+  -f lavfi -i "smptehdbars=size=1280x720:rate=30" \
+  -f lavfi -i "sine=frequency=440:sample_rate=48000,volume=0.1" \
+  -c:v libx264 -preset veryfast -b:v 2500k -pix_fmt yuv420p \
+  -c:a aac -b:a 96k \
+  -f flv rtmp://watch.channelz0.example:1935/live/YOUR_STREAM_KEY
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripmarker{} \riphi{In this repo:} \ripmdpath{\ripmono{tools/\allowbreak{}test-\allowbreak{}broadcast.\allowbreak{}sh}} runs this for you, reading your domain and key from \ripmono{.env}.
+
+If \ripmono{watch.\allowbreak{}channelz0.\allowbreak{}example} shows bars and hums quietly at you within \textasciitilde{}30 seconds, the tower is live. Everything after this is programming.
+
+
+\ripsection{\ripmdhead{Phase 2 — Master control (playout PC: ErsatzTV)}}
+
+The playout PC is the machine that runs 24/7 at home. Any x86 box with Intel Quick Sync (or an NVIDIA card) works; see the \riphi{Gear \& Cost Plan}. \textbf{Wire it to the router with ethernet.} Wi-Fi is where 24/7 streams go to die.
+
+
+\ripsubsection{\ripmdhead{2.1 Lay out the media library}}
+
+Structure the folders the way the station thinks:
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+/media/channelz0/
+├── shows/
+│   ├── Ground Zero/
+│   │   └── Season 01/
+│   │       ├── Ground Zero - s01e01 - First Contact, First Baguette.mp4
+│   │       └── Ground Zero - s01e02 - The Skin Fits Fine.mp4
+│   └── Lab Hour/
+│       └── Season 01/...
+├── movies/                  # public-domain features
+├── commercials/
+│   ├── local/               # submitted spots (screened, normalized)
+│   └── lab/                 # your sponsor promos
+├── bumpers/                 # "You're watching Channel Z0" (5–15s each)
+├── psas/                    # Prelinger-archive vintage PSAs & shorts
+└── interstitials/
+    ├── colorbars-1h.mp4     # sign-off loop (generated below)
+    └── technical-difficulties.mp4
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+Shows use Plex-style naming (\ripmono{Show -\allowbreak{} s01e01 -\allowbreak{} Title.\allowbreak{}ext}) so the library scanner files them correctly.
+
+\ripmarker{} \riphi{In this repo:} \ripmdpath{\ripmono{tools/\allowbreak{}make-\allowbreak{}media-\allowbreak{}tree.\allowbreak{}sh}} creates this whole layout in one go.
+
+\textbf{Free period-correct filler:} the Internet Archive's \href{https://archive.org/details/prelinger}{Prelinger collection} — thousands of public-domain educational films, PSAs, and vintage ads. Exactly the texture an old-style channel needs between local spots, and legally spotless.
+
+\ripmarker{} \riphi{In this repo:} \ripmdpath{\ripmono{tools/\allowbreak{}fetch-\allowbreak{}archive.\allowbreak{}sh}} does the fetching — Prelinger shorts, cartoons, and the themed feature nights, filtered to public-domain-marked items and verified with ffprobe on the way in. It is resumable, so run it overnight against the colour bars: \ripmono{tools/\allowbreak{}fetch-\allowbreak{}archive.\allowbreak{}sh -\allowbreak{}-\allowbreak{}all}. Full manual in \ripdocref{\ripmono{docs/\allowbreak{}archive-\allowbreak{}fetch.\allowbreak{}md}}{RL-Z0-ARCHIVE-FETCH}.
+
+\begin{ripnote}
+⚠ Don't point a fetcher at archive.org's \ripmono{classic\_\allowbreak{}tv\_\allowbreak{}commercials} collection wholesale — it mixes genuine vintage spots with material still very much in copyright (there's a 2007 FedEx ad in there). Filter on the licence mark, which is what the tool does.
+\end{ripnote}
+
+
+\ripsubsection{\ripmdhead{2.2 Install ErsatzTV (Docker)}}
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+docker run -d --name ersatztv \
+  -p 8409:8409 \
+  -v /opt/ersatztv/config:/config \
+  -v /media/channelz0:/media:ro \
+  --device /dev/dri:/dev/dri \
+  --restart unless-stopped \
+  ghcr.io/ersatztv/ersatztv:latest-vaapi
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripmarker{} \riphi{In this repo:} \ripmdpath{\ripmono{playout/\allowbreak{}ersatztv.\allowbreak{}sh}} wraps this, with the tag configurable via \ripmono{ERSATZTV\_TAG}.
+
+Notes, as of this writing: \ripmono{latest-vaapi} is the right tag for Intel Quick Sync boxes (\ripmono{latest-nvidia} for NVENC; plain \ripmono{latest} for software-only). \ripmono{-\allowbreak{}-\allowbreak{}device /\allowbreak{}dev/\allowbreak{}dri} hands the GPU to the container. Web UI lands on \ripmono{http:\allowbreak{}/\allowbreak{}/\allowbreak{}playout-\allowbreak{}pc:\allowbreak{}8409}.
+
+
+\ripsubsection{\ripmdhead{2.3 Configure the station}}
+
+\textbf{If a Channel Z0 already exists somewhere, do not do any of this by hand.} Capture that station and pour it into this box — it carries the profile, the libraries, the collections, the filler presets, the channel, the watermark, the graphics elements and the playout, and it re-points the encoder at whatever hardware this machine has:
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{8.9}{13.8}
+\begin{ripcodeblock}
+# on the machine that is on air — read-only, safe against a live station
+tools/z0-station-image.sh --capture --from root@<node>:/config --out /tmp/z0-station.tgz
+# on the new box
+tools/bootstrap-node.sh --role playout --station-image /tmp/z0-station.tgz …
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+See \ripdocref{clustering}{RL-Z0-CLUSTERING}. There is no config API to script instead — ErsatzTV's \ripmono{/api/…} serves the SPA, not JSON — so the database is the station.
+
+The steps below are how you build the \textbf{first} one, from nothing.
+
+In the ErsatzTV web UI, in order:
+
+\begin{ripnumbers}
+\item \textbf{FFmpeg profile} (Settings → FFmpeg Profiles): one profile, \ripmono{Z0 Broadcast} — 1920×1080, H.264 hardware encode (VAAPI/QSV), \textasciitilde{}4500 kbps video, AAC 128 kbps audio, normalize framerate on. If your uplink is a true 10 \riphi{megabits}, make it 1280×720 at 3000–3500 kbps instead and leave headroom for the household. This one profile is the master encode — everything downstream just copies it.
+\item \textbf{Libraries} (Media → Libraries): add local libraries pointing at \ripmono{shows/}, \ripmono{movies/}, and — as \riphi{Other Videos} — \ripmono{commercials/}, \ripmono{bumpers/}, \ripmono{psas/}, \ripmono{interstitials/\allowbreak{}}. Set libraries to rescan on an interval, so dropping a new ad in the folder is all it takes.
+\item \textbf{Collections}: build collections named \ripmono{Local Ads}, \ripmono{Lab Promos}, \ripmono{Bumpers}, \ripmono{Vintage PSAs}, \ripmono{Colour Bars}. These are the ammunition for filler.
+\item \textbf{Filler presets} (Media → Filler Presets): this is the old-TV magic.
+\begin{ripbullets}
+\item \ripmono{Ad Break} — mid-roll filler drawing from \ripmono{Local Ads} + \ripmono{Lab Promos} + \ripmono{Vintage PSAs}.
+\item \ripmono{Station ID} — pre/post-roll from \ripmono{Bumpers}.
+\item \textbf{Pad to the half hour}: use padded filler mode so every slot fills to :00/:30 with ads. This is the single feature that makes it feel like real television — shows start on the half hour \riphi{because the ad break stretched to fit}, exactly like 1994.
+\item \ripmono{Dead Air} — fallback filler set to \ripmono{Colour Bars}, so if a schedule ever runs dry the station shows bars instead of black.
+\end{ripbullets}
+
+\item \textbf{Channel} (Channels → Add): number \ripmono{1}, name \textbf{Channel Z0}, streaming mode \textbf{MPEG-TS}, your \ripmono{Z0 Broadcast} profile. Add the \textbf{watermark}: your Z0 logo PNG, bottom-right, \textasciitilde{}15\% opacity, always on. That's the channel bug.
+\item \textbf{Schedule} (Schedules): build the broadcast day from schedule items (each item = a collection or show + a filler preset). A starting rhythm:
+\begin{ripbullets}
+\item mornings: cartoons/PSAs · midday: Prelinger theatre + community loop · afternoon: movie
+\item \textbf{19:00 — GROUND ZERO} (flagship slot, protect it)
+\item 20:00: prime movie · 23:00: mellow late block
+\item \ripmarker{} \riphi{In this repo:} \ripdocref{\ripmono{docs/\allowbreak{}programming.\allowbreak{}md}}{RL-Z0-PROGRAMMING} turns that rhythm into the whole week — every block defined, the themed nights, the show bible, and the exact ErsatzTV mapping (collections, fixed-start anchors, weekend schedule). It's the twin of the storefront's program grid; build from it.
+\item \textbf{00:00 — SIGN-OFF}: a nightly ritual item (anthem, station sign-off card — \ripmdpath{\ripmono{tools/\allowbreak{}make-\allowbreak{}signoff.\allowbreak{}sh}} generates the card-into-bars close), then \ripmono{Colour Bars} until the 06:00 sign-on. Deeply on-brand, and it costs nothing.
+\end{ripbullets}
+
+\item Sanity-check locally: open \ripmono{http:\allowbreak{}/\allowbreak{}/\allowbreak{}playout-\allowbreak{}pc:\allowbreak{}8409/\allowbreak{}iptv/\allowbreak{}channel/\allowbreak{}<number>.\allowbreak{}ts} in VLC — \textbf{the channel number you set in step 5, not 1}. Channel Z0 is number 0, and \ripmono{/\allowbreak{}iptv/\allowbreak{}channel/\allowbreak{}1.\allowbreak{}ts} returns 404 on it; a wrong number here gives you a node that answers every health check and publishes nothing. You should be watching Channel Z0. (ErsatzTV also serves an XMLTV guide at \ripmono{/\allowbreak{}iptv/\allowbreak{}xmltv.\allowbreak{}xml} — useful later for generating the website's schedule.)
+\end{ripnumbers}
+
+
+\ripsection{\ripmdhead{Phase 3 — The uplink (one relay, running forever)}}
+
+The relay is a single FFmpeg process that copies the already-encoded channel from ErsatzTV to the tower. \ripmono{-c copy} means no second encode — it's pure plumbing, nearly zero CPU.
+
+The unit ships in this repo as \ripmdpath{\ripmono{playout/\allowbreak{}z0-\allowbreak{}uplink.\allowbreak{}service}}. It reads your domain, stream key, and channel URL from an environment file, so the secret never lives inside the unit:
+
+\ripcodeopen
+\ripcodehead{ini}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+[Unit]
+Description=Channel Z0 uplink (ErsatzTV -> Owncast)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+EnvironmentFile=/etc/channel-z0.env
+ExecStart=/usr/bin/ffmpeg -hide_banner -loglevel warning \
+  -i ${Z0_CHANNEL_URL} \
+  -c copy \
+  -f flv rtmp://${Z0_WATCH_DOMAIN}:1935/live/${Z0_STREAM_KEY}
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+Install it:
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+sudo cp playout/z0-uplink.service /etc/systemd/system/
+sudo cp .env.example /etc/channel-z0.env   # then edit in your real values
+sudo systemctl daemon-reload
+sudo systemctl enable --now z0-uplink
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripmono{Restart=\allowbreak{}always} is the station engineer who never sleeps: home internet blips, ErsatzTV restarts, whatever — the uplink reconnects five seconds after the path returns, and Owncast picks the stream back up. While it's down, viewers see your offline message instead of an error. Broadcast continuity, handled.
+
+\textbf{Uplink budget check:} 4500 kbps video + 128 kbps audio + overhead ≈ 5 Mbps sustained. On an 80 Mbps (10 MB/s) uplink that's 6\% utilization; even on a literal 10 Mbps plan it fits with room for the household, at 720p. One stream. Always one stream.
+
+\textbf{Containerized alternative.} Instead of the systemd unit, \ripmdpath{\ripmono{playout/\allowbreak{}compose.\allowbreak{}yml}} runs the whole home side — ErsatzTV, the uplink relay, and the optional now-playing bridge — in one \ripmono{docker compose up -\allowbreak{}d}. It's the easy path on a homelab; see \ripdocref{\ripmono{docs/\allowbreak{}self-\allowbreak{}hosting.\allowbreak{}md}}{RL-Z0-SELF-HOSTING} for Proxmox and TrueNAS specifics (mostly: how to hand the box's iGPU to the container).
+
+\textbf{The live marquee (optional).} Owncast doesn't know what ErsatzTV is airing — \ripmdpath{\ripmono{playout/\allowbreak{}nowplaying.\allowbreak{}py}} closes that gap. It reads ErsatzTV's XMLTV guide, works out the current program, and writes it into Owncast's stream title, which the storefront then shows as a live NOW SHOWING line. Create an Owncast access token at \ripmono{https:\allowbreak{}/\allowbreak{}/\allowbreak{}watch.\allowbreak{}<domain>/\allowbreak{}admin/\allowbreak{}access-\allowbreak{}tokens} with the \riphi{set stream title} scope, put it in \ripmono{.env} as \ripmono{Z0\_\allowbreak{}OWNCAST\_\allowbreak{}TOKEN}, and start it with \ripmono{docker compose -\allowbreak{}-\allowbreak{}profile nowplaying up -\allowbreak{}d} (or run the script under a systemd timer).
+
+
+\ripsection{\ripmdhead{Phase 4 — The storefront (channelz0.example)}}
+
+The storefront lives at \ripmdpath{\ripmono{site/\allowbreak{}index.\allowbreak{}html}} — live player, ON AIR light, program grid, and the ad-submission counter, in the Riposte Laboratories design language. (The original CRT version is preserved at \ripmdpath{\ripmono{site/\allowbreak{}retro/\allowbreak{}index.\allowbreak{}html}}.) It's hosted on \textbf{Cloudflare} (a Worker serving \ripmono{site/} as static assets) — the tower (Owncast) carries only the video, and Cloudflare carries the page. To deploy:
+
+\begin{ripnumbers}
+\item Open the file and edit the two lines at the top of the \ripmono{<script>} — everything in \ripmono{CONFIG} derives from them: \ripmono{js const WATCH\_\allowbreak{}HOST =\allowbreak{} "watch.\allowbreak{}ch0.\allowbreak{}ripostelabs.\allowbreak{}xyz"; /\allowbreak{}/\allowbreak{} the Owncast tower on the VPS const AD\_\allowbreak{}EMAIL   =\allowbreak{} "ch0@\allowbreak{}ripostelabs.\allowbreak{}xyz";        /\allowbreak{}/\allowbreak{} where spot submissions land}
+\item \textbf{Deploy to Cloudflare} (Workers Static Assets via its Git integration — no CI file, no secrets):
+\begin{ripbullets}
+\item Workers \& Pages → \textbf{Create} → \textbf{Import a repository} → pick your repo. Cloudflare detects the static site, commits a \ripmono{wrangler.\allowbreak{}jsonc} (with \ripmono{assets.\allowbreak{}directory:\allowbreak{} "site"}), and deploys. You get a \ripmono{*.workers.dev} URL.
+\item The Worker → \textbf{Settings → Domains \& Routes} → add a \textbf{Custom Domain} \ripmono{ch0.\allowbreak{}ripostelabs.\allowbreak{}xyz} (instant, since ripostelabs.xyz is on Cloudflare DNS).
+\item Every push to \ripmono{main} now auto-deploys. (Prefer deploying by hand? \ripmono{npx wrangler deploy}.) \textbf{DNS gotcha for the tower:} add \ripmono{watch.\allowbreak{}ch0.\allowbreak{}ripostelabs.\allowbreak{}xyz} → VPS IP as \textbf{DNS only (grey cloud), not proxied} — Cloudflare's proxy won't pass RTMP (:1935) and shouldn't carry a 24/7 video stream. The page is proxied; the stream host is not.
+\end{ripbullets}
+
+\item \textbf{Cross-origin note.} The page is on Cloudflare and the stream is on the VPS, so the tower must send permissive CORS — the updated \ripmdpath{\ripmono{vps/Caddyfile}} does this. \ripmono{site/\_headers} and \ripmono{site/\allowbreak{}\_\allowbreak{}redirects} (security headers, and short links like \ripmono{/watch}) are honoured by Workers Static Assets, same as Pages. There is deliberately \textbf{no} GitHub Pages fallback: GitHub Pages is not enabled on this repo, and Cloudflare is the only publishing route.
+\end{ripnumbers}
+
+
+\ripsubsection{\ripmdhead{When channelz0.tv goes live}}
+
+Everything is staged for a one-line flip; do these in order:
+
+\begin{ripnumbers}
+\item \textbf{Buy it} at any registrar, then add \ripmono{channelz0.tv} to Cloudflare (Add a site) so its DNS is Cloudflare-managed.
+\item \textbf{Custom domains.} In the \ripmono{channel-z0} Worker → Settings → Domains \& Routes, add \ripmono{channelz0.tv} (and \ripmono{www} if you want) as Custom Domains. Both it and \ripmono{ch0.\allowbreak{}ripostelabs.\allowbreak{}xyz} now serve the site.
+\item \textbf{The tower.} Add a DNS record \ripmono{watch.\allowbreak{}channelz0.\allowbreak{}tv} → VPS IP, and uncomment the \ripmono{watch.\allowbreak{}channelz0.\allowbreak{}tv \{ … \}} block in \ripmdpath{\ripmono{vps/Caddyfile}}; \ripmono{sudo systemctl reload caddy}. Caddy fetches the cert automatically.
+\item \textbf{The site.} In \ripmdpath{\ripmono{site/\allowbreak{}index.\allowbreak{}html}}, change the two lines at the top of the script — \ripmono{WATCH\_\allowbreak{}HOST =\allowbreak{} "watch.\allowbreak{}channelz0.\allowbreak{}tv"} and \ripmono{AD\_\allowbreak{}EMAIL =\allowbreak{} "ads@\allowbreak{}channelz0.\allowbreak{}tv"}. Everything else in \ripmono{CONFIG} derives from those. Push; Cloudflare redeploys on its own.
+\item \textbf{\ripmono{.env}} on the playout box: set \ripmono{Z0\_\allowbreak{}SITE\_\allowbreak{}DOMAIN} / \ripmono{Z0\_\allowbreak{}WATCH\_\allowbreak{}DOMAIN} to the \ripmono{channelz0.tv} hostnames (and re-issue the Owncast token against the new host if you moved it).
+\item \textbf{Optional — canonicalize.} To make \ripmono{channelz0.tv} the one true home and redirect the old subdomain, uncomment the 301 in \ripmdpath{\ripmono{site/\allowbreak{}\_\allowbreak{}redirects}}.
+\end{ripnumbers}
+
+The player uses hls.js and falls back to native HLS on Safari/iPhones. If the video ever refuses to load cross-subdomain (a CORS grump), the two-line fallback is an iframe of Owncast's built-in player: \ripmono{<iframe src=\allowbreak{}"https:\allowbreak{}/\allowbreak{}/\allowbreak{}watch.\allowbreak{}channelz0.\allowbreak{}example/\allowbreak{}embed/\allowbreak{}video" allowfullscreen></\allowbreak{}iframe>} — but the direct HLS route is the full retro experience, so try that first. Owncast's own page at \ripmono{watch.} stays useful regardless: it has the live chat.
+
+
+\ripsection{\ripmdhead{Phase 5 — Going live (Ground Zero remotes, Lab Hour)}}
+
+Two patterns, in order of ambition:
+
+\textbf{Pattern A — the hard cutover (start here).} OBS on any machine, streaming to the \riphi{same} RTMP URL and key. When it's time to go live:
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+sudo systemctl stop z0-uplink     # network feed off
+# OBS: Start Streaming              live from the lab / the field
+# ...show happens...
+# OBS: Stop Streaming
+sudo systemctl start z0-uplink    # network feed returns
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+Viewers see a few seconds of "transmission interrupted" at each swap — which, for a channel run by an alien in a human suit, is arguably canon.
+
+\textbf{Pattern B — OBS as master control (the upgrade).} OBS runs 24/7 on the playout PC and \riphi{it} owns the uplink; the ErsatzTV feed becomes just another input:
+
+\begin{ripbullets}
+\item Scene 1 \ripmono{NETWORK FEED}: a VLC/media source playing \ripmono{http:\allowbreak{}/\allowbreak{}/\allowbreak{}127.\allowbreak{}0.\allowbreak{}0.\allowbreak{}1:\allowbreak{}8409/\allowbreak{}iptv/\allowbreak{}channel/\allowbreak{}1.\allowbreak{}ts}
+\item Scene 2 \ripmono{LIVE — GROUND ZERO}: camera + the baguette feed
+\item Scene 3 \ripmono{TECHNICAL DIFFICULTIES}: a slate card, for emergencies
+\end{ripbullets}
+
+Now going live is one seamless scene-click, no dropout. Cost: OBS re-encodes the feed continuously, so the playout PC needs its hardware encoder for OBS (set OBS output to QSV/NVENC, 4500 kbps, and have ErsatzTV's profile use software or the other encoder). Do Pattern A until the swap dance annoys you; graduate to B.
+
+Field kit notes for Ground Zero — including how to hide a lavalier microphone inside a real baguette — are in the \riphi{Gear \& Cost Plan}.
+
+
+\ripsection{\ripmdhead{The ad pipeline (locals → airwaves)}}
+
+\begin{ripnumbers}
+\item \textbf{Intake.} Publish specs on the website (the site file has them built in): 15 / 30 / 60 seconds exactly, MP4 (H.264 + AAC), 1080p or 720p, you must own the rights to everything in it, keep it neighbourly. Collect via \ripmono{ads@\allowbreak{}channelz0.\allowbreak{}example} or a free file-drop form (Google Form works fine).
+\item \textbf{Screening.} Watch every submission before it airs. You are the FCC of this operation. The written one-page standard that saves arguments later ships as \ripdocref{\ripmono{docs/\allowbreak{}ad-\allowbreak{}standards.\allowbreak{}md}}{RL-Z0-AD-STANDARDS} — post it, link it, point to it.
+\item \textbf{Normalize.} Every accepted spot gets one pass through this — same resolution, same framerate, same \riphi{loudness} (the classic sin of TV ads was being louder than the show; you get to fix history): \ripmono{bash ffmpeg -\allowbreak{}i submission.\allowbreak{}mp4 \textbackslash{} -\allowbreak{}vf "scale=\allowbreak{}1920:\allowbreak{}1080:\allowbreak{}force\_\allowbreak{}original\_\allowbreak{}aspect\_\allowbreak{}ratio=\allowbreak{}decrease,\allowbreak{}pad=\allowbreak{}1920:\allowbreak{}1080:\allowbreak{}(ow-\allowbreak{}iw)/\allowbreak{}2:\allowbreak{}(oh-\allowbreak{}ih)/\allowbreak{}2,\allowbreak{}fps=\allowbreak{}30,\allowbreak{}format=\allowbreak{}yuv420p" \textbackslash{} -\allowbreak{}af "loudnorm=\allowbreak{}I=\allowbreak{}-\allowbreak{}16:\allowbreak{}TP=\allowbreak{}-\allowbreak{}1.\allowbreak{}5:\allowbreak{}LRA=\allowbreak{}11" \textbackslash{} -\allowbreak{}c:\allowbreak{}v libx264 -\allowbreak{}preset slow -\allowbreak{}b:\allowbreak{}v 5000k -\allowbreak{}maxrate 6000k -\allowbreak{}bufsize 10000k \textbackslash{} -\allowbreak{}c:\allowbreak{}a aac -\allowbreak{}b:\allowbreak{}a 128k -\allowbreak{}ar 48000 -\allowbreak{}movflags +faststart \textbackslash{} "commercials/\allowbreak{}local/\allowbreak{}BusinessName -\allowbreak{} Spot Title (30s).\allowbreak{}mp4"} \ripmarker{} \riphi{In this repo:} \ripmdpath{\ripmono{tools/\allowbreak{}normalize-\allowbreak{}ad.\allowbreak{}sh}} runs this and files the result in the right folder: \ripmono{tools/\allowbreak{}normalize-\allowbreak{}ad.\allowbreak{}sh submission.\allowbreak{}mp4 "BusinessName -\allowbreak{} Spot Title (30s)"}.
+\item \textbf{Air.} Drop the file in \ripmono{commercials/\allowbreak{}local/\allowbreak{}}. The library rescan picks it up; the \ripmono{Local Ads} collection includes it; the \ripmono{Ad Break} filler starts dealing it into rotation. No further ceremony.
+\end{ripnumbers}
+
+
+\ripsection{\ripmdhead{Broadcast polish}}
+
+\textbf{Generate the sign-off colour bars} (one hour of SMPTE bars with a polite, quiet hum — swap the sine for \ripmono{anullsrc=\allowbreak{}r=\allowbreak{}48000:\allowbreak{}cl=\allowbreak{}stereo} if you want silence):
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+ffmpeg \
+  -f lavfi -i "smptehdbars=size=1920x1080:rate=30" \
+  -f lavfi -i "sine=frequency=440:sample_rate=48000,volume=0.05" \
+  -c:v libx264 -preset veryfast -b:v 2000k -pix_fmt yuv420p \
+  -c:a aac -b:a 96k -t 3600 \
+  interstitials/colorbars-1h.mp4
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripmarker{} \riphi{In this repo:} \ripmdpath{\ripmono{tools/\allowbreak{}make-\allowbreak{}colorbars.\allowbreak{}sh}} — pass minutes as an argument; \ripmono{Z0\_SILENT=1} swaps the hum for silence.
+
+\textbf{The test card.} Raw colour bars prove the pipe (Phase 1.5), but the thing you show \riphi{before sign-on} is the card with the station's name on it — geometry grid, colour bars, a greyscale step wedge, corner castellations, a centre identity panel, and a 1 kHz line-up tone. \ripmdpath{\ripmono{tools/\allowbreak{}make-\allowbreak{}testcard.\allowbreak{}sh}} generates it at 1080p in the station's look; ErsatzTV loops the short clip to fill the pre-06:00 slot, and it doubles as a "please stand by" with a picture the tower can align to. \ripmono{Z0\_SILENT=1} drops the tone.
+
+\textbf{The sign-off.} The end-of-broadcast-day close for the 00:00 SIGN-OFF item: the "THIS CONCLUDES OUR BROADCAST DAY / GOODNIGHT, LOCALS" card dissolving into a short tail of colour bars, so it hands off cleanly to the \ripmono{Colour Bars} filler that carries the rest of the night. \ripmdpath{\ripmono{tools/\allowbreak{}make-\allowbreak{}signoff.\allowbreak{}sh}} makes the whole close in one file — \ripmono{tools/\allowbreak{}make-\allowbreak{}signoff.\allowbreak{}sh 25 10} for a 25-second card and a 10-second bars tail. Where \ripmono{make-slate.sh} makes a static sign-off \riphi{card}, this is the ritual, card into bars.
+
+\textbf{Bumpers.} Five to ten seconds, "NOW WATCHING CHANNEL Z0," made in anything (Kdenlive/DaVinci Resolve are free) — or generated on brand in one command with \ripmdpath{\ripmono{tools/\allowbreak{}make-\allowbreak{}ident.\allowbreak{}sh}}. Record/generate a few variants; the \ripmono{Station ID} filler rotates them. This is 80\% of what makes a stream feel like a \riphi{station}.
+
+\textbf{Slates.} The technical-difficulties card, the sign-off card, "please stand by" — \ripmdpath{\ripmono{tools/\allowbreak{}make-\allowbreak{}slate.\allowbreak{}sh}} generates any of them at 1080p in the station's look. Fills the \ripmono{interstitials/\allowbreak{}technical-\allowbreak{}difficulties.\allowbreak{}mp4} the media tree expects.
+
+\textbf{The bug.} The watermark you set in Phase 2 runs always. Semi-transparent, bottom-right, never explained. Non-negotiable old-TV physics. \ripmdpath{\ripmono{tools/\allowbreak{}make-\allowbreak{}bug.\allowbreak{}sh}} generates the transparent PNG to point the watermark at.
+
+\textbf{Screening spots.} Before you accept a submission, \ripmdpath{\ripmono{tools/\allowbreak{}check-\allowbreak{}ad.\allowbreak{}sh}} reads its length, codecs, and true loudness so you know what you're clearing; \ripmono{tools/\allowbreak{}normalize-\allowbreak{}ad.\allowbreak{}sh} then files it for air.
+
+\textbf{Loudness discipline.} Run \riphi{everything} — shows, bumpers, ads — through the same \ripmono{loudnorm} settings so channel-surfing ears never get blasted. Consistency is the retro luxury.
+
+
+\ripsection{\ripmdhead{Reliability \& operations}}
+
+\begin{ripbullets}
+\item \textbf{When home internet drops:} uplink dies → Owncast flips to your offline message → uplink service reconnects automatically when the line returns. Viewers refresh and they're back. No action required at 3am.
+\item \textbf{When the power blinks:} a small UPS (\textasciitilde{}\$60) on the modem + router + playout PC rides through the flickers. Everything is set to \ripmono{-\allowbreak{}-\allowbreak{}restart unless-\allowbreak{}stopped} / \ripmono{Restart=\allowbreak{}always}, so even a full outage self-heals on power-up.
+\item \textbf{Monitoring:} Owncast's admin shows live viewer counts and stream health. Point free \href{https://uptimerobot.com}{UptimeRobot} at \ripmono{https:\allowbreak{}/\allowbreak{}/\allowbreak{}watch.\allowbreak{}channelz0.\allowbreak{}example/\allowbreak{}api/\allowbreak{}status} — but make it a \textbf{keyword} monitor on \ripmono{"online":true}, not a plain up/down check. A plain check watches the \riphi{tower}, and the tower is almost never the thing that breaks: Owncast, Caddy and the VPS stay perfectly healthy and keep answering \ripmono{200} while the house has stopped sending anything at all. Ask it whether the station is \riphi{broadcasting}, not whether the server is \riphi{answering}. We learned this the expensive way — the channel sat dark for twenty hours behind a completely green endpoint.
+\item \textbf{Updates:} monthly-ish, \ripmono{docker compose pull \&\& docker compose up -\allowbreak{}d} on the VPS, \ripmono{docker pull ghcr.\allowbreak{}io/\allowbreak{}ersatztv/\allowbreak{}ersatztv:\allowbreak{}latest-\allowbreak{}vaapi} + recreate at home. Don't update on a Friday before a Ground Zero premiere.
+\item \textbf{Legal footing:} submitted ads (with a rights attestation), your own shows, and public-domain material keep you clean. Copyrighted music and TV shows are the one real wrinkle — a "local channel for locals" is exactly the kind of thing that stays charming by staying legitimate.
+\end{ripbullets}
+
+
+\ripsection{\ripmdhead{Troubleshooting}}
+
+\begin{ripmdtable}{X[0.55,l]X[1.65,l]}
+\ripmdth{SYMPTOM} & \ripmdth{LIKELY CAUSE → FIX} \\
+Viewers buffer every few seconds & Uplink saturated: drop the FFmpeg profile to 720p/3500k, check nothing else at home is uploading, use ethernet \\
+Stream hiccups at every show change & Ensure the single FFmpeg profile + normalize framerate is on, so ErsatzTV's output stays codec-identical across items; the uplink's \ripmono{Restart=\allowbreak{}always} covers the rest \\
+Uplink log: "non-monotonic DTS" warnings & Cosmetic at this scale; if FFmpeg actually exits, add \ripmono{-\allowbreak{}fflags +genpts} before \ripmono{-i} \\
+Owncast rejects reconnect right after a drop & It holds the old session a few seconds; the service retries every 5s and wins — wait one cycle \\
+Website player black, but Owncast page works & \ripmono{STREAM\_URL} typo or CORS: test the m3u8 in VLC, or fall back to the iframe embed \\
+Ads much louder/quieter than shows & A spot skipped the \ripmono{loudnorm} normalize pass — re-run it \\
+"It's 25 seconds behind real time!" & Yes. It's television. Latency is the cost of infinite viewers on one home connection \\
+Tower says \ripmono{"online":\allowbreak{} false}, but the VPS and Owncast are fine & Nothing is arriving. Check the uplink's channel URL: \ripmono{/\allowbreak{}iptv/\allowbreak{}channel/\allowbreak{}N.\allowbreak{}ts} takes the channel's \textbf{number}, not its id, so renumbering a channel in ErsatzTV silently breaks the relay — the URL starts returning \ripmono{400}, the leader sees an unhealthy channel and stands down. Confirm with \ripmono{curl -\allowbreak{}o /\allowbreak{}dev/\allowbreak{}null -\allowbreak{}w '\%\{http\_\allowbreak{}code\}' http:\allowbreak{}/\allowbreak{}/\allowbreak{}127.\allowbreak{}0.\allowbreak{}0.\allowbreak{}1:\allowbreak{}8409/\allowbreak{}iptv/\allowbreak{}channel/\allowbreak{}N.\allowbreak{}ts} and compare against \ripmono{/\allowbreak{}iptv/\allowbreak{}channels.\allowbreak{}m3u} \\
+A block is missing from the guide entirely & Its content pool resolved to zero items, which is silent — the fill loop is guarded on the enumerator having a current item, so an empty pool schedules nothing and leaves a hole. Either the folder is empty, or the library was scanned but the search index was not (see Phase 2) \\
+A block is short and hands off to filler early & \ripmono{pad\_until} only schedules an item that FITS the remaining time, and gives up on the first one that doesn't. Add \ripmono{discard\_\allowbreak{}attempts} so it looks further down the pool — essential when the pool's runtimes are longer than the slot \\
+\end{ripmdtable}
+
+
+\ripsection{\ripmdhead{Command cheat sheet}}
+
+\begin{ripmdtable}{X[1.07,l]X[0.55,l]X[1.50,l]}
+\ripmdth{DO} & \ripmdth{WHERE} & \ripmdth{COMMAND} \\
+Watch the channel raw & anywhere local & \ripmono{vlc http:\allowbreak{}/\allowbreak{}/\allowbreak{}playout-\allowbreak{}pc:\allowbreak{}8409/\allowbreak{}iptv/\allowbreak{}channel/\allowbreak{}1.\allowbreak{}ts} \\
+Uplink status / logs & playout PC & \ripmono{systemctl status z0-\allowbreak{}uplink} · \ripmono{journalctl -\allowbreak{}fu z0-\allowbreak{}uplink} \\
+Stop/start network feed & playout PC & \ripmono{sudo systemctl stop z0-\allowbreak{}uplink} / \ripmono{start} \\
+Owncast logs & VPS & \ripmono{docker logs -\allowbreak{}f owncast} \\
+Normalize a submitted ad & anywhere & see \riphi{The ad pipeline} §3 \\
+Regenerate sign-off bars & anywhere & see \riphi{Broadcast polish} \\
+Generate the test card & anywhere & \ripmono{tools/\allowbreak{}make-\allowbreak{}testcard.\allowbreak{}sh} \\
+Generate the nightly sign-off & anywhere & \ripmono{tools/\allowbreak{}make-\allowbreak{}signoff.\allowbreak{}sh} \\
+Test pattern to the tower & anywhere & see \riphi{Phase 1.5} \\
+\end{ripmdtable}
+
+\ripdashrule
+
+\riphi{Channel Z0. It's always on somewhere in the neighbourhood.}
+
+\ripend
+
+\end{document}

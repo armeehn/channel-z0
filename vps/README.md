@@ -20,6 +20,6 @@ job is to terminate TLS for the tower and hand the cross-origin page the CORS
 header it needs to pull the stream. See [`vps/Caddyfile`](Caddyfile).
 
 Setup order and hardening (change the default admin password + stream key
-FIRST): see `docs/build-guide.md`, Phase 1. If you run the now-playing bridge,
+FIRST): see `docs/pdf/docs-build-guide.pdf`, Phase 1. If you run the now-playing bridge,
 also create an access token at `/admin/access-tokens` with the *set stream
 title* scope.

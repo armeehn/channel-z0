@@ -1,0 +1,302 @@
+% DOC NO. RL-Z0-CLUSTERING · REV. A
+%
+% This file IS the document. Edit it directly - ripdoc compiles it
+% as it stands and stamps the provenance line at build time.
+%
+%   ripdoc build --only docs-clustering
+%
+% Promoted from docs/clustering.md on 2026-09-07 by `ripdoc promote`.
+\documentclass[fontpath=fonts/,logopath=logo/]{riposte-doc}
+\usepackage{riposte-md}
+
+\title{CHANNEL Z0 — Nodes \& Failover (Station Bulletin № 5)}
+\author{Riposte Laboratories}
+\date{}
+\ripdocno{RL-Z0-CLUSTERING}
+\riprev{A}
+\riprunningtitle{CHANNEL Z0 — Nodes \& Failover (Station Bulletin № 5)}
+
+\begin{document}
+
+\ripmakehead
+
+\riptoc
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+┌───────────────────────────────────────────────────────────┐
+│   CHANNEL Z0 · CH 0 · DESIG RL-Z0                         │
+│   MASTER CONTROL — REDUNDANT                              │
+│   one lease, one transmitter, several machines            │
+└───────────────────────────────────────────────────────────┘
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+How to run the station on more than one machine: what that actually buys you, what it can't, and how to stand a node up in one command.
+
+
+\ripsection{\ripmdhead{Read this first: a linear channel is a singleton}}
+
+The instinct with "add more machines" is load balancing, and for a television channel that instinct is mostly wrong. It's worth being precise about why, because the design follows from it.
+
+\textbf{A channel is one timeline.} At 19:04 the station is four minutes into Ground Zero, everywhere, for everyone. Two playout machines encoding the same schedule do not produce one channel twice — they produce two \riphi{different} channels that drift apart within seconds, because ffmpeg timing, filler selection, and encoder state are not deterministic across machines.
+
+\textbf{Two publishers corrupt the stream.} The tower accepts one RTMP publisher per stream key. Point two at it and Owncast gets interleaved keyframes from two unrelated encodes. The failure is not "slightly degraded" — it's a channel that won't play.
+
+\textbf{The viewer-scaling problem is already solved, elsewhere.} The station's whole architecture is \riphi{one stream leaves the house, the VPS does the crowd work}. Ten viewers or ten thousand, the playout PC uploads exactly one \textasciitilde{}5 Mbps stream. Adding playout nodes does nothing for audience size, because audience was never the bottleneck.
+
+So: \textbf{you cannot load-balance playout.} What you \riphi{can} do:
+
+\begin{ripmdtable}{X[0.74,l]X[0.81,l]X[1.45,l]}
+\ripmdth{GOAL} & \ripmdth{DOES ADDING NODES HELP?} & \ripmdth{HOW} \\
+Survive a dead playout box & \textbf{Yes} — the main reason to do this & Active/standby with a lease. Below. \\
+Serve more viewers & No — already handled & The tower. See \ripdocref{build-guide}{RL-Z0-BUILD-GUIDE} Phase 1. \\
+Run a second channel (Z0-2) & \textbf{Yes} — real horizontal scale & One node per channel, separate stream keys. \\
+Faster library work & \textbf{Yes} & \ripmono{worker} nodes running the batch tools. \\
+Zero-downtime failover & Not really & Expect a few seconds of dead air. See the timing below. \\
+\end{ripmdtable}
+
+Everything below is about the first, third and fourth rows.
+
+
+\ripsection{\ripmdhead{The topology}}
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+        SHARED MEDIA  (NFS / SMB — the library AND the lease)
+        ┌───────────────────────────────────────────────┐
+        │  /media/channelz0/…                           │
+        │  /media/channelz0/.z0-cluster/uplink.lock ◀── the lease
+        └───────────────────────────────────────────────┘
+             ▲                ▲                ▲
+   ┌─────────┴──────┐ ┌───────┴────────┐ ┌─────┴──────────┐
+   │ playout-a      │ │ playout-b      │ │ worker-1       │
+   │ ErsatzTV       │ │ ErsatzTV       │ │ (no channel)   │
+   │ z0-leader *ON  │ │ z0-leader …std │ │ batch tools    │
+   └────────┬───────┘ └────────────────┘ └────────────────┘
+            │ exactly one RTMP stream, ever
+            ▼
+   ┌────────────────┐        ┌──────────────┐
+   │ tower (VPS)    │───────▶│  everyone    │
+   │ Owncast + Caddy│  HLS   │  else        │
+   └────────────────┘        └──────────────┘
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+Both playout nodes run ErsatzTV all the time — idle ErsatzTV costs almost nothing, and it means the standby is warm. Only the lease holder runs the uplink.
+
+
+\ripsection{\ripmdhead{Standing up a node}}
+
+One script, three roles. It inspects the machine, tells you what it found, prints a plan, and only then changes anything.
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+# Look, change nothing. Run this first on any new box.
+tools/bootstrap-node.sh --check
+
+# The tower (do this one first — the playout nodes need its domain)
+tools/bootstrap-node.sh --role tower \
+  --watch-domain watch.ch0.example --site-domain ch0.example --yes
+
+# First playout node — with the station and the library it needs to air anything
+tools/bootstrap-node.sh --role playout --node-id playout-a \
+  --watch-domain watch.ch0.example --stream-key "$KEY" \
+  --station-image /tmp/z0-station.tgz \
+  --media-peer root@nas:/mnt/main-data/channelz0 \
+  --media /mnt/z0 --yes
+
+# Second playout node — same command, different id, SAME shared media
+tools/bootstrap-node.sh --role playout --node-id playout-b \
+  --watch-domain watch.ch0.example --stream-key "$KEY" \
+  --station-image /tmp/z0-station.tgz \
+  --media /mnt/z0 --nfs nas:/export/z0 --yes
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripmono{--dry-run} prints every action without taking it. It's idempotent — re-run it after changing a flag and it reconciles, backing up any existing \ripmono{.env} first, since that file holds the one secret.
+
+The only thing it won't do quietly is install Docker: that means piping a remote script into a shell, so it tells you the exact command and waits for \ripmono{-\allowbreak{}-\allowbreak{}install-\allowbreak{}docker} (or \ripmono{--yes}).
+
+
+\ripsubsection{\ripmdhead{The two flags that decide whether the node is a station or an empty box}}
+
+\textbf{\ripmono{-\allowbreak{}-\allowbreak{}station-\allowbreak{}image}} is the difference between "ErsatzTV is running" and "the channel is on air". Everything that makes this station \riphi{this station} — the FFmpeg profile, the libraries, the smart collections, the filler presets, the channel and its watermark, the graphics elements, the playout — is configured through the web UI and stored in one SQLite file. There is no config API: \ripmono{/api/…} serves the SPA, not JSON. So the only faithful way to reproduce a station is to carry its database across.
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+# On the machine that is on air (read-only; safe against a live station):
+tools/z0-station-image.sh --capture \
+  --from root@vile:/mnt/solid-state/ersatztv --out /tmp/z0-station.tgz
+
+tools/z0-station-image.sh --inspect /tmp/z0-station.tgz
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+The image is a few megabytes. Restoring it re-points three things at the new machine, and each one is a trap if you skip it:
+
+\begin{ripmdtable}{X[0.55,l]X[1.60,l]}
+\ripmdth{IT REWRITES} & \ripmdth{BECAUSE OTHERWISE} \\
+the FFmpeg profile's hardware accel \textbf{and its name} & the profile says \ripmono{h264\_nvenc} on a VAAPI box, silently falls back to software, and eats a CPU \\
+Plex / Jellyfin / Emby sources — deleted & the new node inherits dead libraries pointing at a host it cannot reach. None of Z0's smart collections use them; every one is \ripmono{type:\allowbreak{}other\_\allowbreak{}video} against the local library \\
+the playout anchor — cleared & an anchor stores an \textbf{instruction index} into the flattened schedule. Restored elsewhere it still looks valid and points at a different instruction. The week doesn't fail, it resumes mid-block and the only symptom is a day that looks subtly wrong \\
+\end{ripmdtable}
+
+It also drops the search index, because a stale index makes every tag query resolve to nothing while the folders all look correctly full.
+
+\textbf{\ripmono{--media-peer}} mirrors the library. Reach for \ripmono{fetch-\allowbreak{}archive.\allowbreak{}sh} here and you will get \riphi{a} library, not \riphi{this} one: it runs search queries, so a rebuild returns different titles with different tags, and its manifest only ever skips what is already down — it cannot replay a library. About a fifth of the station has no recipe at all (schoolroom, the Canadian and BC sets, the music cards, everything generated). Copy it:
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+tools/z0-media-sync.sh --from-peer root@vile:/mnt/main-data/channelz0 \
+  --bwlimit 20000        # the station is broadcasting over this same line
+tools/z0-media-sync.sh --from-peer root@vile:/mnt/main-data/channelz0 --verify
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+It never copies \ripmono{.z0-cluster}. That directory \riphi{is} the lease — copy it and the new box starts up believing it is already on air, which is the exact double-publish everything below exists to prevent.
+
+
+\ripsubsection{\ripmdhead{Prove the tools before you trust them with a machine}}
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+tools/test-spawn.sh      # ~5 seconds, no station, no media, no GPU
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+It builds a synthetic station in a scratch database and asserts the properties that decide whether a spawned node airs the right thing: the encoder is re-pointed, the remote libraries don't travel, the playout anchor is cleared, the index is dropped, the channel number is read rather than assumed, and the lease is never copied.
+
+
+\ripsubsection{\ripmdhead{The channel number is not 1}}
+
+ErsatzTV publishes at \ripmono{/\allowbreak{}iptv/\allowbreak{}channel/\allowbreak{}<number>.\allowbreak{}ts}, and the number is whatever the station was built with. \textbf{Channel Z0 is number 0} — \ripmono{/\allowbreak{}iptv/\allowbreak{}channel/\allowbreak{}1.\allowbreak{}ts} returns 404 on it. Bootstrap reads the real number out of the station image and writes it into \ripmono{.env}; it used to hardcode 1, which produced a node that passed every health check and published nothing.
+
+That is also why bootstrap's verification \ripmono{ffprobe}s the channel for decodable video instead of accepting an HTTP 200 from ErsatzTV. ErsatzTV answers on :8409 with no libraries, no channel, and nothing to air — and it answers while wedged. The failover logic already knew this; a node ffprobes itself before standing for election precisely so a broken node doesn't win and broadcast silence.
+
+
+\ripsection{\ripmdhead{How exactly-one-on-air works}}
+
+\ripmono{playout/\allowbreak{}z0-\allowbreak{}leader.\allowbreak{}sh} wraps the uplink. Every playout node runs it; at most one publishes.
+
+\textbf{The lease.} A directory on shared storage, \ripmono{.\allowbreak{}z0-\allowbreak{}cluster/\allowbreak{}uplink.\allowbreak{}lock}. \ripmono{mkdir} is atomic and fails if it exists — that's acquisition, with no window where two nodes both believe they won. The holder writes a heartbeat into it every few seconds.
+
+\textbf{Taking over.} A standby watches the heartbeat. If it stops changing for \ripmono{TTL}, the standby steals the lease by \ripmono{mv}-ing the lock directory aside — \ripmono{rename} is atomic, so if two standbys pounce at once exactly one wins and the loser retries next tick.
+
+\textbf{Fencing, which is the part that matters.} The old leader must be \riphi{off air} before the new one starts:
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+   t=0     leader loses shared storage / dies / is partitioned
+   t=12s   FENCE — leader can't renew, so it kills its own uplink
+   t=20s   TTL   — a standby steals the lease and goes on air
+           ─────
+            8s   dead air, and 8s of margin against double-publishing
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripmono{TTL > FENCE} is the whole safety argument. Eight seconds of dead air beats two stations at once. If you shorten these (\ripmono{Z0\_LEASE\_*} in \ripmono{.env}), keep the gap.
+
+\textbf{Clocks are not trusted.} Comparing a heartbeat's mtime against the local clock breaks the moment two machines disagree about the time, which on a homelab is whenever NTP hiccups. Instead each node watches for the heartbeat \riphi{value to change} and times that with its own elapsed seconds. Skew between nodes is irrelevant. (Run NTP anyway, for legible logs.)
+
+\textbf{Sick nodes don't stand for election.} Before taking the lease a node \ripmono{ffprobe}s its own channel URL — proving ErsatzTV is emitting decodable video, not merely answering HTTP. A node whose ErsatzTV is wedged stands down and lets a standby take it, rather than winning the election and airing silence.
+
+\textbf{Planned reboots are fast.} On \ripmono{SIGTERM} the leader releases the lease deliberately instead of letting it time out, so \ripmono{docker compose down} hands over in a second or two rather than the full TTL.
+
+
+\ripsection{\ripmdhead{Prove it, don't assume it}}
+
+Redundancy you haven't tested isn't redundancy.
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+tools/test-failover.sh          # 3 simulated nodes; ~30 seconds
+Z0_TEST_NODES=5 tools/test-failover.sh
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+It runs real supervisor processes against a scratch cluster directory with a fake publisher, hard-kills the node that's on air (SIGKILL to its whole process group — a simulated power cut), and asserts both properties:
+
+\begin{ripbullets}
+\item \textbf{SAFETY} — never more than one publisher, sampled continuously throughout
+\item \textbf{LIVENESS} — a standby takes over within the TTL
+\end{ripbullets}
+
+Measured on the compressed test timings (renew 1s / fence 3s / ttl 5s): hard failure recovered in \textasciitilde{}4.7 s, graceful handover in \textasciitilde{}2.0 s, and the safety invariant held. No tower, no ErsatzTV, no media required — safe on a laptop.
+
+Check the real cluster any time, from any node:
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+playout/z0-leader.sh --status
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+\ripcodeopen
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+lease holder: playout-a
+publishing:
+  playout-a  since 2026-08-06T21:53:53Z
+
+NODE             ROLE      STATE     LAST-SEEN              HOST
+playout-a        playout   leader    2026-08-06T21:53:57Z   nuc-1
+playout-b        playout   standby   2026-08-06T21:53:57Z   nuc-2
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+Two entries under \ripmono{publishing:} means the thing this whole design exists to prevent is happening. \ripmono{--status} shouts about it.
+
+
+\ripsection{\ripmdhead{The one way to get this wrong}}
+
+\textbf{Every playout node must see the same lease.} If \ripmono{Z0\_\allowbreak{}CLUSTER\_\allowbreak{}DIR\_\allowbreak{}HOST} points at local disk on each machine, both nodes will find an empty cluster, both will conclude they're alone, and both will publish. You will have built the exact failure the lease exists to prevent, and the symptom — a channel that won't play — looks nothing like the cause.
+
+Put the cluster directory on the shared mount. \ripmono{bootstrap-\allowbreak{}node.\allowbreak{}sh} warns when the media root looks local; believe it. \ripmono{--status} from a second node is the quick confirmation: if it can't see the first node, they aren't clustered.
+
+
+\ripsection{\ripmdhead{Running a second channel}}
+
+This is the real horizontal scale, and it needs no coordination at all — a second channel is a second \riphi{station}, sharing only the media library:
+
+\begin{ripnumbers}
+\item A second stream key on the tower (Owncast: a second instance, or PeerTube — see \ripmdpath{\ripmono{vps/peertube/}}).
+\item A node with its own \ripmono{.env}: different \ripmono{Z0\_NODE\_ID}, different \ripmono{Z0\_STREAM\_KEY}, different \ripmono{Z0\_\allowbreak{}CHANNEL\_\allowbreak{}URL} (ErsatzTV channel 2), and a \textbf{different \ripmono{Z0\_\allowbreak{}CLUSTER\_\allowbreak{}DIR\_\allowbreak{}HOST}} — channel 2's lease must not collide with channel 1's.
+\item Give each channel its own standby if you want the same redundancy.
+\end{ripnumbers}
+
+Media is read-only to playout, so any number of nodes can share one library.
+
+
+\ripsection{\ripmdhead{Known limits, plainly}}
+
+\begin{ripbullets}
+\item \textbf{Failover is not seamless.} Viewers see a few seconds of dead air and their player reconnects. Making that invisible needs a hot standby encoder and a switcher at the tower — a different, much larger project.
+\item \textbf{The standby resumes the schedule, not the frame.} ErsatzTV starts the new node at the current wall-clock position in the schedule, so you rejoin the programme roughly where you left it, not exactly.
+\item \textbf{Shared storage is a single point of failure.} The lease lives on the NAS; if the NAS dies, every node fences itself and the channel goes dark. That is the \riphi{correct} behaviour (better dark than doubled), but it means the NAS is now the thing to make redundant.
+\item \textbf{Split-brain across a network partition is bounded, not impossible.} Two nodes that can't see each other but \riphi{can} both reach the tower will, in the worst case, briefly overlap around the fence/TTL boundary. The margin exists to make that window small, not to make it zero.
+\item \textbf{No automatic fallback to a standby's \riphi{media}.} Nodes share one library. A node with a stale local copy will air the wrong thing without complaining.
+\end{ripbullets}
+
+\ripdashrule
+
+\riphi{If the transmitter falls over, another one picks it up. That's the whole idea. The bars are still there if both of them go.}
+
+\ripend
+
+\end{document}
