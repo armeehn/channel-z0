@@ -72,7 +72,7 @@ WAVES = {
     "brass":  _harm([1.0, 0.82, 0.62, 0.50, 0.40, 0.30, 0.22, 0.16, 0.12, 0.08]),
     # Strings: many low-amplitude partials, soft attack, used as a bed.
     "string": _harm([1.0, 0.50, 0.33, 0.25, 0.20, 0.16, 0.14, 0.12, 0.10, 0.08]),
-    # A bell for the sting and the crawl arpeggio: sparse, odd-weighted.
+    # A bell: sparse, odd-weighted.
     "bell":   _harm([1.0, 0.0, 0.55, 0.0, 0.32, 0.10, 0.0, 0.16]),
 }
 
@@ -213,315 +213,105 @@ def crash(t, vol=0.30):
     _burst(t, 1.6, vol, 1.5, step=5, echo=0.5, off=32749)
 
 
-def stab(t, vol=0.30, note="D4"):
-    """The orchestra hit.  Nothing says 16-bit faster."""
-    for i, nm in enumerate((note, "A4", "F5", "D5")):
-        voice(t, 0.28, nm, "brass", vol * (0.9 ** i), pan=(-0.45 + 0.30 * i),
-              atk=0.002, dec=0.09, sus=0.30, rel=0.20, echo=0.30)
-    _burst(t, 0.16, vol * 0.5, 2.0, step=2, echo=0.3, off=15485)
-
-
 # ── the score ─────────────────────────────────────────────────────────────
-# Driving but grave — the Mega Man ZERO register rather than classic Mega Man.
-# Those games are fast and heavy at the same time, and that is the target here:
-# 168 BPM and eighth-note bass keep the drive, while the loop turns on an E
-# major dominant and a Phrygian Bb instead of the bright C and G it used to,
-# and the piece ends on an open fifth — A and E, no third at all. A Picardy
-# third resolved it too sweetly for what the story actually is.
-BPM = 168.0
-BEAT = 60.0 / BPM
-BAR = 4 * BEAT
-SIX = BEAT / 4
-
-CHORDS = {
-    "Am": ["A3", "C4", "E4", "A4"], "F": ["F3", "A3", "C4", "F4"],
-    "C": ["C4", "E4", "G4", "C5"], "G": ["G3", "B3", "D4", "G4"],
-    "Dm": ["D3", "F3", "A3", "D4"], "E": ["E3", "G#3", "B3", "E4"],
-    "A": ["A3", "C#4", "E4", "A4"], "Bb": ["Bb3", "D4", "F4", "Bb4"],
-    "A5": ["A3", "E4", "A4", "E5"],
-}
+# Slow and grave.  There is no tempo: a drone on A, a pulse once a second
+# while the signal is leaving, strings that swell as the ring opens, one low
+# impact, and an open fifth to close — A and E, no third, because the story
+# does not resolve sweetly.  The 168 BPM chip score this replaces is in the
+# repository's history; nothing of it is used except the instruments.
+CHORDS = {"Am": ["A4", "C5", "E5", "A5"], "F": ["F4", "A4", "C5", "F5"],
+          "C": ["C4", "E4", "G4", "C5"], "G": ["G4", "B4", "D5", "G5"],
+          "Dm": ["D4", "F4", "A4", "D5"], "E": ["E4", "G#4", "B4", "E5"],
+          "A5": ["A4", "E5", "A5", "E6"]}
 ROOTS = {"Am": "A2", "F": "F2", "C": "C3", "G": "G2", "Dm": "D3", "E": "E2",
-         "A": "A2", "Bb": "Bb2", "A5": "A2"}
+         "A5": "A2"}
 PADS = {"Am": ["A4", "C5", "E5"], "F": ["F4", "A4", "C5"],
-        "C": ["G4", "C5", "E5"], "G": ["G4", "B4", "D5"],
+        "C": ["C4", "E4", "G4"], "G": ["G4", "B4", "D5"],
         "Dm": ["D4", "F4", "A4"], "E": ["E4", "G#4", "B4"],
-        "A": ["A4", "C#5", "E5"], "Bb": ["Bb4", "D5", "F5"],
         "A5": ["A4", "E5", "A5"]}
 
-LOOP = ["Am", "F", "G", "E"]        # the E is major, and it is what darkens it
+# Frame times the picture and the cue share (make_frames.py timeline).
+T_SIGNAL, T_FIELD, T_RING, T_LAND, T_CLAIM, T_LOCKUP = 3.0, 15.0, 25.0, 33.0, 44.0, 52.0
+T_IMPACT = T_LAND + 80 / 30.0
 
 
-def arp(t, bars, chord, vol=0.05, step=None, wave_name="bell", echo=0.4):
-    step = step or SIX
-    seq = CHORDS[chord]
-    for i in range(int(round(bars * BAR / step))):
-        voice(t + i * step, step * 0.9, seq[i % len(seq)], wave_name, vol,
-              pan=-0.55 + 0.30 * (i % 4), atk=0.002, dec=0.08, sus=0.22,
-              rel=0.09, echo=echo)
-
-
-def pad(t, dur, chord, vol=0.045):
+def pad(t, dur, chord, vol=0.045, atk=1.5, rel=1.5):
     for i, nm in enumerate(PADS[chord]):
         voice(t, dur, nm, "string", vol, pan=(-0.62, 0.0, 0.62)[i],
-              atk=0.30, dec=0.4, sus=0.85, rel=0.5, detune=7.0)
+              atk=atk, dec=0.4, sus=0.9, rel=rel, detune=6.0)
 
 
-def line(t, notes, vol=0.15, wave_name="lead", pan=0.0, sus=0.75, echo=0.25,
-         vib=0.0, detune=0.0, atk=0.006, rel=0.10):
-    for name, sixteenths in notes:
-        d = sixteenths * SIX
-        if name != "R":
-            voice(t, d * 0.94, name, wave_name, vol, pan, atk=atk, dec=0.08,
-                  sus=sus, rel=rel, vib=vib, echo=echo, detune=detune)
-        t += d
-    return t
+def bell(t, note, vol=0.05, pan=0.0, dur=0.9):
+    voice(t, dur, note, "bell", vol, pan, atk=0.004, dec=0.25, sus=0.35,
+          rel=0.6, echo=0.45)
 
 
-def bassline(t, bars, chord, vol=0.185, eighths=True):
-    """Driving eighths with an octave lift on the fourth beat.  This is the
-    engine of the whole cue."""
-    r = ROOTS[chord]
-    up = r[:-1] + str(int(r[-1]) + 1)
-    n = int(bars * 8) if eighths else int(bars * 16)
-    step = BEAT / 2 if eighths else BEAT / 4
-    for j in range(n):
-        nm = up if (j % 8) in (6, 7) else r
-        voice(t + j * step, step * 0.80, nm, "bass", vol,
-              atk=0.002, dec=0.06, sus=0.40, rel=0.05)
-
-
-def drums(t, beats, fill_at=None, double=False):
-    for b in range(beats):
-        tb = t + b * BEAT
-        if b % 4 in (0, 2):
-            kick(tb)
-        if b % 4 == 2:
-            kick(tb + BEAT * 0.75, 0.30)
-        if b % 4 in (1, 3):
-            snare(tb)
-        hat(tb)
-        hat(tb + BEAT / 2, 0.055, open_=(b % 8 == 7))
-        if double:
-            hat(tb + BEAT / 4, 0.04)
-            hat(tb + BEAT * 0.75, 0.04)
-        if fill_at is not None and b == fill_at:
-            for i in range(4):
-                snare(tb + i * BEAT / 4, 0.16 + i * 0.02)
-
-
-# The hook.  Four bars, and it climbs every bar until the last one lets go.
-HOOK = [("A5", 2), ("B5", 2), ("C6", 4), ("B5", 2), ("A5", 2), ("G5", 4),
-        ("A5", 2), ("C6", 2), ("F6", 4), ("E6", 2), ("D6", 2), ("C6", 4),
-        ("E6", 2), ("D6", 2), ("C6", 4), ("B5", 2), ("C6", 2), ("D6", 4),
-        ("B5", 4), ("D6", 4), ("G5", 8)]
-HOOK_LOW = [("C5", 2), ("D5", 2), ("E5", 4), ("D5", 2), ("C5", 2), ("B4", 4),
-            ("C5", 2), ("E5", 2), ("A5", 4), ("G5", 2), ("F5", 2), ("E5", 4),
-            ("G5", 2), ("F5", 2), ("E5", 4), ("D5", 2), ("E5", 2), ("F5", 4),
-            ("D5", 4), ("G5", 4), ("B4", 8)]
+def pulse(t, vol=0.16):
+    voice(t, 0.10, "A1", "bass", vol, atk=0.002, dec=0.08, sus=0.3, rel=0.10,
+          echo=0.18)
 
 
 def build():
-    # ── 0.00 – 4.50  publisher sting ──────────────────────────────────────
-    for i in range(25):
-        _burst((6 + 1.05 * i) / 30.0, 0.010, 0.05, 3.0, step=13, off=i * 733)
+    # ── the drone, under everything ───────────────────────────────────────
+    voice(0.0, 57.0, "A1", "bass", 0.10, atk=4.0, dec=0.5, sus=1.0, rel=2.5)
+    voice(0.0, 57.0, "E2", "string", 0.045, pan=0.2, atk=7.0, dec=0.5, sus=1.0,
+          rel=2.5, detune=5.0)
+    voice(0.0, 57.0, "A2", "string", 0.035, pan=-0.2, atk=9.0, dec=0.5, sus=1.0,
+          rel=2.5, detune=4.0)
 
-    t = 44 / 30.0
-    for i, nm in enumerate(("A4", "C5", "E5", "A5")):
-        voice(t + i * 0.070, 0.16, nm, "bell", 0.17, pan=-0.6 + 0.40 * i,
-              atk=0.002, dec=0.10, sus=0.35, rel=0.22, echo=0.55)
-    t += 0.29
-    stab(t, 0.26, "A3")
-    for nm, v, pn in (("A3", 0.13, -0.3), ("E4", 0.10, 0.0), ("A4", 0.09, 0.3)):
-        voice(t, 1.5, nm, "brass", v, pn, atk=0.008, dec=0.35, sus=0.42,
-              rel=0.55, vib=0.10, echo=0.45, detune=6.0)
-    voice(t, 1.7, "A2", "bass", 0.20, atk=0.003, dec=0.30, sus=0.55, rel=0.5)
-    pad(t, 1.9, "Am", 0.05)
+    # ── 3.0 – 15.0  the signal leaving: a pulse once a second ─────────────
+    t = T_SIGNAL
+    while t < T_FIELD - 0.5:
+        pulse(t, 0.16 * max(0.35, 1 - (t - T_SIGNAL) / 14.0))
+        t += 1.0
+    pad(T_SIGNAL + 0.5, T_FIELD - T_SIGNAL - 1.0, "Am", 0.040, atk=2.5)
+    bell(7.0, "E5", 0.045, -0.2)
+    bell(11.0, "C5", 0.045, 0.2)
 
-    # ── 4.50 – 18.50  the prologue bed ────────────────────────────────────
-    # Bouncy rather than solemn: a sixteenth arpeggio from the first bar, and
-    # hats from the fifth, so the crawl already has a pulse under it.
-    t0 = 4.5
-    bars = 9.8
-    t = t0
-    i = 0
-    while t < t0 + bars * BAR:
-        chord = LOOP[i % 4]
-        pad(t, BAR * 0.96, chord, 0.040)
-        arp(t, 1, chord, vol=0.034)
-        for j in range(4):
-            voice(t + j * BEAT, BEAT * 0.7, ROOTS[chord], "bass", 0.15,
-                  atk=0.004, dec=0.12, sus=0.5, rel=0.08)
-        t += BAR
-        i += 1
-    for b in range(int(5 * BAR / BEAT), int(bars * BAR / BEAT)):
-        hat(t0 + b * BEAT, 0.045)
-        if b % 4 == 2:
-            snare(t0 + b * BEAT, 0.10)
+    # ── 15.0 – 25.0  the field: unanswered, then answered ─────────────────
+    pad(T_FIELD, 10.0, "F", 0.042, atk=3.0)
+    bell(19.0, "E5", 0.040, -0.3)
+    bell(22.5, "A5", 0.050, 0.3, dur=1.4)
+    voice(20.4, 5.0, "E6", "bell", 0.028, atk=2.5, dec=0.5, sus=0.8, rel=1.5, echo=0.5)
 
-    # the hook, previewed quietly on the bell while the crawl is still running
-    line(t0 + 5 * BAR, HOOK, vol=0.072, wave_name="lead", pan=-0.15, sus=0.45,
-         echo=0.38)
-    # a lift into the launch
-    line(t0 + 9 * BAR, [("A4", 2), ("B4", 2), ("C5", 2), ("D5", 2),
-                        ("E5", 2), ("F5", 2), ("G5", 2), ("G#5", 2)],
-         vol=0.10, wave_name="brass", sus=0.6, echo=0.3)
+    # ── 25.0 – 33.0  the ring: strings swell ──────────────────────────────
+    for nm, pn, v in (("A4", -0.4, 0.075), ("C5", 0.0, 0.065), ("E5", 0.4, 0.070)):
+        voice(T_RING, 7.2, nm, "string", v, pn, atk=4.5, dec=0.5, sus=0.95,
+              rel=1.2, vib=0.06, vibd=3.0, detune=6.0)
+    voice(T_RING + 1.0, 6.0, "G3", "bass", 0.09, atk=3.0, dec=0.5, sus=0.9, rel=1.0)
+    for i, tt in enumerate((29.0, 30.4, 31.6)):
+        bell(tt, ("E6", "A6", "E6")[i], 0.032, (-0.3, 0.3, 0.0)[i], dur=1.2)
 
-    # ── 18.50 – 25.50  deep space ─────────────────────────────────────────
-    t0 = 18.5
-    crash(t0, 0.20)
-    drums(t0, int(7.0 / BEAT))
-    t = t0
-    i = 0
-    while t < t0 + 7.0:
-        chord = LOOP[i % 4]
-        bassline(t, 1, chord)
-        pad(t, BAR * 0.95, chord, 0.036)
-        t += BAR
-        i += 1
-    line(t0, HOOK, vol=0.135, wave_name="lead", pan=-0.1, sus=0.66, echo=0.28,
-         vib=0.05, detune=8.0)
-    line(t0 + 2 * SIX, HOOK_LOW, vol=0.055, wave_name="bell", pan=0.42,
-         sus=0.45, echo=0.4)
+    # ── 33.0 – 44.0  the descent and the impact ───────────────────────────
+    voice(T_LAND, T_IMPACT - T_LAND - 0.2, "E2", "string", 0.05, atk=1.0, dec=0.2,
+          sus=0.9, rel=0.2, detune=7.0)
+    kick(T_IMPACT, 0.55)
+    _sweep(T_IMPACT, 1.8, 72.0, 24.0, 0.55, curve=1.8)
+    _burst(T_IMPACT, 0.9, 0.10, 2.0, step=5, echo=0.4, off=32749)
+    # after it: almost nothing.  The drone, and one bell a long way off.
+    bell(40.5, "A5", 0.030, 0.0, dur=1.6)
 
-    # ── 25.50 – 31.50  the wormhole ───────────────────────────────────────
-    # Double time, and the bass goes to sixteenths.  Everything climbs.
-    t0 = 25.5
-    drums(t0, int(6.0 / BEAT), double=True)
-    t = t0
-    i = 0
-    while t < t0 + 6.0:
-        chord = ("Am", "F", "G", "Am", "F", "E")[i % 6]
-        bassline(t, 1, chord, vol=0.17, eighths=False)
-        pad(t, BAR * 0.95, chord, 0.040)
-        t += BAR
-        i += 1
-    steps = ["A4", "B4", "C5", "E5", "A5", "B5", "C6", "E6",
-             "A5", "C6", "E6", "A6", "G5", "B5", "D6", "G6"]
-    for i, nm in enumerate(steps):
-        voice(t0 + i * (6.0 / len(steps)), 6.0 / len(steps) * 0.9, nm, "brass",
-              0.085 + i * 0.0035, pan=-0.7 + 1.4 * i / (len(steps) - 1),
-              atk=0.004, dec=0.06, sus=0.65, rel=0.06, echo=0.35)
-    rt, gapn = t0 + 3.6, 0.18
-    while rt < t0 + 5.9:
-        snare(rt, 0.12 + (rt - t0 - 3.6) * 0.03)
-        rt += gapn
-        gapn = max(0.05, gapn * 0.85)
+    # ── 44.0 – 52.0  the claim ────────────────────────────────────────────
+    pad(T_CLAIM, 7.5, "Am", 0.045, atk=2.0)
+    bell(T_CLAIM + 0.6, "A5", 0.055, -0.2, dur=1.4)
+    bell(T_CLAIM + 2.6, "C6", 0.050, 0.2, dur=1.4)
+    bell(T_CLAIM + 4.6, "B5", 0.045, 0.0, dur=1.6)
 
-    # ── 31.50 – 39.50  the landing ────────────────────────────────────────
-    # The hook, full, and the biggest statement in the cue.
-    t0 = 31.5
-    crash(t0, 0.30)
-    stab(t0, 0.30, "A3")
-    drums(t0, int(8.0 / BEAT), fill_at=int(8.0 / BEAT) - 2)
-    t = t0
-    i = 0
-    while t < t0 + 8.0:
-        chord = ("Am", "F", "Bb", "E")[i % 4]
-        bassline(t, 1, chord, vol=0.20)
-        pad(t, BAR * 0.95, chord, 0.045)
-        t += BAR
-        i += 1
-    line(t0, HOOK, vol=0.150, wave_name="brass", pan=-0.12, sus=0.70,
-         echo=0.30, detune=9.0)
-    line(t0 + 4 * BAR, HOOK, vol=0.140, wave_name="lead", pan=0.12, sus=0.68,
-         echo=0.30, vib=0.06, detune=8.0)
-    line(t0 + 4 * BAR + 2 * SIX, HOOK_LOW, vol=0.060, wave_name="bell",
-         pan=-0.45, sus=0.45, echo=0.4)
-
-    # ── 39.50 – 43.50  her face ───────────────────────────────────────────
-    # Everything stops except a pad and a bell.  It is the only quiet bar in
-    # the cue and it is where the sequence stops being about a spaceship.
-    t0 = 39.5
-    for i, chord in enumerate(("F", "C", "G", "Am")):
-        pad(t0 + i * BAR * 0.7, BAR * 0.72, chord, 0.055)
-        voice(t0 + i * BAR * 0.7, BAR * 0.66, ROOTS[chord], "bass", 0.13,
-              atk=0.02, dec=0.3, sus=0.6, rel=0.3)
-    line(t0 + 0.10, [("E5", 4), ("F5", 4), ("G5", 8),
-                     ("E5", 4), ("D5", 4), ("C5", 8),
-                     ("D5", 4), ("E5", 4), ("A5", 8)],
-         vol=0.095, wave_name="bell", pan=0.0, sus=0.5, echo=0.5, vib=0.04,
-         atk=0.02)
-
-    # ── 43.50 – 48.50  the name card ──────────────────────────────────────
-    t0 = 43.5
-    stab(t0, 0.28, "A3")
-    drums(t0, int(5.0 / BEAT))
-    t = t0
-    i = 0
-    while t < t0 + 5.0:
-        chord = ("Am", "G", "F", "G")[i % 4]
-        bassline(t, 1, chord, vol=0.19)
-        pad(t, BAR * 0.95, chord, 0.042)
-        t += BAR
-        i += 1
-    line(t0, [("A5", 4), ("C6", 4), ("B5", 4), ("G5", 4),
-              ("A5", 4), ("B5", 4), ("C6", 8),
-              ("D6", 4), ("C6", 4), ("B5", 4), ("A5", 4)],
-         vol=0.140, wave_name="lead", pan=-0.1, sus=0.68, echo=0.30,
-         detune=8.0)
-
-    # ── 48.50 – 55.50  the logo ───────────────────────────────────────────
-    t0 = 48.5
-    crash(t0, 0.30)
-    kick(t0, 0.46)
-    stab(t0, 0.32, "A3")
-    for off, chord in ((0.0, "Am"), (0.72, "F"), (1.44, "G"), (2.16, "Am")):
-        tb = t0 + off
-        kick(tb)
-        snare(tb + BEAT)
-        voice(tb, 0.70, ROOTS[chord], "bass", 0.20, atk=0.003, dec=0.15,
-              sus=0.55, rel=0.15)
-        pad(tb, 0.75, chord, 0.05)
-
-    line(t0 + 0.08, [("A5", 2), ("R", 2), ("A5", 2), ("R", 2),
-                     ("C6", 4), ("E6", 4),
-                     ("F6", 8), ("E6", 8),
-                     ("D6", 4), ("E6", 4), ("F6", 4), ("G6", 4)],
-         vol=0.145, wave_name="brass", pan=-0.12, sus=0.72, echo=0.32,
-         detune=9.0)
-    line(t0 + 0.08, [("C5", 2), ("R", 2), ("C5", 2), ("R", 2),
-                     ("E5", 4), ("A5", 4),
-                     ("A5", 8), ("C6", 8),
-                     ("B5", 4), ("C6", 4), ("D6", 4), ("E6", 4)],
-         vol=0.062, wave_name="lead", pan=0.38, sus=0.7, echo=0.3)
-
-    hold = t0 + 3 * 0.72 + 0.72
-    for nm, v, pn in (("A6", 0.125, -0.15), ("E6", 0.085, 0.15),
-                      ("C6", 0.070, 0.35)):
-        voice(hold, 3.4, nm, "brass", v, pn, atk=0.015, dec=0.8, sus=0.55,
-              rel=1.0, vib=0.14, vibd=0.4, echo=0.35, detune=8.0)
-    voice(hold, 3.6, "A2", "bass", 0.20, atk=0.008, dec=0.7, sus=0.6, rel=0.9)
-    pad(hold, 3.6, "Am", 0.055)
-    crash(hold, 0.24)
-    drums(hold, int(3.2 / BEAT))
-
-    # ── 55.50 – 60.00  attract, ending on A MAJOR ─────────────────────────
-    t0 = 55.5
-    for i, chord in enumerate(("F", "E", "A5")):
-        dur = BAR if i < 2 else 2.2
-        voice(t0 + i * BAR, dur * 0.94, ROOTS[chord], "bass", 0.14,
-              atk=0.01, dec=0.3, sus=0.6, rel=0.4)
-        pad(t0 + i * BAR, dur * 0.94, chord, 0.048)
-        if i < 2:
-            arp(t0 + i * BAR, 1, chord, vol=0.034)
-    line(t0, [("C6", 4), ("B5", 4), ("A5", 8),
-              ("B5", 4), ("G#5", 4), ("E5", 8)],
-         vol=0.100, wave_name="lead", pan=-0.1, sus=0.55, echo=0.40, vib=0.05)
-    # the final chord: A and E and A, no third
-    for nm, v, pn in (("A5", 0.105, -0.3), ("E6", 0.080, 0.0),
-                      ("A6", 0.065, 0.3)):
-        voice(t0 + 2 * BAR, 2.4, nm, "brass", v, pn, atk=0.02, dec=0.7,
-              sus=0.6, rel=0.9, vib=0.10, echo=0.4, detune=7.0)
-    for b in range(6):
-        hat(t0 + b * BEAT, 0.030)
-    kick(t0 + 2 * BAR, 0.34)
+    # ── 52.0 – 60.0  the lockup, on an open fifth ─────────────────────────
+    voice(T_LOCKUP, 7.4, "A2", "bass", 0.13, atk=0.8, dec=0.5, sus=0.9, rel=1.2)
+    for nm, pn, v in (("A3", -0.3, 0.085), ("E4", 0.3, 0.070), ("A4", 0.0, 0.055),
+                      ("E5", -0.15, 0.040), ("A5", 0.15, 0.040)):
+        voice(T_LOCKUP, 7.2, nm, "string", v, pn, atk=1.6, dec=0.5, sus=0.9,
+              rel=1.4, vib=0.05, vibd=2.5, detune=6.0)
+    bell(T_LOCKUP + 2.8, "A5", 0.045, -0.2, dur=1.6)
+    bell(T_LOCKUP + 4.4, "E6", 0.040, 0.2, dur=1.8)
 
 
 # ── mix ───────────────────────────────────────────────────────────────────
 def mixdown():
     # The echo unit: one delay line, feedback, and a one-pole lowpass in the
-    # loop so repeats get darker rather than just quieter.  A dotted eighth at
-    # 150 BPM, which is why it locks to the drums instead of smearing them.
+    # loop so repeats get darker rather than just quieter.  Three hundred
+    # milliseconds and dark repeats: a room, not a rhythm.
     delay = int(0.30 * RATE)
     fb = 0.36
     lpf = 0.42
