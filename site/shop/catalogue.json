@@ -1,6 +1,6 @@
 {
  "shop": "https://h23y0x-fd.myshopify.com",
- "generated": "2026-09-11T18:07:29+00:00",
+ "generated": "2026-09-11T19:11:41+00:00",
  "collections": [
   {
    "handle": "channel-z0-apparel",
@@ -101,6 +101,86 @@
        "name": "Canvas",
        "values": [
         "Black"
+       ]
+      }
+     ]
+    },
+    {
+     "handle": "z0-ground-zero-glitch-crewneck",
+     "title": "GROUND ZERO · Glitch Crewneck",
+     "type": "Sweatshirt",
+     "price": {
+      "min": "72.0",
+      "max": "72.0",
+      "currency": "CAD"
+     },
+     "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero-glitch-crewneck",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-crew-ink.png?v=1789153833",
+      "alt": "GROUND ZERO · Glitch Crewneck, ink"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-crew-ink.png?v=1789153833",
+       "alt": "GROUND ZERO · Glitch Crewneck, ink"
+      }
+     ],
+     "options": [
+      {
+       "name": "Colour",
+       "values": [
+        "Ink"
+       ]
+      },
+      {
+       "name": "Size",
+       "values": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "2XL"
+       ]
+      }
+     ]
+    },
+    {
+     "handle": "z0-ground-zero-glitch-tee",
+     "title": "GROUND ZERO · Glitch Tee",
+     "type": "T-Shirt",
+     "price": {
+      "min": "42.0",
+      "max": "42.0",
+      "currency": "CAD"
+     },
+     "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero-glitch-tee",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-tee-ink.png?v=1789153830",
+      "alt": "GROUND ZERO · Glitch Tee, ink"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-tee-ink.png?v=1789153830",
+       "alt": "GROUND ZERO · Glitch Tee, ink"
+      }
+     ],
+     "options": [
+      {
+       "name": "Colour",
+       "values": [
+        "Ink"
+       ]
+      },
+      {
+       "name": "Size",
+       "values": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "2XL"
        ]
       }
      ]
@@ -297,6 +377,86 @@
        "name": "Canvas",
        "values": [
         "Black"
+       ]
+      }
+     ]
+    },
+    {
+     "handle": "z0-stand-by-glitch-crewneck",
+     "title": "Please Stand By · Glitch Crewneck",
+     "type": "Sweatshirt",
+     "price": {
+      "min": "72.0",
+      "max": "72.0",
+      "currency": "CAD"
+     },
+     "url": "https://shop.ripostelabs.xyz/products/z0-stand-by-glitch-crewneck",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-crew-ink.png?v=1789153828",
+      "alt": "Please Stand By · Glitch Crewneck, ink"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-crew-ink.png?v=1789153828",
+       "alt": "Please Stand By · Glitch Crewneck, ink"
+      }
+     ],
+     "options": [
+      {
+       "name": "Colour",
+       "values": [
+        "Ink"
+       ]
+      },
+      {
+       "name": "Size",
+       "values": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "2XL"
+       ]
+      }
+     ]
+    },
+    {
+     "handle": "z0-stand-by-glitch-tee",
+     "title": "Please Stand By · Glitch Tee",
+     "type": "T-Shirt",
+     "price": {
+      "min": "42.0",
+      "max": "42.0",
+      "currency": "CAD"
+     },
+     "url": "https://shop.ripostelabs.xyz/products/z0-stand-by-glitch-tee",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-tee-ink.png?v=1789153825",
+      "alt": "Please Stand By · Glitch Tee, ink"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-tee-ink.png?v=1789153825",
+       "alt": "Please Stand By · Glitch Tee, ink"
+      }
+     ],
+     "options": [
+      {
+       "name": "Colour",
+       "values": [
+        "Ink"
+       ]
+      },
+      {
+       "name": "Size",
+       "values": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "2XL"
        ]
       }
      ]
