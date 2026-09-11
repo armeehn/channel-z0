@@ -1988,7 +1988,7 @@ function updateFlagCard() {
           ${p.image ? `<img src="${p.image.src}" alt="${p.image.alt.replace(/"/g, "&quot;")}" loading="lazy" width="600" height="600">` : ""}
           <div class="shop-meta">
             <div class="shop-name">${p.title}</div>
-            <div class="shop-type">${p.type}${p.options.length ? " · " + p.options.map(o => o.values.length + " " + o.name.toLowerCase() + "s").join(", ") : ""}</div>
+            <div class="shop-type">${p.type}${p.options.length ? " · " + p.options.map(o => o.values.length > 3 ? o.values.length + " " + o.name.toLowerCase() : o.values.join(" / ")).join(" · ") : ""}</div>
             <div class="shop-price"><span>${money(p.price)} ${p.price.currency}</span><span class="shop-buy">GET ONE</span></div>
           </div>
         </a>`).join("");
