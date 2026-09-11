@@ -1,0 +1,133 @@
+{
+ "shop": "https://h23y0x-fd.myshopify.com",
+ "generated": "2026-09-11T16:05:39+00:00",
+ "collections": [
+  {
+   "handle": "channel-z0-apparel",
+   "title": "Channel Z0 · Apparel",
+   "url": "https://h23y0x-fd.myshopify.com/collections/channel-z0-apparel",
+   "products": [
+    {
+     "handle": "ground-zero-tee",
+     "title": "GROUND ZERO Tee",
+     "type": "T-Shirt",
+     "price": {
+      "min": "38.0",
+      "max": "38.0",
+      "currency": "CAD"
+     },
+     "url": "https://h23y0x-fd.myshopify.com/products/ground-zero-tee",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-ground-zero-bos-ink.png?v=1789039598",
+      "alt": "GROUND ZERO Tee, ink"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-ground-zero-bos-ink.png?v=1789039598",
+       "alt": "GROUND ZERO Tee, ink"
+      }
+     ],
+     "options": [
+      {
+       "name": "Size",
+       "values": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "2XL"
+       ]
+      },
+      {
+       "name": "Colour",
+       "values": [
+        "Ink"
+       ]
+      }
+     ]
+    },
+    {
+     "handle": "on-air-crewneck",
+     "title": "ON AIR Crewneck",
+     "type": "Sweatshirt",
+     "price": {
+      "min": "68.0",
+      "max": "68.0",
+      "currency": "CAD"
+     },
+     "url": "https://h23y0x-fd.myshopify.com/products/on-air-crewneck",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-crew-on-air-ink.png?v=1789038380",
+      "alt": "ON AIR Crewneck, ink"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-crew-on-air-ink.png?v=1789038380",
+       "alt": "ON AIR Crewneck, ink"
+      }
+     ],
+     "options": [
+      {
+       "name": "Size",
+       "values": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "2XL"
+       ]
+      },
+      {
+       "name": "Colour",
+       "values": [
+        "Ink"
+       ]
+      }
+     ]
+    },
+    {
+     "handle": "please-stand-by-tee",
+     "title": "Please Stand By Tee",
+     "type": "T-Shirt",
+     "price": {
+      "min": "38.0",
+      "max": "38.0",
+      "currency": "CAD"
+     },
+     "url": "https://h23y0x-fd.myshopify.com/products/please-stand-by-tee",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-stand-by-ink.png?v=1789039598",
+      "alt": "Please Stand By Tee, ink"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-stand-by-ink.png?v=1789039598",
+       "alt": "Please Stand By Tee, ink"
+      }
+     ],
+     "options": [
+      {
+       "name": "Size",
+       "values": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "2XL"
+       ]
+      },
+      {
+       "name": "Colour",
+       "values": [
+        "Ink"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
