@@ -1,12 +1,41 @@
 {
  "shop": "https://h23y0x-fd.myshopify.com",
- "generated": "2026-09-11T16:05:39+00:00",
+ "generated": "2026-09-11T17:03:04+00:00",
  "collections": [
   {
    "handle": "channel-z0-apparel",
-   "title": "Channel Z0 · Apparel",
+   "title": "Channel Z0 · Merch",
    "url": "https://h23y0x-fd.myshopify.com/collections/channel-z0-apparel",
    "products": [
+    {
+     "handle": "z0-ground-zero-poster",
+     "title": "GROUND ZERO Poster",
+     "type": "Poster",
+     "price": {
+      "min": "28.0",
+      "max": "28.0",
+      "currency": "CAD"
+     },
+     "url": "https://h23y0x-fd.myshopify.com/products/z0-ground-zero-poster",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-poster-ink.png?v=1789146057",
+      "alt": "GROUND ZERO Poster, ink"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-poster-ink.png?v=1789146057",
+       "alt": "GROUND ZERO Poster, ink"
+      }
+     ],
+     "options": [
+      {
+       "name": "Ground",
+       "values": [
+        "Ink"
+       ]
+      }
+     ]
+    },
     {
      "handle": "ground-zero-tee",
      "title": "GROUND ZERO Tee",
@@ -43,6 +72,35 @@
        "name": "Colour",
        "values": [
         "Ink"
+       ]
+      }
+     ]
+    },
+    {
+     "handle": "z0-ground-zero-tote",
+     "title": "GROUND ZERO Tote",
+     "type": "Tote Bag",
+     "price": {
+      "min": "28.0",
+      "max": "28.0",
+      "currency": "CAD"
+     },
+     "url": "https://h23y0x-fd.myshopify.com/products/z0-ground-zero-tote",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-tote-ink.png?v=1789146059",
+      "alt": "GROUND ZERO Tote, black"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-tote-ink.png?v=1789146059",
+       "alt": "GROUND ZERO Tote, black"
+      }
+     ],
+     "options": [
+      {
+       "name": "Canvas",
+       "values": [
+        "Black"
        ]
       }
      ]
@@ -88,6 +146,93 @@
      ]
     },
     {
+     "handle": "z0-on-air-poster",
+     "title": "ON AIR Poster",
+     "type": "Poster",
+     "price": {
+      "min": "28.0",
+      "max": "28.0",
+      "currency": "CAD"
+     },
+     "url": "https://h23y0x-fd.myshopify.com/products/z0-on-air-poster",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-poster-ink.png?v=1789146082",
+      "alt": "ON AIR Poster, ink"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-poster-ink.png?v=1789146082",
+       "alt": "ON AIR Poster, ink"
+      }
+     ],
+     "options": [
+      {
+       "name": "Ground",
+       "values": [
+        "Ink"
+       ]
+      }
+     ]
+    },
+    {
+     "handle": "z0-on-air-tote",
+     "title": "ON AIR Tote",
+     "type": "Tote Bag",
+     "price": {
+      "min": "28.0",
+      "max": "28.0",
+      "currency": "CAD"
+     },
+     "url": "https://h23y0x-fd.myshopify.com/products/z0-on-air-tote",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-tote-ink.png?v=1789146084",
+      "alt": "ON AIR Tote, black"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-tote-ink.png?v=1789146084",
+       "alt": "ON AIR Tote, black"
+      }
+     ],
+     "options": [
+      {
+       "name": "Canvas",
+       "values": [
+        "Black"
+       ]
+      }
+     ]
+    },
+    {
+     "handle": "z0-stand-by-poster",
+     "title": "Please Stand By Poster",
+     "type": "Poster",
+     "price": {
+      "min": "28.0",
+      "max": "28.0",
+      "currency": "CAD"
+     },
+     "url": "https://h23y0x-fd.myshopify.com/products/z0-stand-by-poster",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-poster-ink.png?v=1789146060",
+      "alt": "Please Stand By Poster, ink"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-poster-ink.png?v=1789146060",
+       "alt": "Please Stand By Poster, ink"
+      }
+     ],
+     "options": [
+      {
+       "name": "Ground",
+       "values": [
+        "Ink"
+       ]
+      }
+     ]
+    },
+    {
      "handle": "please-stand-by-tee",
      "title": "Please Stand By Tee",
      "type": "T-Shirt",
@@ -123,6 +268,35 @@
        "name": "Colour",
        "values": [
         "Ink"
+       ]
+      }
+     ]
+    },
+    {
+     "handle": "z0-stand-by-tote",
+     "title": "Please Stand By Tote",
+     "type": "Tote Bag",
+     "price": {
+      "min": "28.0",
+      "max": "28.0",
+      "currency": "CAD"
+     },
+     "url": "https://h23y0x-fd.myshopify.com/products/z0-stand-by-tote",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-tote-ink.png?v=1789146062",
+      "alt": "Please Stand By Tote, black"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-tote-ink.png?v=1789146062",
+       "alt": "Please Stand By Tote, black"
+      }
+     ],
+     "options": [
+      {
+       "name": "Canvas",
+       "values": [
+        "Black"
        ]
       }
      ]
