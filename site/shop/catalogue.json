@@ -1,6 +1,6 @@
 {
  "shop": "https://h23y0x-fd.myshopify.com",
- "generated": "2026-09-11T17:03:04+00:00",
+ "generated": "2026-09-11T17:30:42+00:00",
  "collections": [
   {
    "handle": "channel-z0-apparel",
@@ -16,7 +16,7 @@
       "max": "28.0",
       "currency": "CAD"
      },
-     "url": "https://h23y0x-fd.myshopify.com/products/z0-ground-zero-poster",
+     "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero-poster",
      "image": {
       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-poster-ink.png?v=1789146057",
       "alt": "GROUND ZERO Poster, ink"
@@ -45,7 +45,7 @@
       "max": "38.0",
       "currency": "CAD"
      },
-     "url": "https://h23y0x-fd.myshopify.com/products/ground-zero-tee",
+     "url": "https://shop.ripostelabs.xyz/products/ground-zero-tee",
      "image": {
       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-ground-zero-bos-ink.png?v=1789039598",
       "alt": "GROUND ZERO Tee, ink"
@@ -85,7 +85,7 @@
       "max": "28.0",
       "currency": "CAD"
      },
-     "url": "https://h23y0x-fd.myshopify.com/products/z0-ground-zero-tote",
+     "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero-tote",
      "image": {
       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-tote-ink.png?v=1789146059",
       "alt": "GROUND ZERO Tote, black"
@@ -114,7 +114,7 @@
       "max": "68.0",
       "currency": "CAD"
      },
-     "url": "https://h23y0x-fd.myshopify.com/products/on-air-crewneck",
+     "url": "https://shop.ripostelabs.xyz/products/on-air-crewneck",
      "image": {
       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-crew-on-air-ink.png?v=1789038380",
       "alt": "ON AIR Crewneck, ink"
@@ -154,7 +154,7 @@
       "max": "28.0",
       "currency": "CAD"
      },
-     "url": "https://h23y0x-fd.myshopify.com/products/z0-on-air-poster",
+     "url": "https://shop.ripostelabs.xyz/products/z0-on-air-poster",
      "image": {
       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-poster-ink.png?v=1789146082",
       "alt": "ON AIR Poster, ink"
@@ -183,7 +183,7 @@
       "max": "28.0",
       "currency": "CAD"
      },
-     "url": "https://h23y0x-fd.myshopify.com/products/z0-on-air-tote",
+     "url": "https://shop.ripostelabs.xyz/products/z0-on-air-tote",
      "image": {
       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-tote-ink.png?v=1789146084",
       "alt": "ON AIR Tote, black"
@@ -212,7 +212,7 @@
       "max": "28.0",
       "currency": "CAD"
      },
-     "url": "https://h23y0x-fd.myshopify.com/products/z0-stand-by-poster",
+     "url": "https://shop.ripostelabs.xyz/products/z0-stand-by-poster",
      "image": {
       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-poster-ink.png?v=1789146060",
       "alt": "Please Stand By Poster, ink"
@@ -241,7 +241,7 @@
       "max": "38.0",
       "currency": "CAD"
      },
-     "url": "https://h23y0x-fd.myshopify.com/products/please-stand-by-tee",
+     "url": "https://shop.ripostelabs.xyz/products/please-stand-by-tee",
      "image": {
       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-stand-by-ink.png?v=1789039598",
       "alt": "Please Stand By Tee, ink"
@@ -281,7 +281,7 @@
       "max": "28.0",
       "currency": "CAD"
      },
-     "url": "https://h23y0x-fd.myshopify.com/products/z0-stand-by-tote",
+     "url": "https://shop.ripostelabs.xyz/products/z0-stand-by-tote",
      "image": {
       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-tote-ink.png?v=1789146062",
       "alt": "Please Stand By Tote, black"
