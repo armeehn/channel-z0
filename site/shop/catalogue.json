@@ -1,6 +1,6 @@
 {
  "shop": "https://h23y0x-fd.myshopify.com",
- "generated": "2026-09-11T17:55:09+00:00",
+ "generated": "2026-09-11T18:07:29+00:00",
  "collections": [
   {
    "handle": "channel-z0-apparel",
@@ -18,12 +18,12 @@
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero-poster",
      "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-poster-ink.png?v=1789148904",
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-poster-ink.png?v=1789149958",
       "alt": "GROUND ZERO Poster, ink"
      },
      "images": [
       {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-poster-ink.png?v=1789148904",
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-poster-ink.png?v=1789149958",
        "alt": "GROUND ZERO Poster, ink"
       }
      ],
@@ -47,12 +47,12 @@
      },
      "url": "https://shop.ripostelabs.xyz/products/ground-zero-tee",
      "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-ground-zero-ink.png?v=1789148959",
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-ground-zero-ink.png?v=1789150009",
       "alt": "ground-zero-tee, ink"
      },
      "images": [
       {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-ground-zero-ink.png?v=1789148959",
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-ground-zero-ink.png?v=1789150009",
        "alt": "ground-zero-tee, ink"
       }
      ],
@@ -87,12 +87,12 @@
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero-tote",
      "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-tote-ink.png?v=1789148905",
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-tote-ink.png?v=1789149959",
       "alt": "GROUND ZERO Tote, black"
      },
      "images": [
       {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-tote-ink.png?v=1789148905",
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-tote-ink.png?v=1789149959",
        "alt": "GROUND ZERO Tote, black"
       }
      ],
@@ -116,12 +116,12 @@
      },
      "url": "https://shop.ripostelabs.xyz/products/on-air-crewneck",
      "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-crew-on-air-ink.png?v=1789148996",
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-crew-on-air-ink.png?v=1789150039",
       "alt": "on-air-crewneck, ink"
      },
      "images": [
       {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-crew-on-air-ink.png?v=1789148996",
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-crew-on-air-ink.png?v=1789150039",
        "alt": "on-air-crewneck, ink"
       }
      ],
@@ -156,12 +156,12 @@
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-on-air-poster",
      "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-poster-ink.png?v=1789148929",
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-poster-ink.png?v=1789149981",
       "alt": "ON AIR Poster, ink"
      },
      "images": [
       {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-poster-ink.png?v=1789148929",
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-poster-ink.png?v=1789149981",
        "alt": "ON AIR Poster, ink"
       }
      ],
@@ -185,12 +185,12 @@
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-on-air-tote",
      "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-tote-ink.png?v=1789148931",
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-tote-ink.png?v=1789149982",
       "alt": "ON AIR Tote, black"
      },
      "images": [
       {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-tote-ink.png?v=1789148931",
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-tote-ink.png?v=1789149982",
        "alt": "ON AIR Tote, black"
       }
      ],
@@ -214,12 +214,12 @@
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-stand-by-poster",
      "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-poster-ink.png?v=1789148907",
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-poster-ink.png?v=1789149961",
       "alt": "Please Stand By Poster, ink"
      },
      "images": [
       {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-poster-ink.png?v=1789148907",
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-poster-ink.png?v=1789149961",
        "alt": "Please Stand By Poster, ink"
       }
      ],
@@ -243,12 +243,12 @@
      },
      "url": "https://shop.ripostelabs.xyz/products/please-stand-by-tee",
      "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-stand-by-ink.png?v=1789148965",
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-stand-by-ink.png?v=1789150014",
       "alt": "please-stand-by-tee, ink"
      },
      "images": [
       {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-stand-by-ink.png?v=1789148965",
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-stand-by-ink.png?v=1789150014",
        "alt": "please-stand-by-tee, ink"
       }
      ],
@@ -283,12 +283,12 @@
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-stand-by-tote",
      "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-tote-ink.png?v=1789148908",
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-tote-ink.png?v=1789149963",
       "alt": "Please Stand By Tote, black"
      },
      "images": [
       {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-tote-ink.png?v=1789148908",
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-tote-ink.png?v=1789149963",
        "alt": "Please Stand By Tote, black"
       }
      ],
