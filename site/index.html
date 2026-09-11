@@ -462,7 +462,11 @@
   .spec-row .v b { color: var(--red); }
 
   /* hover notes — every spec line explains itself. Dotted key = there's a note;
-     it opens on hover, and on focus so a keyboard or a thumb gets it too. */
+     it opens on hover, and on focus so a keyboard or a thumb gets it too.
+     It drops UNDER its row, inside the card: the rail is the right-hand
+     column, so anything hung off its left edge lands on the picture, and the
+     video paints over it. It cannot step out to the right either: the section
+     panel is a scroll container and clips whatever leaves it. */
   .spec-row[aria-describedby] { position: relative; cursor: help; }
   .spec-row[aria-describedby] .k {
     text-decoration: underline dotted; text-decoration-color: var(--red); text-underline-offset: 3px;
@@ -470,22 +474,28 @@
   .spec-row[aria-describedby]:hover .k, .spec-row[aria-describedby]:focus-within .k { color: var(--ink); }
   .spec-row[aria-describedby]:focus-visible { outline: 2px solid var(--red); outline-offset: -2px; }
   .spec-note {
-    position: absolute; z-index: 30; right: calc(100% + 12px); top: -4px; width: 250px;
-    border: 2px solid var(--ink); background: var(--paper);
+    position: absolute; z-index: 30; left: 0; right: 0; top: 0;
+    border: 0 solid var(--ink); background: var(--paper);
     box-shadow: 5px 5px 0 rgba(20, 20, 20, .13);
-    padding: 9px 11px; font-size: 11px; line-height: 1.5;
+    padding: 0; font-size: 11px; line-height: 1.5;
     color: var(--ink-2); letter-spacing: 0; text-transform: none;
     opacity: 0; visibility: hidden; transition: opacity .12s ease;
     pointer-events: none;
+    /* Closed it takes NO room: padding and border count as overflow even at
+       max-height 0, and under the last row that was enough to give SEC.01 a
+       scrollbar. */
     max-height: 0; overflow: hidden;
   }
   .spec-note b { color: var(--ink); }
-  .spec-note::after {   /* the little pointer back at the row */
-    content: ""; position: absolute; top: 13px; right: -7px;
-    border-left: 7px solid var(--ink);
-    border-top: 5px solid transparent; border-bottom: 5px solid transparent;
+  .spec-note::after {   /* the little pointer back at the key */
+    content: ""; position: absolute; top: -7px; left: 14px;
+    border-bottom: 7px solid var(--ink);
+    border-left: 5px solid transparent; border-right: 5px solid transparent;
   }
-  .spec-row:hover .spec-note, .spec-row:focus-within .spec-note { opacity: 1; visibility: visible; max-height: none; overflow: visible; }
+  .spec-row:hover .spec-note, .spec-row:focus-within .spec-note {
+    opacity: 1; visibility: visible; max-height: none; overflow: visible;
+    top: calc(100% + 6px); border-width: 2px; padding: 9px 11px;
+  }
   @media (prefers-reduced-motion: reduce) { .spec-note { transition: none; } }
 
   /* ---------- SEC.02 program ---------- */
@@ -625,10 +635,6 @@
     .station-foot .foot-lab { flex-wrap: wrap; gap: 10px; }
     .sec-note { margin-left: 0; }
     .live-status { margin-left: 0; }
-    /* one column: the card is full width, so the note drops under its row
-       instead of off the left edge of the phone. */
-    .spec-note { right: auto; left: 0; top: calc(100% - 1px); width: 100%; }
-    .spec-note::after { display: none; }
   }
 
   /* ---------- hero fold ----------
@@ -987,51 +993,51 @@
         <div class="spec-rows">
           <div class="spec-row" tabindex="0" aria-describedby="note-feed">
             <span class="k">FEED</span><span class="v" id="nowShowing">—</span>
-            <span class="spec-note" role="tooltip" id="note-feed">What's on air <b>this minute</b>. Read live from the tower every 30 seconds — the title master control set for the programme actually leaving the encoder, not the one the schedule hoped for. If the tower can't be reached, this falls back to today's grid below.</span>
+            <span class="spec-note" role="tooltip" id="note-feed">What's on air <b>this minute</b>, read from the tower. If the tower can't be reached, this falls back to today's grid below.</span>
           </div>
           <div class="spec-row" tabindex="0" aria-describedby="note-format">
             <span class="k">FORMAT</span><span class="v">LINEAR TV · 854×480</span>
-            <span class="spec-note" role="tooltip" id="note-format">One channel, one stream, no menu — you get what's on. <b>854×480, 16:9</b>: standard definition on purpose, because nearly every print in the library is a 480p scan. The programme itself is <b>4:3</b>, pillarboxed into the middle 640×480, and the two 107-pixel bars either side are where the listings, the date and the weather live — so the station furniture never sits on the picture.</span>
+            <span class="spec-note" role="tooltip" id="note-format">One channel, one stream, no menu. <b>Standard definition</b> on purpose: nearly every print in the library is a 480p scan. The programme is 4:3; the bars either side carry the station furniture, so nothing sits on the picture.</span>
           </div>
           <div class="spec-row" tabindex="0" aria-describedby="note-encode">
             <span class="k">ENCODE</span><span class="v">H.264 · 1600k · AAC</span>
-            <span class="spec-note" role="tooltip" id="note-encode">H.264 at <b>1600 kbps</b> (3200 kbps buffer) with AAC audio, encoded once on the station's own GPU. Hardware <b>NVENC</b>, so running a channel around the clock costs the house machine almost nothing.</span>
+            <span class="spec-note" role="tooltip" id="note-encode">H.264 with AAC audio, encoded once, in hardware, at the station. Running a channel around the clock costs the house almost nothing.</span>
           </div>
           <div class="spec-row" tabindex="0" aria-describedby="note-playout">
             <span class="k">PLAYOUT</span><span class="v">ERSATZTV 26.7 · YAML</span>
-            <span class="spec-note" role="tooltip" id="note-playout">The week is a <b>file</b>, not a click-path. ErsatzTV reads one YAML schedule and builds the broadcast day from it — every block, tentpole and sign-off in the grid below comes out of that single document.</span>
+            <span class="spec-note" role="tooltip" id="note-playout">The week is a <b>file</b>, not a click-path. Every block, tentpole and sign-off in the grid below comes out of one schedule.</span>
           </div>
           <div class="spec-row" tabindex="0" aria-describedby="note-graphics">
             <span class="k">GRAPHICS</span><span class="v">BUG · CARD · STRIP · NEXT</span>
-            <span class="spec-note" role="tooltip" id="note-graphics">Four things painted over the picture as it goes out: the <b>channel bug</b>, a <b>weather card</b> that refreshes every 15 minutes, the <b>bottom strip</b>, and the <b>NEXT</b> lower third naming what follows — it shows in a programme's first 30 seconds, then gets out of the way.</span>
+            <span class="spec-note" role="tooltip" id="note-graphics">Four things painted over the picture on the way out: the <b>channel bug</b>, a <b>weather card</b>, the <b>bottom strip</b>, and a <b>NEXT</b> lower third that names what follows.</span>
           </div>
           <div class="spec-row" tabindex="0" aria-describedby="note-weather">
             <span class="k">WEATHER</span><span class="v">KELOWNA · OPEN-METEO</span>
-            <span class="spec-note" role="tooltip" id="note-weather">Local forecast from <b>Open-Meteo</b> — no API key, no account, nobody counting you. It drives the corner card every 15 minutes and a full-screen <b>WEATHER DESK</b> segment four times a day.</span>
+            <span class="spec-note" role="tooltip" id="note-weather">Local forecast. No account, nobody counting you. It drives the corner card and a <b>WEATHER DESK</b> segment a few times a day.</span>
           </div>
           <div class="spec-row" tabindex="0" aria-describedby="note-tower">
             <span class="k">TOWER</span><span class="v">OWNCAST · PASSTHROUGH</span>
-            <span class="spec-note" role="tooltip" id="note-tower">The transmitter: one small always-on VM running <b>Owncast</b> in single-quality passthrough. It re-muxes and never re-encodes, which is the only reason a machine that size can carry a 24/7 channel.</span>
+            <span class="spec-note" role="tooltip" id="note-tower">The transmitter: one small machine that never sleeps. It passes the stream through and never re-encodes it.</span>
           </div>
           <div class="spec-row" tabindex="0" aria-describedby="note-uptime">
             <span class="k">UPTIME</span><span class="v">24/7 · SIGN-OFF 00:00</span>
-            <span class="spec-note" role="tooltip" id="note-uptime">The transmitter never sleeps; the <b>broadcast day</b> does. Sign-on at 06:00, sign-off at midnight, test card until sunrise — and Saturday runs late, as Saturday should.</span>
+            <span class="spec-note" role="tooltip" id="note-uptime">The transmitter never sleeps; the <b>broadcast day</b> does. Sign-on at 06:00, sign-off at midnight, test card until sunrise. Saturday runs late.</span>
           </div>
           <div class="spec-row" tabindex="0" aria-describedby="note-ads">
             <span class="k">ADS</span><span class="v">LOCALLY SOURCED</span>
-            <span class="spec-note" role="tooltip" id="note-ads">Every commercial comes from someone nearby — a shop, a band, a garage sale. Screened before air and <b>loudness-normalized</b>, so no spot is louder than the film it interrupts.</span>
+            <span class="spec-note" role="tooltip" id="note-ads">Every commercial comes from someone nearby. Screened before air and <b>loudness-normalized</b>, so no spot is louder than the film it interrupts.</span>
           </div>
           <div class="spec-row" tabindex="0" aria-describedby="note-sponsor">
             <span class="k">SPONSOR</span><span class="v">RIPOSTE LABS</span>
-            <span class="spec-note" role="tooltip" id="note-sponsor">Riposte Laboratories keeps the transmitter lit and fills the gaps between programmes with whatever the lab has been building that week. No other advertiser pays for this channel.</span>
+            <span class="spec-note" role="tooltip" id="note-sponsor">Riposte Laboratories keeps the transmitter lit and fills the gaps with whatever the lab built that week. No other advertiser pays for this channel.</span>
           </div>
           <div class="spec-row" tabindex="0" aria-describedby="note-status">
             <span class="k">STATUS</span><span class="v" id="specStatus"><b>STANDBY</b></span>
-            <span class="spec-note" role="tooltip" id="note-status">The station's vitals, polled from the tower every 30 seconds. <b>SIGNAL ACQUIRED</b> means the uplink is connected and segments are genuinely moving — not merely that this page loaded.</span>
+            <span class="spec-note" role="tooltip" id="note-status">The station's vitals, polled from the tower. <b>SIGNAL ACQUIRED</b> means segments are genuinely moving, not merely that this page loaded.</span>
           </div>
           <div class="spec-row" tabindex="0" aria-describedby="note-p2p">
             <span class="k">P2P</span><span class="v" id="p2pStat">STANDBY</span>
-            <span class="spec-note" role="tooltip" id="note-p2p">Viewers quietly hand each other stream segments over <b>WebRTC</b>, so the tower ships each one far fewer times. Strictly a bonus: no WebRTC, or no one else watching, and it's ordinary HLS with nothing lost.</span>
+            <span class="spec-note" role="tooltip" id="note-p2p">Viewers quietly hand each other pieces of the stream, so the tower ships each one fewer times. Strictly a bonus: alone, it's ordinary HLS with nothing lost.</span>
           </div>
         </div>
         </div>
