@@ -1,12 +1,41 @@
 {
  "shop": "https://h23y0x-fd.myshopify.com",
- "generated": "2026-09-12T21:00:05+00:00",
+ "generated": "2026-09-12T22:36:45+00:00",
  "collections": [
   {
    "handle": "channel-z0-apparel",
    "title": "Channel Z0 · Merch",
    "url": "https://h23y0x-fd.myshopify.com/collections/channel-z0-apparel",
    "products": [
+    {
+     "handle": "channel-z0-glitch-stickers",
+     "title": "Channel Z0 · Glitch Sticker Sheet",
+     "type": "Stickers",
+     "price": {
+      "min": "6.0",
+      "max": "6.0",
+      "currency": "CAD"
+     },
+     "url": "https://shop.ripostelabs.xyz/products/channel-z0-glitch-stickers",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/channel-z0-glitch-stickers.png?v=1789252555",
+      "alt": "Channel Z0 · Glitch Sticker Sheet, a5 · 9 stickers"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/channel-z0-glitch-stickers.png?v=1789252555",
+       "alt": "Channel Z0 · Glitch Sticker Sheet, a5 · 9 stickers"
+      }
+     ],
+     "options": [
+      {
+       "name": "Sheet",
+       "values": [
+        "A5 · 9 stickers"
+       ]
+      }
+     ]
+    },
     {
      "handle": "z0-ground-zero-poster",
      "title": "GROUND ZERO Poster",
@@ -141,6 +170,70 @@
         "L",
         "XL",
         "2XL"
+       ]
+      }
+     ]
+    },
+    {
+     "handle": "z0-ground-zero-glitch-sticker",
+     "title": "GROUND ZERO · Glitch Sticker",
+     "type": "Stickers",
+     "price": {
+      "min": "2.0",
+      "max": "2.0",
+      "currency": "CAD"
+     },
+     "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero-glitch-sticker",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-split.png?v=1789252529",
+      "alt": "GROUND ZERO · Glitch Sticker, split"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-split.png?v=1789252529",
+       "alt": "GROUND ZERO · Glitch Sticker, split"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-melt.png?v=1789252530",
+       "alt": "GROUND ZERO · Glitch Sticker, melt"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-drip.png?v=1789252530",
+       "alt": "GROUND ZERO · Glitch Sticker, drip"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-scan.png?v=1789252530",
+       "alt": "GROUND ZERO · Glitch Sticker, scan"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-tile.png?v=1789252530",
+       "alt": "GROUND ZERO · Glitch Sticker, tile"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-wave.png?v=1789252529",
+       "alt": "GROUND ZERO · Glitch Sticker, wave"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-dither.png?v=1789252530",
+       "alt": "GROUND ZERO · Glitch Sticker, dither"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-kaleid.png?v=1789252529",
+       "alt": "GROUND ZERO · Glitch Sticker, kaleid"
+      }
+     ],
+     "options": [
+      {
+       "name": "Cut",
+       "values": [
+        "Split",
+        "Melt",
+        "Drip",
+        "Scan",
+        "Tile",
+        "Wave",
+        "Dither",
+        "Kaleid"
        ]
       }
      ]
@@ -417,6 +510,70 @@
         "L",
         "XL",
         "2XL"
+       ]
+      }
+     ]
+    },
+    {
+     "handle": "z0-stand-by-glitch-sticker",
+     "title": "Please Stand By · Glitch Sticker",
+     "type": "Stickers",
+     "price": {
+      "min": "2.0",
+      "max": "2.0",
+      "currency": "CAD"
+     },
+     "url": "https://shop.ripostelabs.xyz/products/z0-stand-by-glitch-sticker",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-split.png?v=1789252523",
+      "alt": "Please Stand By · Glitch Sticker, split"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-split.png?v=1789252523",
+       "alt": "Please Stand By · Glitch Sticker, split"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-melt.png?v=1789252523",
+       "alt": "Please Stand By · Glitch Sticker, melt"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-drip.png?v=1789252523",
+       "alt": "Please Stand By · Glitch Sticker, drip"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-scan.png?v=1789252523",
+       "alt": "Please Stand By · Glitch Sticker, scan"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-tile.png?v=1789252523",
+       "alt": "Please Stand By · Glitch Sticker, tile"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-wave.png?v=1789252523",
+       "alt": "Please Stand By · Glitch Sticker, wave"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-dither.png?v=1789252523",
+       "alt": "Please Stand By · Glitch Sticker, dither"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-kaleid.png?v=1789252523",
+       "alt": "Please Stand By · Glitch Sticker, kaleid"
+      }
+     ],
+     "options": [
+      {
+       "name": "Cut",
+       "values": [
+        "Split",
+        "Melt",
+        "Drip",
+        "Scan",
+        "Tile",
+        "Wave",
+        "Dither",
+        "Kaleid"
        ]
       }
      ]
