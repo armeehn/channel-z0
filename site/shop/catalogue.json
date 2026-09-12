@@ -1,6 +1,6 @@
 {
  "shop": "https://h23y0x-fd.myshopify.com",
- "generated": "2026-09-11T19:11:41+00:00",
+ "generated": "2026-09-12T21:00:05+00:00",
  "collections": [
   {
    "handle": "channel-z0-apparel",
@@ -12,8 +12,8 @@
      "title": "GROUND ZERO Poster",
      "type": "Poster",
      "price": {
-      "min": "28.0",
-      "max": "28.0",
+      "min": "20.0",
+      "max": "20.0",
       "currency": "CAD"
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero-poster",
@@ -41,8 +41,8 @@
      "title": "GROUND ZERO Tee",
      "type": "T-Shirt",
      "price": {
-      "min": "38.0",
-      "max": "38.0",
+      "min": "28.0",
+      "max": "28.0",
       "currency": "CAD"
      },
      "url": "https://shop.ripostelabs.xyz/products/ground-zero-tee",
@@ -81,8 +81,8 @@
      "title": "GROUND ZERO Tote",
      "type": "Tote Bag",
      "price": {
-      "min": "28.0",
-      "max": "28.0",
+      "min": "18.0",
+      "max": "18.0",
       "currency": "CAD"
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero-tote",
@@ -110,8 +110,8 @@
      "title": "GROUND ZERO · Glitch Crewneck",
      "type": "Sweatshirt",
      "price": {
-      "min": "72.0",
-      "max": "72.0",
+      "min": "48.0",
+      "max": "48.0",
       "currency": "CAD"
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero-glitch-crewneck",
@@ -150,8 +150,8 @@
      "title": "GROUND ZERO · Glitch Tee",
      "type": "T-Shirt",
      "price": {
-      "min": "42.0",
-      "max": "42.0",
+      "min": "28.0",
+      "max": "28.0",
       "currency": "CAD"
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero-glitch-tee",
@@ -190,8 +190,8 @@
      "title": "ON AIR Crewneck",
      "type": "Sweatshirt",
      "price": {
-      "min": "68.0",
-      "max": "68.0",
+      "min": "48.0",
+      "max": "48.0",
       "currency": "CAD"
      },
      "url": "https://shop.ripostelabs.xyz/products/on-air-crewneck",
@@ -230,8 +230,8 @@
      "title": "ON AIR Poster",
      "type": "Poster",
      "price": {
-      "min": "28.0",
-      "max": "28.0",
+      "min": "20.0",
+      "max": "20.0",
       "currency": "CAD"
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-on-air-poster",
@@ -259,8 +259,8 @@
      "title": "ON AIR Tote",
      "type": "Tote Bag",
      "price": {
-      "min": "28.0",
-      "max": "28.0",
+      "min": "18.0",
+      "max": "18.0",
       "currency": "CAD"
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-on-air-tote",
@@ -288,8 +288,8 @@
      "title": "Please Stand By Poster",
      "type": "Poster",
      "price": {
-      "min": "28.0",
-      "max": "28.0",
+      "min": "20.0",
+      "max": "20.0",
       "currency": "CAD"
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-stand-by-poster",
@@ -317,8 +317,8 @@
      "title": "Please Stand By Tee",
      "type": "T-Shirt",
      "price": {
-      "min": "38.0",
-      "max": "38.0",
+      "min": "28.0",
+      "max": "28.0",
       "currency": "CAD"
      },
      "url": "https://shop.ripostelabs.xyz/products/please-stand-by-tee",
@@ -357,8 +357,8 @@
      "title": "Please Stand By Tote",
      "type": "Tote Bag",
      "price": {
-      "min": "28.0",
-      "max": "28.0",
+      "min": "18.0",
+      "max": "18.0",
       "currency": "CAD"
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-stand-by-tote",
@@ -386,8 +386,8 @@
      "title": "Please Stand By · Glitch Crewneck",
      "type": "Sweatshirt",
      "price": {
-      "min": "72.0",
-      "max": "72.0",
+      "min": "48.0",
+      "max": "48.0",
       "currency": "CAD"
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-stand-by-glitch-crewneck",
@@ -426,8 +426,8 @@
      "title": "Please Stand By · Glitch Tee",
      "type": "T-Shirt",
      "price": {
-      "min": "42.0",
-      "max": "42.0",
+      "min": "28.0",
+      "max": "28.0",
       "currency": "CAD"
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-stand-by-glitch-tee",
