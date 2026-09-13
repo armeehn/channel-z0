@@ -1,12 +1,68 @@
 {
  "shop": "https://h23y0x-fd.myshopify.com",
- "generated": "2026-09-12T22:36:45+00:00",
+ "generated": "2026-09-13T14:23:25+00:00",
  "collections": [
   {
    "handle": "channel-z0-apparel",
    "title": "Channel Z0 · Merch",
    "url": "https://h23y0x-fd.myshopify.com/collections/channel-z0-apparel",
    "products": [
+    {
+     "handle": "z0-ground-zero-apparel",
+     "title": "GROUND ZERO Apparel",
+     "type": "Apparel",
+     "price": {
+      "min": "28.0",
+      "max": "48.0",
+      "currency": "CAD"
+     },
+     "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero-apparel",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-ground-zero-ink.png?v=1789308944",
+      "alt": "ground-zero-tee, ink"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-ground-zero-ink.png?v=1789308944",
+       "alt": "ground-zero-tee, ink"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-tee-ink.png?v=1789308944",
+       "alt": "GROUND ZERO · Glitch Tee, ink"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-crew-ink.png?v=1789308944",
+       "alt": "GROUND ZERO · Glitch Crewneck, ink"
+      }
+     ],
+     "options": [
+      {
+       "name": "Garment",
+       "values": [
+        "Tee",
+        "Glitch Tee",
+        "Glitch Crewneck"
+       ]
+      },
+      {
+       "name": "Colour",
+       "values": [
+        "Ink"
+       ]
+      },
+      {
+       "name": "Size",
+       "values": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "2XL"
+       ]
+      }
+     ]
+    },
     {
      "handle": "z0-ground-zero-poster",
      "title": "GROUND ZERO Poster",
@@ -18,58 +74,18 @@
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero-poster",
      "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-poster-ink.png?v=1789149958",
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-poster-ink.png?v=1789308886",
       "alt": "GROUND ZERO Poster, ink"
      },
      "images": [
       {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-poster-ink.png?v=1789149958",
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-poster-ink.png?v=1789308886",
        "alt": "GROUND ZERO Poster, ink"
       }
      ],
      "options": [
       {
        "name": "Ground",
-       "values": [
-        "Ink"
-       ]
-      }
-     ]
-    },
-    {
-     "handle": "ground-zero-tee",
-     "title": "GROUND ZERO Tee",
-     "type": "T-Shirt",
-     "price": {
-      "min": "28.0",
-      "max": "28.0",
-      "currency": "CAD"
-     },
-     "url": "https://shop.ripostelabs.xyz/products/ground-zero-tee",
-     "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-ground-zero-ink.png?v=1789150009",
-      "alt": "ground-zero-tee, ink"
-     },
-     "images": [
-      {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-ground-zero-ink.png?v=1789150009",
-       "alt": "ground-zero-tee, ink"
-      }
-     ],
-     "options": [
-      {
-       "name": "Size",
-       "values": [
-        "XS",
-        "S",
-        "M",
-        "L",
-        "XL",
-        "2XL"
-       ]
-      },
-      {
-       "name": "Colour",
        "values": [
         "Ink"
        ]
@@ -87,12 +103,12 @@
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero-tote",
      "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-tote-ink.png?v=1789149959",
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-tote-ink.png?v=1789308892",
       "alt": "GROUND ZERO Tote, black"
      },
      "images": [
       {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-tote-ink.png?v=1789149959",
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-tote-ink.png?v=1789308892",
        "alt": "GROUND ZERO Tote, black"
       }
      ],
@@ -106,107 +122,39 @@
      ]
     },
     {
-     "handle": "z0-ground-zero-glitch-crewneck",
-     "title": "GROUND ZERO · Glitch Crewneck",
-     "type": "Sweatshirt",
+     "handle": "z0-on-air-apparel",
+     "title": "ON AIR Apparel",
+     "type": "Apparel",
      "price": {
       "min": "48.0",
       "max": "48.0",
       "currency": "CAD"
      },
-     "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero-glitch-crewneck",
+     "url": "https://shop.ripostelabs.xyz/products/z0-on-air-apparel",
      "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-crew-ink.png?v=1789153833",
-      "alt": "GROUND ZERO · Glitch Crewneck, ink"
-     },
-     "images": [
-      {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-crew-ink.png?v=1789153833",
-       "alt": "GROUND ZERO · Glitch Crewneck, ink"
-      }
-     ],
-     "options": [
-      {
-       "name": "Colour",
-       "values": [
-        "Ink"
-       ]
-      },
-      {
-       "name": "Size",
-       "values": [
-        "XS",
-        "S",
-        "M",
-        "L",
-        "XL",
-        "2XL"
-       ]
-      }
-     ]
-    },
-    {
-     "handle": "z0-ground-zero-glitch-tee",
-     "title": "GROUND ZERO · Glitch Tee",
-     "type": "T-Shirt",
-     "price": {
-      "min": "28.0",
-      "max": "28.0",
-      "currency": "CAD"
-     },
-     "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero-glitch-tee",
-     "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-tee-ink.png?v=1789153830",
-      "alt": "GROUND ZERO · Glitch Tee, ink"
-     },
-     "images": [
-      {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-ground-zero-glitch-tee-ink.png?v=1789153830",
-       "alt": "GROUND ZERO · Glitch Tee, ink"
-      }
-     ],
-     "options": [
-      {
-       "name": "Colour",
-       "values": [
-        "Ink"
-       ]
-      },
-      {
-       "name": "Size",
-       "values": [
-        "XS",
-        "S",
-        "M",
-        "L",
-        "XL",
-        "2XL"
-       ]
-      }
-     ]
-    },
-    {
-     "handle": "on-air-crewneck",
-     "title": "ON AIR Crewneck",
-     "type": "Sweatshirt",
-     "price": {
-      "min": "48.0",
-      "max": "48.0",
-      "currency": "CAD"
-     },
-     "url": "https://shop.ripostelabs.xyz/products/on-air-crewneck",
-     "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-crew-on-air-ink.png?v=1789150039",
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-crew-on-air-ink.png?v=1789308952",
       "alt": "on-air-crewneck, ink"
      },
      "images": [
       {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-crew-on-air-ink.png?v=1789150039",
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-crew-on-air-ink.png?v=1789308952",
        "alt": "on-air-crewneck, ink"
       }
      ],
      "options": [
       {
+       "name": "Garment",
+       "values": [
+        "Crewneck"
+       ]
+      },
+      {
+       "name": "Colour",
+       "values": [
+        "Ink"
+       ]
+      },
+      {
        "name": "Size",
        "values": [
         "XS",
@@ -215,12 +163,6 @@
         "L",
         "XL",
         "2XL"
-       ]
-      },
-      {
-       "name": "Colour",
-       "values": [
-        "Ink"
        ]
       }
      ]
@@ -236,12 +178,12 @@
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-on-air-poster",
      "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-poster-ink.png?v=1789149981",
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-poster-ink.png?v=1789308905",
       "alt": "ON AIR Poster, ink"
      },
      "images": [
       {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-poster-ink.png?v=1789149981",
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-poster-ink.png?v=1789308905",
        "alt": "ON AIR Poster, ink"
       }
      ],
@@ -265,12 +207,12 @@
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-on-air-tote",
      "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-tote-ink.png?v=1789149982",
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-tote-ink.png?v=1789308907",
       "alt": "ON AIR Tote, black"
      },
      "images": [
       {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-tote-ink.png?v=1789149982",
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-on-air-tote-ink.png?v=1789308907",
        "alt": "ON AIR Tote, black"
       }
      ],
@@ -279,6 +221,62 @@
        "name": "Canvas",
        "values": [
         "Black"
+       ]
+      }
+     ]
+    },
+    {
+     "handle": "z0-stand-by-apparel",
+     "title": "Please Stand By Apparel",
+     "type": "Apparel",
+     "price": {
+      "min": "28.0",
+      "max": "48.0",
+      "currency": "CAD"
+     },
+     "url": "https://shop.ripostelabs.xyz/products/z0-stand-by-apparel",
+     "image": {
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-stand-by-ink.png?v=1789308949",
+      "alt": "please-stand-by-tee, ink"
+     },
+     "images": [
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-stand-by-ink.png?v=1789308949",
+       "alt": "please-stand-by-tee, ink"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-tee-ink.png?v=1789308949",
+       "alt": "Please Stand By · Glitch Tee, ink"
+      },
+      {
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-crew-ink.png?v=1789308949",
+       "alt": "Please Stand By · Glitch Crewneck, ink"
+      }
+     ],
+     "options": [
+      {
+       "name": "Garment",
+       "values": [
+        "Tee",
+        "Glitch Tee",
+        "Glitch Crewneck"
+       ]
+      },
+      {
+       "name": "Colour",
+       "values": [
+        "Ink"
+       ]
+      },
+      {
+       "name": "Size",
+       "values": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "2XL"
        ]
       }
      ]
@@ -294,58 +292,18 @@
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-stand-by-poster",
      "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-poster-ink.png?v=1789149961",
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-poster-ink.png?v=1789308893",
       "alt": "Please Stand By Poster, ink"
      },
      "images": [
       {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-poster-ink.png?v=1789149961",
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-poster-ink.png?v=1789308893",
        "alt": "Please Stand By Poster, ink"
       }
      ],
      "options": [
       {
        "name": "Ground",
-       "values": [
-        "Ink"
-       ]
-      }
-     ]
-    },
-    {
-     "handle": "please-stand-by-tee",
-     "title": "Please Stand By Tee",
-     "type": "T-Shirt",
-     "price": {
-      "min": "28.0",
-      "max": "28.0",
-      "currency": "CAD"
-     },
-     "url": "https://shop.ripostelabs.xyz/products/please-stand-by-tee",
-     "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-stand-by-ink.png?v=1789150014",
-      "alt": "please-stand-by-tee, ink"
-     },
-     "images": [
-      {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-tee-stand-by-ink.png?v=1789150014",
-       "alt": "please-stand-by-tee, ink"
-      }
-     ],
-     "options": [
-      {
-       "name": "Size",
-       "values": [
-        "XS",
-        "S",
-        "M",
-        "L",
-        "XL",
-        "2XL"
-       ]
-      },
-      {
-       "name": "Colour",
        "values": [
         "Ink"
        ]
@@ -363,12 +321,12 @@
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-stand-by-tote",
      "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-tote-ink.png?v=1789149963",
+      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-tote-ink.png?v=1789308895",
       "alt": "Please Stand By Tote, black"
      },
      "images": [
       {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-tote-ink.png?v=1789149963",
+       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-tote-ink.png?v=1789308895",
        "alt": "Please Stand By Tote, black"
       }
      ],
@@ -377,86 +335,6 @@
        "name": "Canvas",
        "values": [
         "Black"
-       ]
-      }
-     ]
-    },
-    {
-     "handle": "z0-stand-by-glitch-crewneck",
-     "title": "Please Stand By · Glitch Crewneck",
-     "type": "Sweatshirt",
-     "price": {
-      "min": "48.0",
-      "max": "48.0",
-      "currency": "CAD"
-     },
-     "url": "https://shop.ripostelabs.xyz/products/z0-stand-by-glitch-crewneck",
-     "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-crew-ink.png?v=1789153828",
-      "alt": "Please Stand By · Glitch Crewneck, ink"
-     },
-     "images": [
-      {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-crew-ink.png?v=1789153828",
-       "alt": "Please Stand By · Glitch Crewneck, ink"
-      }
-     ],
-     "options": [
-      {
-       "name": "Colour",
-       "values": [
-        "Ink"
-       ]
-      },
-      {
-       "name": "Size",
-       "values": [
-        "XS",
-        "S",
-        "M",
-        "L",
-        "XL",
-        "2XL"
-       ]
-      }
-     ]
-    },
-    {
-     "handle": "z0-stand-by-glitch-tee",
-     "title": "Please Stand By · Glitch Tee",
-     "type": "T-Shirt",
-     "price": {
-      "min": "28.0",
-      "max": "28.0",
-      "currency": "CAD"
-     },
-     "url": "https://shop.ripostelabs.xyz/products/z0-stand-by-glitch-tee",
-     "image": {
-      "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-tee-ink.png?v=1789153825",
-      "alt": "Please Stand By · Glitch Tee, ink"
-     },
-     "images": [
-      {
-       "src": "https://cdn.shopify.com/s/files/1/1006/4396/3192/files/z0-stand-by-glitch-tee-ink.png?v=1789153825",
-       "alt": "Please Stand By · Glitch Tee, ink"
-      }
-     ],
-     "options": [
-      {
-       "name": "Colour",
-       "values": [
-        "Ink"
-       ]
-      },
-      {
-       "name": "Size",
-       "values": [
-        "XS",
-        "S",
-        "M",
-        "L",
-        "XL",
-        "2XL"
        ]
       }
      ]
