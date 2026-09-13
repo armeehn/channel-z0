@@ -110,8 +110,8 @@ The short version — the [build guide](docs/pdf/docs-build-guide.pdf) has every
    bare-metal `playout/z0-uplink.service`). Optionally add the now-playing
    bridge: `docker compose --profile nowplaying up -d`. You now run a
    television station.
-5. **Phase 4 — the storefront.** Edit the `WATCH_HOST` + `AD_EMAIL` lines at the
-   top of `site/index.html`. Cloudflare serves it via **Workers Static Assets**,
+5. **Phase 4 — the storefront.** `station.env` + `tools/rebrand.py` set the
+   tower host and mailbox in `site/index.html`. Cloudflare serves it via **Workers Static Assets**,
    wired to this repo through Cloudflare's Git integration (`wrangler.jsonc`
    points `assets` at `site/`) — every push to `main` auto-deploys. Live at
    `ch0.ripostelabs.xyz`.
@@ -189,21 +189,31 @@ the storefront on every push on its own.
 
 ## The sponsor
 
-Channel Z0 is sponsored by **Riposte Laboratories**
-([ripostelabs.xyz](https://ripostelabs.xyz)) — a design company that
-transforms discarded plastic and end-of-life battery cells into durable,
-modular products. Between programs, you'll see what the lab has been building
-lately. The storefront speaks the lab's design language: paper, ink, one red,
-spec sheets, and esh's checkers.
+Every station has someone paying for the tower. Here it is
+**Riposte Laboratories** ([ripostelabs.xyz](https://ripostelabs.xyz)), whose
+Lab Hour shows what the lab has been building lately and whose design
+language the storefront borrows: paper, ink, one red, spec sheets, checkers.
+The name comes from `station.env`; the look is the `:root` block at the top
+of `site/index.html`.
 
 *PARRY · RIPOSTE · RECYCLE · REPEAT ♻*
 
+## Make it yours
+
+This repository is meant to be forked. Every name, domain, mailbox, show
+title and place it carries lives in [`station.env`](station.env); edit that
+file and run `python3 tools/rebrand.py` to have the whole tree, schedules
+and file names included, follow it. [`FORKING.md`](FORKING.md) is the
+checklist from fork to first sign-on.
+
 ## License
 
+<!-- rebrand:off -->
 Code and configuration are [MIT](LICENSE). The *Channel Z0* and *Ground Zero*
 names, show concepts, and the Riposte Laboratories marks and brand language
 are not granted by the licence — build your own station with this plumbing,
-but make it yours. (The Prelinger Archive material the guide points at is
+but make it yours (`station.env` is where that starts).
+<!-- rebrand:on --> (The Prelinger Archive material the guide points at is
 public domain; anything you air still has to be yours to air. See
 [`docs/pdf/docs-ad-standards.pdf`](docs/pdf/docs-ad-standards.pdf).)
 
@@ -215,13 +225,15 @@ public domain; anything you air still has to be yours to air. See
 
 ## Brand
 
-This project follows the [Riposte Laboratories design system](https://github.com/armeehn/riposte-brand) — published at
-[ripostelabs.xyz/brand](https://ripostelabs.xyz/brand/). See [`docs/pdf/brand.pdf`](docs/pdf/brand.pdf) for what
-conforms, what deliberately diverges, and why.
+<!-- rebrand:off -->
+The upstream station follows the [Riposte Laboratories design system](https://github.com/armeehn/riposte-brand)
+([ripostelabs.xyz/brand](https://ripostelabs.xyz/brand/)); [`docs/pdf/brand.pdf`](docs/pdf/brand.pdf) records what
+conforms, what deliberately diverges, and why. A fork owes it nothing.
+<!-- rebrand:on -->
 
 <table>
 <tr>
 <td><b>DOC NO. RL-Z0-A</b><br>REV. A &middot; EST. 2026</td>
-<td align="right"><b>PARRY &#9851; RIPOSTE &#9851; RECYCLE &#9851; REPEAT</b><br>Riposte Laboratories Inc.</td>
+<td align="right"><b>PARRY · RIPOSTE · RECYCLE · REPEAT</b><br>Riposte Laboratories Inc.</td>
 </tr>
 </table>
