@@ -89,7 +89,7 @@ import time
 
 # The container runs on this timezone, and every time in the schedule file is
 # local to it. cron does not necessarily agree, so pin it rather than inherit.
-DEFAULT_TZ = "America/Los_Angeles"
+DEFAULT_TZ = "America/Vancouver"
 
 CONFIG_DIR = "/mnt/solid-state/ersatztv"
 SCHEDULE_NAME = "channel-z0.yml"

@@ -127,7 +127,7 @@ async function postToTower(env, body) {
   // OWNCAST_BASE wins when it is set. `wrangler dev` against the real host
   // would post into the live room on the first test keystroke, so local runs
   // point this at a stub — and it is the only way to do that.
-  const base = env.OWNCAST_BASE || `https://${env.WATCH_HOST || "watch.ch0.ripostelabs.xyz"}`;
+  const base = env.OWNCAST_BASE || `https://${env.WATCH_HOST}`;
   try {
     const res = await fetch(`${base.replace(/\/$/, "")}/api/integrations/chat/send`, {
       method: "POST",
