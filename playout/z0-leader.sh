@@ -68,6 +68,17 @@ TTL="${Z0_LEASE_TTL:-20}"
 # be checked without a tower. Defaults to the real relay.
 UPLINK_CMD="${Z0_UPLINK_CMD:-}"
 
+# ── Tower watchdog ────────────────────────────────────────────────────────────
+# ffmpeg only exits when a write fails. When the tower half-closes the RTMP
+# session (Owncast logs "Inbound stream disconnected" but leaves the socket
+# open), every write still succeeds into a black hole: the socket sits in
+# CLOSE-WAIT, the process lives, and the channel is dark until somebody
+# restarts the container. 2026-09-14: two such outages of 12 and 17 minutes.
+# So ask the tower itself whether it is receiving, and restart the uplink
+# when it has said "no" for longer than a normal reconnect takes (~15s).
+TOWER_STATUS_URL="${Z0_TOWER_STATUS_URL:-https://${Z0_WATCH_DOMAIN:-}/api/status}"
+OFFLINE_GRACE="${Z0_OFFLINE_GRACE:-45}"
+
 log() { printf '%s z0-leader[%s] %s\n' "$(date -u +%H:%M:%S)" "$NODE_ID" "$*" >&2; }
 
 # ── Health ────────────────────────────────────────────────────────────────────
@@ -79,6 +90,15 @@ health_ok() {
   timeout 12 ffprobe -v error -rw_timeout 8000000 \
     -select_streams v:0 -show_entries stream=codec_type \
     -of csv=p=0 "$CHANNEL_URL" 2>/dev/null | grep -q video
+}
+
+# Unreachable tower counts as online: a dead API is not evidence the stream
+# is dark, and churning the uplink on it would only add reconnects.
+tower_online() {
+  [[ -n "$UPLINK_CMD" ]] && return 0        # test mode: no tower to ask
+  local body
+  body=$(curl -fsS -m 8 "$TOWER_STATUS_URL" 2>/dev/null) || return 0
+  grep -q '"online": *true' <<<"$body"
 }
 
 # ── The lease ─────────────────────────────────────────────────────────────────
@@ -150,6 +170,8 @@ release() {
 
 # ── The uplink child ──────────────────────────────────────────────────────────
 UPLINK_PID=""
+uplink_since=0
+offline_since=0
 
 start_uplink() {
   [[ -n "$UPLINK_PID" ]] && kill -0 "$UPLINK_PID" 2>/dev/null && return 0
@@ -165,6 +187,7 @@ start_uplink() {
       -f flv "rtmp://${Z0_WATCH_DOMAIN}:1935/live/${Z0_STREAM_KEY}" &
   fi
   UPLINK_PID=$!
+  uplink_since=$(date +%s); offline_since=0
   log "uplink started (pid ${UPLINK_PID})"
 }
 
@@ -265,6 +288,20 @@ while (( ! shutting_down )); do
           unhealthy_since=0
         fi
       fi
+      # A running uplink the tower is not receiving is a hung uplink. Give a
+      # fresh one OFFLINE_GRACE to connect before believing the tower.
+      if [[ -n "$UPLINK_PID" ]] && (( now - uplink_since >= OFFLINE_GRACE )); then
+        if tower_online; then
+          offline_since=0
+        else
+          (( offline_since == 0 )) && offline_since="$now"
+          if (( now - offline_since >= OFFLINE_GRACE )); then
+            log "tower reports offline for $(( now - offline_since ))s with uplink pid ${UPLINK_PID} alive — restarting it"
+            stop_uplink "tower offline"
+          fi
+        fi
+      fi
+
       # The uplink can also just die (tower restart, network blip). Let the next
       # tick restart it; that's the same reconnect-forever behaviour as before.
       if [[ -n "$UPLINK_PID" ]] && ! kill -0 "$UPLINK_PID" 2>/dev/null; then
