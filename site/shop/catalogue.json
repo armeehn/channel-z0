@@ -1,6 +1,6 @@
 {
  "shop": "https://h23y0x-fd.myshopify.com",
- "generated": "2026-09-14T01:01:32+00:00",
+ "generated": "2026-09-14T01:43:06+00:00",
  "collections": [
   {
    "handle": "channel-z0-apparel",
@@ -13,7 +13,7 @@
      "type": "Merch",
      "price": {
       "min": "18.0",
-      "max": "118.0",
+      "max": "50.0",
       "currency": "CAD"
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-ground-zero",
@@ -81,7 +81,7 @@
      "type": "Merch",
      "price": {
       "min": "18.0",
-      "max": "118.0",
+      "max": "50.0",
       "currency": "CAD"
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-on-air",
@@ -139,7 +139,7 @@
      "type": "Merch",
      "price": {
       "min": "18.0",
-      "max": "118.0",
+      "max": "50.0",
       "currency": "CAD"
      },
      "url": "https://shop.ripostelabs.xyz/products/z0-stand-by",
