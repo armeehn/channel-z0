@@ -18,6 +18,10 @@
 # Auth is an ed25519 deploy key in the MIRROR_SSH_KEY secret. Its public half
 # is a write-enabled deploy key on the GitHub repo, so the blast radius of the
 # key is that one mirror.
+#
+# The target is the MIRROR_REMOTE repository variable (Settings -> Actions ->
+# Variables), e.g. git@github.com:armeehn/channel-z0.git. Unset, the job
+# exits early and mirrors nothing, so a fork never pushes to a stranger's repo.
 name: Mirror to GitHub
 
 on:
@@ -37,8 +41,13 @@ jobs:
       - name: Load the deploy key
         env:
           KEY: ${{ secrets.MIRROR_SSH_KEY }}
+          MIRROR_REMOTE: ${{ vars.MIRROR_REMOTE }}
         run: |
           set -euo pipefail
+          if [ -z "$MIRROR_REMOTE" ]; then
+            echo "MIRROR_REMOTE is not set; nothing to mirror."
+            exit 0
+          fi
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
           printf "%s\n" "$KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
@@ -49,8 +58,12 @@ jobs:
           # `github.token` is a Gitea token and GITHUB_SERVER_URL is this
           # server, so cloning the source needs no extra secret.
           TOKEN: ${{ github.token }}
+          MIRROR_REMOTE: ${{ vars.MIRROR_REMOTE }}
         run: |
           set -euo pipefail
+          if [ -z "$MIRROR_REMOTE" ]; then
+            exit 0
+          fi
 
           # Clone bare: the ref set is then exactly this server's, with no
           # remote-tracking indirection for --prune to trip over.
@@ -61,5 +74,5 @@ jobs:
           # a rewritten branch through. Both are what "mirror" means: this
           # server wins, always.
           git -C src.git push --prune --force \
-            git@github.com:armeehn/channel-z0.git \
+            "$MIRROR_REMOTE" \
             "+refs/heads/*:refs/heads/*" "+refs/tags/*:refs/tags/*"

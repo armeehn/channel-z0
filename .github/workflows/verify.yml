@@ -53,6 +53,16 @@ jobs:
           done
           exit $status
 
+  # station.env must already be applied to the tree, and a fork's rebrand
+  # must round-trip byte-exact. Pure Python, no packages.
+  rebrand:
+    name: rebrand round trip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/rebrand.py --check
+      - run: python3 tools/test_rebrand.py
+
   relay:
     name: comment relay
     runs-on: ubuntu-latest

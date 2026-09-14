@@ -35,7 +35,7 @@
 #    type and mush.
 set -euo pipefail
 
-MEDIA_ROOT="${Z0_MEDIA_ROOT:-/mnt/main-data/channelz0}"
+MEDIA_ROOT="${Z0_MEDIA_ROOT:-/media/channelz0}"
 IMAGE="${Z0_FFMPEG_IMAGE:-ghcr.io/ersatztv/legacy:v26.7.1}"
 SECS="${Z0_WX_SEGMENT_SECS:-120}"       # 4 slides x 30s
 SLIDE=$(( SECS / 4 ))
