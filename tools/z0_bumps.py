@@ -1344,7 +1344,7 @@ class SlitScan(Treatment):
         depth = int((n - 1) * e)
         if self.vertical:
             idx = (n - 1 - (np.arange(H) / H * depth)).astype(np.int32)
-            return stack[idx, np.arange(H)[:, None], np.arange(W)[None, :]]
+            return stack[idx[:, None], np.arange(H)[:, None], np.arange(W)[None, :]]
         idx = (n - 1 - (np.arange(W) / W * depth)).astype(np.int32)
         return stack[idx[None, :], np.arange(H)[:, None], np.arange(W)[None, :]]
 
