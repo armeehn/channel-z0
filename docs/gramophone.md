@@ -6,8 +6,9 @@ Tools in `tools/z0-gramo/`; the manifest `sides.json` is the rights record;
 the docs table is in `docs/programming-library.tex`.
 
 Two pools, two days: `Z0 Gramophone Songs` (La Bolduc, the Saint-Benoît-du-Lac
-chant) sits in Wednesday's SONGS AND CHORUSES, `Z0 Gramophone Reels` (Soucy,
-Allard, Montmarquette) in Friday's POLKA PARTY. Nothing else in the week
+chant, the named-composer chansons: 158 sides) sits in Wednesday's SONGS AND
+CHORUSES, `Z0 Gramophone Reels` (Soucy, Allard, Montmarquette: 64) in
+Friday's POLKA PARTY. Nothing else in the week
 draws on them: the sides are not tagged `canada`, so `Z0 Prairie Music`, the
 Neighbourhood Desk and Canada Night are unchanged. The schedule file does not
 change either; the two playlists gain one item each in the database.
@@ -46,13 +47,16 @@ supports it, and refuses the rest:
 | `own` | the credited performer wrote the material (La Bolduc) | every credit d. <= 1971 |
 | `trad` | a reel, gigue or quadrille: traditional, no author | any credit dated is <= 1971 |
 | `chant` | plainchant from the abbey: no author | corporate credit, no clock |
-| none | a tenor, a pianist, a salon orchestra performing an unnamed composer | **REVIEW** |
+| `named` | a `work` block names every composer, lyricist and arranger, with LAC's catalogue record as source | every author d. <= 1971 |
+| none | the feed credits a performer and nothing names the work's author | **UNRESOLVED** |
 
-The REVIEW pile is the bulk of round 3 (Saucier, Éva Gauthier, Albani,
-Dufault, Eckstein, Miro's Band): singers dead for eighty years performing
-works the record does not attribute. Most are almost certainly clear and
-none can be proven from the feed. Naming the composers per side is the
-cheapest way to grow the pool, and it is a research task, not a build step.
+The feed credits performers (Saucier, Éva Gauthier, Albani, Dufault,
+Eckstein, Miro's Band), so 145 sides sat UNRESOLVED until their composers
+were researched into `work` blocks from LAC's own per-disc record (read
+through web.archive.org), with BnF and LC authority files for missing dates.
+Manifest as of 2026-09-15: CLEAR 222, HELD 1 (a lyricist d. 1973),
+UNRESOLVED 16 (mostly unnamed translators of sung texts). `gramo.py stamp`
+writes the status per side and the tests refuse a stale stamp.
 
 `gramo.py check` prints the verdict per side and the counts per clock.
 Corporate credits (a trio, a band, the abbey) have no personal clock; an
@@ -69,10 +73,14 @@ call an mp3), envelope, render, and an ffprobe gate: h264 640x480 30 fps
 yuv420p, AAC 48 kHz stereo, <= 3000 kbps. Then `z0-video-tail.sh scan` over
 the output: the picture must run at least as long as the sound, or the side
 airs as seconds of audio over no frames and the tower drifts by exactly that.
-About 30 s per side, `$JOBS` at a time. Render on forge (`ml350p run`), not on
-x or LXC 111: 94 sides at 4 jobs put x at load 48. forge has Pillow and ffmpeg
-but no Liberation fonts; copy them from 111 and point `GRAMO_FONT_DIR` at
-them. Deterministic: no clock, no seed. Output under
+About 4 CPU-minutes per side, `$JOBS` at a time. Render on forge (`ssh forge`,
+ship `tools/z0-gramo` + `tools/z0-video-tail.sh` as a tarball), not on x or
+LXC 111: 94 sides at 4 jobs put x at load 48. forge has Pillow and ffmpeg but
+no Liberation fonts; copy them from 111 and point `GRAMO_FONT_DIR` at them.
+`build.sh` selects sides by the status word `gramo.py check` prints (CLEAR);
+pass ids explicitly to build only the sides not yet in the library. The card
+carries `gramo.py`'s sha1 as provenance; nothing reads it back, so an edit to
+the renderer does not by itself force a re-render of cards already on air. Deterministic: no clock, no seed. Output under
 `$GRAMO_WORK/out/gramophone/<basis>/`.
 
 ## Into the library
