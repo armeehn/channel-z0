@@ -25,3 +25,15 @@ docker compose --profile nowplaying up -d   # ...and the live marquee
 The `uplink` service replaces `z0-uplink.service` — use whichever you prefer;
 don't run both. Media library layout: run `tools/make-media-tree.sh` to create
 it, and see `docs/pdf/docs-build-guide.pdf` Phase 2 for the schedule/filler configuration.
+
+## Loudness
+
+The library spans -13 LUFS (gramophone sides) to -70 LUFS (silent cards), with
+programmes around -22 to -28 and idents near -50. FFmpeg profile 1 therefore
+runs ffmpeg's `loudnorm=I=-16:TP=-1.5:LRA=11` on every item (ErsatzTV
+`NormalizeLoudnessMode=LoudNorm`, `TargetLoudness=-16`, enabled 2026-09-15).
+That is the same target `tools/normalize-ad.sh` clears spots to, so a file
+that skipped the pass still airs at station level. The uplink is `-c copy`,
+so what ErsatzTV emits is what the tower carries. A change to the profile
+takes effect at the next item, no restart. The sentinel check
+`z0-loudness-normalized` fails if the mode is ever switched off.
