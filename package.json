@@ -6,9 +6,11 @@
   "scripts": {
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
+    "test": "node tools/test-all.mjs",
     "test:relay": "node tools/test-comment-relay.mjs"
   },
   "devDependencies": {
+    "playwright-core": "^1.63.0",
     "wrangler": "^4.125.0"
   }
 }
