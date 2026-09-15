@@ -81,6 +81,7 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | `tools/test-comment-relay.mjs` | Drive the relay Worker with no browser and no network — shape, rate limits, fail-closed moderation, the tower call |
 | `tools/check-ad.sh` | Screen a submitted spot: length, codecs, true loudness (read-only) |
 | `tools/normalize-ad.sh` | Clear a submitted spot for air: 1080p/30, loudness-normalized |
+| `tools/z0-video-tail.sh` | Find clips whose picture ends before their sound (they log as 0.6–0.9x and drift the tower) and loop them to length |
 | `tools/make-colorbars.sh` | Generate the midnight sign-off bars (with optional silence) |
 | `tools/make-testcard.sh` | Generate the station test card — the branded signal-check pattern with a 1 kHz line-up tone |
 | `tools/make-signoff.sh` | Generate the nightly sign-off — the "broadcast day concludes" card dissolving into colour bars |

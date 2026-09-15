@@ -212,6 +212,24 @@ ffmpeg -i "$B/hls/$(dirname $V)/$SEG" -frames:v 1 out.png
 And after any ErsatzTV restart, \textbf{restart \ripmono{z0-uplink} too} — it does not recover on its own, and Owncast will keep reporting \ripmono{online: true} with a frozen picture.
 
 
+\ripsubsection{\ripmdhead{The picture must be as long as the sound}}
+
+ErsatzTV logs \ripmono{Media item [N] transcoded at 0.68x (throttled)} and the tower drifts by a few seconds per item. The number is not the encoder: it is ffmpeg's own \ripmono{speed=}, the last \textbf{video} timestamp over wall time. A clip whose video stream ends before its audio airs its tail as sound over no frames, reads as 0.6--0.9x, and costs the tower exactly the missing seconds. On 2026-09-15, 14 of the 32 \ripmono{z0-anime} clips carried 35--51 s of picture under a 55 s \ripmono{anullsrc} track (the glitch carrier came out short and the final mux had no \ripmono{-shortest}); the six items warned about that day were all of them, and the GPU, the profile and the graphics engine were clean at 6x realtime.
+
+\ripcodeopen
+\ripcodehead{sh}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+# on the playout node — lists every clip short on picture, exit 1 if any
+tools/z0-video-tail.sh scan /mnt/main-data/channelz0/generative
+
+# loops the picture to the audio length; duration unchanged, so no rescan
+tools/z0-video-tail.sh fix  /mnt/main-data/channelz0/generative
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+The sentinel check \ripmono{z0-encoder-keeps-up} counts these warnings over the last 24 h and names the files. Run \ripmono{scan} on a new batch before installing it; \ripmono{fix} re-encodes the video only and replaces the file by write-temp and rename, so a clip on air is never torn.
+
 \ripsection{\ripmdhead{Tuning}}
 
 All in \ripmono{tools/\allowbreak{}z0-\allowbreak{}generative.\allowbreak{}py}:
