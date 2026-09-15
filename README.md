@@ -88,6 +88,14 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | `tools/make-slate.sh` | Generate slate cards — technical difficulties, sign-off, please stand by |
 | `tools/make-bug.sh` | Generate the channel bug (watermark PNG) for ErsatzTV |
 
+The nine `tools/test-*.mjs` suites run with `npm ci && npm test` (or one at a
+time with `node tools/test-<name>.mjs`). The eight browser suites need a full
+Chrome, not a headless shell: they default to the puppeteer cache and take a
+`CHROME=/path/to/chrome` override. `test-now-plate` and `test-player-controls`
+tune into the live tower and go red when it is off air. CI runs only
+`test-comment-relay`; the rest are local, see the note at the end of
+`.github/workflows/verify.yml`.
+
 ## Quickstart
 
 The short version — the [build guide](docs/pdf/docs-build-guide.pdf) has every command.

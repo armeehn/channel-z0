@@ -119,7 +119,9 @@ jobs:
 #
 #   z0-lists.py --check   needs --db, a live ErsatzTV SQLite database on vile.
 #   z0-day-align.py       drives a running container and reads the tower clock.
-#   tools/test-*.mjs      the eight DOM tests need a browser. They also default
-#                         to a playwright path that exists on no host any more,
-#                         so they cannot run anywhere today; resurrecting them
-#                         is its own change, not a rider on this one.
+#   tools/test-*.mjs      the eight DOM tests need a full Chrome (Fullscreen
+#                         API, H.264) that neither runner image ships, and two
+#                         of them tune into the live tower. Installing Chrome
+#                         per run is ~170 MB on a runner with an ENOSPC
+#                         history, for a suite that would flap with the
+#                         signal. Run them locally: `npm ci && npm test`.
