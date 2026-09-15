@@ -11,6 +11,7 @@ now-playing bridge tells the storefront what's on.
 | `ersatztv.sh` | Start just ErsatzTV in docker (pick your hardware-encoder tag) |
 | `nowplaying.py` | The live marquee: reads ErsatzTV's guide, writes the current program into Owncast's title |
 | `graphics-elements/` | The on-air overlays — bug, weather card, up-next, crawl. Deploy to ErsatzTV’s `/config/templates/graphics-elements/` ([manual](../docs/pdf/docs-weather.pdf)) |
+| `z0-tools-sync.sh` | Populates the node's `.z0tools/tools/` copy (what root's cron runs) from Gitea main; cron 04:30 and by hand after a merge. Watched by the sentinel check `z0-tools-in-sync` |
 | `z0-uplink.service` | Bare-metal alternative to the compose `uplink`: systemd ffmpeg `-c copy` relay |
 
 ## Quick start (containerized)
