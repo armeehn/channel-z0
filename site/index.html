@@ -786,11 +786,13 @@
       flex: 1 1 50%; border-bottom: 1px solid var(--ink);
       letter-spacing: .05em; padding: 10px 4px; gap: 5px;
     }
-    /* Five half-width tabs wrap as two rows of two and a fifth on its own —
-       which takes the whole row rather than leaving a hole beside it, and is
-       the only one with no row under it to be separated from. */
+    /* Half-width tabs wrap two to a row. An odd count leaves the last one
+       alone, so it takes the whole row rather than leaving a hole beside it;
+       an even count ends in a full pair. Whatever sits on the last row has no
+       row under it to be separated from. */
     .sec-tab:nth-child(2n), .sec-tab:last-child { border-right: none; }
-    .sec-tab:last-child { flex-basis: 100%; border-bottom: none; }
+    .sec-tab:nth-child(odd):last-child { flex-basis: 100%; }
+    .sec-tab:last-child, .sec-tab:nth-child(odd):nth-last-child(2) { border-bottom: none; }
   }
 </style>
 <script>
