@@ -55,14 +55,22 @@ register() { # state
 #   RENEW  the leader touches the heartbeat this often
 #   FENCE  if the leader cannot renew for this long, it kills its own uplink
 #   TTL    a standby steals the lease after the heartbeat is this stale
+#   HEALTH_EVERY  the leader ffprobes its own channel this often
 #
 # TTL > FENCE by a wide margin, so the old leader has stopped publishing before
 # the new one starts. With the defaults the leader is off air by T+12s and the
 # standby comes up at T+20s — an 8s gap where the channel is down, which is the
 # correct trade. Dead air for eight seconds beats two stations at once.
+#
+# HEALTH_EVERY is not part of that argument. Every probe opens a channel
+# session that ErsatzTV logs as "Starting ts stream" and closes as "Broken
+# pipe"; probing on every RENEW tick wrote 5,000+ such lines a day and buried
+# the real ones. A probe that fails is repeated every tick, so the time from
+# first failure to standing down is still FENCE. Standbys probe every tick.
 RENEW="${Z0_LEASE_RENEW:-5}"
 FENCE="${Z0_LEASE_FENCE:-12}"
 TTL="${Z0_LEASE_TTL:-20}"
+HEALTH_EVERY="${Z0_HEALTH_EVERY:-30}"
 
 # Test seam: the failover harness swaps in a fake publisher so the invariant can
 # be checked without a tower. Defaults to the real relay.
@@ -254,11 +262,12 @@ shutting_down=0
 on_term() { shutting_down=1; log "shutting down"; stop_uplink "shutdown"; release; exit 0; }
 trap on_term TERM INT
 
-log "watching (cluster=${CLUSTER_DIR} renew=${RENEW}s fence=${FENCE}s ttl=${TTL}s)"
+log "watching (cluster=${CLUSTER_DIR} renew=${RENEW}s fence=${FENCE}s ttl=${TTL}s health=${HEALTH_EVERY}s)"
 
 leader=0
 last_renew=$(date +%s)
 unhealthy_since=0
+last_probe=0
 
 while (( ! shutting_down )); do
   now=$(date +%s)
@@ -275,18 +284,25 @@ while (( ! shutting_down )); do
     fi
 
     if (( leader )); then
-      if health_ok; then
-        unhealthy_since=0
-        start_uplink
-      else
-        (( unhealthy_since == 0 )) && unhealthy_since="$now"
-        if (( now - unhealthy_since >= FENCE )); then
-          log "channel unhealthy for $(( now - unhealthy_since ))s — standing down so a standby can take it"
-          stop_uplink "unhealthy"
-          release
-          leader=0
+      # Probe on the HEALTH_EVERY cadence while healthy, every tick once a probe
+      # has failed, so the FENCE clock below runs at RENEW resolution.
+      if (( unhealthy_since > 0 || now - last_probe >= HEALTH_EVERY )); then
+        last_probe="$now"
+        if health_ok; then
           unhealthy_since=0
+        else
+          (( unhealthy_since == 0 )) && unhealthy_since="$now"
         fi
+      fi
+
+      if (( unhealthy_since == 0 )); then
+        start_uplink
+      elif (( now - unhealthy_since >= FENCE )); then
+        log "channel unhealthy for $(( now - unhealthy_since ))s — standing down so a standby can take it"
+        stop_uplink "unhealthy"
+        release
+        leader=0
+        unhealthy_since=0
       fi
       # A running uplink the tower is not receiving is a hung uplink. Give a
       # fresh one OFFLINE_GRACE to connect before believing the tower.
@@ -312,7 +328,7 @@ while (( ! shutting_down )); do
   else
     # Only healthy nodes stand for election.
     if health_ok && try_acquire; then
-      leader=1; last_renew=$(date +%s); unhealthy_since=0
+      leader=1; last_renew=$(date +%s); unhealthy_since=0; last_probe="$last_renew"
       start_uplink
     fi
   fi
