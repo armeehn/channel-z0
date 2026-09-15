@@ -52,7 +52,7 @@ playout:
   - epg_group: true
   - pad_until: '06:26'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -100,7 +100,7 @@ playout:
   - epg_group: true
   - pad_until: '10:56'
     tomorrow: false
-    content: 'prelinger'
+    content: 'pl_prelinger'
     custom_title: 'PRELINGER THEATRE'
     discard_attempts: 6
   - epg_group: false
@@ -179,7 +179,7 @@ playout:
   - epg_group: true
   - pad_until: '15:56'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -195,7 +195,7 @@ playout:
   - epg_group: true
   - pad_until: '18:00'
     tomorrow: false
-    content: 'animation_blocks'
+    content: 'pl_cartoon_block_ii'
     custom_title: 'CARTOON BLOCK II'
     discard_attempts: 6
   - epg_group: false
@@ -274,7 +274,7 @@ playout:
   - epg_group: true
   - pad_until: '21:56'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -402,7 +402,7 @@ playout:
   - epg_group: true
   - pad_until: '06:26'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -450,7 +450,7 @@ playout:
   - epg_group: true
   - pad_until: '10:56'
     tomorrow: false
-    content: 'prelinger'
+    content: 'pl_prelinger'
     custom_title: 'PRELINGER THEATRE'
     discard_attempts: 6
   - epg_group: false
@@ -529,7 +529,7 @@ playout:
   - epg_group: true
   - pad_until: '15:56'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -545,7 +545,7 @@ playout:
   - epg_group: true
   - pad_until: '18:00'
     tomorrow: false
-    content: 'animation_blocks'
+    content: 'pl_cartoon_block_ii'
     custom_title: 'CARTOON BLOCK II'
     discard_attempts: 6
   - epg_group: false
@@ -624,7 +624,7 @@ playout:
   - epg_group: true
   - pad_until: '21:56'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -752,7 +752,7 @@ playout:
   - epg_group: true
   - pad_until: '06:56'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -784,7 +784,7 @@ playout:
   - epg_group: true
   - pad_until: '10:56'
     tomorrow: false
-    content: 'prelinger'
+    content: 'pl_prelinger'
     custom_title: 'PRELINGER THEATRE'
     discard_attempts: 6
   - epg_group: false
@@ -863,7 +863,7 @@ playout:
   - epg_group: true
   - pad_until: '15:56'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -879,7 +879,7 @@ playout:
   - epg_group: true
   - pad_until: '18:00'
     tomorrow: false
-    content: 'animation_blocks'
+    content: 'pl_cartoon_block_ii'
     custom_title: 'CARTOON BLOCK II'
     discard_attempts: 6
   - epg_group: false
@@ -958,7 +958,7 @@ playout:
   - epg_group: true
   - pad_until: '22:27'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -994,7 +994,7 @@ playout:
   - sequence: 'graphics_up'
   - epg_group: true
   - pad_to_next: 30
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -1088,7 +1088,7 @@ playout:
   - epg_group: true
   - pad_until: '06:26'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -1136,7 +1136,7 @@ playout:
   - epg_group: true
   - pad_until: '12:00'
     tomorrow: false
-    content: 'prelinger'
+    content: 'pl_prelinger'
     custom_title: 'PRELINGER THEATRE'
     discard_attempts: 6
   - epg_group: false
@@ -1198,7 +1198,7 @@ playout:
   - epg_group: true
   - pad_until: '15:56'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -1214,7 +1214,7 @@ playout:
   - epg_group: true
   - pad_until: '18:00'
     tomorrow: false
-    content: 'animation_blocks'
+    content: 'pl_cartoon_block_ii'
     custom_title: 'CARTOON BLOCK II'
     discard_attempts: 6
   - epg_group: false
@@ -1293,7 +1293,7 @@ playout:
   - epg_group: true
   - pad_until: '22:26'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -1404,7 +1404,7 @@ playout:
   - epg_group: true
   - pad_until: '06:26'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -1452,7 +1452,7 @@ playout:
   - epg_group: true
   - pad_until: '10:56'
     tomorrow: false
-    content: 'prelinger'
+    content: 'pl_prelinger'
     custom_title: 'PRELINGER THEATRE'
     discard_attempts: 6
   - epg_group: false
@@ -1531,7 +1531,7 @@ playout:
   - epg_group: true
   - pad_until: '15:56'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -1547,7 +1547,7 @@ playout:
   - epg_group: true
   - pad_until: '18:00'
     tomorrow: false
-    content: 'animation_blocks'
+    content: 'pl_cartoon_block_ii'
     custom_title: 'CARTOON BLOCK II'
     discard_attempts: 6
   - epg_group: false
@@ -1626,7 +1626,7 @@ playout:
   - epg_group: true
   - pad_until: '21:56'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -1754,7 +1754,7 @@ playout:
   - epg_group: true
   - pad_until: '06:26'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -1802,7 +1802,7 @@ playout:
   - epg_group: true
   - pad_until: '10:56'
     tomorrow: false
-    content: 'prelinger'
+    content: 'pl_prelinger'
     custom_title: 'PRELINGER THEATRE'
     discard_attempts: 6
   - epg_group: false
@@ -1881,7 +1881,7 @@ playout:
   - epg_group: true
   - pad_until: '15:56'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -1897,7 +1897,7 @@ playout:
   - epg_group: true
   - pad_until: '18:00'
     tomorrow: false
-    content: 'animation_blocks'
+    content: 'pl_cartoon_block_ii'
     custom_title: 'CARTOON BLOCK II'
     discard_attempts: 6
   - epg_group: false
@@ -1976,7 +1976,7 @@ playout:
   - epg_group: true
   - pad_until: '21:56'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -2104,7 +2104,7 @@ playout:
   - epg_group: true
   - pad_until: '06:26'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -2152,7 +2152,7 @@ playout:
   - epg_group: true
   - pad_until: '10:56'
     tomorrow: false
-    content: 'prelinger'
+    content: 'pl_prelinger'
     custom_title: 'PRELINGER THEATRE'
     discard_attempts: 6
   - epg_group: false
@@ -2231,7 +2231,7 @@ playout:
   - epg_group: true
   - pad_until: '15:56'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false
@@ -2247,7 +2247,7 @@ playout:
   - epg_group: true
   - pad_until: '18:00'
     tomorrow: false
-    content: 'animation_blocks'
+    content: 'pl_cartoon_block_ii'
     custom_title: 'CARTOON BLOCK II'
     discard_attempts: 6
   - epg_group: false
@@ -2326,7 +2326,7 @@ playout:
   - epg_group: true
   - pad_until: '21:56'
     tomorrow: false
-    content: 'pad_short'
+    content: 'pl_short_subjects'
     custom_title: 'SHORT SUBJECTS'
     discard_attempts: 6
   - epg_group: false

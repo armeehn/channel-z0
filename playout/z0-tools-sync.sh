@@ -21,6 +21,7 @@ REPO_URL="${Z0_REPO_URL:-https://gitea.hq.ripostelabs.xyz/sasha/channel-z0.git}"
 CLONE="${Z0_REPO_CLONE:-/opt/channel-z0/src}"
 TOOLS_DIR="${Z0_TOOLS_DIR:-/mnt/main-data/channelz0/.z0tools/tools}"
 LISTS_DIR="${Z0_LISTS_DIR:-/mnt/main-data/channelz0/.z0tools/lists}"
+PLAYOUT_DIR="${Z0_PLAYOUT_DIR:-/mnt/main-data/channelz0/.z0tools/playout}"
 SELF=/usr/local/sbin/z0-tools-sync
 
 # Generated on the node, never in git: survive the --delete.
@@ -40,9 +41,14 @@ mkdir -p "$TOOLS_DIR"
 rsync -a --delete "${EXCL[@]}" "$CLONE/tools/" "$TOOLS_DIR/"
 mkdir -p "$LISTS_DIR"
 rsync -a --delete "$CLONE/lists/" "$LISTS_DIR/"
+# The two import fragments ride along too, so `z0 fragments` on x can deploy
+# what main actually has (2026-09-15: the bumps/promos keys). Deploying into
+# /config stays a deliberate step; this only stages the copy.
+mkdir -p "$PLAYOUT_DIR"
+rsync -a "$CLONE/playout/_content.yml" "$CLONE/playout/_sequences.yml" "$PLAYOUT_DIR/"
 
 # Keep this script current too. install(1) writes a new inode, so the
 # copy bash is still reading is untouched.
 install -m 755 "$CLONE/playout/z0-tools-sync.sh" "$SELF"
 
-echo "$(date -u +%FT%TZ) tools lists <- main $(git -C "$CLONE" rev-parse --short HEAD)"
+echo "$(date -u +%FT%TZ) tools lists playout <- main $(git -C "$CLONE" rev-parse --short HEAD)"

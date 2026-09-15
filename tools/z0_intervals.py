@@ -38,6 +38,11 @@ CONTENT_SECONDS = {
     "commercials": 30, "colorbars": 3600, "pad_short": 105, "rail": 900,
     "prelinger": 954, "slowtv": 1434, "newsreels": 300, "schoolroom": 600,
     "overnight": 1200, "animation_blocks": 396, "music": 180,
+    # Rundowns with breaks (lists/z0-lists.yml); sized as their lead pool so
+    # the interval next to them does not grow to the 600 s default.
+    "pl_short_subjects": 105, "pl_prelinger": 954, "pl_cartoon_block_ii": 396,
+    "bumps_math": 12, "bumps_glitch": 12, "bumps_lsys": 14,
+    "promos_merch": 15, "promos_projects": 18,
 }
 DEFAULT_CONTENT_SECONDS = 600
 

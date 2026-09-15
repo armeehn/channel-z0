@@ -134,7 +134,15 @@ def programme(title, content, count=1, rolls=True):
 
 
 def strand(title, content, until, tomorrow=False, discard=6, trim=False):
-    """A block padded out to a clock time. `discard_attempts` matters: without
+    """A block padded out to a clock time.
+
+    `pad_until` never emits pre-roll or post-roll, so a strand that pads from
+    a bare pool has no advert breaks at all. The daytime strands therefore pad
+    from a PLAYLIST (`pl_short_subjects`, `pl_prelinger`,
+    `pl_cartoon_block_ii`) whose rundown carries a bump and a house promo
+    after every two or three items — see lists/z0-lists.yml. The bumps are
+    8–15 s, so the tail of a block can end on a couple of them; that is fine,
+    and it is why `discard_attempts` stays at 6. `discard_attempts` matters: without
     it, `pad_until` gives up on the first item that does not FIT the remaining
     gap rather than trying the next one, and a single unlucky shuffle empties
     the whole block."""
@@ -232,22 +240,22 @@ def day_plan(name, spec):
 
     if name == "saturday":
         # Cartoons come forward and run long; no STRETCH AND COFFEE.
-        P += strand("SHORT SUBJECTS", "pad_short", "07:00")
+        P += strand("SHORT SUBJECTS", "pl_short_subjects", "07:00")
         P += strand("CARTOON CARNIVAL", morning, "10:00")
-        P += strand("PRELINGER THEATRE", "prelinger", "11:00")
+        P += strand("PRELINGER THEATRE", "pl_prelinger", "11:00")
         P += coming_soon("LAB HOUR — COMING SOON", "coming_soon_lab", "12:00")
     elif name == "sunday":
         # The quiet one: a slower morning, and NO LAB HOUR — 11:00 is
         # PRELINGER THEATRE, which is why this branch has no card at all.
-        P += strand("SHORT SUBJECTS", "pad_short", "06:30")
+        P += strand("SHORT SUBJECTS", "pl_short_subjects", "06:30")
         P += strand("SUNDAY SERVICE", "slowtv", "09:00", discard=4)
         P += strand("CARTOON CARNIVAL", morning, "11:00")
-        P += strand("PRELINGER THEATRE", "prelinger", "12:00")
+        P += strand("PRELINGER THEATRE", "pl_prelinger", "12:00")
     else:
-        P += strand("SHORT SUBJECTS", "pad_short", "06:30")
+        P += strand("SHORT SUBJECTS", "pl_short_subjects", "06:30")
         P += strand("STRETCH AND COFFEE", "slowtv", "07:00", discard=4)
         P += strand("CARTOON BLOCK", morning, "09:00")
-        P += strand("PRELINGER THEATRE", "prelinger", "11:00")
+        P += strand("PRELINGER THEATRE", "pl_prelinger", "11:00")
         P += coming_soon("LAB HOUR — COMING SOON", "coming_soon_lab", "12:00")
 
     # ── Midday ────────────────────────────────────────────────────────────────
@@ -278,8 +286,8 @@ def day_plan(name, spec):
 
     # ── Afternoon ─────────────────────────────────────────────────────────────
     P += programme(*spec["matinee"])
-    P += strand("SHORT SUBJECTS", "pad_short", "16:00")
-    P += strand("CARTOON BLOCK II", "animation_blocks", "18:00")
+    P += strand("SHORT SUBJECTS", "pl_short_subjects", "16:00")
+    P += strand("CARTOON BLOCK II", "pl_cartoon_block_ii", "18:00")
 
     # ── Early evening ─────────────────────────────────────────────────────────
     # 19:00 GROUND ZERO and 00:00 SIGN-OFF are the two fixed points that never
@@ -306,7 +314,7 @@ def day_plan(name, spec):
     # the guide never promised, which after the cards started holding slots
     # meant an hour of COMING SOON on a night with no Ground Zero on the grid.
     if name == "saturday":
-        P += strand("SHORT SUBJECTS", "pad_short", "22:30")
+        P += strand("SHORT SUBJECTS", "pl_short_subjects", "22:30")
         P += programme(*spec["second_feature"])
         P.append({"sequence": "station_break"})
         # ── This one is `pad_to_next`, and it HAS to be. ────────────────────
@@ -323,12 +331,12 @@ def day_plan(name, spec):
         # `pad_to_next: 30` pads to the next half hour whatever the clock
         # says, so it is bounded by construction: at 00:03 it lands on 00:30,
         # which is exactly the sign-off the storefront promises.
-        P += strand_to_next("SHORT SUBJECTS", "pad_short", 30)
+        P += strand_to_next("SHORT SUBJECTS", "pl_short_subjects", 30)
     elif name == "sunday":
-        P += strand("SHORT SUBJECTS", "pad_short", "22:30")
+        P += strand("SHORT SUBJECTS", "pl_short_subjects", "22:30")
         P.append({"sequence": "station_break"})
     else:
-        P += strand("SHORT SUBJECTS", "pad_short", "22:00")
+        P += strand("SHORT SUBJECTS", "pl_short_subjects", "22:00")
         P += coming_soon("GROUND ZERO ENCORE — COMING SOON",
                          "coming_soon_gnd", "23:00")
         # No SHORT SUBJECTS strand after this break: the COMING SOON card

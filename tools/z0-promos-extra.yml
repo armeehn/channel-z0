@@ -1,0 +1,18 @@
+# Channel Z0 — projects to promote that api.hq does not list (yet).
+#
+# api.hq /v1/projects and /v1/software are the source of truth and every entry
+# there gets a spot automatically. Add an entry here only for work that is
+# already PUBLIC (a public repo, a published page, a shipped release) and that
+# the API has no row for. Remove it once the API carries it. Never list work
+# that has not been announced: the channel is public.
+#
+# Fields: id (slug, becomes the file name), name, subtitle, status, summary
+# (one or two sentences, under 240 characters), genre (optional background
+# from `z0_bumps.py list`; default flow).
+projects:
+  - id: carlauncher
+    name: CarLauncher
+    subtitle: a home screen for a rooted RAV4 head unit
+    status: shipping
+    summary: An open-source Android launcher for the aftermarket head unit in a 2019 RAV4. Big buttons, a games library, one signed APK the car fetches for itself.
+    genre: hexgrid
