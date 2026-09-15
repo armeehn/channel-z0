@@ -200,6 +200,25 @@ smart_collections:
     query: 'type:other_video AND (tag:polka OR tag:kolomyika OR tag:fiddle) NOT tag:nfb AND minutes:[0 TO 9]'
     note: Every uptempo form at once. The Friday lead.
 
+  # ── The Virtual Gramophone sides ───────────────────────────────────────────
+  # Library and Archives Canada 78s, 1900-1950, filed under gramophone/ by
+  # tools/z0-gramo with the picture drawn from the sound. Not tagged `canada`
+  # on purpose: `Z0 Prairie Music` also feeds Canada Night and the
+  # Neighbourhood Desk, and these sides are lunch music only. Two clocks, both
+  # proven per side in tools/z0-gramo/sides.json; a side that fails either
+  # never gets a file, so no pool needs a NOT clause for it.
+  - name: Z0 Gramophone Songs
+    query: 'type:other_video AND tag:gramophone AND (tag:chanson OR tag:chant) AND minutes:[0 TO 9]'
+    note: >
+      La Bolduc's own songs and the Saint-Benoît-du-Lac plainchant sides:
+      voices, so Wednesday. Sung numbers for SONGS AND CHORUSES.
+
+  - name: Z0 Gramophone Reels
+    query: 'type:other_video AND tag:gramophone AND tag:reel AND minutes:[0 TO 9]'
+    note: >
+      Reels, gigues and quadrilles from the Québec fiddlers (Soucy, Allard,
+      Montmarquette). Fast forms, so Friday's POLKA PARTY.
+
   # The only BC-MADE narrative features in the library: Central Films'
   # quota quickies, shot at Willows Park in Victoria 1935-37. Everything else
   # Canadian here is archive or documentary footage, so these carry a feature
@@ -614,6 +633,7 @@ playlists:
       - {smart: Z0 Prairie Music Waltzes, count: 2, order: shuffle, guide: true}
       - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
       - {smart: Z0 Prairie Music Short Sides, count: 2, order: shuffle, guide: true}
+      - {smart: Z0 Gramophone Songs, count: 2, order: shuffle, guide: true}
 
   - name: Lunch Loops Kolomyiky
     group: Channel Z0
@@ -632,6 +652,7 @@ playlists:
       - {smart: Z0 Prairie Music Weddings, count: 2, order: shuffle, guide: true}
       - {collection: Z0 Idents, count: 1, order: shuffle, guide: false}
       - {smart: Z0 Prairie Music Short Sides, count: 2, order: shuffle, guide: true}
+      - {smart: Z0 Gramophone Reels, count: 2, order: shuffle, guide: true}
 
   - name: Lunch Loops Weddings
     group: Channel Z0
