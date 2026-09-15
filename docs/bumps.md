@@ -25,7 +25,7 @@ two promo collections rather than one of each.
 ## Files
 
 ```
-tools/z0_bumps.py        engine + CLI: 21 genres, 8 treatments, taglines, audio
+tools/z0_bumps.py        engine + CLI: 26 genres, 8 treatments, taglines, audio
 tools/z0-promos.py       merch + projects spots; imports z0_bumps
 tools/z0-promos-extra.yml      public projects api.hq does not list yet
 lists/z0-lists.yml       Z0 Bumps {Math,Glitch,L-System}, Z0 Promos {Merch,Projects}
@@ -49,7 +49,8 @@ Media on the node:
   0 of the wordmark as sums of circles), flow fields, harmonographs,
   elementary automata, Life, moiré, Julia sets, phyllotaxis, Voronoi, times
   tables on a circle, double pendulums, Lorenz, Truchet tiles, the wave
-  equation, spirographs, Ulam's spiral, hex grids.
+  equation, spirographs, Ulam's spiral, hex grids, a Mandelbrot zoom, the
+  abelian sandpile, boids, metaballs, diffusion-limited aggregation.
 - **glitch** — a math genre through a treatment: pixel sort, analogue
   feedback, slit-scan, VHS tracking, block bleed (the datamosh look without
   breaking a bitstream), bitcrush, wobble, vertical roll. Bursty envelopes,

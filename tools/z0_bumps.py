@@ -140,6 +140,16 @@ TAGLINES = [
     "no feed. no login. no idea who you are.",
     "every frame here was computed. some were worth it.",
     "the tower is a small computer. don't tell the tower.",
+    "no thumbnails. no previews. just what's on.",
+    "we schedule. you watch. that was the deal.",
+    "the same channel for everyone. imagine.",
+    "rendered on a server in a garage. probably.",
+    "a cartoon is coming. or the weather. or us.",
+    "a channel you can fall asleep to. we mean it.",
+    "your attention is not for sale. it's just here.",
+    "some of this is 90 years old. some of it is 90 seconds.",
+    "colour bars at midnight. it's a tradition.",
+    "the picture is small. the commitment is not.",
 ]
 
 
@@ -1236,7 +1246,212 @@ class HexGrid(Genre):
         return self.down(img)
 
 
+# ── Mandelbrot zoom ──────────────────────────────────────────────────────────
+MANDEL_SITES = [
+    (-0.743643887037151, 0.131825904205330, 2.2e-5),   # seahorse valley
+    (-0.7453, 0.1127, 4e-4),
+    (-1.25066, 0.02012, 1e-4),
+    (-0.16, 1.0405, 2e-3),
+    (0.2549870375144766, -0.0005679790528465, 5e-4),
+]
+
+
+class Mandel(Genre):
+    NAME = "mandel"
+    FACT = "the Mandelbrot set. zooming in never ends."
+    PALETTE = "ember"
+
+    def __init__(self, rng, art_secs, palette=None):
+        super().__init__(rng, art_secs, palette)
+        self.hw, self.hh = W // 2, H // 2
+        self.cx, self.cy, self.final = MANDEL_SITES[int(rng.integers(len(MANDEL_SITES)))]
+        self.start = 3.0
+        ys, xs = np.mgrid[0:self.hh, 0:self.hw]
+        self.ux = (xs / self.hw - 0.5).astype(np.float64)
+        self.uy = ((ys / self.hh - 0.5) * (H / W)).astype(np.float64)
+
+    def frame(self, i, t, u):
+        span = self.start * (self.final / self.start) ** ease_in_out(u)
+        iters = int(60 + 160 * u)
+        c = (self.cx + self.ux * span) + 1j * (self.cy + self.uy * span)
+        z = np.zeros_like(c)
+        n = np.zeros(c.shape, dtype=np.float32)
+        alive = np.ones(c.shape, dtype=bool)
+        for k in range(iters):
+            z[alive] = z[alive] * z[alive] + c[alive]
+            esc = alive & (np.abs(z) > 4.0)
+            n[esc] = k + 1 - np.log2(np.maximum(np.log(np.abs(z[esc])), 1e-9))
+            alive &= ~esc
+        v = np.where(alive, 0.0, 0.12 + 0.88 * (0.5 + 0.5 * np.sin(np.sqrt(n) * 1.7 - t * 0.5)))
+        return self.up(lerp_ramp(v, self.pal), 2)
+
+
+# ── Abelian sandpile ─────────────────────────────────────────────────────────
+class Sandpile(Genre):
+    NAME = "sandpile"
+    FACT = "grains dropped on one cell. four topple. this is what happens."
+    PALETTE = "heat"
+
+    def __init__(self, rng, art_secs, palette=None):
+        super().__init__(rng, art_secs, palette)
+        self.px = 4
+        self.cw, self.ch = W // self.px, H // self.px
+        self.g = np.zeros((self.ch, self.cw), dtype=np.int32)
+        self.per_frame = int(rng.integers(40, 90))
+        self.sources = [(self.ch // 2, self.cw // 2)]
+        if rng.random() < 0.4:
+            self.sources.append((self.ch // 2, self.cw // 2 + int(rng.integers(-40, 40))))
+        self.tones = np.array([0.06, 0.32, 0.62, 1.0])
+
+    def frame(self, i, t, u):
+        for (y, x) in self.sources:
+            self.g[y, x] += self.per_frame
+        for _ in range(400):
+            over = self.g >= 4
+            if not over.any():
+                break
+            q = (self.g // 4) * over
+            self.g -= 4 * q
+            self.g[1:, :] += q[:-1, :]
+            self.g[:-1, :] += q[1:, :]
+            self.g[:, 1:] += q[:, :-1]
+            self.g[:, :-1] += q[:, 1:]
+        v = self.tones[np.clip(self.g, 0, 3)]
+        return self.up(lerp_ramp(v, self.pal), self.px, smooth=False)
+
+
+# ── Boids ────────────────────────────────────────────────────────────────────
+class Boids(Genre):
+    NAME = "boids"
+    FACT = "three rules per bird. no leader."
+    PALETTE = "station"
+
+    def __init__(self, rng, art_secs, palette=None):
+        super().__init__(rng, art_secs, palette)
+        n = 150
+        self.p = rng.uniform(0, 1, (n, 2)) * np.array([W, H])
+        ang = rng.uniform(0, 2 * np.pi, n)
+        self.v = np.stack([np.cos(ang), np.sin(ang)], 1) * 3.0
+        self.canvas = np.zeros((H, W, 3), dtype=np.float32)
+        self.hue = rng.uniform(0.4, 1.0, n)
+        self.speed = 3.2
+
+    def frame(self, i, t, u):
+        p, v = self.p, self.v
+        d = p[:, None, :] - p[None, :, :]
+        d -= np.round(d / np.array([W, H])) * np.array([W, H])      # wrap-aware
+        dist = np.hypot(d[..., 0], d[..., 1]) + 1e-6
+        near = (dist < 70)
+        close = (dist < 22)
+        np.fill_diagonal(near, False)
+        np.fill_diagonal(close, False)
+        cnt = np.maximum(near.sum(1), 1)[:, None]
+        cohesion = -(d * near[..., None]).sum(1) / cnt * 0.012
+        alignment = ((v[None, :, :] * near[..., None]).sum(1) / cnt - v) * 0.06
+        separation = (d / dist[..., None] ** 2 * close[..., None]).sum(1) * 6.0
+        v = v + cohesion + alignment + separation
+        sp = np.hypot(v[:, 0], v[:, 1])[:, None]
+        v = v / sp * self.speed
+        p = (p + v) % np.array([W, H])
+        self.p, self.v = p, v
+        self.canvas *= 0.93
+        img = Image.fromarray(np.clip(self.canvas, 0, 255).astype(np.uint8))
+        dr = ImageDraw.Draw(img)
+        cols = lerp_ramp(self.hue, self.pal)
+        for (x, y), (vx, vy), col in zip(p, v, cols):
+            nx, ny = vx / self.speed, vy / self.speed
+            tri = [(x + nx * 9, y + ny * 9), (x - nx * 5 + ny * 4, y - ny * 5 - nx * 4),
+                   (x - nx * 5 - ny * 4, y - ny * 5 + nx * 4)]
+            dr.polygon(tri, fill=tuple(int(c) for c in col))
+        self.canvas = np.asarray(img).astype(np.float32)
+        return np.asarray(img)
+
+
+# ── Metaballs ────────────────────────────────────────────────────────────────
+class Metaballs(Genre):
+    NAME = "metaballs"
+    FACT = "six charges and one threshold. the goo is the sum."
+    PALETTE = "signal"
+
+    def __init__(self, rng, art_secs, palette=None):
+        super().__init__(rng, art_secs, palette)
+        self.hw, self.hh = W // 2, H // 2
+        n = 6
+        self.c = rng.uniform(0.2, 0.8, (n, 2)) * np.array([self.hw, self.hh])
+        self.a = rng.uniform(40, 110, (n, 2))
+        self.w = rng.uniform(0.2, 0.7, (n, 2))
+        self.ph = rng.uniform(0, 6.3, (n, 2))
+        self.r = rng.uniform(28, 48, n)
+        ys, xs = np.mgrid[0:self.hh, 0:self.hw]
+        self.xs, self.ys = xs.astype(np.float32), ys.astype(np.float32)
+
+    def frame(self, i, t, u):
+        p = self.c + self.a * np.sin(self.w * t + self.ph)
+        f = np.zeros((self.hh, self.hw), dtype=np.float32)
+        for (px, py), r in zip(p, self.r):
+            f += (r * r) / ((self.xs - px) ** 2 + (self.ys - py) ** 2 + 1.0)
+        v = smoothstep(0.8, 1.15, f) * 0.85 + 0.1 * np.clip(f, 0, 1)
+        return self.up(lerp_ramp(v, self.pal), 2)
+
+
+# ── Diffusion-limited aggregation ────────────────────────────────────────────
+class DLA(Genre):
+    NAME = "dla"
+    FACT = "random walkers that stick. this is how frost grows."
+    PALETTE = "cold"
+
+    def __init__(self, rng, art_secs, palette=None):
+        super().__init__(rng, art_secs, palette)
+        self.px = 3
+        self.cw, self.ch = W // self.px, H // self.px
+        self.g = np.zeros((self.ch, self.cw), dtype=np.float32)     # 0 free, else age 0..1
+        self.stuck_at = np.zeros((self.ch, self.cw), dtype=np.int32)
+        cy, cx = self.ch // 2, self.cw // 2
+        self.g[cy, cx] = 1.0
+        self.cy, self.cx = cy, cx
+        self.radius = 3.0
+        self.max_radius = self.ch / 2 - 3
+        n = 400
+        self.wy, self.wx = self.spawn(n)
+        self.steps = 12
+        self.count = 1
+
+    def spawn(self, n):
+        """Walkers start on a ring just outside the cluster: uniform spawns
+        spend the whole clip wandering an empty grid."""
+        ang = self.rng.uniform(0, 2 * np.pi, n)
+        r = min(self.radius + 6, self.max_radius)
+        wy = np.clip(np.round(self.cy + r * np.sin(ang)), 0, self.ch - 1).astype(np.int64)
+        wx = np.clip(np.round(self.cx + r * np.cos(ang)), 0, self.cw - 1).astype(np.int64)
+        return wy, wx
+
+    def frame(self, i, t, u):
+        steps = self.steps if self.radius < self.max_radius else 0   # grown out: hold
+        for _ in range(steps):
+            self.wy = (self.wy + self.rng.integers(-1, 2, len(self.wy))) % self.ch
+            self.wx = (self.wx + self.rng.integers(-1, 2, len(self.wx))) % self.cw
+            far = np.hypot(self.wy - self.cy, self.wx - self.cx) > self.radius + 30
+            if far.any():
+                ny, nx = self.spawn(int(far.sum()))
+                self.wy[far], self.wx[far] = ny, nx
+            occ = self.g > 0
+            nb = (occ[(self.wy + 1) % self.ch, self.wx] | occ[(self.wy - 1) % self.ch, self.wx]
+                  | occ[self.wy, (self.wx + 1) % self.cw] | occ[self.wy, (self.wx - 1) % self.cw])
+            hit = nb & ~occ[self.wy, self.wx]
+            if hit.any():
+                self.g[self.wy[hit], self.wx[hit]] = 1.0
+                self.stuck_at[self.wy[hit], self.wx[hit]] = i
+                self.count += int(hit.sum())
+                self.radius = max(self.radius, float(np.hypot(self.wy[hit] - self.cy, self.wx[hit] - self.cx).max()))
+                ny, nx = self.spawn(int(hit.sum()))
+                self.wy[hit], self.wx[hit] = ny, nx
+        age = np.where(self.g > 0, 1.0 - 0.6 * np.clip((i - self.stuck_at) / (self.n_frames + 1), 0, 1), 0.0)
+        img = lerp_ramp(age.astype(np.float32), self.pal)
+        return self.up(img, self.px, smooth=False)
+
+
 GENRES = {g.NAME: g for g in [
+    Mandel, Sandpile, Boids, Metaballs, DLA,
     LSystem, Attractor, ReactionDiffusion, Chladni, Epicycles, Flow, Harmonograph,
     Automaton, Life, Moire, Julia, Phyllotaxis, Voronoi, TimesTable, Pendulum,
     Lorenz, Truchet, Ripple, Spiro, Ulam, HexGrid,
