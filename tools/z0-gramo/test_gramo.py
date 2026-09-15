@@ -30,7 +30,10 @@ class Rights(unittest.TestCase):
     def test_death_year(self):
         self.assertEqual(gramo.death_year("Bolduc, Édouard, Mme, 1894-1941"), 1941)
         self.assertEqual(gramo.death_year("Desmarteaux, Alexandre, m. 1926"), 1926)
+        self.assertEqual(gramo.death_year("Hartmann, Georges, d. 1900"), 1900)
+        self.assertEqual(gramo.death_year("Lamberti, Augustin, 1832?-1893"), 1893)
         self.assertIsNone(gramo.death_year("Soucy, Isidore, 1899-"))
+        self.assertIsNone(gramo.death_year("Déroulède, Paul, 1846-1914?"))
         self.assertIsNone(gramo.death_year("Anonymous"))
 
     def test_corporate_has_no_clock(self):
@@ -70,6 +73,36 @@ class Rights(unittest.TestCase):
             gramo.clear(dict(SIDE, basis=None))
         self.assertIs(cm.exception.clock, gramo.Clock.WORK)
 
+    def test_named_work_reads_the_work_block(self):
+        named = dict(SIDE, basis="named", persons=["Singer, 1900-1980"],
+                     work={"composers": ["Adam, Adolphe, 1803-1856"],
+                           "lyricists": ["Cappeau, Placide, 1808-1877"],
+                           "source": "https://www.bac-lac.gc.ca/x"})
+        self.assertEqual(gramo.status(named)[0], gramo.Status.CLEAR)
+        self.assertEqual(gramo.clear(named)[gramo.Clock.WORK], "authors d.1856, d.1877  <= 1971")
+
+        late = dict(named, work=dict(named["work"], lyricists=["Living, 1900-1990"]))
+        self.assertEqual(gramo.status(late)[0], gramo.Status.HELD)
+        undated = dict(named, work=dict(named["work"], lyricists=["Someone"]))
+        self.assertEqual(gramo.status(undated)[0], gramo.Status.UNRESOLVED)
+        silent = dict(named, work={"composers": [], "unresolved": "sources disagree"})
+        st, err = gramo.status(silent)
+        self.assertEqual(st, gramo.Status.UNRESOLVED)
+        self.assertIn("sources disagree", str(err))
+        nobody = dict(named, work={"composers": []})
+        self.assertEqual(gramo.status(nobody)[0], gramo.Status.UNRESOLVED)
+
+    def test_arranger_of_a_trad_tune_is_clocked(self):
+        trad = dict(SIDE, basis="trad", work={"arrangers": ["Arr, Anne, 1880-1950"]})
+        self.assertEqual(gramo.clear(trad)[gramo.Clock.WORK],
+                         "traditional tune, arr. d.1950  <= 1971")
+        late = dict(SIDE, basis="trad", work={"arrangers": ["Arr, Anne, 1900-1980"]})
+        self.assertEqual(gramo.status(late)[0], gramo.Status.HELD)
+
+    def test_late_recording_is_held_not_unresolved(self):
+        self.assertEqual(gramo.status(dict(SIDE, year=1965))[0], gramo.Status.HELD)
+        self.assertEqual(gramo.status(dict(SIDE, basis=None))[0], gramo.Status.UNRESOLVED)
+
     def test_anonymous_work_needs_no_author(self):
         chant = dict(SIDE, basis="chant", persons=["Saint-Benoît-du-Lac (Abbey : Québec)"])
         self.assertEqual(gramo.clear(chant)[gramo.Clock.WORK], "plainchant, no author")
@@ -97,6 +130,12 @@ class Rights(unittest.TestCase):
         for side in sides:
             self.assertTrue(side["url"].startswith("https://www.collectionscanada.gc.ca/"),
                             "the feed's own host does not resolve; use .gc.ca")
+            self.assertEqual(side.get("status"), gramo.status(side)[0].value,
+                             "%s: stamped status is stale; run gramo.py stamp" % side["id"])
+            work = side.get("work") or {}
+            if side["basis"] == "named" or work:
+                self.assertTrue(work.get("source", "").startswith("https://"),
+                                "%s: a researched work needs its source URL" % side["id"])
         for side, verdict in placed:
             gramo.panel_lines(side, verdict, 240)               # fits the panel
             stems.add(gramo.rel_path(side))
@@ -118,8 +157,11 @@ class Manifest(unittest.TestCase):
 
     def test_tex_rows(self):
         rows = gramo.tex_rows([SIDE, dict(SIDE, id="1", basis=None, title="A & B")])
-        self.assertIn("Clear.", rows[0])
-        self.assertIn("REVIEW (s.6)", rows[1])
+        self.assertIn("CLEAR.", rows[0])
+        self.assertIn("UNRESOLVED (s.6)", rows[1])
+        named = dict(SIDE, basis="named", work={"composers": ["Adam, Adolphe, 1803-1856"],
+                                                "source": "https://x"})
+        self.assertIn("composer Adam, Adolphe, 1803-1856. s.23", gramo.tex_rows([named])[0])
         self.assertIn("A \\& B", rows[1])
 
 

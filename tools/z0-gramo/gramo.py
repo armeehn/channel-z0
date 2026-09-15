@@ -34,6 +34,7 @@ the picture, like the L-system panels.
 
     gramo.py select    STAGE.json SRC_DIR OUT.json   # manifest from round 3
     gramo.py check     [SIDE_ID]                     # rights clocks only
+    gramo.py stamp                                   # write status into sides.json
     gramo.py envelope  SRC.mp3 ENV.json              # ffmpeg DSP pass
     gramo.py render    SIDE_ID SRC.mp3 ENV.json OUT.mp4
     gramo.py stem      SIDE_ID                       # library file stem
@@ -104,9 +105,21 @@ SERIF = FONT_DIR + "/LiberationSerif-%s.ttf"
 #   s.6  musical work     50y -> 70y on 2022-12-30: author d. <= 1971 is out
 # The recording year is the disc's own ID3 date where LAC stamped one; the
 # Virtual Gramophone digitised discs cut 1900-1950, which is the fallback.
-# The work clock is proven only where the record itself names the author or
-# the work has none: a performer's death date says nothing about a song
-# somebody else wrote, and the feeds credit performers.
+# The work clock is proven only where the author is named and dated or the
+# work has none: a performer's death date says nothing about a song somebody
+# else wrote, and the feeds credit performers. Where the feed is silent the
+# side carries a `work` block researched against LAC's own catalogue record
+# (composer heading, statement of responsibility) with the source URL:
+#
+#   "basis": "named",
+#   "work": {"composers": ["Adam, Adolphe, 1803-1856"],
+#            "lyricists": ["Cappeau, Placide, 1808-1877"],
+#            "arrangers": [],                      # optional; also clocked
+#            "source": "https://www.bac-lac.gc.ca/.../Item.aspx?idNumber=N",
+#            "unresolved": "why the clock cannot be read"}   # optional
+#
+# Every author listed must be dated and dead by WORK_LAST_DEATH; a missing
+# year or an `unresolved` note holds the side. Nothing is ever guessed.
 RECORDING_LAST_FIXED = 1964
 WORK_LAST_DEATH = 1971
 VG_SPAN = (1900, 1950)
@@ -116,8 +129,8 @@ FFPROBE = shlex.split(os.environ.get("FFPROBE", "ffprobe"))
 HERE = os.path.dirname(os.path.abspath(__file__))
 SIDES = os.path.join(HERE, "sides.json")
 
-_YEARS = re.compile(r"(\d{4})\s*-\s*(\d{4})?\s*$")
-_DIED_ONLY = re.compile(r"\bm\.?\s*(\d{4})\s*$")       # "Desmarteaux, Alexandre, m. 1926"
+_YEARS = re.compile(r"(\d{4})\??\s*-\s*(\d{4})?\s*$")         # "1832?-1893": an uncertain birth is fine
+_DIED_ONLY = re.compile(r"\b[md]\.?\s*(\d{4})\s*$")     # "Desmarteaux, Alexandre, m. 1926", "d. 1900"
 _CORPORATE = re.compile(r"trio|quartet|band|orchestra|groupe|abbey|chorus|"
                         r"habitants|quatuor|choeur", re.I)
 _TRAD_FORM = re.compile(r"\b(reel|gigue|quadrille|cotillon|clog|set carr|"
@@ -134,6 +147,18 @@ class Basis(Enum):
     OWN = "own"             # the credited performer wrote the material
     TRAD = "trad"           # traditional dance tune, no author
     CHANT = "chant"         # plainchant, no author
+    NAMED = "named"         # authors researched into side["work"], with source
+
+
+class Status(Enum):
+    """What the two clocks say about a side, as written into the manifest."""
+    CLEAR = "CLEAR"                 # both clocks have run: in the library
+    HELD = "HELD"                   # a clock is known not to have run yet
+    UNRESOLVED = "UNRESOLVED"       # a clock cannot be read: author unnamed or undated
+
+
+# work-block keys whose people are all authors on the s.6 clock
+WORK_ROLES = ("composers", "lyricists", "arrangers")
 
 
 # Performers whose recorded repertoire is their own writing. The memory that
@@ -141,7 +166,8 @@ class Basis(Enum):
 AUTHORS = {"Bolduc, Édouard, Mme"}
 
 # Library folder per basis: the folder is the tag ErsatzTV derives.
-FOLDER = {Basis.OWN: "chanson", Basis.TRAD: "reel", Basis.CHANT: "chant"}
+FOLDER = {Basis.OWN: "chanson", Basis.TRAD: "reel", Basis.CHANT: "chant",
+          Basis.NAMED: "chanson"}
 
 # Display names where "Given Surname" is not how the performer is known.
 DISPLAY = {"Bolduc, Édouard, Mme": "La Bolduc",
@@ -149,9 +175,10 @@ DISPLAY = {"Bolduc, Édouard, Mme": "La Bolduc",
 
 
 class RightsError(Exception):
-    def __init__(self, clock, msg):
+    def __init__(self, clock, msg, status=Status.UNRESOLVED):
         super().__init__("%s %s: %s" % (clock.name, clock.value, msg))
         self.clock = clock
+        self.status = status
 
 
 class EnvelopeError(Exception):
@@ -184,11 +211,22 @@ def person_name(person):
     return _DIED_ONLY.sub("", _YEARS.sub("", person)).strip().rstrip(",").strip()
 
 
+def authors_of(side, basis):
+    """The people the s.6 clock runs on: the performers for own material,
+    the researched work block otherwise (arrangers of a trad tune included)."""
+    if basis is Basis.OWN:
+        return [p for p in side["persons"] if not is_corporate(p)]
+
+    work = side.get("work") or {}
+    return [p for role in WORK_ROLES for p in work.get(role, [])]
+
+
 def clear(side):
     """Both clocks, or raise. Never guesses a missing year or an author."""
     year = side.get("year")
     if year is not None and year > RECORDING_LAST_FIXED:
-        raise RightsError(Clock.RECORDING, "fixed %d > %d" % (year, RECORDING_LAST_FIXED))
+        raise RightsError(Clock.RECORDING, "fixed %d > %d" % (year, RECORDING_LAST_FIXED),
+                          Status.HELD)
 
     if year is None and VG_SPAN[1] > RECORDING_LAST_FIXED:
         raise RightsError(Clock.RECORDING, "collection span exceeds the clock")
@@ -198,18 +236,22 @@ def clear(side):
         raise RightsError(Clock.WORK, "composer not named in the record")
 
     basis = Basis(basis)
-    dated = []
-    for person in side["persons"]:
-        if is_corporate(person):
-            continue
+    work = side.get("work") or {}
+    if work.get("unresolved"):
+        raise RightsError(Clock.WORK, "unresolved, " + work["unresolved"])
 
+    if basis is Basis.NAMED and not work.get("composers"):
+        raise RightsError(Clock.WORK, "no composer in the work block")
+
+    dated = []
+    for person in authors_of(side, basis):
         died = death_year(person)
         if died is None:
             raise RightsError(Clock.WORK, "no death year for %r" % person)
 
         if died > WORK_LAST_DEATH:
             raise RightsError(Clock.WORK, "%r died %d > %d; work runs to %d"
-                              % (person, died, WORK_LAST_DEATH, died + 71))
+                              % (person, died, WORK_LAST_DEATH, died + 71), Status.HELD)
 
         dated.append(died)
 
@@ -218,10 +260,23 @@ def clear(side):
 
     recording = ("fixed %d" % year if year is not None
                  else "fixed %d-%d" % VG_SPAN) + "  <= %d" % RECORDING_LAST_FIXED
-    work = {Basis.OWN: "author " + ", ".join("d.%d" % d for d in dated) + "  <= %d" % WORK_LAST_DEATH,
+    authors = ", ".join("d.%d" % d for d in dated) + "  <= %d" % WORK_LAST_DEATH
+    work = {Basis.OWN: "author " + authors,
+            Basis.NAMED: "authors " + authors,
             Basis.TRAD: "traditional tune, no author",
             Basis.CHANT: "plainchant, no author"}[basis]
+    if basis in (Basis.TRAD, Basis.CHANT) and dated:
+        work = work.replace("no author", "arr. " + authors)
+
     return {Clock.RECORDING: recording, Clock.WORK: work}
+
+
+def status(side):
+    """(Status, verdict-or-RightsError) for one side."""
+    try:
+        return Status.CLEAR, clear(side)
+    except RightsError as e:
+        return e.status, e
 
 
 def load_sides(path=SIDES):
@@ -534,7 +589,9 @@ def panel_lines(side, verdict, seconds):
         ("  %s" % verdict[Clock.RECORDING], "label"),
         ("  PUBLIC DOMAIN, PERMANENTLY", "bold"),
         ("WORK       %s" % Clock.WORK.value, "ink"),
-        ("  %s" % verdict[Clock.WORK], "label"),
+    ]
+    rows += [("  " + line, "label") for line in wrap(verdict[Clock.WORK], COLS - 2)]
+    rows += [
         ("  PUBLIC DOMAIN, PERMANENTLY", "bold"),
         ("", "gap"),
     ]
@@ -718,17 +775,26 @@ def tex_rows(sides):
     shape of the Canadian film tables in docs/programming-library.tex."""
     rows = []
     for side in sides:
-        try:
-            v = clear(side)
-            clocks = "s.23 %s; s.6 %s. Clear." % (v[Clock.RECORDING].replace("  ", ", "),
-                                                v[Clock.WORK])
-        except RightsError as e:
-            clocks = "REVIEW (%s): %s." % (e.clock.value, str(e).split(": ", 1)[1])
+        st, v = status(side)
+        if st is Status.CLEAR:
+            clocks = "s.23 %s; s.6 %s. CLEAR." % (v[Clock.RECORDING].replace("  ", ", "),
+                                                v[Clock.WORK].replace("  ", ", "))
+        else:
+            clocks = "%s (%s): %s." % (st.value, v.clock.value, str(v).split(": ", 1)[1])
+
+        work = side.get("work") or {}
+        credits = "; ".join("%s %s" % (role[:-1], ", ".join(work[role]))
+                            for role in WORK_ROLES if work.get(role))
+        if credits:
+            clocks = "%s %s" % (credits + ".", clocks)
 
         title = "%s — %s" % (side["performer"], side["title"])
         if side.get("year"):
             title += " (%d)" % side["year"]
         src = "\\ripmono{obj/\\allowbreak{}m2/\\allowbreak{}f7/\\allowbreak{}%s.mp3}" % side["id"]
+        record = re.search(r"idNumber=(\d+)", work.get("source", ""))
+        if record:
+            src += "; LAC record \\ripmono{%s}" % record.group(1)
         rows.append("%s & %s & %s \\\\" % (tex_escape(title), src, tex_escape(clocks)))
 
     return rows
@@ -750,19 +816,28 @@ def main(argv):
 
     if cmd == "check":
         sides = [load_side(argv[2])] if len(argv) > 2 else load_sides()
-        rejected = {c: 0 for c in Clock}
+        counts = {st: 0 for st in Status}
         for side in sides:
-            try:
-                v = clear(side)
-            except RightsError as e:
-                rejected[e.clock] += 1
-                print("%-6s REJECT %s" % (side["id"], e))
+            st, v = status(side)
+            counts[st] += 1
+            if st is not Status.CLEAR:
+                print("%-6s %-10s %s" % (side["id"], st.value, v))
                 continue
 
-            print("%-6s ok     %s | %s" % (side["id"], v[Clock.RECORDING], v[Clock.WORK]))
+            print("%-6s %-10s %s | %s" % (side["id"], st.value, v[Clock.RECORDING], v[Clock.WORK]))
 
-        print("clear %d  rejected %s" % (len(sides) - sum(rejected.values()),
-                                         ", ".join("%s %d" % (c.value, n) for c, n in rejected.items())))
+        print("  ".join("%s %d" % (st.value, n) for st, n in counts.items()))
+        return 0
+
+    if cmd == "stamp":
+        sides = load_sides()
+        for side in sides:
+            side["status"] = status(side)[0].value
+        with open(SIDES, "w") as fh:
+            json.dump(sides, fh, ensure_ascii=False, indent=1)
+            fh.write("\n")
+        print("  ".join("%s %d" % (st.value, sum(s["status"] == st.value for s in sides))
+                        for st in Status))
         return 0
 
     if cmd == "envelope":
