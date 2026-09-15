@@ -118,5 +118,5 @@ regenerates to itself before deploying.
 
 `docs/ground-zero-open.md` (the lockup and the face the GROUND ZERO card
 uses), `docs/intervals.md` (the other family of station furniture, and the
-index-rebuild trap), `docs/programming.md` (the show bible these segments
+index-rebuild trap), `docs/programming.tex` (the show bible these segments
 extend).

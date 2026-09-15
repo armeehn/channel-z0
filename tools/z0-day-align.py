@@ -26,7 +26,7 @@ WHAT IT CHECKS
   last is COLOUR BARS padding to 06:00 tomorrow) carries a 20:00 tentpole whose
   title is unique to its weekday — MONDAY NIGHT NOIR, ATOMIC TUESDAY, … Those
   names come from z0-build-schedule.py's own WEEK table, which is the same
-  table the storefront grid in site/index.html and docs/programming.md are
+  table the storefront grid in site/index.html and docs/programming.tex are
   written from. So "the tentpole that is built for Wednesday is the one the
   Wednesday tab shows" is a complete alignment test, stated in the terms the
   viewer sees.
