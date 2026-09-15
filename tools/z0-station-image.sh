@@ -21,7 +21,7 @@
 #   tools/z0-station-image.sh --restore /tmp/z0-station.tgz \
 #                             --config ./ersatztv-config --hwaccel vaapi
 #
-# See docs/clustering.md, "Standing up a node".
+# See docs/clustering.tex, "Standing up a node".
 set -uo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

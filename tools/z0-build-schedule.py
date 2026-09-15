@@ -487,7 +487,7 @@ def main():
         # Intervals are spliced into the finished instruction list rather than
         # emitted inline by day_plan, because an interval's length depends on
         # BOTH segments it sits between — which is only knowable once the day
-        # is complete. See tools/z0_intervals.py and docs/intervals.md.
+        # is complete. See tools/z0_intervals.py and docs/intervals.tex.
         days = {name: z0_intervals.splice(P) for name, P in days.items()}
     text = emit(days, start)
 

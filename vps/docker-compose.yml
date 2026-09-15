@@ -1,6 +1,6 @@
 # Channel Z0 — the tower (VPS)
 # Owncast receives the single RTMP uplink from home and serves HLS to everyone.
-# See docs/build-guide.md, Phase 1.
+# See docs/build-guide.tex, Phase 1.
 services:
   owncast:
     image: owncast/owncast:latest

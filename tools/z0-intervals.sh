@@ -12,7 +12,7 @@
 #   z0-intervals.sh all        stage + assemble + install + rescan
 #
 # Rendering itself is NOT here: it is a multi-hour batch and belongs in a
-# nohup on 114. See docs/intervals.md.
+# nohup on 114. See docs/intervals.tex.
 set -euo pipefail
 
 C114=114

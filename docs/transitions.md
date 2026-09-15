@@ -117,6 +117,6 @@ regenerates to itself before deploying.
 ## Related
 
 `docs/ground-zero-open.md` (the lockup and the face the GROUND ZERO card
-uses), `docs/intervals.md` (the other family of station furniture, and the
+uses), `docs/intervals.tex` (the other family of station furniture, and the
 index-rebuild trap), `docs/programming.tex` (the show bible these segments
 extend).
