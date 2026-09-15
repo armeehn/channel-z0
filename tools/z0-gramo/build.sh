@@ -30,7 +30,7 @@ one() { # id -> one finished card, or a non-zero exit with the reason
 
   if [ -s "$out" ]; then echo "$id  have  $rel"; return 0; fi
 
-  python3 gramo.py check "$id" | grep -q "^$id *ok" || { echo "$id  REJECT"; return 1; }
+  python3 gramo.py check "$id" | grep -q "^$id *CLEAR" || { echo "$id  REJECT"; return 1; }
 
   # --fail, and the exact byte count: archive hosts answer 5xx with an HTML
   # body that ffprobe will happily call an mp3 with a short duration.
@@ -64,7 +64,7 @@ echo "── sides"
 if [ $# -gt 0 ]; then
   ids=("$@")
 else
-  mapfile -t ids < <(python3 gramo.py check | awk '$2=="ok"{print $1}')
+  mapfile -t ids < <(python3 gramo.py check | awk '$2=="CLEAR"{print $1}')
 fi
 echo "${#ids[@]} to build, $JOBS at a time"
 

@@ -164,6 +164,17 @@ class Manifest(unittest.TestCase):
         self.assertIn("composer Adam, Adolphe, 1803-1856. s.23", gramo.tex_rows([named])[0])
         self.assertIn("A \\& B", rows[1])
 
+    def test_build_selects_what_check_prints(self):
+        # build.sh selects sides by the status word `check` prints; a rename
+        # of that word once made it build zero sides and exit clean.
+        out = subprocess.run([sys.executable, gramo.__file__, "check", "14408"],
+                             capture_output=True, text=True, check=True).stdout
+        word = out.split()[1]
+        self.assertEqual(word, gramo.Status.CLEAR.value)
+        build = open(os.path.join(os.path.dirname(gramo.__file__), "build.sh")).read()
+        self.assertIn('$2=="%s"' % word, build)
+        self.assertIn("^$id *%s" % word, build)
+
 
 class Envelope(unittest.TestCase):
     def test_parse(self):
