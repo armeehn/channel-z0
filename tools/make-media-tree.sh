@@ -50,5 +50,5 @@ Next:
   1. tools/fetch-archive.sh --all   fill psas/, prelinger/, cartoons/, movies/*
      from the Internet Archive (public-domain only). See docs/archive-fetch.md.
   2. Add these folders as libraries in ErsatzTV (Phase 2.3) and build the
-     collections listed in docs/programming.md.
+     collections listed in docs/programming.tex.
 TREE

@@ -489,7 +489,7 @@ playlists:
       - {smart: Z0 Soundies and Musical Shorts, count: 1, order: shuffle, guide: true}
 
   # ── Noon ───────────────────────────────────────────────────────────────────
-  # docs/programming.md defines the 12:00 slot as "Music + the community
+  # docs/programming.tex defines the 12:00 slot as "Music + the community
   # bulletin board", but the deployed schedule had it padding from `prelinger`.
   # That mismatch is the bug behind the report "there isn't music even though
   # it's noon — it's still showing old clips".

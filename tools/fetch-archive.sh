@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Channel Z0 — stock the media library from the Internet Archive.
 #
-# Fills the acquired half of the schedule in docs/programming.md — Prelinger
+# Fills the acquired half of the schedule in docs/programming.tex — Prelinger
 # Theatre, the Cartoon Block, the themed feature nights — with public-domain
 # material, straight into the folders ErsatzTV already watches.
 #
@@ -324,5 +324,5 @@ Two of these destinations are new folders the build guide doesn't create:
   cartoons/    → add as an ErsatzTV "Other Videos" library, collection `Cartoons`
   prelinger/   → add as an ErsatzTV "Other Videos" library, collection `Prelinger`
 The movies/* subfolders sit inside the existing movies library; make each one a
-collection (`Features · Noir`, `· SciFi`, …) as described in docs/programming.md.
+collection (`Features · Noir`, `· SciFi`, …) as described in docs/programming.tex.
 NOTE

@@ -47,8 +47,8 @@ WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday",
 # The 20:00 and 23:00 identities are the ONLY things that change between days.
 # That is the whole trick: it is the cheapest possible way to make seven
 # identical loops feel like seven different evenings, and it is what the
-# storefront grid and docs/programming.md both promise. Titles and themes here
-# are taken from docs/programming.md — if you change one, change all three or
+# storefront grid and docs/programming.tex both promise. Titles and themes here
+# are taken from docs/programming.tex — if you change one, change all three or
 # the guide-on-the-wall and the guide disagree.
 WEEK = {
     "monday": dict(
@@ -220,12 +220,12 @@ def day_plan(name, spec):
 
     # ── Sign-on and morning ───────────────────────────────────────────────────
     # The weekends are NOT the weekday spine with different films in it — they
-    # restructure the morning, and both docs/programming.md and the storefront
+    # restructure the morning, and both docs/programming.tex and the storefront
     # grid say so in the same words. The generator used to apply the weekday
     # shape to all seven days, which put LAB HOUR on Sunday (the guide promises
     # PRELINGER THEATRE) and pushed Saturday's matinee an hour late.
     #
-    # Keep these three branches in step with docs/programming.md § Weekends and
+    # Keep these three branches in step with docs/programming.tex § Weekends and
     # `WEEK` in site/index.html, or the guide and the guide-on-the-wall disagree.
     P.append({"sequence": "sign_on"})
     morning = spec.get("morning", "pl_cartoon_hour")
@@ -252,7 +252,7 @@ def day_plan(name, spec):
 
     # ── Midday ────────────────────────────────────────────────────────────────
     P.append({"sequence": "weather_break"})
-    # docs/programming.md has always defined noon as "Music + the community
+    # docs/programming.tex has always defined noon as "Music + the community
     # bulletin board", but the deployed schedule padded it from `prelinger` —
     # which is the bug behind "there isn't music even though it's noon, it's
     # still showing old clips".
