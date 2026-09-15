@@ -57,7 +57,7 @@ const visible = (page) => page.evaluate(() =>
   await page.waitForTimeout(400);
 
   ok("tabs mode engages", await page.evaluate(() => document.documentElement.classList.contains("tabs")));
-  ok("five tabs rendered", (await page.$$(".sec-tab")).length === 5, `${(await page.$$(".sec-tab")).length}`);
+  ok("six tabs rendered", (await page.$$(".sec-tab")).length === 6, `${(await page.$$(".sec-tab")).length}`);
 
   // the merged footer: one element, outside the tab machinery, no heading
   const foot = await page.evaluate(() => {
@@ -142,7 +142,7 @@ const visible = (page) => page.evaluate(() =>
   await page.keyboard.press("End");
   await page.waitForTimeout(140);
   vis = await visible(page);
-  ok("End jumps to SEC.05", vis[0] === "rights", vis.join(","));
+  ok("End jumps to SEC.06", vis[0] === "shop", vis.join(","));
   await page.keyboard.press("Home");
   await page.waitForTimeout(140);
   vis = await visible(page);
@@ -264,7 +264,7 @@ const visible = (page) => page.evaluate(() =>
     const ts = Array.from(document.querySelectorAll(".sec-tab"));
     return new Set(ts.map((t) => Math.round(t.getBoundingClientRect().top))).size;
   });
-  // five half-width tabs: two pairs and the fifth alone on a full-width row
+  // six half-width tabs: three pairs, no tab left alone beside a hole
   ok("phone tabs wrap to 3 rows", tabRows === 3, `${tabRows} rows`);
   const noHorz = await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
   ok("phone: no horizontal scroll", noHorz);
@@ -292,7 +292,7 @@ const visible = (page) => page.evaluate(() =>
     navHidden: getComputedStyle(document.getElementById("secnav")).display === "none",
     scrolls: document.scrollingElement.scrollHeight > window.innerHeight,
   }));
-  ok("no JS: all five sections present", st.shown === 5, `${st.shown}`);
+  ok("no JS: all six sections present", st.shown === 6, `${st.shown}`);
   const noJsFoot = await page.evaluate(() => {
     const f = document.querySelector(".station-foot");
     const last = document.querySelectorAll(".panels > .panel");
