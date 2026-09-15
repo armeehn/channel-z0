@@ -8,7 +8,7 @@
 # Every recipe filters on a public-domain licence mark. That is the whole point:
 # archive.org hosts plenty that is *not* yours to air (its classic-commercials
 # collection includes 2007 FedEx spots), so this tool only ever takes items the
-# uploader has marked public domain. See docs/ad-standards.md.
+# uploader has marked public domain. See docs/ad-standards.tex.
 #
 # Usage:
 #   tools/fetch-archive.sh --list                  # show the recipes, fetch nothing
@@ -21,7 +21,7 @@
 # $Z0_MEDIA_ROOT/.z0-archive/manifest.jsonl, and anything already listed there
 # is skipped on the next run. Kill it whenever; run it again to continue.
 #
-# See docs/archive-fetch.md for the full operating manual.
+# See docs/archive-fetch.tex for the full operating manual.
 set -euo pipefail
 
 MEDIA_ROOT="${Z0_MEDIA_ROOT:-/media/channelz0}"

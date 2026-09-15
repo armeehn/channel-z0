@@ -3,7 +3,7 @@
 Imported by tools/z0-build-schedule.py and applied to each day's instruction
 list, so intervals are part of the generated week rather than something bolted
 on afterwards. The art itself is made by tools/z0-generative.py; see
-docs/intervals.md.
+docs/intervals.tex.
 
 The ask was that the first and last four minutes of every segment become
 generative art. Two properties of this schedule shape how that is delivered.

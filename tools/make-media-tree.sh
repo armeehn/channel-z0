@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Channel Z0 — create the media library layout the station expects.
-# Run once on the playout PC (see docs/build-guide.md, Phase 2.1).
+# Run once on the playout PC (see docs/build-guide.tex, Phase 2.1).
 #
 # Usage:
 #   tools/make-media-tree.sh                   # builds under /media/channelz0
@@ -48,7 +48,7 @@ media library ready at ${MEDIA_ROOT}:
 
 Next:
   1. tools/fetch-archive.sh --all   fill psas/, prelinger/, cartoons/, movies/*
-     from the Internet Archive (public-domain only). See docs/archive-fetch.md.
+     from the Internet Archive (public-domain only). See docs/archive-fetch.tex.
   2. Add these folders as libraries in ErsatzTV (Phase 2.3) and build the
      collections listed in docs/programming.tex.
 TREE

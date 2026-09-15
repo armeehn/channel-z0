@@ -18,7 +18,7 @@
 #   tools/bootstrap-node.sh --role tower --site-domain ch0.example --yes
 #
 # Adding a second playout node is the same command with a different --node-id,
-# pointed at the same shared --media. See docs/clustering.md.
+# pointed at the same shared --media. See docs/clustering.tex.
 #
 # It is idempotent: run it again after changing a flag and it reconciles.
 set -uo pipefail
@@ -164,7 +164,7 @@ if [[ "$ROLE" == "playout" ]]; then
   else
     warn "media root looks local (${FSTYPE}) — fine for ONE playout node."
     warn "  A second node needs shared storage, or each will think it's alone"
-    warn "  and both will publish. Pass --nfs host:/export, or see docs/clustering.md."
+    warn "  and both will publish. Pass --nfs host:/export, or see docs/clustering.tex."
   fi
 
   [[ -z "$WATCH_DOMAIN" ]] && err "--watch-domain is required for a playout node"

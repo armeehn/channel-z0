@@ -9,7 +9,7 @@
 #   tools/z0-weather.sh              # render everything
 #   tools/z0-weather.sh --card-only  # skip the segment (the slow part)
 #
-# Normally driven by cron every 15 minutes; see docs/weather.md and
+# Normally driven by cron every 15 minutes; see docs/weather.tex and
 # docs/graphics.md.
 #
 # ── Three rules this script exists to enforce ───────────────────────────────
