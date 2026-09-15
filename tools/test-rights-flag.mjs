@@ -7,14 +7,13 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { chromium } from "playwright-core";
 
 const HOME = process.env.HOME || "";
-const PLAYWRIGHT = process.env.PLAYWRIGHT || `${HOME}/daily-bread/db-render/node_modules/playwright/index.mjs`;
 const CHROME = process.env.CHROME || `${HOME}/.cache/puppeteer/chrome/linux-150.0.7871.24/chrome-linux64/chrome`;
 const ROOT = process.env.SITE_DIR || join(dirname(fileURLToPath(import.meta.url)), "..", "site");
 const PORT = Number(process.env.PORT || 8791);
 
-const { chromium } = await import(PLAYWRIGHT);
 
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css" };
 const server = createServer(async (req, res) => {

@@ -6,8 +6,7 @@
  * the Worker so every one of those answers is reachable on demand — against a
  * real relay only "yes" is easy to produce.
  *
- * Prerequisites (not vendored):
- *   PLAYWRIGHT  path to a playwright install
+ * Prerequisites: playwright-core (npm ci), and
  *   CHROME      path to a full Chrome binary
  *
  *   node tools/test-chat-composer.mjs
@@ -16,15 +15,14 @@ import { createServer } from "node:http";
 import { readFile, mkdir } from "node:fs/promises";
 import { extname, join, normalize, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { chromium } from "playwright-core";
 
 const HOME = process.env.HOME || "";
-const PLAYWRIGHT = process.env.PLAYWRIGHT || `${HOME}/daily-bread/db-render/node_modules/playwright/index.mjs`;
 const CHROME = process.env.CHROME || `${HOME}/.cache/puppeteer/chrome/linux-150.0.7871.24/chrome-linux64/chrome`;
 const ROOT = process.env.SITE_DIR || join(dirname(fileURLToPath(import.meta.url)), "..", "site");
 const OUTDIR = process.env.OUTDIR || "/tmp/z0-composer-test";
 const PORT = Number(process.env.PORT || 8792);
 
-const { chromium } = await import(PLAYWRIGHT);
 await mkdir(OUTDIR, { recursive: true });
 
 /* The stub relay. `relay` is rewritten between tests to make the Worker answer

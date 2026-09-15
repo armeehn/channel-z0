@@ -10,8 +10,7 @@
  * deterministic and the suite passes with the real tower up, down or gone. One
  * optional section at the end tunes in against the live tower if it answers.
  *
- * Prerequisites, neither of which this repo vendors:
- *   PLAYWRIGHT  path to a playwright install   (default: $HOME/daily-bread/db-render/node_modules/playwright/index.mjs)
+ * Prerequisites: playwright-core (npm ci), and
  *   CHROME      path to a full Chrome binary   (default: the puppeteer cache below)
  *
  *   node tools/test-offair-card.mjs
@@ -22,16 +21,15 @@ import { createServer } from "node:http";
 import { readFile, mkdir } from "node:fs/promises";
 import { extname, join, normalize, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { chromium } from "playwright-core";
 
 const HOME = process.env.HOME || "";
-const PLAYWRIGHT = process.env.PLAYWRIGHT || `${HOME}/daily-bread/db-render/node_modules/playwright/index.mjs`;
 const CHROME = process.env.CHROME ||
   `${HOME}/.cache/puppeteer/chrome/linux-150.0.7871.24/chrome-linux64/chrome`;
 const ROOT = process.env.SITE_DIR || join(dirname(fileURLToPath(import.meta.url)), "..", "site");
 const OUTDIR = process.env.OUTDIR || "/tmp/z0-offair-test";
 const PORT = Number(process.env.PORT || 8791);
 
-const { chromium } = await import(PLAYWRIGHT);
 await mkdir(OUTDIR, { recursive: true });
 
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css" };
