@@ -210,7 +210,7 @@ That is also why bootstrap's verification \ripmono{ffprobe}s the channel for dec
 
 \textbf{Clocks are not trusted.} Comparing a heartbeat's mtime against the local clock breaks the moment two machines disagree about the time, which on a homelab is whenever NTP hiccups. Instead each node watches for the heartbeat \riphi{value to change} and times that with its own elapsed seconds. Skew between nodes is irrelevant. (Run NTP anyway, for legible logs.)
 
-\textbf{Sick nodes don't stand for election.} Before taking the lease a node \ripmono{ffprobe}s its own channel URL — proving ErsatzTV is emitting decodable video, not merely answering HTTP. A node whose ErsatzTV is wedged stands down and lets a standby take it, rather than winning the election and airing silence.
+\textbf{Sick nodes don't stand for election.} Before taking the lease a node \ripmono{ffprobe}s its own channel URL — proving ErsatzTV is emitting decodable video, not merely answering HTTP. A node whose ErsatzTV is wedged stands down and lets a standby take it, rather than winning the election and airing silence. Standbys probe every tick; the leader probes every \ripmono{Z0\_HEALTH\_EVERY} (30 s) while healthy and every tick once a probe fails, because each probe is a channel session ErsatzTV logs, and probing every 5 s buried the real log lines.
 
 \textbf{Planned reboots are fast.} On \ripmono{SIGTERM} the leader releases the lease deliberately instead of letting it time out, so \ripmono{docker compose down} hands over in a second or two rather than the full TTL.
 
