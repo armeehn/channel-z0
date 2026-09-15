@@ -1,17 +1,3159 @@
 [
-  {
-    "id": "14397",
-    "title": "On est canayen ou ben on l'est pas",
-    "short": "On est canayen",
-    "performer": "La Bolduc (Mme Édouard Bolduc) with E. Daignault",
-    "persons": [
-      "Bolduc, Édouard, Mme, 1894-1941",
-      "Daignault, Eugène, 1895-1960"
-    ],
-    "persons_display": "Mary Travers 1894-1941 wrote it. Daignault 1895-1960",
-    "feeds": ["The Virtual Gramophone: La Bolduc"],
-    "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14397.mp3",
-    "bytes": 1807459,
-    "why_clear": "LAC Virtual Gramophone; feed declares Library and Archives Canada/Music Collection (c) Public Domain. Disc fixed 1900-1950: recording PD under s.23 (2015 extension non-retroactive, <=1964 permanently out). La Bolduc wrote her own songs, so performer and composer are one person, d.1941; the credited second voice d.1960; both <=1971, so the musical work is PD under s.6 (2022 extension non-retroactive). Selected from /root/z0/content/canada-round3-stage.json on x, tier STAGE."
-  }
+ {
+  "id": "12630",
+  "title": "Reel des matelots",
+  "performer": "A. J. Boulay",
+  "persons": [
+   "Boulay, A. J. (Arthur-Joseph), 1883-1948"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": "trad",
+  "year": 1929,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12630.mp3",
+  "bytes": 1708333
+ },
+ {
+  "id": "12716",
+  "title": "Valse de Gaspé",
+  "performer": "A. J. Boulay",
+  "persons": [
+   "Boulay, A. J. (Arthur-Joseph), 1883-1948"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1929,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12716.mp3",
+  "bytes": 1906102
+ },
+ {
+  "id": "18193",
+  "title": "Agnus Dei XV, I mode ; Sanctus IX, V mode",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18193.mp3",
+  "bytes": 1479512
+ },
+ {
+  "id": "18186",
+  "title": "Alleluia V emitte, IV mode ; Alleluia V veni, II mode",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18186.mp3",
+  "bytes": 1661324
+ },
+ {
+  "id": "18184",
+  "title": "Alleluia, Rosa vernans",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18184.mp3",
+  "bytes": 2116482
+ },
+ {
+  "id": "18191",
+  "title": "Ave Maria : antienne ; Ave Maria Stella : hymne",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18191.mp3",
+  "bytes": 1810118
+ },
+ {
+  "id": "18210",
+  "title": "Ave Maria : offertoire ; Cum jubilo : sanctus",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18210.mp3",
+  "bytes": 1748260
+ },
+ {
+  "id": "18215",
+  "title": "Benedicta es tu. Graduel ; Tota Pulchra es. Alleluia",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18215.mp3",
+  "bytes": 2274052
+ },
+ {
+  "id": "18195",
+  "title": "Creator alme [siderum], IV mode ; Caelestis urbs [Jerusalem], I mode ; Ad Jesum autem, II mode",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18195.mp3",
+  "bytes": 1783368
+ },
+ {
+  "id": "18216",
+  "title": "Credo IV",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18216.mp3",
+  "bytes": 1914190
+ },
+ {
+  "id": "18189",
+  "title": "Credo VI, IV mode ; Recordare, I mode",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18189.mp3",
+  "bytes": 1694761
+ },
+ {
+  "id": "18204",
+  "title": "Cum jubilo : Agnus Dei ; Gloriosa : communion ; Cum jubilo : Ite missa est",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18204.mp3",
+  "bytes": 2090568
+ },
+ {
+  "id": "18203",
+  "title": "Cum jubilo : Kyrie [IX] ; Regina caeli : antienne",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18203.mp3",
+  "bytes": 1396756
+ },
+ {
+  "id": "18188",
+  "title": "Gaude, II mode",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18188.mp3",
+  "bytes": 1732377
+ },
+ {
+  "id": "18197",
+  "title": "Gaudens Gaudebo : introït",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18197.mp3",
+  "bytes": 1921295
+ },
+ {
+  "id": "18183",
+  "title": "Gloria ambrosien",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18183.mp3",
+  "bytes": 1263845
+ },
+ {
+  "id": "18209",
+  "title": "Gloria in excelsis : Cum jubilo",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18209.mp3",
+  "bytes": 1466555
+ },
+ {
+  "id": "18185",
+  "title": "Haec dies, II mode. Graduel",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18185.mp3",
+  "bytes": 1438552
+ },
+ {
+  "id": "18180",
+  "title": "Inviolata : prose ; Concordi laetitia : rythme ; Sub tuum praesidium : antienne",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18180.mp3",
+  "bytes": 1912100
+ },
+ {
+  "id": "18182",
+  "title": "Kyrie Clemens rector, I mode",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18182.mp3",
+  "bytes": 1739483
+ },
+ {
+  "id": "18177",
+  "title": "Memorare : antienne ; Resonet in Laudibus : cantique",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18177.mp3",
+  "bytes": 1413475
+ },
+ {
+  "id": "18181",
+  "title": "Mittit ad virginem : séquence",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18181.mp3",
+  "bytes": 1813461
+ },
+ {
+  "id": "18176",
+  "title": "O mira caritas : séquence",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18176.mp3",
+  "bytes": 2098928
+ },
+ {
+  "id": "18196",
+  "title": "Salve Regina (V mode) ; Tantum ergo (V mode)",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18196.mp3",
+  "bytes": 1634575
+ },
+ {
+  "id": "18192",
+  "title": "Salve Regina : antienne ; Sancta Maria : cantique",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18192.mp3",
+  "bytes": 1989004
+ },
+ {
+  "id": "18187",
+  "title": "Salve mater misericordiae : cantique",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18187.mp3",
+  "bytes": 1803012
+ },
+ {
+  "id": "18850",
+  "title": "Sanctus IX (V mode) ; Agnus Dei XV (I mode)",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": 1944,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18850.mp3",
+  "bytes": 1493305
+ },
+ {
+  "id": "18199",
+  "title": "Tota Pulchra es : cantique",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18199.mp3",
+  "bytes": 1985661
+ },
+ {
+  "id": "18194",
+  "title": "Videns dominus, I mode ; Nemo, VIII mode ; Spiritus, VIII mode ; Ite missa est : ton pascal",
+  "performer": "Abbaye de Saint-Benoît-du-Lac",
+  "persons": [
+   "Saint-Benoît-du-Lac (Abbey : Québec)"
+  ],
+  "repertoire": "latin-chant (Quebec abbey)",
+  "basis": "chant",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18194.mp3",
+  "bytes": 1273876
+ },
+ {
+  "id": "15488",
+  "title": "C'est Marie-Thalon",
+  "performer": "Alexandre Desmarteaux",
+  "persons": [
+   "Desmarteaux, Alexandre, m. 1926"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1925,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15488.mp3",
+  "bytes": 2155543
+ },
+ {
+  "id": "15445",
+  "title": "La valse des chats",
+  "performer": "Alexandre Desmarteaux",
+  "persons": [
+   "Desmarteaux, Alexandre, m. 1926"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1926,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15445.mp3",
+  "bytes": 2452939
+ },
+ {
+  "id": "15489",
+  "title": "Les jambes en l'air",
+  "performer": "Alexandre Desmarteaux",
+  "persons": [
+   "Desmarteaux, Alexandre, m. 1926"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1925,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15489.mp3",
+  "bytes": 2348954
+ },
+ {
+  "id": "15503",
+  "title": "Suzette, oh! ma Susette = If you knew Susie [like I know Susie]",
+  "performer": "Alexandre Desmarteaux",
+  "persons": [
+   "Desmarteaux, Alexandre, m. 1926"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1926,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15503.mp3",
+  "bytes": 2391499
+ },
+ {
+  "id": "15939",
+  "title": "Schottische militaire = Military schottische",
+  "performer": "Alfred Montmarquette & Adélard St-Jean",
+  "persons": [
+   "Montmarquette, Alfred, 1871-1944",
+   "St-Jean, Adélard, 1890-1964"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15939.mp3",
+  "bytes": 1985870
+ },
+ {
+  "id": "12585",
+  "title": "D'où viens-tu bergère = Whence, o shepherd maiden",
+  "performer": "Charles Marchand & Troubadours de Bytown (Groupe musical)",
+  "persons": [
+   "Marchand, Charles, 1890-1930",
+   "Troubadours de Bytown (Groupe musical)"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12585.mp3",
+  "bytes": 1399520
+ },
+ {
+  "id": "12586",
+  "title": "La visite du jour de l'an = The new year's day visit",
+  "performer": "Charles Marchand & Troubadours de Bytown (Groupe musical)",
+  "persons": [
+   "Marchand, Charles, 1890-1930",
+   "Troubadours de Bytown (Groupe musical)"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12586.mp3",
+  "bytes": 1209131
+ },
+ {
+  "id": "12538",
+  "title": "Ah! C'est à St-Pascal",
+  "performer": "Conrad Gauthier",
+  "persons": [
+   "Gauthier, Conrad, 1885-1964"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12538.mp3",
+  "bytes": 1395458
+ },
+ {
+  "id": "12517",
+  "title": "C'était un petit vieux",
+  "performer": "Conrad Gauthier",
+  "persons": [
+   "Gauthier, Conrad, 1885-1964"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12517.mp3",
+  "bytes": 1564072
+ },
+ {
+  "id": "12518",
+  "title": "La petite vache noire ; Si tous les garçons du monde",
+  "performer": "Conrad Gauthier",
+  "persons": [
+   "Gauthier, Conrad, 1885-1964"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12518.mp3",
+  "bytes": 1740647
+ },
+ {
+  "id": "13065",
+  "title": "Légende de St-Nicholas",
+  "performer": "Conrad Gauthier",
+  "persons": [
+   "Gauthier, Conrad, 1885-1964"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1931,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13065.mp3",
+  "bytes": 1831332
+ },
+ {
+  "id": "12532",
+  "title": "Malurons malurette",
+  "performer": "Conrad Gauthier",
+  "persons": [
+   "Gauthier, Conrad, 1885-1964"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12532.mp3",
+  "bytes": 1654694
+ },
+ {
+  "id": "12960",
+  "title": "Mon chapeau de paille",
+  "performer": "Conrad Gauthier",
+  "persons": [
+   "Gauthier, Conrad, 1885-1964"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12960.mp3",
+  "bytes": 1729670
+ },
+ {
+  "id": "12531",
+  "title": "Quand Polion va voir Nina [i.e. Mina]",
+  "performer": "Conrad Gauthier",
+  "persons": [
+   "Gauthier, Conrad, 1885-1964"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12531.mp3",
+  "bytes": 1556932
+ },
+ {
+  "id": "10900",
+  "title": "Mammy's good-night lullaby",
+  "performer": "Crescent Trio",
+  "persons": [
+   "Crescent Trio"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10900.mp3",
+  "bytes": 1869948
+ },
+ {
+  "id": "4944",
+  "title": "L'amour et le médecin",
+  "performer": "Edouard Lebel",
+  "persons": [
+   "Lebel, Edouard, 1856-1939"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1906,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/4944.mp3",
+  "bytes": 1243798
+ },
+ {
+  "id": "16804",
+  "title": "Angels ever bright and fair",
+  "performer": "Emma Albani",
+  "persons": [
+   "Albani, Emma, Dame, 1847-1930"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16804.mp3",
+  "bytes": 2206343
+ },
+ {
+  "id": "16805",
+  "title": "Handel's largo",
+  "performer": "Emma Albani",
+  "persons": [
+   "Albani, Emma, Dame, 1847-1930"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16805.mp3",
+  "bytes": 2020699
+ },
+ {
+  "id": "16807",
+  "title": "Il penseroso... sweet bird, that shunn'st the noise of folly",
+  "performer": "Emma Albani",
+  "persons": [
+   "Albani, Emma, Dame, 1847-1930"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16807.mp3",
+  "bytes": 3214617
+ },
+ {
+  "id": "16840",
+  "title": "Le pré aux clercs",
+  "performer": "Emma Albani",
+  "persons": [
+   "Albani, Emma, Dame, 1847-1930"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16840.mp3",
+  "bytes": 2929133
+ },
+ {
+  "id": "14475",
+  "title": "Alouette, gentille alouette",
+  "performer": "Eugène Daignault",
+  "persons": [
+   "Daignault, Eugène, 1895-1960"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14475.mp3",
+  "bytes": 1564340
+ },
+ {
+  "id": "10327",
+  "title": "Ah! qui me passera le bois? ; En roulant ma boule",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1917,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10327.mp3",
+  "bytes": 1561435
+ },
+ {
+  "id": "10234",
+  "title": "Air des larmes",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1917,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10234.mp3",
+  "bytes": 1671726
+ },
+ {
+  "id": "10333",
+  "title": "Alouette",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1917,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10333.mp3",
+  "bytes": 1346058
+ },
+ {
+  "id": "10341",
+  "title": "Au clair de la lune ; Il pleut, il pleut, bergère ; Promenade en bateau ; Fais dodo, Colas",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1919,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10341.mp3",
+  "bytes": 1978162
+ },
+ {
+  "id": "17161",
+  "title": "Auprès de ma blonde",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1919,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17161.mp3",
+  "bytes": 2082870
+ },
+ {
+  "id": "10338",
+  "title": "Chanson triste",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1917,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10338.mp3",
+  "bytes": 2152208
+ },
+ {
+  "id": "10323",
+  "title": "D'où viens-tu, bergère? = [Shepardess, whence com'st thou?] ; V'la l'bon vent",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1917,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10323.mp3",
+  "bytes": 1737702
+ },
+ {
+  "id": "10336",
+  "title": "Isabeau s'y promène",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1917,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10336.mp3",
+  "bytes": 1406968
+ },
+ {
+  "id": "10345",
+  "title": "La casquette du Père Bugeaud ; La mist' en laire = [There's music in the air] ; Frère Jacques ; En passant par la Lorraine",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1919,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10345.mp3",
+  "bytes": 1954763
+ },
+ {
+  "id": "17160",
+  "title": "La chère maison",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1917,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17160.mp3",
+  "bytes": 2438937
+ },
+ {
+  "id": "10170",
+  "title": "Le bonheur est chose légère",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1918,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10170.mp3",
+  "bytes": 2073649
+ },
+ {
+  "id": "10343",
+  "title": "Le pont d'Avignon, ou, [Sur le pont d'Avignon] ; Ah! Vous dirai-je, maman ; La bonne aventure ; J'ai du bon tabac",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1919,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10343.mp3",
+  "bytes": 1845566
+ },
+ {
+  "id": "17156",
+  "title": "Le retour des promis",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1935,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17156.mp3",
+  "bytes": 2241956
+ },
+ {
+  "id": "17164",
+  "title": "Là-bas sur ces montagnes = Far away in the mountains",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1921,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17164.mp3",
+  "bytes": 2597292
+ },
+ {
+  "id": "10236",
+  "title": "Panis angelicus",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1917,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10236.mp3",
+  "bytes": 1960607
+ },
+ {
+  "id": "10339",
+  "title": "Romance ; Fantoches",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1917,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10339.mp3",
+  "bytes": 2018688
+ },
+ {
+  "id": "17154",
+  "title": "Romance ; Fantoches",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1935,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17154.mp3",
+  "bytes": 2869522
+ },
+ {
+  "id": "10342",
+  "title": "Savez-vous planter les choux? ; Trempe ton pain ; La mère Michel ; Malbrouck, ou, [Malbrough s'en va-t-en guerre]",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1919,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10342.mp3",
+  "bytes": 2003533
+ },
+ {
+  "id": "17153",
+  "title": "Souvenirs du jeune âge",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1935,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17153.mp3",
+  "bytes": 2277430
+ },
+ {
+  "id": "10168",
+  "title": "Sur les bords de la Riviera",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1917,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10168.mp3",
+  "bytes": 1852752
+ },
+ {
+  "id": "10331",
+  "title": "Un canadien errant",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1917,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10331.mp3",
+  "bytes": 1681383
+ },
+ {
+  "id": "17163",
+  "title": "Vive la Canadienne = Long live the Canadian girl",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1921,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17163.mp3",
+  "bytes": 2116377
+ },
+ {
+  "id": "10326",
+  "title": "À la claire fontaine",
+  "performer": "Eva Gauthier",
+  "persons": [
+   "Gauthier, Eva, 1885-1958"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1917,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10326.mp3",
+  "bytes": 1718951
+ },
+ {
+  "id": "12078",
+  "title": "O hush thee, my babie",
+  "performer": "Harry Macdonough & Lyric Quartet (Vocal group)",
+  "persons": [
+   "Macdonough, Harry, 1871-1931",
+   "Lyric Quartet (Vocal group)"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1918,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12078.mp3",
+  "bytes": 1873682
+ },
+ {
+  "id": "12081",
+  "title": "Sweet and low",
+  "performer": "Harry Macdonough & Lyric Quartet (Vocal group)",
+  "persons": [
+   "Macdonough, Harry, 1871-1931",
+   "Lyric Quartet (Vocal group)"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1918,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12081.mp3",
+  "bytes": 1575547
+ },
+ {
+  "id": "10133",
+  "title": "Mammy's little coal black rose",
+  "performer": "Harry Macdonough & Orpheus Quartet",
+  "persons": [
+   "Macdonough, Harry, 1871-1931",
+   "Orpheus Quartet"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1917,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10133.mp3",
+  "bytes": 2230062
+ },
+ {
+  "id": "15082",
+  "title": "Berceuse : Fais dodo, mon petit ange",
+  "performer": "Hector Pellerin",
+  "persons": [
+   "Pellerin, Hector, 1887-1953"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1921,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15082.mp3",
+  "bytes": 1876782
+ },
+ {
+  "id": "16252",
+  "title": "Le moineau de Paris",
+  "performer": "Hector Pellerin",
+  "persons": [
+   "Pellerin, Hector, 1887-1953"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16252.mp3",
+  "bytes": 2668972
+ },
+ {
+  "id": "15033",
+  "title": "Nous n'irons plus au bois : chanson-valse",
+  "performer": "Hector Pellerin",
+  "persons": [
+   "Pellerin, Hector, 1887-1953"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1921,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15033.mp3",
+  "bytes": 1883365
+ },
+ {
+  "id": "16045",
+  "title": "Parfum du soir",
+  "performer": "Hector Pellerin",
+  "persons": [
+   "Pellerin, Hector, 1887-1953"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16045.mp3",
+  "bytes": 2237063
+ },
+ {
+  "id": "12679",
+  "title": "Polka piquée",
+  "performer": "Henri Lacroix",
+  "persons": [
+   "Lacroix, Henri, 1895-1962"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1929,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12679.mp3",
+  "bytes": 1733577
+ },
+ {
+  "id": "12735",
+  "title": "Valse canadienne = Canadian waltz",
+  "performer": "Henri Lacroix",
+  "persons": [
+   "Lacroix, Henri, 1895-1962"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1929,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12735.mp3",
+  "bytes": 1761183
+ },
+ {
+  "id": "12562",
+  "title": "Valse du péril",
+  "performer": "Henri Lacroix",
+  "persons": [
+   "Lacroix, Henri, 1895-1962"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12562.mp3",
+  "bytes": 1688552
+ },
+ {
+  "id": "14697",
+  "title": "Marche Duplessis",
+  "performer": "Henri Lacroix & Habitants (Groupe musical)",
+  "persons": [
+   "Lacroix, Henri, 1895-1962",
+   "Habitants (Groupe musical)"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1936,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14697.mp3",
+  "bytes": 2255767
+ },
+ {
+  "id": "14748",
+  "title": "Valse de clog de Dorval",
+  "performer": "Henri Lacroix & Habitants (Groupe musical)",
+  "persons": [
+   "Lacroix, Henri, 1895-1962",
+   "Habitants (Groupe musical)"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": "trad",
+  "year": 1936,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14748.mp3",
+  "bytes": 2295264
+ },
+ {
+  "id": "10847",
+  "title": "Bells of St. Mary's",
+  "performer": "Henri Miro & Henri's Orchestra",
+  "persons": [
+   "Miro, Henri, 1879-1950",
+   "Henri's Orchestra"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10847.mp3",
+  "bytes": 1609985
+ },
+ {
+  "id": "10849",
+  "title": "If you could care",
+  "performer": "Henri Miro & Henri's Orchestra",
+  "persons": [
+   "Miro, Henri, 1879-1950",
+   "Henri's Orchestra"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10849.mp3",
+  "bytes": 1446237
+ },
+ {
+  "id": "16063",
+  "title": "La charmeuse : gavotte",
+  "performer": "Henri Miro & Henri's Orchestra",
+  "persons": [
+   "Miro, Henri, 1879-1950",
+   "Henri's Orchestra"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16063.mp3",
+  "bytes": 2692377
+ },
+ {
+  "id": "10024",
+  "title": "Love will find a way ; At siesta time",
+  "performer": "Henri Miro & Henri's Orchestra",
+  "persons": [
+   "Miro, Henri, 1879-1950",
+   "Henri's Orchestra"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10024.mp3",
+  "bytes": 1801692
+ },
+ {
+  "id": "11025",
+  "title": "Minuetto ; Barcarolle",
+  "performer": "Henri Miro & Henri's Orchestra",
+  "persons": [
+   "Miro, Henri, 1879-1950",
+   "Henri's Orchestra"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1921,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/11025.mp3",
+  "bytes": 2065400
+ },
+ {
+  "id": "10708",
+  "title": "Please",
+  "performer": "Henri Miro & Henri's Orchestra",
+  "persons": [
+   "Miro, Henri, 1879-1950",
+   "Henri's Orchestra"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10708.mp3",
+  "bytes": 1904469
+ },
+ {
+  "id": "10836",
+  "title": "Sunshine rose, or, [My sunshine rose]",
+  "performer": "Henri Miro & Henri's Orchestra",
+  "persons": [
+   "Miro, Henri, 1879-1950",
+   "Henri's Orchestra"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10836.mp3",
+  "bytes": 1916945
+ },
+ {
+  "id": "10059",
+  "title": "Sweet and low",
+  "performer": "Henri Miro & Henri's Orchestra",
+  "persons": [
+   "Miro, Henri, 1879-1950",
+   "Henri's Orchestra"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10059.mp3",
+  "bytes": 1626993
+ },
+ {
+  "id": "11107",
+  "title": "The rye waltz",
+  "performer": "Henri Miro & Henri's Orchestra",
+  "persons": [
+   "Miro, Henri, 1879-1950",
+   "Henri's Orchestra"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1921,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/11107.mp3",
+  "bytes": 1668857
+ },
+ {
+  "id": "10772",
+  "title": "Colonel Bogey march",
+  "performer": "Henri Miro & Miro's Band",
+  "persons": [
+   "Miro, Henri, 1879-1950",
+   "Miro's Band"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10772.mp3",
+  "bytes": 1823854
+ },
+ {
+  "id": "10809",
+  "title": "Sons of the brave",
+  "performer": "Henri Miro & Miro's Band",
+  "persons": [
+   "Miro, Henri, 1879-1950",
+   "Miro's Band"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10809.mp3",
+  "bytes": 1657358
+ },
+ {
+  "id": "16598",
+  "title": "Swing me in the moonlight",
+  "performer": "Henri Miro & Miro's Band",
+  "persons": [
+   "Miro, Henri, 1879-1950",
+   "Miro's Band"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1922,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16598.mp3",
+  "bytes": 2010459
+ },
+ {
+  "id": "10773",
+  "title": "The contemptibles march",
+  "performer": "Henri Miro & Miro's Band",
+  "persons": [
+   "Miro, Henri, 1879-1950",
+   "Miro's Band"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10773.mp3",
+  "bytes": 1562380
+ },
+ {
+  "id": "9830",
+  "title": "Berceuse",
+  "performer": "Herbert L. Clarke",
+  "persons": [
+   "Clarke, Herbert L. (Herbert Lincoln), 1867-1945"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1917,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/9830.mp3",
+  "bytes": 1790658
+ },
+ {
+  "id": "17454",
+  "title": "A lullaby",
+  "performer": "Hubert Eisdell",
+  "persons": [
+   "Eisdell, Hubert, 1882-1948"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1914,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17454.mp3",
+  "bytes": 3259182
+ },
+ {
+  "id": "15964",
+  "title": "Boule de Neige",
+  "performer": "Isidore Soucy",
+  "persons": [
+   "Soucy, Isidore, 1899-1963"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15964.mp3",
+  "bytes": 1874988
+ },
+ {
+  "id": "15563",
+  "title": "Brandy",
+  "performer": "Isidore Soucy",
+  "persons": [
+   "Soucy, Isidore, 1899-1963"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1927,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15563.mp3",
+  "bytes": 2098719
+ },
+ {
+  "id": "15757",
+  "title": "Gigue du carnaval = Carnival jig",
+  "performer": "Isidore Soucy",
+  "persons": [
+   "Soucy, Isidore, 1899-1963"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15757.mp3",
+  "bytes": 2050131
+ },
+ {
+  "id": "13327",
+  "title": "Reel de Gaspé",
+  "performer": "Isidore Soucy",
+  "persons": [
+   "Soucy, Isidore, 1899-1963"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1929,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13327.mp3",
+  "bytes": 1435832
+ },
+ {
+  "id": "13926",
+  "title": "Reel de la Baie Comeau",
+  "performer": "Isidore Soucy",
+  "persons": [
+   "Soucy, Isidore, 1899-1963"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1937,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13926.mp3",
+  "bytes": 3057081
+ },
+ {
+  "id": "14723",
+  "title": "Reel de la Rivière-aux-renards",
+  "performer": "Isidore Soucy",
+  "persons": [
+   "Soucy, Isidore, 1899-1963"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1936,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14723.mp3",
+  "bytes": 2234851
+ },
+ {
+  "id": "15711",
+  "title": "Reel de la police = Policeman's reel",
+  "performer": "Isidore Soucy",
+  "persons": [
+   "Soucy, Isidore, 1899-1963"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15711.mp3",
+  "bytes": 1920981
+ },
+ {
+  "id": "13514",
+  "title": "Reel du Faubourg Québec",
+  "performer": "Isidore Soucy",
+  "persons": [
+   "Soucy, Isidore, 1899-1963"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1931,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13514.mp3",
+  "bytes": 1655213
+ },
+ {
+  "id": "15877",
+  "title": "Reel polonais = Polish reel",
+  "performer": "Isidore Soucy",
+  "persons": [
+   "Soucy, Isidore, 1899-1963"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15877.mp3",
+  "bytes": 1727257
+ },
+ {
+  "id": "15709",
+  "title": "Reels des pompiers = Firemen's reel",
+  "performer": "Isidore Soucy",
+  "persons": [
+   "Soucy, Isidore, 1899-1963"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15709.mp3",
+  "bytes": 2034144
+ },
+ {
+  "id": "15651",
+  "title": "Valse Isidore = Isidore waltz",
+  "performer": "Isidore Soucy",
+  "persons": [
+   "Soucy, Isidore, 1899-1963"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1927,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15651.mp3",
+  "bytes": 1847403
+ },
+ {
+  "id": "13929",
+  "title": "Valse du vieux québec",
+  "performer": "Isidore Soucy",
+  "persons": [
+   "Soucy, Isidore, 1899-1963"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1937,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13929.mp3",
+  "bytes": 2945486
+ },
+ {
+  "id": "15060",
+  "title": "Moi, je l'fais",
+  "performer": "J. H. Germain",
+  "persons": [
+   "Germain, J. H. (J.-Hervey), 1888-1961"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15060.mp3",
+  "bytes": 2052325
+ },
+ {
+  "id": "15310",
+  "title": "L'année bissextile",
+  "performer": "J. R. Tremblay & J. H. Germain",
+  "persons": [
+   "Tremblay, J. R., Mme, 1885-1970",
+   "Germain, J. H. (J.-Hervey), 1888-1961"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1924,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15310.mp3",
+  "bytes": 2226614
+ },
+ {
+  "id": "15311",
+  "title": "Une police d'assurance",
+  "performer": "J. R. Tremblay & J. H. Germain",
+  "persons": [
+   "Tremblay, J. R., Mme, 1885-1970",
+   "Germain, J. H. (J.-Hervey), 1888-1961"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1924,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15311.mp3",
+  "bytes": 2590952
+ },
+ {
+  "id": "9919",
+  "title": "Crédo",
+  "performer": "Jean-Philéas Filion",
+  "persons": [
+   "Filion, Jean-Philéas, 1871-1940"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1917,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/9919.mp3",
+  "bytes": 1975490
+ },
+ {
+  "id": "10513",
+  "title": "Enragé",
+  "performer": "Jean-Philéas Filion",
+  "persons": [
+   "Filion, Jean-Philéas, 1871-1940"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": null,
+  "year": 1916,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10513.mp3",
+  "bytes": 1992100
+ },
+ {
+  "id": "13119",
+  "title": "Boules de neige : reel = Snowballs : reel",
+  "performer": "Joseph Allard",
+  "persons": [
+   "Allard, Joseph, 1873-1947"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": "trad",
+  "year": 1933,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13119.mp3",
+  "bytes": 1789614
+ },
+ {
+  "id": "12528",
+  "title": "Gigue canadienne",
+  "performer": "Joseph Allard",
+  "persons": [
+   "Allard, Joseph, 1873-1947"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12528.mp3",
+  "bytes": 1718834
+ },
+ {
+  "id": "16441",
+  "title": "Glengarry reel",
+  "performer": "Joseph Allard",
+  "persons": [
+   "Allard, Joseph, 1873-1947"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": "trad",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16441.mp3",
+  "bytes": 2437475
+ },
+ {
+  "id": "12633",
+  "title": "Marche Sir Wilfrid Laurier",
+  "performer": "Joseph Allard",
+  "persons": [
+   "Allard, Joseph, 1873-1947"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1929,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12633.mp3",
+  "bytes": 1797028
+ },
+ {
+  "id": "12777",
+  "title": "Reel Jacques-Cartier = Jacques Cartier reel",
+  "performer": "Joseph Allard",
+  "persons": [
+   "Allard, Joseph, 1873-1947"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12777.mp3",
+  "bytes": 1732291
+ },
+ {
+  "id": "12634",
+  "title": "Reel de Châteauguay",
+  "performer": "Joseph Allard",
+  "persons": [
+   "Allard, Joseph, 1873-1947"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12634.mp3",
+  "bytes": 1750520
+ },
+ {
+  "id": "12941",
+  "title": "Reel de Montréal = Montreal reel",
+  "performer": "Joseph Allard",
+  "persons": [
+   "Allard, Joseph, 1873-1947"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12941.mp3",
+  "bytes": 1660988
+ },
+ {
+  "id": "12778",
+  "title": "Reel de Ste-Anne = St. Anne Reel",
+  "performer": "Joseph Allard",
+  "persons": [
+   "Allard, Joseph, 1873-1947"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12778.mp3",
+  "bytes": 1864650
+ },
+ {
+  "id": "14770",
+  "title": "Reel de l'aveugle = [Blind man's reel]",
+  "performer": "Joseph Allard",
+  "persons": [
+   "Allard, Joseph, 1873-1947"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1936,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14770.mp3",
+  "bytes": 2048877
+ },
+ {
+  "id": "12549",
+  "title": "Reel du voyageur = [Traveller's reel], ou,  Drummer's reel",
+  "performer": "Joseph Allard",
+  "persons": [
+   "Allard, Joseph, 1873-1947"
+  ],
+  "repertoire": "instrumental trad (reel/gigue/quadrille)",
+  "basis": "trad",
+  "year": 1928,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12549.mp3",
+  "bytes": 1709045
+ },
+ {
+  "id": "12308",
+  "title": "Alouette",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1915,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12308.mp3",
+  "bytes": 1848217
+ },
+ {
+  "id": "12276",
+  "title": "Au [i.e. Ô] Canada, terre des nos aïeux",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12276.mp3",
+  "bytes": 1701905
+ },
+ {
+  "id": "9722",
+  "title": "Calm as the night",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1917,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/9722.mp3",
+  "bytes": 1361102
+ },
+ {
+  "id": "12293",
+  "title": "Chanson du blé",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1910,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12293.mp3",
+  "bytes": 1498910
+ },
+ {
+  "id": "17411",
+  "title": "Chanson à boire : douce ivresse",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17411.mp3",
+  "bytes": 2148926
+ },
+ {
+  "id": "17395",
+  "title": "Dans cet etable [i.e. Dans cette étable] : [Cantique de Noël]",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1907,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17395.mp3",
+  "bytes": 2282412
+ },
+ {
+  "id": "12291",
+  "title": "Dieu [i.e Dieu!] sauve la France",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1915,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12291.mp3",
+  "bytes": 1778265
+ },
+ {
+  "id": "12280",
+  "title": "Dieu [i.e. Dieu!] sauve la France",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1910,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12280.mp3",
+  "bytes": 1746707
+ },
+ {
+  "id": "17275",
+  "title": "Embarquez-vous!",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17275.mp3",
+  "bytes": 2825950
+ },
+ {
+  "id": "12292",
+  "title": "Envoi de fleurs : mélodie",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1910,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12292.mp3",
+  "bytes": 1647280
+ },
+ {
+  "id": "17400",
+  "title": "Gai lou la gai le rosier [i.e. Gai lon la, gai le rosier]",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1907,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17400.mp3",
+  "bytes": 2041772
+ },
+ {
+  "id": "12303",
+  "title": "Isabeau s'y promène",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1915,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12303.mp3",
+  "bytes": 2962622
+ },
+ {
+  "id": "17399",
+  "title": "J'ignore son nom",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1912,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17399.mp3",
+  "bytes": 2381520
+ },
+ {
+  "id": "17409",
+  "title": "Je t'aime [Ich liebe dich]",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17409.mp3",
+  "bytes": 2047623
+ },
+ {
+  "id": "12306",
+  "title": "L'improvisateur",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1915,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12306.mp3",
+  "bytes": 1573645
+ },
+ {
+  "id": "17393",
+  "title": "La Marseillaise = Die Marseillaise = The Marseillaise",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1906,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17393.mp3",
+  "bytes": 2118206
+ },
+ {
+  "id": "12296",
+  "title": "Le drapeau de Carillon",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1915,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12296.mp3",
+  "bytes": 1793953
+ },
+ {
+  "id": "12271",
+  "title": "Le drapeau de carillon",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1910,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12271.mp3",
+  "bytes": 1656769
+ },
+ {
+  "id": "17408",
+  "title": "Le régiment de sambre et meuse",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17408.mp3",
+  "bytes": 2115280
+ },
+ {
+  "id": "17394",
+  "title": "Les anges dans nos campagnes [Air traditionnel]",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1906,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17394.mp3",
+  "bytes": 2629475
+ },
+ {
+  "id": "12287",
+  "title": "Les deux gendarmes",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1915,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12287.mp3",
+  "bytes": 1678521
+ },
+ {
+  "id": "17407",
+  "title": "Les rameaux",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1906,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17407.mp3",
+  "bytes": 2363235
+ },
+ {
+  "id": "12297",
+  "title": "Les rameaux",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1915,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12297.mp3",
+  "bytes": 1289647
+ },
+ {
+  "id": "17397",
+  "title": "Les saisons",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1907,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17397.mp3",
+  "bytes": 2084926
+ },
+ {
+  "id": "17410",
+  "title": "Malgre moi [i.e. Malgré moi]",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17410.mp3",
+  "bytes": 2504035
+ },
+ {
+  "id": "17403",
+  "title": "Minuit, chretien[s], ou, [Cantique de Noël]",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1906,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17403.mp3",
+  "bytes": 2768446
+ },
+ {
+  "id": "12274",
+  "title": "Minuit, chrétiens, ou, Cantique de Noël",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1909,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12274.mp3",
+  "bytes": 1993991
+ },
+ {
+  "id": "17418",
+  "title": "Mélodie des baisers",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17418.mp3",
+  "bytes": 1661429
+ },
+ {
+  "id": "17402",
+  "title": "Noël des bergers [= Ça, bergers, assemblons-nous]",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1906,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17402.mp3",
+  "bytes": 2243646
+ },
+ {
+  "id": "12288",
+  "title": "Noël montez à Dieu",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1915,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12288.mp3",
+  "bytes": 1716464
+ },
+ {
+  "id": "12301",
+  "title": "Nuit d'Espagne",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1915,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12301.mp3",
+  "bytes": 1713037
+ },
+ {
+  "id": "17404",
+  "title": "O Canada terre de nos aïeux",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1907,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17404.mp3",
+  "bytes": 2365795
+ },
+ {
+  "id": "17405",
+  "title": "O Canada, mon pays, mes amours",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1906,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17405.mp3",
+  "bytes": 2428697
+ },
+ {
+  "id": "17268",
+  "title": "O Canada, terre de nos aïeux",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17268.mp3",
+  "bytes": 3110162
+ },
+ {
+  "id": "17416",
+  "title": "Ouvre tes yeux bleus",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17416.mp3",
+  "bytes": 1739692
+ },
+ {
+  "id": "17424",
+  "title": "Partant pour la Syrie",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17424.mp3",
+  "bytes": 2243646
+ },
+ {
+  "id": "17406",
+  "title": "Salut, ô Vierge immaculée [Cantique]",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1907,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17406.mp3",
+  "bytes": 2543532
+ },
+ {
+  "id": "17423",
+  "title": "Si mes vers avaient des ailes",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17423.mp3",
+  "bytes": 2140653
+ },
+ {
+  "id": "12299",
+  "title": "Souhait",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1915,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12299.mp3",
+  "bytes": 1587225
+ },
+ {
+  "id": "17398",
+  "title": "Souvenirs du jeune âge",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1912,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17398.mp3",
+  "bytes": 2274366
+ },
+ {
+  "id": "12300",
+  "title": "Stances",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1915,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12300.mp3",
+  "bytes": 1856259
+ },
+ {
+  "id": "12281",
+  "title": "Viva [i.e. Vive] la France",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1910,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12281.mp3",
+  "bytes": 1855109
+ },
+ {
+  "id": "12307",
+  "title": "Vive la Canadienne",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1915,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12307.mp3",
+  "bytes": 1632082
+ },
+ {
+  "id": "12298",
+  "title": "Vive la France",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1914,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12298.mp3",
+  "bytes": 1642785
+ },
+ {
+  "id": "12275",
+  "title": "Ô Canada, mon pays, mes amours",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1910,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12275.mp3",
+  "bytes": 1754585
+ },
+ {
+  "id": "12310",
+  "title": "Ô Canada, terre de nos aïeux",
+  "performer": "Joseph Saucier",
+  "persons": [
+   "Saucier, Joseph, 1869-1941"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1915,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12310.mp3",
+  "bytes": 1759463
+ },
+ {
+  "id": "17415",
+  "title": "Le crucifix",
+  "performer": "Joseph Saucier & Émile Gour",
+  "persons": [
+   "Saucier, Joseph, 1869-1941",
+   "Gour, Émile, 1893-1970"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1920,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17415.mp3",
+  "bytes": 2341657
+ },
+ {
+  "id": "13625",
+  "title": "Aux chauffeurs d'automobile",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1931,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13625.mp3",
+  "bytes": 1250121
+ },
+ {
+  "id": "13516",
+  "title": "Fricassez-vous",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13516.mp3",
+  "bytes": 1414680
+ },
+ {
+  "id": "13352",
+  "title": "Gendre et belle-mère",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1929,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13352.mp3",
+  "bytes": 1483381
+ },
+ {
+  "id": "13635",
+  "title": "Il va me faire mourir c'gars-là",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1931,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13635.mp3",
+  "bytes": 1523304
+ },
+ {
+  "id": "13718",
+  "title": "J'ai un bouton sur la langue",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1932,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13718.mp3",
+  "bytes": 1444331
+ },
+ {
+  "id": "13510",
+  "title": "La bastringue",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1931,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13510.mp3",
+  "bytes": 1887022
+ },
+ {
+  "id": "13649",
+  "title": "La chanson du bavard",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1931,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13649.mp3",
+  "bytes": 1906701
+ },
+ {
+  "id": "13727",
+  "title": "La gaspésienne pure laine",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1935,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13727.mp3",
+  "bytes": 1780137
+ },
+ {
+  "id": "13219",
+  "title": "La gaspésienne: reel",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "trad",
+  "year": 1929,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13219.mp3",
+  "bytes": 1422895
+ },
+ {
+  "id": "13533",
+  "title": "La pitoune",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13533.mp3",
+  "bytes": 2012350
+ },
+ {
+  "id": "13553",
+  "title": "Le bas de Noël",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1931,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13553.mp3",
+  "bytes": 1403987
+ },
+ {
+  "id": "13611",
+  "title": "Le commerçant des rues",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1931,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13611.mp3",
+  "bytes": 1714418
+ },
+ {
+  "id": "13551",
+  "title": "Le jour de l'an",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1931,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13551.mp3",
+  "bytes": 1869699
+ },
+ {
+  "id": "13620",
+  "title": "Le propriétaire",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1931,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13620.mp3",
+  "bytes": 1433570
+ },
+ {
+  "id": "14430",
+  "title": "Le propriétaire",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1931,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14430.mp3",
+  "bytes": 1556837
+ },
+ {
+  "id": "14433",
+  "title": "Le sauvage du nord",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1931,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14433.mp3",
+  "bytes": 1536181
+ },
+ {
+  "id": "13548",
+  "title": "Les agents d'assurance",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1931,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13548.mp3",
+  "bytes": 1588733
+ },
+ {
+  "id": "13713",
+  "title": "Les américains",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1932,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13713.mp3",
+  "bytes": 1542335
+ },
+ {
+  "id": "13726",
+  "title": "Les cinq jumelles",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1935,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13726.mp3",
+  "bytes": 1500999
+ },
+ {
+  "id": "13711",
+  "title": "Les conducteurs de chars",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1932,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13711.mp3",
+  "bytes": 1791661
+ },
+ {
+  "id": "13717",
+  "title": "Les femmes",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1932,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13717.mp3",
+  "bytes": 1905818
+ },
+ {
+  "id": "13489",
+  "title": "Les maringouins",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13489.mp3",
+  "bytes": 1532949
+ },
+ {
+  "id": "13712",
+  "title": "Les policemen",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1932,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13712.mp3",
+  "bytes": 1508476
+ },
+ {
+  "id": "13532",
+  "title": "Mon vieux est jaloux",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13532.mp3",
+  "bytes": 1690982
+ },
+ {
+  "id": "13716",
+  "title": "Quand j'étais chez mon père",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1932,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13716.mp3",
+  "bytes": 1551429
+ },
+ {
+  "id": "13719",
+  "title": "Rose cherche à se marier",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1932,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13719.mp3",
+  "bytes": 1431631
+ },
+ {
+  "id": "13709",
+  "title": "Sans travail",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1932,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13709.mp3",
+  "bytes": 1638576
+ },
+ {
+  "id": "13715",
+  "title": "Si les saucisses pouvaient parler",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1932,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13715.mp3",
+  "bytes": 1446810
+ },
+ {
+  "id": "13447",
+  "title": "Si vous avez une fille qui veut se marier",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13447.mp3",
+  "bytes": 1407239
+ },
+ {
+  "id": "13590",
+  "title": "Tit noir a le mal imaginaire",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1932,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13590.mp3",
+  "bytes": 1726861
+ },
+ {
+  "id": "13488",
+  "title": "Toujours \"L'R-100\"",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13488.mp3",
+  "bytes": 1674387
+ },
+ {
+  "id": "13505",
+  "title": "Ça va venir, découragez-vous pas",
+  "performer": "La Bolduc",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13505.mp3",
+  "bytes": 1635458
+ },
+ {
+  "id": "13520",
+  "title": "Le clog à Tizef Parent : avec imitations",
+  "performer": "La Bolduc & Alfred Montmarquette & Adélard St-Jean",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941",
+   "Montmarquette, Alfred, 1871-1944",
+   "St-Jean, Adélard, 1890-1964"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "trad",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13520.mp3",
+  "bytes": 1785782
+ },
+ {
+  "id": "14408",
+  "title": "Marche des goglus",
+  "performer": "La Bolduc & Alfred Montmarquette & Adélard St-Jean",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941",
+   "Montmarquette, Alfred, 1871-1944",
+   "St-Jean, Adélard, 1890-1964"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14408.mp3",
+  "bytes": 1451598
+ },
+ {
+  "id": "13223",
+  "title": "Elle attend tout l'temps",
+  "performer": "La Bolduc & Eugène Daignault",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941",
+   "Daignault, Eugène, 1895-1960"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13223.mp3",
+  "bytes": 1482324
+ },
+ {
+  "id": "14392",
+  "title": "Elle attend tout le temps",
+  "performer": "La Bolduc & Eugène Daignault",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941",
+   "Daignault, Eugène, 1895-1960"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1929,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14392.mp3",
+  "bytes": 1335315
+ },
+ {
+  "id": "14398",
+  "title": "Estimez vous pas tant",
+  "performer": "La Bolduc & Eugène Daignault",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941",
+   "Daignault, Eugène, 1895-1960"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14398.mp3",
+  "bytes": 1599238
+ },
+ {
+  "id": "14390",
+  "title": "Le 25 [vingt-cinq] de mai",
+  "performer": "La Bolduc & Eugène Daignault",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941",
+   "Daignault, Eugène, 1895-1960"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14390.mp3",
+  "bytes": 1316217
+ },
+ {
+  "id": "13444",
+  "title": "Le jupon d'Angèle",
+  "performer": "La Bolduc & Eugène Daignault",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941",
+   "Daignault, Eugène, 1895-1960"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13444.mp3",
+  "bytes": 1517696
+ },
+ {
+  "id": "14397",
+  "title": "On est canayen ou ben on l'est pas",
+  "performer": "La Bolduc & Eugène Daignault",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941",
+   "Daignault, Eugène, 1895-1960"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14397.mp3",
+  "bytes": 1807459
+ },
+ {
+  "id": "13445",
+  "title": "Pingo-Gobino",
+  "performer": "La Bolduc & Eugène Daignault",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941",
+   "Daignault, Eugène, 1895-1960"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13445.mp3",
+  "bytes": 1555008
+ },
+ {
+  "id": "13398",
+  "title": "Je suis Zozo",
+  "performer": "La Bolduc & Eugène Daignault & Trio de la rue St. Timothée",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941",
+   "Daignault, Eugène, 1895-1960",
+   "Trio de la rue St. Timothée"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1930,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13398.mp3",
+  "bytes": 1505475
+ },
+ {
+  "id": "13286",
+  "title": "La bouteille de rhum",
+  "performer": "La Bolduc & Eugène Daignault & Trio de la rue St. Timothée",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941",
+   "Daignault, Eugène, 1895-1960",
+   "Trio de la rue St. Timothée"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1929,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13286.mp3",
+  "bytes": 1593354
+ },
+ {
+  "id": "13353",
+  "title": "Quand on s'est vu (avec chant)",
+  "performer": "La Bolduc & R. Beaudry",
+  "persons": [
+   "Bolduc, Édouard, Mme, 1894-1941",
+   "Beaudry, R. (Louis-Roméo), 1882-1932"
+  ],
+  "repertoire": "francophone song/monologue",
+  "basis": "own",
+  "year": 1929,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13353.mp3",
+  "bytes": 1717643
+ },
+ {
+  "id": "16894",
+  "title": "Elle est tellement innocente - Romance",
+  "performer": "Paul Dufault",
+  "persons": [
+   "Dufault, Paul, 1872-1930"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1911,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16894.mp3",
+  "bytes": 2434549
+ },
+ {
+  "id": "16100",
+  "title": "La marseillaise",
+  "performer": "Paul Dufault",
+  "persons": [
+   "Dufault, Paul, 1872-1930"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16100.mp3",
+  "bytes": 2373475
+ },
+ {
+  "id": "17270",
+  "title": "Le drapeau de carillon",
+  "performer": "Paul Dufault",
+  "persons": [
+   "Dufault, Paul, 1872-1930"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17270.mp3",
+  "bytes": 3956111
+ },
+ {
+  "id": "16108",
+  "title": "Les trois gosses : conte de Noël",
+  "performer": "Paul Dufault",
+  "persons": [
+   "Dufault, Paul, 1872-1930"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16108.mp3",
+  "bytes": 2964835
+ },
+ {
+  "id": "16902",
+  "title": "Mon Seigneur Jésus",
+  "performer": "Paul Dufault",
+  "persons": [
+   "Dufault, Paul, 1872-1930"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1916,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16902.mp3",
+  "bytes": 2731509
+ },
+ {
+  "id": "16103",
+  "title": "Noël d'Irlande",
+  "performer": "Paul Dufault",
+  "persons": [
+   "Dufault, Paul, 1872-1930"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16103.mp3",
+  "bytes": 2093703
+ },
+ {
+  "id": "16161",
+  "title": "Viatique",
+  "performer": "Paul Dufault",
+  "persons": [
+   "Dufault, Paul, 1872-1930"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16161.mp3",
+  "bytes": 2000080
+ },
+ {
+  "id": "16172",
+  "title": "À des oiseaux",
+  "performer": "Paul Dufault",
+  "persons": [
+   "Dufault, Paul, 1872-1930"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16172.mp3",
+  "bytes": 1902208
+ },
+ {
+  "id": "16791",
+  "title": "O Canada, mon pays, mes amours!",
+  "performer": "Rex Battle & Rodolphe Plamondon",
+  "persons": [
+   "Battle, Rex, 1895-1967",
+   "Plamondon, Rodolphe, 1876-1940"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1926,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16791.mp3",
+  "bytes": 2731509
+ },
+ {
+  "id": "17389",
+  "title": "Notre Père qui es aux cieux",
+  "performer": "Rodolphe Plamondon",
+  "persons": [
+   "Plamondon, Rodolphe, 1876-1940"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17389.mp3",
+  "bytes": 1905499
+ },
+ {
+  "id": "9883",
+  "title": "Christmas Eve : kiddies' patrol : Santa Claus is coming ; Sleigh bells in distance ; Drawing nearer ; Arrives at house ; Selects toys ; Goes down chimney ; Distributes presents ; Returns ; Jumps in sleigh ; Cracks whip ; Away he goes ; Drops whip ; Picks",
+  "performer": "Walter B. Rogers & Henri Miro & Miro's Band",
+  "persons": [
+   "Rogers, Walter B., 1865-1939",
+   "Miro, Henri, 1879-1950",
+   "Miro's Band"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1918,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/9883.mp3",
+  "bytes": 1685546
+ },
+ {
+  "id": "9879",
+  "title": "Christmas morn : kiddies' patrol : Chimes strikes 6 o'clock ; Children awaken ; Run to see wonderful Christmas tree ; Fun with toys ; Postman arrives ; More presents ; More fun ; Breakfast is ready ; Finale",
+  "performer": "Walter B. Rogers & Henri Miro & Miro's Band",
+  "persons": [
+   "Rogers, Walter B., 1865-1939",
+   "Miro, Henri, 1879-1950",
+   "Miro's Band"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1918,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/9879.mp3",
+  "bytes": 1704256
+ },
+ {
+  "id": "16694",
+  "title": "A kiss in the dark",
+  "performer": "Willie Eckstein",
+  "persons": [
+   "Eckstein, Willie, 1888-1963"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1924,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16694.mp3",
+  "bytes": 2394093
+ },
+ {
+  "id": "16424",
+  "title": "I'm in the market for you : from the motion picture \"High society blues",
+  "performer": "Willie Eckstein",
+  "persons": [
+   "Eckstein, Willie, 1888-1963"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16424.mp3",
+  "bytes": 2483189
+ },
+ {
+  "id": "16653",
+  "title": "Turkey in the straw",
+  "performer": "Willie Eckstein",
+  "persons": [
+   "Eckstein, Willie, 1888-1963"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": null,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16653.mp3",
+  "bytes": 2113956
+ },
+ {
+  "id": "9946",
+  "title": "Burmah moon",
+  "performer": "Willie Eckstein & Geoffrey O'Hara",
+  "persons": [
+   "Eckstein, Willie, 1888-1963",
+   "O'Hara, Geoffrey, 1882-1967"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1919,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/9946.mp3",
+  "bytes": 1639517
+ },
+ {
+  "id": "9947",
+  "title": "Doughboy Jack and Doughnut Jill",
+  "performer": "Willie Eckstein & Geoffrey O'Hara",
+  "persons": [
+   "Eckstein, Willie, 1888-1963",
+   "O'Hara, Geoffrey, 1882-1967"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1919,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/9947.mp3",
+  "bytes": 1709471
+ },
+ {
+  "id": "10270",
+  "title": "Burmah moon",
+  "performer": "Willie Eckstein & Strand Trio",
+  "persons": [
+   "Eckstein, Willie, 1888-1963",
+   "Strand Trio"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1919,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10270.mp3",
+  "bytes": 1846770
+ },
+ {
+  "id": "16673",
+  "title": "Loveley Lucerne",
+  "performer": "Willie Eckstein & Willie Eckstein Trio",
+  "persons": [
+   "Eckstein, Willie, 1888-1963",
+   "Willie Eckstein Trio"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1924,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16673.mp3",
+  "bytes": 2522093
+ },
+ {
+  "id": "16614",
+  "title": "Lovely Lucerne",
+  "performer": "Willie Eckstein & Willie Eckstein Trio",
+  "persons": [
+   "Eckstein, Willie, 1888-1963",
+   "Willie Eckstein Trio"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1922,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16614.mp3",
+  "bytes": 2531236
+ },
+ {
+  "id": "16983",
+  "title": "Mignonne, pourquoi pleurer",
+  "performer": "Émile Gour",
+  "persons": [
+   "Gour, Émile, 1893-1970"
+  ],
+  "repertoire": "salon/concert (Canadian performer)",
+  "basis": null,
+  "year": 1921,
+  "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16983.mp3",
+  "bytes": 2810276
+ }
 ]

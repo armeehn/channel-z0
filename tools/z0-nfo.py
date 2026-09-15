@@ -260,6 +260,28 @@ MUSIC_FORMS = [
 
 MUSIC_SPLIT = re.compile(r"^(.{2,60}?)\s+-\s+(.+)$")
 
+# The LAC Virtual Gramophone sides (gramophone/<chanson|reel|chant>/) carry
+# their LAC object id in the stem; tools/z0-gramo/sides.json is the record of
+# title, performer and both copyright clocks, so the sidecar is read from it
+# rather than re-parsed from the file name. Imported lazily: it is only needed
+# when such a file is met, and its Pillow import is optional off the render host.
+GRAMO_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "z0-gramo")
+LAC_ID = re.compile(r"\[lac-(\d+)\]")
+
+
+def gramo_side(stem):
+    """(gramo module, side) for a Virtual Gramophone stem, else None."""
+    m = LAC_ID.search(stem)
+    if not m:
+        return None
+
+    sys.path.insert(0, GRAMO_DIR)
+    import gramo
+    try:
+        return gramo, gramo.load_side(m.group(1))
+    except KeyError:
+        return None
+
 
 def slugify(s):
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
@@ -443,6 +465,20 @@ def build(item, media_root):
             tags.append("song")
             genres.append("Song")
 
+    # ── The Virtual Gramophone sides ─────────────────────────────────────────
+    # Both clocks are re-proven here: a side the manifest no longer clears
+    # must not get a sidecar, so the RightsError is left to stop the run.
+    gramo_outline = None
+    if "gramophone" in folders and gramo_side(stem):
+        gramo, side = gramo_side(stem)
+        verdict = gramo.clear(side)
+        title, year = side["title"], side.get("year") or year
+        genres.append("Music")
+        studios.append("Library and Archives Canada")
+        gramo_outline = (f"{side['performer']}. LAC Virtual Gramophone {side['id']}. "
+                         f"Recording {verdict[gramo.Clock.RECORDING]} (s.23); "
+                         f"work {verdict[gramo.Clock.WORK]} (s.6): public domain, permanently.")
+
     # ── Contested copyright: the NFB shorts ──────────────────────────────────
     # As a federal agency the NFB's pre-1976 output should be public domain in
     # Canada under Crown copyright (s.12, 50 years). No court has ruled, and the
@@ -521,6 +557,8 @@ def build(item, media_root):
             outline = f"A {series} short." if not year else f"A {series} short from {year}."
         elif "music" in folders:
             outline = f"{artist} performs." if artist else "Prairie dance-band recording."
+        elif gramo_outline:
+            outline = gramo_outline
         elif "bc" in folders:
             outline = "Vancouver on film, from the City of Vancouver Archives."
             if year:

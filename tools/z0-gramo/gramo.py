@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-r"""Channel Z0 — GRAMOPHONE listening interval.
+r"""Channel Z0 — GRAMOPHONE sides for LUNCH LOOPS.
 
 One Library and Archives Canada *Virtual Gramophone* 78 side, played whole,
 with the picture generated from the sound itself. The record's groove IS the
@@ -7,32 +7,37 @@ side's loudness map, laid down in polar coordinates exactly as a cutting
 lathe would: rim first, one turn per 1/78 min, label last. A tonearm tracks
 playback inward; the groove already played turns station marigold behind it.
 
-    +---------------------------- 854 ------------------------------+
-    |   art viewport 0..447          |   panel 462..840             |
-    |                                |  CH 0  LISTENING INTERVAL    |
-    |        ,--------.              |  title / performer / dates   |
-    |      /  ((( o )))  \  <-arm    |  LAC provenance + object id  |
-    |      \  groove =   /           |  s.23 recording clock  -> PD |
-    |        `--------'              |  s.6  work clock       -> PD |
-    |   played = marigold, ahead     |  feeds, VU needle, clock     |
-    |   of the stylus = grey         |  01:23 / 03:06               |
-    +---------------------------------------------------------------+
+    +--------------------- 640 (4:3) ---------------------+
+    |   art viewport 0..319      |   panel 332..628       |
+    |                            |  CH 0  GRAMOPHONE      |
+    |        ,------.            |  title / performer     |
+    |      /  (( o ))  \ <-arm   |  LAC object id         |
+    |      \  groove   /         |  s.23 recording  -> PD |
+    |        `------'            |  s.6  work       -> PD |
+    |   played = marigold,       |  VU needle, clock      |
+    |   ahead of stylus = grey   |  01:23 / 03:06         |
+    +-----------------------------------------------------+
+
+4:3, like every other LUNCH LOOPS card: the block airs with the gutter rails
+up, and a 16:9 item puts its edges under the rails. ErsatzTV pillarboxes
+this into the same 640 px the prairie cards occupy.
 
 Everything is derived: the loudness envelope comes from ffmpeg (`astats`,
 one RMS figure per video frame — numpy does not import in LXC 111, so
 ffmpeg is the DSP and Python only draws), the geometry from the side's own
-duration, the panel text from the feed record. Deterministic: no clock, no
+duration, the panel text from the manifest. Deterministic: no clock, no
 seed, no network at render time.
 
 Standing rules honoured: no crosshair anywhere (the spindle is a plain hole,
 the VU scale is an open arc); nothing is a subtitle element — the text is in
-the picture, like the L-system panels; the clip fills the frame because the
-gutter rails go DOWN for intervals.
+the picture, like the L-system panels.
 
-    gramo.py envelope  SRC.mp3 ENV.json           # ffmpeg DSP pass
+    gramo.py select    STAGE.json SRC_DIR OUT.json   # manifest from round 3
+    gramo.py check     [SIDE_ID]                     # rights clocks only
+    gramo.py envelope  SRC.mp3 ENV.json              # ffmpeg DSP pass
     gramo.py render    SIDE_ID SRC.mp3 ENV.json OUT.mp4
-    gramo.py nfo       SIDE_ID OUT.nfo
-    gramo.py check     SIDE_ID                    # rights clocks only
+    gramo.py stem      SIDE_ID                       # library file stem
+    gramo.py tex                                     # docs table
 """
 import hashlib
 import json
@@ -44,32 +49,38 @@ import subprocess
 import sys
 from enum import Enum
 
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+try:
+    from PIL import Image, ImageDraw, ImageFont, ImageOps
+except ImportError:         # z0-nfo.py imports the clocks on hosts without Pillow
+    Image = ImageDraw = ImageFont = ImageOps = None
 
-# ── house spec (matches tools/z0-lsys and the anime family) ────────────────
-W, H = 854, 480
+# ── card spec (matches the LUNCH LOOPS music cards: 4:3, 30 fps) ────────────
+W, H = 640, 480
 FPS = 30
 SR = 48000
 NS = SR // FPS              # 1600 samples == one video frame
 MAX_KBPS = 3000             # the interval assembler's encodability gate
-MAX_SECONDS = 240           # 4:00, the longest junction the schedule books
+MAX_MINUTES = 9             # every lunch pool is bounded minutes:[0 TO 9]
 
-# ── the record ──────────────────────────────────────────────────────────────
+# ── the disc ────────────────────────────────────────────────────────────────
 RPM = 78
-ART_W = 448                 # whole macroblocks, same viewport as the L-systems
-DISC_D = 420
+ART_W = 320                 # left half; whole macroblocks
+DISC_D = 300
 R_OUT = DISC_D // 2
-R_LABEL = 68
-R_HOLE = 5
+R_LABEL = 52
+R_HOLE = 4
 SUPER = 2                   # groove field is drawn at 2x and box-filtered down
 GROOVE_PX = 3               # cosmetic ring pitch; the real pitch is sub-pixel
 LEAD_IN_S = 1.5             # blank groove before the music, like a real side
 
-# ── panel geometry (identical to the L-system specimens, measured) ──────────
-PANEL_X = 462
-PANEL_R = 840
+# ── the panel (the L-system panel's proportions at 4:3) ─────────────────────
+PANEL_X = 332
+PANEL_R = 628
 PANEL_W = PANEL_R - PANEL_X
-COLS = 52                   # 12 px mono in 378 px; a longer line is a bug
+COLS = 40                   # 12 px mono in 296 px; a longer line is a bug
+ROW = 16
+PANEL_TOP = 66              # first text row, under the title
+PANEL_FLOOR = 390           # static rows must end above the clock and VU
 
 # ── palette ─────────────────────────────────────────────────────────────────
 BG = (11, 11, 11)
@@ -82,7 +93,7 @@ INK = (200, 200, 196)
 LABEL = (120, 120, 116)
 RULE = (48, 48, 46)
 
-FONT_DIR = "/usr/share/fonts/liberation"
+FONT_DIR = os.environ.get("GRAMO_FONT_DIR", "/usr/share/fonts/liberation")
 MONO = FONT_DIR + "/LiberationMono-%s.ttf"
 SERIF = FONT_DIR + "/LiberationSerif-%s.ttf"
 
@@ -91,8 +102,11 @@ SERIF = FONT_DIR + "/LiberationSerif-%s.ttf"
 # one says nothing about the other. Both extensions were non-retroactive:
 #   s.23 sound recording  50y -> 70y on 2015-06-23: fixed <= 1964 is out for good
 #   s.6  musical work     50y -> 70y on 2022-12-30: author d. <= 1971 is out
-# The Virtual Gramophone digitised discs cut 1900-1950, so every side clears
-# the first clock by construction; the second must be proven per person.
+# The recording year is the disc's own ID3 date where LAC stamped one; the
+# Virtual Gramophone digitised discs cut 1900-1950, which is the fallback.
+# The work clock is proven only where the record itself names the author or
+# the work has none: a performer's death date says nothing about a song
+# somebody else wrote, and the feeds credit performers.
 RECORDING_LAST_FIXED = 1964
 WORK_LAST_DEATH = 1971
 VG_SPAN = (1900, 1950)
@@ -103,6 +117,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SIDES = os.path.join(HERE, "sides.json")
 
 _YEARS = re.compile(r"(\d{4})\s*-\s*(\d{4})?\s*$")
+_DIED_ONLY = re.compile(r"\bm\.?\s*(\d{4})\s*$")       # "Desmarteaux, Alexandre, m. 1926"
+_CORPORATE = re.compile(r"trio|quartet|band|orchestra|groupe|abbey|chorus|"
+                        r"habitants|quatuor|choeur", re.I)
+_TRAD_FORM = re.compile(r"\b(reel|gigue|quadrille|cotillon|clog|set carr|"
+                        r"brandy|jig)\b", re.I)
 
 
 class Clock(Enum):
@@ -110,8 +129,29 @@ class Clock(Enum):
     WORK = "s.6"
 
 
+class Basis(Enum):
+    """Why the WORK clock can be read off the record at all."""
+    OWN = "own"             # the credited performer wrote the material
+    TRAD = "trad"           # traditional dance tune, no author
+    CHANT = "chant"         # plainchant, no author
+
+
+# Performers whose recorded repertoire is their own writing. The memory that
+# staged round 3 records the fact for La Bolduc; nobody else is assumed.
+AUTHORS = {"Bolduc, Édouard, Mme"}
+
+# Library folder per basis: the folder is the tag ErsatzTV derives.
+FOLDER = {Basis.OWN: "chanson", Basis.TRAD: "reel", Basis.CHANT: "chant"}
+
+# Display names where "Given Surname" is not how the performer is known.
+DISPLAY = {"Bolduc, Édouard, Mme": "La Bolduc",
+           "Saint-Benoît-du-Lac (Abbey : Québec)": "Abbaye de Saint-Benoît-du-Lac"}
+
+
 class RightsError(Exception):
-    pass
+    def __init__(self, clock, msg):
+        super().__init__("%s %s: %s" % (clock.name, clock.value, msg))
+        self.clock = clock
 
 
 class EnvelopeError(Exception):
@@ -127,41 +167,165 @@ class LayoutError(Exception):
 def death_year(person):
     """'Bolduc, Édouard, Mme, 1894-1941' -> 1941. None when not stated."""
     m = _YEARS.search(person)
-    if not m or not m.group(2):
-        return None
+    if m and m.group(2):
+        return int(m.group(2))
 
-    return int(m.group(2))
+    m = _DIED_ONLY.search(person)
+    return int(m.group(1)) if m else None
+
+
+def is_corporate(person):
+    """An ensemble or an abbey has no personal clock to age out."""
+    return not re.search(r"\d{4}", person) and bool(_CORPORATE.search(person))
+
+
+def person_name(person):
+    """'Bolduc, Édouard, Mme, 1894-1941' -> 'Bolduc, Édouard, Mme'."""
+    return _DIED_ONLY.sub("", _YEARS.sub("", person)).strip().rstrip(",").strip()
 
 
 def clear(side):
-    """Both clocks, or raise. Never guesses a missing year."""
-    if VG_SPAN[1] > RECORDING_LAST_FIXED:
-        raise RightsError("collection span exceeds the recording clock")
+    """Both clocks, or raise. Never guesses a missing year or an author."""
+    year = side.get("year")
+    if year is not None and year > RECORDING_LAST_FIXED:
+        raise RightsError(Clock.RECORDING, "fixed %d > %d" % (year, RECORDING_LAST_FIXED))
 
+    if year is None and VG_SPAN[1] > RECORDING_LAST_FIXED:
+        raise RightsError(Clock.RECORDING, "collection span exceeds the clock")
+
+    basis = side.get("basis")
+    if basis is None:
+        raise RightsError(Clock.WORK, "composer not named in the record")
+
+    basis = Basis(basis)
+    dated = []
     for person in side["persons"]:
+        if is_corporate(person):
+            continue
+
         died = death_year(person)
         if died is None:
-            raise RightsError("no death year for %r; work clock unprovable" % person)
+            raise RightsError(Clock.WORK, "no death year for %r" % person)
 
         if died > WORK_LAST_DEATH:
-            raise RightsError("%r died %d > %d; work runs to %d"
+            raise RightsError(Clock.WORK, "%r died %d > %d; work runs to %d"
                               % (person, died, WORK_LAST_DEATH, died + 71))
 
-    return {
-        Clock.RECORDING: "fixed %d-%d  <= %d" % (*VG_SPAN, RECORDING_LAST_FIXED),
-        Clock.WORK: ", ".join("d.%d" % death_year(p) for p in side["persons"]),
-    }
+        dated.append(died)
+
+    if basis is Basis.OWN and not dated:
+        raise RightsError(Clock.WORK, "own material claimed with no dated author")
+
+    recording = ("fixed %d" % year if year is not None
+                 else "fixed %d-%d" % VG_SPAN) + "  <= %d" % RECORDING_LAST_FIXED
+    work = {Basis.OWN: "author " + ", ".join("d.%d" % d for d in dated) + "  <= %d" % WORK_LAST_DEATH,
+            Basis.TRAD: "traditional tune, no author",
+            Basis.CHANT: "plainchant, no author"}[basis]
+    return {Clock.RECORDING: recording, Clock.WORK: work}
+
+
+def load_sides(path=SIDES):
+    with open(path) as fh:
+        return json.load(fh)
 
 
 def load_side(side_id, path=SIDES):
-    with open(path) as fh:
-        sides = json.load(fh)
-
-    for side in sides:
+    for side in load_sides(path):
         if side["id"] == side_id:
             return side
 
     raise KeyError(side_id)
+
+
+def cleared(sides):
+    """(side, verdict) for every side both clocks pass."""
+    out = []
+    for side in sides:
+        try:
+            out.append((side, clear(side)))
+        except RightsError:
+            continue
+
+    return out
+
+
+# ═══ manifest ═══════════════════════════════════════════════════════════════
+
+def basis_for(entry):
+    """Round 3's repertoire class + the title decide what the record proves."""
+    rep = entry.get("repertoire", "")
+    if rep.startswith("latin-chant"):
+        return Basis.CHANT.value
+
+    if rep.startswith("instrumental trad") or _TRAD_FORM.search(entry["title"]):
+        return Basis.TRAD.value
+
+    if any(person_name(p) in AUTHORS for p in entry["artist"].split(";")):
+        return Basis.OWN.value
+
+    return None
+
+
+def id3_year(src):
+    """The disc's own date as LAC stamped it, or None."""
+    out = subprocess.check_output(FFPROBE + ["-v", "error", "-show_entries",
+                                             "format_tags=date", "-of",
+                                             "default=nw=1:nk=1", src])
+    m = re.search(r"\b(1[89]\d{2}|19[0-6]\d)\b", out.decode(errors="replace"))
+    return int(m.group(1)) if m else None
+
+
+def display_name(person):
+    name = person_name(person)
+    if name in DISPLAY:
+        return DISPLAY[name]
+
+    parts = [p.strip() for p in name.split(",")]
+    if len(parts) < 2:
+        return parts[0]
+
+    given = re.sub(r"\s*\(.*?\)", "", parts[1]).strip()
+    return ("%s %s" % (given, parts[0])).strip()
+
+
+def select(stage, src_dir):
+    """Every LAC side of round 3, with the facts the clocks read."""
+    sides = []
+    for entry in stage:
+        if "bytes" not in entry:
+            continue                    # not fetched from the LAC host: out of scope
+
+        side_id = entry["id"].replace(".mp3", "")
+        persons = [p.strip() for p in entry["artist"].split(";") if p.strip()]
+        src = os.path.join(src_dir, side_id + ".mp3")
+        sides.append({
+            "id": side_id,
+            "title": entry["title"].strip(),
+            "performer": " & ".join(display_name(p) for p in persons),
+            "persons": persons,
+            "repertoire": entry["repertoire"],
+            "basis": basis_for(entry),
+            "year": id3_year(src) if os.path.exists(src) else None,
+            "url": entry["url"],
+            "bytes": entry["bytes"],
+        })
+
+    return sorted(sides, key=lambda s: (s["performer"], s["title"]))
+
+
+_UNSAFE = re.compile(r'[<>:"/\\|?*\x00-\x1f]+')
+
+
+def stem(side):
+    """Library file stem: `Performer - Title (Year) [lac-ID]`, SMB-safe."""
+    title = _UNSAFE.sub(" ", side["title"].split(" = ")[0])
+    title = re.sub(r"\s+", " ", title).strip(" .")[:80].strip()
+    year = " (%d)" % side["year"] if side.get("year") else ""
+    return "%s - %s%s [lac-%s]" % (side["performer"], title, year, side["id"])
+
+
+def rel_path(side):
+    return "gramophone/%s/%s.mp4" % (FOLDER[Basis(side["basis"])], stem(side))
 
 
 # ═══ envelope (ffmpeg is the DSP) ═══════════════════════════════════════════
@@ -196,7 +360,9 @@ def parse_envelope(text):
 
 
 def measure(src, workdir):
-    txt = os.path.join(workdir, "rms.txt")
+    # Named after the source: build.sh measures several sides at once in
+    # one work dir, and a shared file interleaves two passes' lines.
+    txt = os.path.join(workdir, os.path.basename(src) + ".rms.txt")
     subprocess.run(envelope_cmd(src, txt), check=True,
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     with open(txt) as fh:
@@ -255,14 +421,14 @@ def label_disc(side, fonts):
     d = ImageDraw.Draw(img)
     c = DISC_D / 2
     d.ellipse((c - R_LABEL, c - R_LABEL, c + R_LABEL, c + R_LABEL), fill=IVORY)
-    d.ellipse((c - R_LABEL + 4, c - R_LABEL + 4, c + R_LABEL - 4, c + R_LABEL - 4),
+    d.ellipse((c - R_LABEL + 3, c - R_LABEL + 3, c + R_LABEL - 3, c + R_LABEL - 3),
               outline=MARIGOLD, width=2)
 
     f_small, f_title = fonts["label_small"], fonts["label_title"]
     lines = [("CH 0", f_small), ("GRAMOPHONE", f_small),
-             (fit_text(d, side["short"], f_title, 2 * R_LABEL - 26), f_title),
+             (fit_text(d, side["title"], f_title, 2 * R_LABEL - 20), f_title),
              ("%d RPM" % RPM, f_small)]
-    ys = [c - 52, c - 38, c + 12, c + 34]
+    ys = [c - 42, c - 30, c + 8, c + 26]
     for (text, font), y in zip(lines, ys):
         w = d.textlength(text, font=font)
         d.text((c - w / 2, y), text, font=font, fill=SHELLAC)
@@ -272,8 +438,8 @@ def label_disc(side, fonts):
 
 
 def fit_text(d, text, font, width):
-    """Shrink a label line with an ellipsis until it fits. The label is
-    small and the full title lives in the panel, so truncation is fine."""
+    """Shrink a line with an ellipsis until it fits. The label is small and
+    the full title lives in the panel, so truncation is fine."""
     if d.textlength(text, font=font) <= width:
         return text
 
@@ -321,9 +487,9 @@ def load_fonts():
         "small": ImageFont.truetype(MONO % "Regular", 11),
         "code": ImageFont.truetype(MONO % "Regular", 12),
         "bold": ImageFont.truetype(MONO % "Bold", 12),
-        "title": ImageFont.truetype(SERIF % "Bold", 22),
-        "label_small": ImageFont.truetype(SERIF % "Bold", 12),
-        "label_title": ImageFont.truetype(SERIF % "Bold", 15),
+        "title": ImageFont.truetype(SERIF % "Bold", 18),
+        "label_small": ImageFont.truetype(SERIF % "Bold", 10),
+        "label_title": ImageFont.truetype(SERIF % "Bold", 12),
     }
 
 
@@ -354,28 +520,26 @@ def wrap(text, cols=COLS):
 
 def panel_lines(side, verdict, seconds):
     """Everything static on the panel, as (text, style) rows."""
-    rows = [
-        ("CH 0  LISTENING INTERVAL", "label"),
-        ("", "title"),                                   # title drawn in serif
-        (side["performer"], "ink"),
-        (side["persons_display"], "label"),
+    rows = [(line, "ink") for line in wrap(side["performer"])]
+    for line in wrap(" · ".join(side["persons"])):
+        rows.append((line, "label"))
+
+    rows += [
         ("", "gap"),
         ("%d RPM · SHELLAC · MONO · %d:%02d" % (RPM, seconds // 60, seconds % 60), "ink"),
         ("LIBRARY AND ARCHIVES CANADA", "ink"),
         ("VIRTUAL GRAMOPHONE  obj/m2/f7/%s" % side["id"], "label"),
         ("", "rule"),
-        ("RECORDING  %-5s %s" % (Clock.RECORDING.value, verdict[Clock.RECORDING]), "ink"),
-        ("           PUBLIC DOMAIN, PERMANENTLY", "bold"),
-        ("WORK       %-5s %s" % (Clock.WORK.value, verdict[Clock.WORK]), "ink"),
-        ("           PUBLIC DOMAIN, PERMANENTLY", "bold"),
+        ("RECORDING  %s" % Clock.RECORDING.value, "ink"),
+        ("  %s" % verdict[Clock.RECORDING], "label"),
+        ("  PUBLIC DOMAIN, PERMANENTLY", "bold"),
+        ("WORK       %s" % Clock.WORK.value, "ink"),
+        ("  %s" % verdict[Clock.WORK], "label"),
+        ("  PUBLIC DOMAIN, PERMANENTLY", "bold"),
         ("", "gap"),
     ]
     for line in wrap("Both clocks have to run out. A public-domain "
                      "recording of a living work is still an infringement."):
-        rows.append((line, "label"))
-
-    rows.append(("", "gap"))
-    for line in wrap("LAC FEEDS: " + " · ".join(side["feeds"])):
         rows.append((line, "label"))
 
     check_cols([r[0] for r in rows])
@@ -387,19 +551,17 @@ def panel_static(side, verdict, seconds, fonts):
     img = Image.new("RGB", (W, H), BG)
     d = ImageDraw.Draw(img)
     d.rectangle((ART_W, 0, W - 1, H - 1), fill=PANEL_BG)
-    for y in (10, 68, 408):
+    for y in (10, 60, 440):
         d.line((PANEL_X, y, PANEL_R, y), fill=RULE)
+
+    d.text((PANEL_X, 15), "CH 0  GRAMOPHONE", font=fonts["small"], fill=LABEL)
+    title = fit_text(d, side["title"], fonts["title"], PANEL_W)
+    d.text((PANEL_X, 32), title, font=fonts["title"], fill=IVORY)
 
     colour = {"label": LABEL, "ink": INK, "bold": MARIGOLD}
     font = {"label": fonts["small"], "ink": fonts["code"], "bold": fonts["bold"]}
-    y = 15
+    y = PANEL_TOP
     for text, style in panel_lines(side, verdict, seconds):
-        if style == "title":
-            title = fit_text(d, side["title"], fonts["title"], PANEL_W)
-            d.text((PANEL_X, 28), title, font=fonts["title"], fill=IVORY)
-            y = 60 + 16
-            continue
-
         if style == "gap":
             y += 8
             continue
@@ -410,23 +572,29 @@ def panel_static(side, verdict, seconds, fonts):
             continue
 
         d.text((PANEL_X, y), text, font=font[style], fill=colour[style])
-        y += 16
+        y += ROW
+
+    # The clock and the VU live below the static rows; text running into
+    # them would be the same silent clipping check_cols refuses.
+    if y > PANEL_FLOOR:
+        raise LayoutError("panel rows end at %d > %d" % (y, PANEL_FLOOR))
 
     # Bottom strip: provenance of the renderer itself, like the L-systems'
     # `src sha1`. What is on screen is what is in the repo.
     sha = hashlib.sha1(open(__file__, "rb").read()).hexdigest()[:12]
-    d.text((PANEL_X, 418), "tools/z0-gramo/gramo.py  sha1 %s" % sha,
+    d.text((PANEL_X, 448), "z0-gramo/gramo.py  sha1 %s" % sha,
            font=fonts["small"], fill=LABEL)
-    d.text((PANEL_X, 434), "groove = RMS/frame, rim first, 1 turn per 1/%d min"
-           % RPM, font=fonts["small"], fill=LABEL)
+    d.text((PANEL_X, 462), "groove = RMS per frame, rim first",
+           font=fonts["small"], fill=LABEL)
     return img
 
 
 # VU meter: an open arc with a needle. An arc plus a needle is a dial; a ring
 # plus crossed lines would be a gunsight, which is why there is no ring.
-VU_CX, VU_CY, VU_R = 800, 398, 34
+VU_CX, VU_CY, VU_R = 596, 412, 26
 VU_MIN_DB, VU_MAX_DB = -40.0, 0.0
 VU_LEFT_DEG, VU_RIGHT_DEG = 160, 20       # y-up angles of the scale ends
+CLOCK_Y = 404
 
 
 def vu_angle(db):
@@ -439,27 +607,27 @@ def draw_vu(d, db, fonts):
     d.arc(box, start=-VU_LEFT_DEG, end=-VU_RIGHT_DEG, fill=INK, width=2)
     for k in range(5):
         a = math.radians(VU_LEFT_DEG - (VU_LEFT_DEG - VU_RIGHT_DEG) * k / 4)
-        x0, y0 = VU_CX + (VU_R - 6) * math.cos(a), VU_CY - (VU_R - 6) * math.sin(a)
+        x0, y0 = VU_CX + (VU_R - 5) * math.cos(a), VU_CY - (VU_R - 5) * math.sin(a)
         x1, y1 = VU_CX + VU_R * math.cos(a), VU_CY - VU_R * math.sin(a)
         d.line((x0, y0, x1, y1), fill=INK, width=1)
 
     a = vu_angle(db)
     d.line((VU_CX, VU_CY, VU_CX + (VU_R - 2) * math.cos(a),
             VU_CY - (VU_R - 2) * math.sin(a)), fill=MARIGOLD, width=2)
-    d.text((VU_CX - VU_R - 24, VU_CY - 8), "VU", font=fonts["small"], fill=LABEL)
+    d.text((VU_CX - VU_R - 22, VU_CY - 8), "VU", font=fonts["small"], fill=LABEL)
 
 
 def draw_arm(d, t, seconds):
     """Tonearm from a top-right pivot to the stylus on the groove."""
     cx, cy = ART_W / 2, H / 2
-    px, py = ART_W - 26, 34
+    px, py = ART_W - 22, 30
     r = stylus_radius(t, seconds)
     ang = math.atan2(py - cy, px - cx)
     sx, sy = cx + r * math.cos(ang), cy + r * math.sin(ang)
 
     d.line((px, py, sx, sy), fill=INK, width=3)
-    d.ellipse((px - 7, py - 7, px + 7, py + 7), fill=INK)
-    d.rectangle((sx - 4, sy - 4, sx + 4, sy + 4), fill=MARIGOLD)
+    d.ellipse((px - 6, py - 6, px + 6, py + 6), fill=INK)
+    d.rectangle((sx - 3, sy - 3, sx + 3, sy + 3), fill=MARIGOLD)
 
 
 def clock_text(t, seconds):
@@ -486,7 +654,7 @@ def frames(side, env, seconds, fonts):
         draw_arm(d, t, seconds)
         db = env[i] if i < len(env) else -120.0
         draw_vu(d, db, fonts)
-        d.text((PANEL_X, 390), clock_text(int(t), int(seconds)),
+        d.text((PANEL_X, CLOCK_Y), clock_text(int(t), int(seconds)),
                font=fonts["bold"], fill=IVORY)
         yield img
 
@@ -496,7 +664,9 @@ def encode_cmd(src, out, seconds):
 
     CRF 23 like the assembler; ErsatzTV re-encodes on air, what matters is
     that the groove edges survive. Audio is transcoded once, mono -> stereo
-    AAC 48 kHz, and NOT processed: this is the disc as LAC published it."""
+    AAC 48 kHz, and NOT processed: this is the disc as LAC published it.
+    `-shortest` is not used: the picture runs the full audio length by
+    construction, and `z0-video-tail.sh scan` proves it afterwards."""
     return FFMPEG + ["-v", "error", "-nostdin", "-y",
                      "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", "%dx%d" % (W, H),
                      "-r", str(FPS), "-i", "-",
@@ -516,7 +686,13 @@ def duration(src):
 
 
 def render(side, src, env, out):
-    seconds = min(duration(src), float(MAX_SECONDS))
+    """The whole side. A side the lunch pool bound would exclude is refused
+    here rather than cut: the pool is `minutes:[0 TO 9]` and a cut song is
+    worse than a missing one."""
+    seconds = duration(src)
+    if seconds > MAX_MINUTES * 60:
+        raise RuntimeError("%.0f s side exceeds the %d min pool bound" % (seconds, MAX_MINUTES))
+
     fonts = load_fonts()
     proc = subprocess.Popen(encode_cmd(src, out, seconds), stdin=subprocess.PIPE)
     for img in frames(side, env, seconds, fonts):
@@ -527,45 +703,66 @@ def render(side, src, env, out):
         raise RuntimeError("ffmpeg failed")
 
 
-# ═══ NFO ════════════════════════════════════════════════════════════════════
+# ═══ docs ═══════════════════════════════════════════════════════════════════
 
-NFO = """<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<movie>
-  <title>{name}</title>
-  <sorttitle>{name}</sorttitle>
-  <mpaa>Z0-GENERAL</mpaa>
-  <outline>{outline}</outline>
-  <plot>{plot}</plot>
-  <tag>media</tag>
-  <tag>gramophone</tag>
-</movie>
-"""
+def tex_escape(s):
+    s = s.replace("\\", "\\textbackslash{}")
+    for ch in "&%$#_{}":
+        s = s.replace(ch, "\\" + ch)
+    s = s.replace("~", "\\textasciitilde{}").replace("^", "\\textasciicircum{}")
+    return s.replace("<=", "\\ensuremath{\\leq}")
 
 
-def nfo(side, name):
-    """Tags: media + gramophone. Deliberately NOT `generative` — the NFO
-    replaces the folder tags, so a file staged in /media/generative with
-    this sidecar stays out of the interval pool until the schedule names
-    `tag:gramophone` (a NEW tag: rebuild the search index, not just rescan)."""
-    outline = "%s — %s. LAC Virtual Gramophone %s." % (
-        side["title"], side["performer"], side["id"])
-    plot = outline + " Recording PD (s.23, fixed <=1950); work PD (s.6, %s)." % (
-        ", ".join("d.%d" % death_year(p) for p in side["persons"]))
-    return NFO.format(name=name, outline=esc(outline), plot=esc(plot))
+def tex_rows(sides):
+    """One `ripmdlongtable` row per side: TITLE & SOURCE & CLOCKS, in the
+    shape of the Canadian film tables in docs/programming-library.tex."""
+    rows = []
+    for side in sides:
+        try:
+            v = clear(side)
+            clocks = "s.23 %s; s.6 %s. Clear." % (v[Clock.RECORDING].replace("  ", ", "),
+                                                v[Clock.WORK])
+        except RightsError as e:
+            clocks = "REVIEW (%s): %s." % (e.clock.value, str(e).split(": ", 1)[1])
 
+        title = "%s — %s" % (side["performer"], side["title"])
+        if side.get("year"):
+            title += " (%d)" % side["year"]
+        src = "\\ripmono{obj/\\allowbreak{}m2/\\allowbreak{}f7/\\allowbreak{}%s.mp3}" % side["id"]
+        rows.append("%s & %s & %s \\\\" % (tex_escape(title), src, tex_escape(clocks)))
 
-def esc(s):
-    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    return rows
 
 
 # ═══ CLI ════════════════════════════════════════════════════════════════════
 
 def main(argv):
     cmd = argv[1] if len(argv) > 1 else ""
+    if cmd == "select":
+        with open(argv[2]) as fh:
+            stage = json.load(fh)
+        sides = select(stage, argv[3])
+        with open(argv[4], "w") as fh:
+            json.dump(sides, fh, ensure_ascii=False, indent=1)
+            fh.write("\n")
+        print("%d LAC sides, %d clear" % (len(sides), len(cleared(sides))))
+        return 0
+
     if cmd == "check":
-        side = load_side(argv[2])
-        for k, v in clear(side).items():
-            print("%-10s %-5s %s" % (k.name, k.value, v))
+        sides = [load_side(argv[2])] if len(argv) > 2 else load_sides()
+        rejected = {c: 0 for c in Clock}
+        for side in sides:
+            try:
+                v = clear(side)
+            except RightsError as e:
+                rejected[e.clock] += 1
+                print("%-6s REJECT %s" % (side["id"], e))
+                continue
+
+            print("%-6s ok     %s | %s" % (side["id"], v[Clock.RECORDING], v[Clock.WORK]))
+
+        print("clear %d  rejected %s" % (len(sides) - sum(rejected.values()),
+                                         ", ".join("%s %d" % (c.value, n) for c, n in rejected.items())))
         return 0
 
     if cmd == "envelope":
@@ -583,11 +780,12 @@ def main(argv):
         render(side, argv[3], env, argv[5])
         return 0
 
-    if cmd == "nfo":
-        side = load_side(argv[2])
-        name = os.path.splitext(os.path.basename(argv[3]))[0]
-        with open(argv[3], "w") as fh:
-            fh.write(nfo(side, name))
+    if cmd == "stem":
+        print(rel_path(load_side(argv[2])))
+        return 0
+
+    if cmd == "tex":
+        print("\n".join(tex_rows(load_sides())))
         return 0
 
     print(__doc__)

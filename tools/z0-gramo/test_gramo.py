@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Tests for the GRAMOPHONE interval. Plain unittest: LXC 111 has no pytest.
+"""Tests for the GRAMOPHONE sides. Plain unittest: LXC 111 has no pytest.
 
 Every check carries a negative control. An agent cannot hear or see the
 output, so the claims are measured: the rights clocks refuse what they
 should, the envelope parser fails loudly when ffmpeg said nothing, and a
 loud side draws a different disc from a silent one."""
 import hashlib
-import io
+import json
 import os
 import shutil
 import subprocess
@@ -21,42 +21,106 @@ HAVE_FFMPEG = shutil.which(gramo.FFMPEG[0]) is not None
 HAVE_FONTS = os.path.exists(gramo.MONO % "Regular")
 
 SIDE = {
-    "id": "0", "title": "Test side", "short": "Test",
-    "performer": "Nobody", "persons": ["Nobody, 1890-1940"],
-    "persons_display": "Nobody 1890-1940", "feeds": ["A feed"],
+    "id": "0", "title": "Test side", "performer": "Nobody",
+    "persons": ["Nobody, 1890-1940"], "basis": "own", "year": 1930,
 }
 
 
 class Rights(unittest.TestCase):
     def test_death_year(self):
         self.assertEqual(gramo.death_year("Bolduc, Édouard, Mme, 1894-1941"), 1941)
+        self.assertEqual(gramo.death_year("Desmarteaux, Alexandre, m. 1926"), 1926)
         self.assertIsNone(gramo.death_year("Soucy, Isidore, 1899-"))
         self.assertIsNone(gramo.death_year("Anonymous"))
 
+    def test_corporate_has_no_clock(self):
+        self.assertTrue(gramo.is_corporate("Saint-Benoît-du-Lac (Abbey : Québec)"))
+        self.assertTrue(gramo.is_corporate("Trio de la rue St. Timothée"))
+        self.assertFalse(gramo.is_corporate("Isidore Soucy"))      # a person, undated
+        self.assertFalse(gramo.is_corporate("Miro, Henri, 1879-1950"))
+
     def test_clear_both_clocks(self):
         v = gramo.clear(SIDE)
-        self.assertIn("1964", v[gramo.Clock.RECORDING])
-        self.assertEqual(v[gramo.Clock.WORK], "d.1940")
+        self.assertEqual(v[gramo.Clock.RECORDING], "fixed 1930  <= 1964")
+        self.assertEqual(v[gramo.Clock.WORK], "author d.1940  <= 1971")
+
+    def test_refuses_late_recording(self):
+        with self.assertRaises(gramo.RightsError) as cm:
+            gramo.clear(dict(SIDE, year=1965))
+        self.assertIs(cm.exception.clock, gramo.Clock.RECORDING)
+
+    def test_undated_disc_falls_back_to_the_span(self):
+        v = gramo.clear(dict(SIDE, year=None))
+        self.assertEqual(v[gramo.Clock.RECORDING], "fixed 1900-1950  <= 1964")
 
     def test_refuses_late_death(self):
         # Andy De Jarlis d.1975: recording PD, his own compositions are not.
-        side = dict(SIDE, persons=["De Jarlis, Andy, 1914-1975"])
-        with self.assertRaises(gramo.RightsError):
-            gramo.clear(side)
+        with self.assertRaises(gramo.RightsError) as cm:
+            gramo.clear(dict(SIDE, persons=["De Jarlis, Andy, 1914-1975"]))
+        self.assertIs(cm.exception.clock, gramo.Clock.WORK)
 
     def test_refuses_missing_year(self):
-        side = dict(SIDE, persons=["Nobody, 1890-1940", "Someone"])
         with self.assertRaises(gramo.RightsError):
-            gramo.clear(side)
+            gramo.clear(dict(SIDE, persons=["Nobody, 1890-1940", "Someone"]))
 
-    def test_shipped_sides_clear(self):
-        with open(gramo.SIDES) as fh:
-            sides = __import__("json").load(fh)
+    def test_refuses_unnamed_composer(self):
+        # A dead tenor singing a song the record does not attribute: the work
+        # clock cannot be read, however long ago the singer died.
+        with self.assertRaises(gramo.RightsError) as cm:
+            gramo.clear(dict(SIDE, basis=None))
+        self.assertIs(cm.exception.clock, gramo.Clock.WORK)
 
+    def test_anonymous_work_needs_no_author(self):
+        chant = dict(SIDE, basis="chant", persons=["Saint-Benoît-du-Lac (Abbey : Québec)"])
+        self.assertEqual(gramo.clear(chant)[gramo.Clock.WORK], "plainchant, no author")
+        trad = dict(SIDE, basis="trad")
+        self.assertEqual(gramo.clear(trad)[gramo.Clock.WORK], "traditional tune, no author")
+
+    def test_basis_from_the_record(self):
+        self.assertEqual(gramo.basis_for({"repertoire": "latin-chant (Quebec abbey)",
+                                          "title": "Agnus Dei", "artist": "x"}), "chant")
+        self.assertEqual(gramo.basis_for({"repertoire": "salon/concert", "title": "Reel des matelots",
+                                          "artist": "Boulay, A. J., 1883-1948"}), "trad")
+        self.assertEqual(gramo.basis_for({"repertoire": "francophone song/monologue",
+                                          "title": "Les cinq jumelles",
+                                          "artist": "Bolduc, Édouard, Mme, 1894-1941"}), "own")
+        # The tenor and the pianist: performer named, composer not.
+        self.assertIsNone(gramo.basis_for({"repertoire": "salon/concert", "title": "Je t'aime",
+                                           "artist": "Saucier, Joseph, 1869-1941"}))
+
+    def test_shipped_sides(self):
+        sides = gramo.load_sides()
+        placed = gramo.cleared(sides)
+        self.assertGreater(len(placed), 0)
+        self.assertLess(len(placed), len(sides), "the manifest must carry the rejects too")
+        stems = set()
         for side in sides:
-            gramo.panel_lines(side, gramo.clear(side), 240)   # fits the panel
             self.assertTrue(side["url"].startswith("https://www.collectionscanada.gc.ca/"),
                             "the feed's own host does not resolve; use .gc.ca")
+        for side, verdict in placed:
+            gramo.panel_lines(side, verdict, 240)               # fits the panel
+            stems.add(gramo.rel_path(side))
+        self.assertEqual(len(stems), len(placed), "two sides would share a file")
+
+
+class Manifest(unittest.TestCase):
+    def test_display_name(self):
+        self.assertEqual(gramo.display_name("Bolduc, Édouard, Mme, 1894-1941"), "La Bolduc")
+        self.assertEqual(gramo.display_name("Soucy, Isidore, 1899-1963"), "Isidore Soucy")
+        self.assertEqual(gramo.display_name("Boulay, A. J. (Arthur-Joseph), 1883-1948"), "A. J. Boulay")
+        self.assertEqual(gramo.display_name("Crescent Trio"), "Crescent Trio")
+
+    def test_stem_is_smb_safe(self):
+        side = dict(SIDE, id="13119", performer="Joseph Allard",
+                    title="Boules de neige : reel = Snowballs : reel")
+        self.assertEqual(gramo.stem(side), "Joseph Allard - Boules de neige reel (1930) [lac-13119]")
+        self.assertEqual(gramo.rel_path(side), "gramophone/chanson/" + gramo.stem(side) + ".mp4")
+
+    def test_tex_rows(self):
+        rows = gramo.tex_rows([SIDE, dict(SIDE, id="1", basis=None, title="A & B")])
+        self.assertIn("Clear.", rows[0])
+        self.assertIn("REVIEW (s.6)", rows[1])
+        self.assertIn("A \\& B", rows[1])
 
 
 class Envelope(unittest.TestCase):
@@ -115,10 +179,11 @@ class Picture(unittest.TestCase):
         env = [-20.0 + (k % 7) for k in range(gramo.FPS * 3)]
         self.assertEqual(self.frame_md5(env), self.frame_md5(env))
 
-    def test_frame_is_house_size(self):
+    def test_frame_is_a_lunch_card(self):
+        # 4:3, so the card sits inside the gutter rails like the prairie sides.
         env = [-30.0] * gramo.FPS
         img = next(gramo.frames(SIDE, env, 1.0, self.fonts))
-        self.assertEqual(img.size, (gramo.W, gramo.H))
+        self.assertEqual(img.size, (640, 480))
         self.assertEqual(img.mode, "RGB")
 
     def test_stylus_travels_rim_to_label(self):
@@ -127,29 +192,20 @@ class Picture(unittest.TestCase):
         self.assertEqual(gramo.stylus_radius(99, 10), gramo.R_LABEL)
 
     def test_panel_refuses_overlong_line(self):
-        side = dict(SIDE, feeds=["x" * (gramo.COLS + 1)])
+        side = dict(SIDE, performer="x" * (gramo.COLS + 1))
         with self.assertRaises(gramo.LayoutError):
             gramo.panel_lines(side, gramo.clear(side), 60)
+
+    def test_panel_refuses_overflow(self):
+        # Four ensembles' worth of credits wraps past the clock and the VU.
+        side = dict(SIDE, persons=["Nobody %d, 1890-1940" % k for k in range(24)])
+        with self.assertRaises(gramo.LayoutError):
+            gramo.panel_static(side, gramo.clear(side), 60, self.fonts)
 
     def test_vu_needle_sweeps(self):
         lo, hi = gramo.vu_angle(-40.0), gramo.vu_angle(0.0)
         self.assertGreater(lo, hi)                       # left to right
         self.assertEqual(gramo.vu_angle(-200.0), lo)     # clamped
-
-
-class Nfo(unittest.TestCase):
-    def test_tags(self):
-        text = gramo.nfo(SIDE, "z0-gramo-00")
-        self.assertIn("<tag>media</tag>", text)
-        self.assertIn("<tag>gramophone</tag>", text)
-        # The NFO replaces the folder tags. `generative` would put the clip in
-        # the live interval pool on the next rescan; staged means it is absent.
-        self.assertNotIn("generative", text)
-        self.assertIn("<title>z0-gramo-00</title>", text)
-
-    def test_escapes(self):
-        side = dict(SIDE, title="Tom & Jerry <live>")
-        self.assertIn("Tom &amp; Jerry &lt;live&gt;", gramo.nfo(side, "x"))
 
 
 if __name__ == "__main__":
