@@ -47,6 +47,29 @@ content:
     key: idents
     order: shuffle
 
+  # Bumps (tools/z0_bumps.py) and house promos (tools/z0-promos.py). Three
+  # bump families and two promo kinds so a break can be built from distinct
+  # sources; see lists/z0-lists.yml.
+  - collection: Z0 Bumps Math
+    key: bumps_math
+    order: shuffle
+
+  - collection: Z0 Bumps Glitch
+    key: bumps_glitch
+    order: shuffle
+
+  - collection: Z0 Bumps L-System
+    key: bumps_lsys
+    order: shuffle
+
+  - collection: Z0 Promos Merch
+    key: promos_merch
+    order: shuffle
+
+  - collection: Z0 Promos Projects
+    key: promos_projects
+    order: shuffle
+
   - collection: Z0 Test Card
     key: testcard
     order: chronological
@@ -307,6 +330,19 @@ content:
   - playlist: Cartoon Hour
     playlist_group: Channel Z0
     key: pl_cartoon_hour
+
+  # Rundowns with advert breaks built in, for the padded strands.
+  - playlist: Short Subjects Hour
+    playlist_group: Channel Z0
+    key: pl_short_subjects
+
+  - playlist: Prelinger Theatre Hour
+    playlist_group: Channel Z0
+    key: pl_prelinger
+
+  - playlist: Cartoon Block II
+    playlist_group: Channel Z0
+    key: pl_cartoon_block_ii
 
   - playlist: Saturday Morning
     playlist_group: Channel Z0

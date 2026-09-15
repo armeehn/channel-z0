@@ -94,17 +94,34 @@ sequence:
   # handlers push a FillerKind, everything in here is automatically dropped
   # from the programme guide — which is the point: the guide should list
   # programmes, not station furniture.
+  # Since 2026-09-15 a break is ident → bump → house promo → commercial.
+  # The bump is 8–15 s of generated picture with a station line on the end
+  # (tools/z0_bumps.py); the promo is one of the station's own adverts — a
+  # product from the shop or a Riposte programme (tools/z0-promos.py). The
+  # commercials pool was empty for a month and nobody noticed, because an
+  # empty `count:` is a silent no-op; the promos are what actually fills it.
   - key: feature_break
     items:
       - count: 1
         content: idents
-      - count: 2
+      - count: 1
+        content: bumps_math
+      - count: 1
+        content: promos_merch
+      - count: 1
         content: commercials
 
   - key: advert_break
     items:
       - count: 1
+        content: bumps_glitch
+        filler_kind: preroll
+      - count: 1
+        content: promos_projects
+        filler_kind: preroll
+      - count: 1
         content: commercials
+        filler_kind: preroll
 
   # ══ The weather desk ═══════════════════════════════════════════════════════
   # One file, rewritten in place every 15 minutes and always exactly the same
