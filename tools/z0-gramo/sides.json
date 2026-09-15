@@ -10,7 +10,8 @@
   "basis": "trad",
   "year": 1929,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12630.mp3",
-  "bytes": 1708333
+  "bytes": 1708333,
+  "status": "CLEAR"
  },
  {
   "id": "12716",
@@ -20,10 +21,15 @@
    "Boulay, A. J. (Arthur-Joseph), 1883-1948"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1929,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12716.mp3",
-  "bytes": 1906102
+  "bytes": 1906102,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007635002",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "18193",
@@ -36,7 +42,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18193.mp3",
-  "bytes": 1479512
+  "bytes": 1479512,
+  "status": "CLEAR"
  },
  {
   "id": "18186",
@@ -49,7 +56,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18186.mp3",
-  "bytes": 1661324
+  "bytes": 1661324,
+  "status": "CLEAR"
  },
  {
   "id": "18184",
@@ -62,7 +70,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18184.mp3",
-  "bytes": 2116482
+  "bytes": 2116482,
+  "status": "CLEAR"
  },
  {
   "id": "18191",
@@ -75,7 +84,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18191.mp3",
-  "bytes": 1810118
+  "bytes": 1810118,
+  "status": "CLEAR"
  },
  {
   "id": "18210",
@@ -88,7 +98,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18210.mp3",
-  "bytes": 1748260
+  "bytes": 1748260,
+  "status": "CLEAR"
  },
  {
   "id": "18215",
@@ -101,7 +112,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18215.mp3",
-  "bytes": 2274052
+  "bytes": 2274052,
+  "status": "CLEAR"
  },
  {
   "id": "18195",
@@ -114,7 +126,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18195.mp3",
-  "bytes": 1783368
+  "bytes": 1783368,
+  "status": "CLEAR"
  },
  {
   "id": "18216",
@@ -127,7 +140,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18216.mp3",
-  "bytes": 1914190
+  "bytes": 1914190,
+  "status": "CLEAR"
  },
  {
   "id": "18189",
@@ -140,7 +154,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18189.mp3",
-  "bytes": 1694761
+  "bytes": 1694761,
+  "status": "CLEAR"
  },
  {
   "id": "18204",
@@ -153,7 +168,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18204.mp3",
-  "bytes": 2090568
+  "bytes": 2090568,
+  "status": "CLEAR"
  },
  {
   "id": "18203",
@@ -166,7 +182,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18203.mp3",
-  "bytes": 1396756
+  "bytes": 1396756,
+  "status": "CLEAR"
  },
  {
   "id": "18188",
@@ -179,7 +196,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18188.mp3",
-  "bytes": 1732377
+  "bytes": 1732377,
+  "status": "CLEAR"
  },
  {
   "id": "18197",
@@ -192,7 +210,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18197.mp3",
-  "bytes": 1921295
+  "bytes": 1921295,
+  "status": "CLEAR"
  },
  {
   "id": "18183",
@@ -205,7 +224,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18183.mp3",
-  "bytes": 1263845
+  "bytes": 1263845,
+  "status": "CLEAR"
  },
  {
   "id": "18209",
@@ -218,7 +238,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18209.mp3",
-  "bytes": 1466555
+  "bytes": 1466555,
+  "status": "CLEAR"
  },
  {
   "id": "18185",
@@ -231,7 +252,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18185.mp3",
-  "bytes": 1438552
+  "bytes": 1438552,
+  "status": "CLEAR"
  },
  {
   "id": "18180",
@@ -244,7 +266,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18180.mp3",
-  "bytes": 1912100
+  "bytes": 1912100,
+  "status": "CLEAR"
  },
  {
   "id": "18182",
@@ -257,7 +280,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18182.mp3",
-  "bytes": 1739483
+  "bytes": 1739483,
+  "status": "CLEAR"
  },
  {
   "id": "18177",
@@ -270,7 +294,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18177.mp3",
-  "bytes": 1413475
+  "bytes": 1413475,
+  "status": "CLEAR"
  },
  {
   "id": "18181",
@@ -283,7 +308,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18181.mp3",
-  "bytes": 1813461
+  "bytes": 1813461,
+  "status": "CLEAR"
  },
  {
   "id": "18176",
@@ -296,7 +322,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18176.mp3",
-  "bytes": 2098928
+  "bytes": 2098928,
+  "status": "CLEAR"
  },
  {
   "id": "18196",
@@ -309,7 +336,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18196.mp3",
-  "bytes": 1634575
+  "bytes": 1634575,
+  "status": "CLEAR"
  },
  {
   "id": "18192",
@@ -322,7 +350,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18192.mp3",
-  "bytes": 1989004
+  "bytes": 1989004,
+  "status": "CLEAR"
  },
  {
   "id": "18187",
@@ -335,7 +364,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18187.mp3",
-  "bytes": 1803012
+  "bytes": 1803012,
+  "status": "CLEAR"
  },
  {
   "id": "18850",
@@ -348,7 +378,8 @@
   "basis": "chant",
   "year": 1944,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18850.mp3",
-  "bytes": 1493305
+  "bytes": 1493305,
+  "status": "CLEAR"
  },
  {
   "id": "18199",
@@ -361,7 +392,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18199.mp3",
-  "bytes": 1985661
+  "bytes": 1985661,
+  "status": "CLEAR"
  },
  {
   "id": "18194",
@@ -374,7 +406,8 @@
   "basis": "chant",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/18194.mp3",
-  "bytes": 1273876
+  "bytes": 1273876,
+  "status": "CLEAR"
  },
  {
   "id": "15488",
@@ -384,10 +417,15 @@
    "Desmarteaux, Alexandre, m. 1926"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "trad",
   "year": 1925,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15488.mp3",
-  "bytes": 2155543
+  "bytes": 2155543,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007647125",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "15445",
@@ -397,10 +435,24 @@
    "Desmarteaux, Alexandre, m. 1926"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "named",
   "year": 1926,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15445.mp3",
-  "bytes": 2452939
+  "bytes": 2452939,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007647209",
+   "composers": [
+    "Spencer, Émile, 1859-1921"
+   ],
+   "lyricists": [
+    "Lamberti, Augustin, 1832?-1893"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb43280840b",
+    "https://catalogue.bnf.fr/ark:/12148/cb16379233n"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "15489",
@@ -410,10 +462,15 @@
    "Desmarteaux, Alexandre, m. 1926"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "trad",
   "year": 1925,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15489.mp3",
-  "bytes": 2348954
+  "bytes": 2348954,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007647700",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "15503",
@@ -423,10 +480,25 @@
    "Desmarteaux, Alexandre, m. 1926"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1926,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15503.mp3",
-  "bytes": 2391499
+  "bytes": 2391499,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007647257",
+   "composers": [
+    "De Sylva, B. G. (Buddy Gard), 1896-1950"
+   ],
+   "lyricists": [
+    "De Sylva, B. G. (Buddy Gard), 1896-1950",
+    "Beaudry, R. (Roméo), 1882-1932"
+   ],
+   "unresolved": "LAC, BnF cb43290269m and LC 2019564185 credit De Sylva alone (Beaudry, French text); later editions add Joseph Meyer (1894-1987), so authorship is disputed",
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb43290269m"
+   ]
+  },
+  "status": "UNRESOLVED"
  },
  {
   "id": "15939",
@@ -437,10 +509,15 @@
    "St-Jean, Adélard, 1890-1964"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15939.mp3",
-  "bytes": 1985870
+  "bytes": 1985870,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007649912",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12585",
@@ -451,10 +528,18 @@
    "Troubadours de Bytown (Groupe musical)"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12585.mp3",
-  "bytes": 1399520
+  "bytes": 1399520,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007634024",
+   "note": "LAC record: traditional noël, arrangement P. Gautier",
+   "arrangers": [
+    "Gautier, Pierre, 1863-1940"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12586",
@@ -465,10 +550,18 @@
    "Troubadours de Bytown (Groupe musical)"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12586.mp3",
-  "bytes": 1209131
+  "bytes": 1209131,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007634026",
+   "note": "LAC record: traditional song, arrangement P. Gautier",
+   "arrangers": [
+    "Gautier, Pierre, 1863-1940"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12538",
@@ -478,10 +571,15 @@
    "Gauthier, Conrad, 1885-1964"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12538.mp3",
-  "bytes": 1395458
+  "bytes": 1395458,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007624124",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12517",
@@ -491,10 +589,15 @@
    "Gauthier, Conrad, 1885-1964"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12517.mp3",
-  "bytes": 1564072
+  "bytes": 1564072,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007623793",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12518",
@@ -504,10 +607,15 @@
    "Gauthier, Conrad, 1885-1964"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12518.mp3",
-  "bytes": 1740647
+  "bytes": 1740647,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007623874",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "13065",
@@ -517,10 +625,15 @@
    "Gauthier, Conrad, 1885-1964"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1931,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13065.mp3",
-  "bytes": 1831332
+  "bytes": 1831332,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019342647",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12532",
@@ -530,10 +643,15 @@
    "Gauthier, Conrad, 1885-1964"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12532.mp3",
-  "bytes": 1654694
+  "bytes": 1654694,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007624049",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12960",
@@ -543,10 +661,15 @@
    "Gauthier, Conrad, 1885-1964"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "trad",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12960.mp3",
-  "bytes": 1729670
+  "bytes": 1729670,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007636010",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12531",
@@ -556,10 +679,15 @@
    "Gauthier, Conrad, 1885-1964"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12531.mp3",
-  "bytes": 1556932
+  "bytes": 1556932,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019392663",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10900",
@@ -569,10 +697,20 @@
    "Crescent Trio"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10900.mp3",
-  "bytes": 1869948
+  "bytes": 1869948,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007627051",
+   "composers": [
+    "Von Tilzer, Harry, 1872-1946"
+   ],
+   "lyricists": [
+    "Jerome, William, 1865-1932"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "4944",
@@ -582,10 +720,23 @@
    "Lebel, Edouard, 1856-1939"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "named",
   "year": 1906,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/4944.mp3",
-  "bytes": 1243798
+  "bytes": 1243798,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007612004",
+   "composers": [
+    "Weckerlin, Jean-Baptiste, 1821-1910"
+   ],
+   "lyricists": [],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb433337282",
+    "https://catalogue.bnf.fr/ark:/12148/cb139010607"
+   ],
+   "note": "text: anonymous poem 'trouvée dans les papiers du Dr Chevalier' (BnF); Weckerlin dates from BnF"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16804",
@@ -595,10 +746,24 @@
    "Albani, Emma, Dame, 1847-1930"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16804.mp3",
-  "bytes": 2206343
+  "bytes": 2206343,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007654874",
+   "composers": [
+    "Handel, George Frideric, 1685-1759"
+   ],
+   "lyricists": [
+    "Morell, Thomas, 1703-1784"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb13607547b"
+   ],
+   "note": "Theodora (1750), libretto Morell"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16805",
@@ -608,10 +773,19 @@
    "Albani, Emma, Dame, 1847-1930"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16805.mp3",
-  "bytes": 2020699
+  "bytes": 2020699,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007654891",
+   "composers": [
+    "Handel, George Frideric, 1685-1759"
+   ],
+   "lyricists": [],
+   "unresolved": "sung text and its author not identified by LAC (Minato's Italian or an English adaptation)"
+  },
+  "status": "UNRESOLVED"
  },
  {
   "id": "16807",
@@ -621,10 +795,20 @@
    "Albani, Emma, Dame, 1847-1930"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16807.mp3",
-  "bytes": 3214617
+  "bytes": 3214617,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019326284",
+   "composers": [
+    "Handel, George Frideric, 1685-1759"
+   ],
+   "lyricists": [
+    "Milton, John, 1608-1674"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16840",
@@ -634,10 +818,21 @@
    "Albani, Emma, Dame, 1847-1930"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16840.mp3",
-  "bytes": 2929133
+  "bytes": 2929133,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007655267",
+   "composers": [
+    "Hérold, Ferdinand, 1791-1833"
+   ],
+   "lyricists": [
+    "Planard, Eugène de, 1783-1855"
+   ],
+   "note": "Le pré aux clercs, act 1"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "14475",
@@ -647,10 +842,15 @@
    "Daignault, Eugène, 1895-1960"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14475.mp3",
-  "bytes": 1564340
+  "bytes": 1564340,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007642707",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10327",
@@ -660,10 +860,18 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1917,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10327.mp3",
-  "bytes": 1561435
+  "bytes": 1561435,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007624404",
+   "note": "LAC record: folk songs, arrangement Amédée Tremblay",
+   "arrangers": [
+    "Tremblay, Amédée, 1876-1949"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10234",
@@ -673,10 +881,23 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1917,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10234.mp3",
-  "bytes": 1671726
+  "bytes": 1671726,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007659836",
+   "composers": [
+    "Massenet, Jules, 1842-1912"
+   ],
+   "lyricists": [
+    "Blau, Edouard, 1836-1906",
+    "Milliet, Paul, 1848-1924",
+    "Hartmann, Georges, d. 1900"
+   ],
+   "note": "Werther"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10333",
@@ -686,10 +907,18 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1917,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10333.mp3",
-  "bytes": 1346058
+  "bytes": 1346058,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019302083",
+   "note": "LAC record: folk song, Amédée Tremblay (arrangement)",
+   "arrangers": [
+    "Tremblay, Amédée, 1876-1949"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10341",
@@ -699,10 +928,15 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1919,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10341.mp3",
-  "bytes": 1978162
+  "bytes": 1978162,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019354331",
+   "note": "LAC record: author unknown; canonical folk song, no arranger credited"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17161",
@@ -712,10 +946,15 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1919,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17161.mp3",
-  "bytes": 2082870
+  "bytes": 2082870,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007660043",
+   "note": "LAC record: author unknown; canonical folk song, no arranger credited"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10338",
@@ -725,10 +964,20 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1917,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10338.mp3",
-  "bytes": 2152208
+  "bytes": 2152208,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007623184",
+   "composers": [
+    "Duparc, Henri, 1848-1933"
+   ],
+   "lyricists": [
+    "Lahor, Jean, 1840-1909"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10323",
@@ -738,10 +987,15 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1917,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10323.mp3",
-  "bytes": 1737702
+  "bytes": 1737702,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007624317",
+   "note": "LAC record: author unknown; canonical folk song, no arranger credited"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10336",
@@ -751,10 +1005,18 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1917,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10336.mp3",
-  "bytes": 1406968
+  "bytes": 1406968,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007775958",
+   "note": "LAC record: folk song, arrangement Amédée Tremblay",
+   "arrangers": [
+    "Tremblay, Amédée, 1876-1949"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10345",
@@ -764,10 +1026,21 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1919,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10345.mp3",
-  "bytes": 1954763
+  "bytes": 1954763,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007624346",
+   "composers": [
+    "Root, George F. (George Frederick), 1820-1895"
+   ],
+   "lyricists": [
+    "Crosby, Fanny, 1820-1915"
+   ],
+   "unresolved": "French text of 'La mist' en laire' (on Root's tune) is unattributed by LAC"
+  },
+  "status": "UNRESOLVED"
  },
  {
   "id": "17160",
@@ -777,10 +1050,24 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1917,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17160.mp3",
-  "bytes": 2438937
+  "bytes": 2438937,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019393279",
+   "composers": [
+    "Jaques-Dalcroze, Émile, 1865-1950"
+   ],
+   "lyricists": [
+    "Jaques-Dalcroze, Émile, 1865-1950"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb45568861m"
+   ],
+   "note": "texte et musique Jaques-Dalcroze (BnF)"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10170",
@@ -790,10 +1077,21 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1918,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10170.mp3",
-  "bytes": 2073649
+  "bytes": 2073649,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007622034",
+   "composers": [
+    "Saint-Saëns, Camille, 1835-1921"
+   ],
+   "lyricists": [
+    "Barbier, Jules, 1825-1901",
+    "Carré, Michel, 1819-1872"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10343",
@@ -803,10 +1101,15 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1919,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10343.mp3",
-  "bytes": 1845566
+  "bytes": 1845566,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007624345",
+   "note": "LAC record: author unknown; canonical folk song, no arranger credited"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17156",
@@ -816,10 +1119,19 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1935,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17156.mp3",
-  "bytes": 2241956
+  "bytes": 2241956,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007660039",
+   "composers": [
+    "Godard, Benjamin, 1849-1895"
+   ],
+   "lyricists": [],
+   "unresolved": "lyricist not named by LAC; BnF has no score for Godard's 'Le retour des promis'"
+  },
+  "status": "UNRESOLVED"
  },
  {
   "id": "17164",
@@ -829,10 +1141,18 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1921,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17164.mp3",
-  "bytes": 2597292
+  "bytes": 2597292,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007676598",
+   "note": "LAC record: folk song, Tiersot arrangement",
+   "arrangers": [
+    "Tiersot, Julien, 1857-1936"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10236",
@@ -842,10 +1162,21 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1917,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10236.mp3",
-  "bytes": 1960607
+  "bytes": 1960607,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007660083",
+   "composers": [
+    "Franck, César, 1822-1890"
+   ],
+   "lyricists": [
+    "Thomas, Aquinas, Saint, 1225?-1274"
+   ],
+   "note": "Latin hymn text, 13th c."
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10339",
@@ -855,10 +1186,25 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1917,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10339.mp3",
-  "bytes": 2018688
+  "bytes": 2018688,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007624343",
+   "composers": [
+    "Debussy, Claude, 1862-1918"
+   ],
+   "lyricists": [
+    "Bourget, Paul, 1852-1935",
+    "Verlaine, Paul, 1844-1896"
+   ],
+   "unresolved": "LAC credits 'Fontaine, Lucien' without role or dates; same take as 17154",
+   "also": [
+    "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007660035"
+   ]
+  },
+  "status": "UNRESOLVED"
  },
  {
   "id": "17154",
@@ -868,10 +1214,21 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1935,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17154.mp3",
-  "bytes": 2869522
+  "bytes": 2869522,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007660035",
+   "composers": [
+    "Debussy, Claude, 1862-1918"
+   ],
+   "lyricists": [
+    "Bourget, Paul, 1852-1935",
+    "Verlaine, Paul, 1844-1896"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10342",
@@ -881,10 +1238,15 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1919,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10342.mp3",
-  "bytes": 2003533
+  "bytes": 2003533,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007624344",
+   "note": "LAC record: author unknown; canonical folk song, no arranger credited"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17153",
@@ -894,10 +1256,21 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1935,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17153.mp3",
-  "bytes": 2277430
+  "bytes": 2277430,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007660084",
+   "composers": [
+    "Hérold, Ferdinand, 1791-1833"
+   ],
+   "lyricists": [
+    "Planard, Eugène de, 1783-1855"
+   ],
+   "note": "Le pré aux clercs"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10168",
@@ -907,10 +1280,17 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1917,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10168.mp3",
-  "bytes": 1852752
+  "bytes": 1852752,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007622555",
+   "composers": [],
+   "lyricists": [],
+   "unresolved": "LAC record: author unknown; a composed popular song, not a folk song"
+  },
+  "status": "UNRESOLVED"
  },
  {
   "id": "10331",
@@ -920,10 +1300,18 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "trad",
   "year": 1917,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10331.mp3",
-  "bytes": 1681383
+  "bytes": 1681383,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007624405",
+   "note": "LAC record: folk song, arrangement Amédée Tremblay",
+   "arrangers": [
+    "Tremblay, Amédée, 1876-1949"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17163",
@@ -933,10 +1321,18 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1921,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17163.mp3",
-  "bytes": 2116377
+  "bytes": 2116377,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019400062",
+   "note": "LAC record: folk song, arrangement Amédée Tremblay",
+   "arrangers": [
+    "Tremblay, Amédée, 1876-1949"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10326",
@@ -946,10 +1342,15 @@
    "Gauthier, Eva, 1885-1958"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "trad",
   "year": 1917,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10326.mp3",
-  "bytes": 1718951
+  "bytes": 1718951,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007624318",
+   "note": "LAC record: author unknown; canonical folk song, no arranger credited"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12078",
@@ -960,10 +1361,20 @@
    "Lyric Quartet (Vocal group)"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1918,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12078.mp3",
-  "bytes": 1873682
+  "bytes": 1873682,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007632833",
+   "composers": [
+    "Sullivan, Arthur, Sir, 1842-1900"
+   ],
+   "lyricists": [
+    "Scott, Walter, 1771-1832"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12081",
@@ -974,10 +1385,20 @@
    "Lyric Quartet (Vocal group)"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1918,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12081.mp3",
-  "bytes": 1575547
+  "bytes": 1575547,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019375970",
+   "composers": [
+    "Barnby, Joseph, Sir, 1838-1896"
+   ],
+   "lyricists": [
+    "Tennyson, Alfred Tennyson, Baron, 1809-1892"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10133",
@@ -988,10 +1409,27 @@
    "Orpheus Quartet"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1917,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10133.mp3",
-  "bytes": 2230062
+  "bytes": 2230062,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=319947604",
+   "composers": [
+    "Whiting, Richard A., 1891-1938",
+    "Polla, William C., 1876-1939"
+   ],
+   "lyricists": [
+    "Egan, Raymond B., 1890-1952",
+    "Branen, Jeff T., 1872-1927"
+   ],
+   "also": [
+    "http://id.loc.gov/authorities/names/no94005844",
+    "http://id.loc.gov/authorities/names/no92032651"
+   ],
+   "note": "LAC record couples 'When evening shadows fall' (Branen/Polla) on the same disc"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "15082",
@@ -1001,10 +1439,21 @@
    "Pellerin, Hector, 1887-1953"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1921,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15082.mp3",
-  "bytes": 1876782
+  "bytes": 1876782,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007645855",
+   "composers": [
+    "Clutsam, George H., 1866-1951"
+   ],
+   "lyricists": [
+    "Clutsam, George H., 1866-1951"
+   ],
+   "unresolved": "French text 'Fais dodo, mon petit ange' set to Clutsam's Berceuse has no named translator"
+  },
+  "status": "UNRESOLVED"
  },
  {
   "id": "16252",
@@ -1014,10 +1463,20 @@
    "Pellerin, Hector, 1887-1953"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16252.mp3",
-  "bytes": 2668972
+  "bytes": 2668972,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1034301491",
+   "composers": [
+    "Bénech, F.-L. (Ferdinand-L.), 1875-1925"
+   ],
+   "lyricists": [
+    "Dumont, E. (Ernest), 1877-1941"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "15033",
@@ -1027,10 +1486,15 @@
    "Pellerin, Hector, 1887-1953"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1921,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15033.mp3",
-  "bytes": 1883365
+  "bytes": 1883365,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007645632",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16045",
@@ -1040,10 +1504,24 @@
    "Pellerin, Hector, 1887-1953"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16045.mp3",
-  "bytes": 2237063
+  "bytes": 2237063,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007650589",
+   "composers": [
+    "Christiné, Henri, 1867-1941"
+   ],
+   "lyricists": [
+    "Christiné, Henri, 1867-1941"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb42911772j"
+   ],
+   "note": "paroles et musique Christiné (BnF)"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12679",
@@ -1053,10 +1531,15 @@
    "Lacroix, Henri, 1895-1962"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1929,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12679.mp3",
-  "bytes": 1733577
+  "bytes": 1733577,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007634781",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12735",
@@ -1066,10 +1549,15 @@
    "Lacroix, Henri, 1895-1962"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1929,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12735.mp3",
-  "bytes": 1761183
+  "bytes": 1761183,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019345464",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12562",
@@ -1079,10 +1567,15 @@
    "Lacroix, Henri, 1895-1962"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12562.mp3",
-  "bytes": 1688552
+  "bytes": 1688552,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007626918",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "14697",
@@ -1093,10 +1586,15 @@
    "Habitants (Groupe musical)"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1936,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14697.mp3",
-  "bytes": 2255767
+  "bytes": 2255767,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007643555",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "14748",
@@ -1110,7 +1608,8 @@
   "basis": "trad",
   "year": 1936,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14748.mp3",
-  "bytes": 2295264
+  "bytes": 2295264,
+  "status": "CLEAR"
  },
  {
   "id": "10847",
@@ -1121,10 +1620,22 @@
    "Henri's Orchestra"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10847.mp3",
-  "bytes": 1609985
+  "bytes": 1609985,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007626700",
+   "composers": [
+    "Adams, A. Emmett, 1889-1938"
+   ],
+   "lyricists": [],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb16306735j"
+   ],
+   "note": "instrumental"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10849",
@@ -1135,10 +1646,19 @@
    "Henri's Orchestra"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10849.mp3",
-  "bytes": 1446237
+  "bytes": 1446237,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007626702",
+   "composers": [
+    "Darewski, Herman, 1883-1947"
+   ],
+   "lyricists": [],
+   "note": "instrumental"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16063",
@@ -1149,10 +1669,19 @@
    "Henri's Orchestra"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16063.mp3",
-  "bytes": 2692377
+  "bytes": 2692377,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007650774",
+   "composers": [
+    "Miro, Henri, 1879-1950"
+   ],
+   "lyricists": [],
+   "note": "instrumental"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10024",
@@ -1163,10 +1692,22 @@
    "Henri's Orchestra"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10024.mp3",
-  "bytes": 1801692
+  "bytes": 1801692,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621038",
+   "composers": [
+    "Fraser-Simson, H. (Harold), 1878-1944"
+   ],
+   "lyricists": [],
+   "unresolved": "Grace Torrens ('At siesta time') has no dates in LAC, BnF or LC NAF",
+   "also": [
+    "http://id.loc.gov/authorities/names/no2007128722"
+   ]
+  },
+  "status": "UNRESOLVED"
  },
  {
   "id": "11025",
@@ -1177,10 +1718,19 @@
    "Henri's Orchestra"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1921,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/11025.mp3",
-  "bytes": 2065400
+  "bytes": 2065400,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1034290678",
+   "composers": [
+    "Offenbach, Jacques, 1819-1880"
+   ],
+   "lyricists": [],
+   "note": "instrumental"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10708",
@@ -1191,10 +1741,21 @@
    "Henri's Orchestra"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10708.mp3",
-  "bytes": 1904469
+  "bytes": 1904469,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007625840",
+   "composers": [
+    "Roberts, Lee S., 1884-1949"
+   ],
+   "lyricists": [
+    "Callahan, J. Will, 1874-1946"
+   ],
+   "note": "instrumental"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10836",
@@ -1205,10 +1766,19 @@
    "Henri's Orchestra"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10836.mp3",
-  "bytes": 1916945
+  "bytes": 1916945,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007626579",
+   "composers": [
+    "Polla, William C., 1876-1939"
+   ],
+   "lyricists": [],
+   "note": "instrumental"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10059",
@@ -1219,10 +1789,19 @@
    "Henri's Orchestra"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10059.mp3",
-  "bytes": 1626993
+  "bytes": 1626993,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621549",
+   "composers": [
+    "Johnson, Chas. L. (Charles Leslie), 1876-1950"
+   ],
+   "lyricists": [],
+   "note": "instrumental"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "11107",
@@ -1233,10 +1812,19 @@
    "Henri's Orchestra"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1921,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/11107.mp3",
-  "bytes": 1668857
+  "bytes": 1668857,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007628065",
+   "composers": [
+    "Ascher, Emil, 1859-1922"
+   ],
+   "lyricists": [],
+   "note": "instrumental"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10772",
@@ -1247,10 +1835,22 @@
    "Miro's Band"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10772.mp3",
-  "bytes": 1823854
+  "bytes": 1823854,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007626220",
+   "composers": [
+    "Alford, Kenneth J., 1881-1945"
+   ],
+   "lyricists": [],
+   "also": [
+    "http://id.loc.gov/authorities/names/n83051531"
+   ],
+   "note": "instrumental; Alford dates from LC NAF"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10809",
@@ -1261,10 +1861,19 @@
    "Miro's Band"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10809.mp3",
-  "bytes": 1657358
+  "bytes": 1657358,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007626386",
+   "composers": [
+    "Bidgood, Thomas, 1860-1925"
+   ],
+   "lyricists": [],
+   "note": "instrumental"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16598",
@@ -1275,10 +1884,21 @@
    "Miro's Band"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1922,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16598.mp3",
-  "bytes": 2010459
+  "bytes": 2010459,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007653940",
+   "composers": [
+    "Scott, Maurice, 1878-1933"
+   ],
+   "lyricists": [
+    "Mills, A. J., 1871-1919"
+   ],
+   "note": "instrumental"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10773",
@@ -1289,10 +1909,19 @@
    "Miro's Band"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10773.mp3",
-  "bytes": 1562380
+  "bytes": 1562380,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007626221",
+   "composers": [
+    "Stanley, Leo R., 1884-1966"
+   ],
+   "lyricists": [],
+   "note": "instrumental"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "9830",
@@ -1302,10 +1931,19 @@
    "Clarke, Herbert L. (Herbert Lincoln), 1867-1945"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1917,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/9830.mp3",
-  "bytes": 1790658
+  "bytes": 1790658,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007620182",
+   "composers": [
+    "Godard, Benjamin, 1849-1895"
+   ],
+   "lyricists": [],
+   "note": "instrumental (cornet); Jocelyn"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17454",
@@ -1315,10 +1953,20 @@
    "Eisdell, Hubert, 1882-1948"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1914,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17454.mp3",
-  "bytes": 3259182
+  "bytes": 3259182,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1034273662",
+   "composers": [
+    "Monk, William Henry, 1823-1889",
+    "Gould, J. E. (John Edgar), approximately 1820-1875"
+   ],
+   "lyricists": [],
+   "note": "LAC leaves the music/lyrics roles uncertain; both authors dated"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "15964",
@@ -1331,7 +1979,8 @@
   "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15964.mp3",
-  "bytes": 1874988
+  "bytes": 1874988,
+  "status": "CLEAR"
  },
  {
   "id": "15563",
@@ -1344,7 +1993,8 @@
   "basis": "trad",
   "year": 1927,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15563.mp3",
-  "bytes": 2098719
+  "bytes": 2098719,
+  "status": "CLEAR"
  },
  {
   "id": "15757",
@@ -1357,7 +2007,8 @@
   "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15757.mp3",
-  "bytes": 2050131
+  "bytes": 2050131,
+  "status": "CLEAR"
  },
  {
   "id": "13327",
@@ -1370,7 +2021,8 @@
   "basis": "trad",
   "year": 1929,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13327.mp3",
-  "bytes": 1435832
+  "bytes": 1435832,
+  "status": "CLEAR"
  },
  {
   "id": "13926",
@@ -1383,7 +2035,8 @@
   "basis": "trad",
   "year": 1937,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13926.mp3",
-  "bytes": 3057081
+  "bytes": 3057081,
+  "status": "CLEAR"
  },
  {
   "id": "14723",
@@ -1396,7 +2049,8 @@
   "basis": "trad",
   "year": 1936,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14723.mp3",
-  "bytes": 2234851
+  "bytes": 2234851,
+  "status": "CLEAR"
  },
  {
   "id": "15711",
@@ -1409,7 +2063,8 @@
   "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15711.mp3",
-  "bytes": 1920981
+  "bytes": 1920981,
+  "status": "CLEAR"
  },
  {
   "id": "13514",
@@ -1422,7 +2077,8 @@
   "basis": "trad",
   "year": 1931,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13514.mp3",
-  "bytes": 1655213
+  "bytes": 1655213,
+  "status": "CLEAR"
  },
  {
   "id": "15877",
@@ -1435,7 +2091,8 @@
   "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15877.mp3",
-  "bytes": 1727257
+  "bytes": 1727257,
+  "status": "CLEAR"
  },
  {
   "id": "15709",
@@ -1448,7 +2105,8 @@
   "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15709.mp3",
-  "bytes": 2034144
+  "bytes": 2034144,
+  "status": "CLEAR"
  },
  {
   "id": "15651",
@@ -1461,7 +2119,8 @@
   "basis": "trad",
   "year": 1927,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15651.mp3",
-  "bytes": 1847403
+  "bytes": 1847403,
+  "status": "CLEAR"
  },
  {
   "id": "13929",
@@ -1474,7 +2133,8 @@
   "basis": "trad",
   "year": 1937,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13929.mp3",
-  "bytes": 2945486
+  "bytes": 2945486,
+  "status": "CLEAR"
  },
  {
   "id": "15060",
@@ -1484,10 +2144,24 @@
    "Germain, J. H. (J.-Hervey), 1888-1961"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15060.mp3",
-  "bytes": 2052325
+  "bytes": 2052325,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019409851",
+   "composers": [
+    "Christiné, Henri, 1867-1941"
+   ],
+   "lyricists": [
+    "Christiné, Henri, 1867-1941"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb429117100"
+   ],
+   "note": "paroles et musique Christiné (BnF)"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "15310",
@@ -1498,10 +2172,21 @@
    "Germain, J. H. (J.-Hervey), 1888-1961"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "named",
   "year": 1924,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15310.mp3",
-  "bytes": 2226614
+  "bytes": 2226614,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019364156",
+   "composers": [
+    "Beaudry, R. (Roméo), 1882-1932"
+   ],
+   "lyricists": [
+    "Beaudry, R. (Roméo), 1882-1932"
+   ],
+   "note": "LAC credits Beaudry alone"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "15311",
@@ -1512,10 +2197,21 @@
    "Germain, J. H. (J.-Hervey), 1888-1961"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "named",
   "year": 1924,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/15311.mp3",
-  "bytes": 2590952
+  "bytes": 2590952,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007646727",
+   "composers": [
+    "Beaudry, R. (Roméo), 1882-1932"
+   ],
+   "lyricists": [
+    "Beaudry, R. (Roméo), 1882-1932"
+   ],
+   "note": "LAC credits Beaudry alone"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "9919",
@@ -1525,10 +2221,22 @@
    "Filion, Jean-Philéas, 1871-1940"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1917,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/9919.mp3",
-  "bytes": 1975490
+  "bytes": 1975490,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007771341",
+   "composers": [],
+   "lyricists": [
+    "Déroulède, Paul, 1846-1914"
+   ],
+   "unresolved": "Déroulède is the poet; the composer of this setting is not named by LAC or BnF",
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb12026086v"
+   ]
+  },
+  "status": "UNRESOLVED"
  },
  {
   "id": "10513",
@@ -1538,10 +2246,17 @@
    "Filion, Jean-Philéas, 1871-1940"
   ],
   "repertoire": "francophone song/monologue",
-  "basis": null,
+  "basis": "named",
   "year": 1916,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10513.mp3",
-  "bytes": 1992100
+  "bytes": 1992100,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007625191",
+   "composers": [],
+   "lyricists": [],
+   "unresolved": "LAC record: author unknown; a comic monologue, not a folk text"
+  },
+  "status": "UNRESOLVED"
  },
  {
   "id": "13119",
@@ -1554,7 +2269,8 @@
   "basis": "trad",
   "year": 1933,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13119.mp3",
-  "bytes": 1789614
+  "bytes": 1789614,
+  "status": "CLEAR"
  },
  {
   "id": "12528",
@@ -1567,7 +2283,8 @@
   "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12528.mp3",
-  "bytes": 1718834
+  "bytes": 1718834,
+  "status": "CLEAR"
  },
  {
   "id": "16441",
@@ -1580,7 +2297,8 @@
   "basis": "trad",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16441.mp3",
-  "bytes": 2437475
+  "bytes": 2437475,
+  "status": "CLEAR"
  },
  {
   "id": "12633",
@@ -1590,10 +2308,19 @@
    "Allard, Joseph, 1873-1947"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1929,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12633.mp3",
-  "bytes": 1797028
+  "bytes": 1797028,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019345463",
+   "composers": [
+    "Allard, Joseph, 1873-1947"
+   ],
+   "lyricists": [],
+   "note": "instrumental; Allard's own march"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12777",
@@ -1606,7 +2333,8 @@
   "basis": "trad",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12777.mp3",
-  "bytes": 1732291
+  "bytes": 1732291,
+  "status": "CLEAR"
  },
  {
   "id": "12634",
@@ -1619,7 +2347,8 @@
   "basis": "trad",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12634.mp3",
-  "bytes": 1750520
+  "bytes": 1750520,
+  "status": "CLEAR"
  },
  {
   "id": "12941",
@@ -1632,7 +2361,8 @@
   "basis": "trad",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12941.mp3",
-  "bytes": 1660988
+  "bytes": 1660988,
+  "status": "CLEAR"
  },
  {
   "id": "12778",
@@ -1645,7 +2375,8 @@
   "basis": "trad",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12778.mp3",
-  "bytes": 1864650
+  "bytes": 1864650,
+  "status": "CLEAR"
  },
  {
   "id": "14770",
@@ -1658,7 +2389,8 @@
   "basis": "trad",
   "year": 1936,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14770.mp3",
-  "bytes": 2048877
+  "bytes": 2048877,
+  "status": "CLEAR"
  },
  {
   "id": "12549",
@@ -1671,7 +2403,8 @@
   "basis": "trad",
   "year": 1928,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12549.mp3",
-  "bytes": 1709045
+  "bytes": 1709045,
+  "status": "CLEAR"
  },
  {
   "id": "12308",
@@ -1681,10 +2414,18 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1915,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12308.mp3",
-  "bytes": 1848217
+  "bytes": 1848217,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621694",
+   "note": "LAC record: folk song, Tremblay (arrangement)",
+   "arrangers": [
+    "Tremblay, Amédée, 1876-1949"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12276",
@@ -1694,10 +2435,20 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12276.mp3",
-  "bytes": 1701905
+  "bytes": 1701905,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1056969190",
+   "composers": [
+    "Lavallée, Calixa, 1842-1891"
+   ],
+   "lyricists": [
+    "Routhier, A. B. (Adolphe Basile), Sir, 1839-1920"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "9722",
@@ -1707,10 +2458,19 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1917,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/9722.mp3",
-  "bytes": 1361102
+  "bytes": 1361102,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007619938",
+   "composers": [
+    "Bohm, Carl, 1844-1920"
+   ],
+   "lyricists": [],
+   "unresolved": "English translation of Bohm's 'Still wie die Nacht' has no named translator"
+  },
+  "status": "UNRESOLVED"
  },
  {
   "id": "12293",
@@ -1720,10 +2480,25 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1910,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12293.mp3",
-  "bytes": 1498910
+  "bytes": 1498910,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621626",
+   "composers": [
+    "Massé, Victor, 1822-1884"
+   ],
+   "lyricists": [
+    "Barbier, Jules, 1825-1901",
+    "Carré, Michel, 1819-1872"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb43140030t"
+   ],
+   "note": "Les saisons (opéra comique)"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17411",
@@ -1733,10 +2508,19 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17411.mp3",
-  "bytes": 2148926
+  "bytes": 2148926,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007662420",
+   "composers": [
+    "Dubois, Théodore, 1837-1924"
+   ],
+   "lyricists": [],
+   "unresolved": "lyricist of Dubois's 'Chanson à boire (Douce ivresse)' not named by LAC or found at BnF"
+  },
+  "status": "UNRESOLVED"
  },
  {
   "id": "17395",
@@ -1746,10 +2530,15 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1907,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17395.mp3",
-  "bytes": 2282412
+  "bytes": 2282412,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019396161",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12291",
@@ -1759,10 +2548,24 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1915,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12291.mp3",
-  "bytes": 1778265
+  "bytes": 1778265,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621547",
+   "composers": [
+    "Kowalski, Henri, 1841-1916"
+   ],
+   "lyricists": [
+    "Trogoff, Christian de, 1850-1901"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb430788176",
+    "https://catalogue.bnf.fr/ark:/12148/cb124432127"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12280",
@@ -1772,10 +2575,24 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1910,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12280.mp3",
-  "bytes": 1746707
+  "bytes": 1746707,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621506",
+   "composers": [
+    "Kowalski, Henri, 1841-1916"
+   ],
+   "lyricists": [
+    "Trogoff, Christian de, 1850-1901"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb430788176",
+    "https://catalogue.bnf.fr/ark:/12148/cb124432127"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17275",
@@ -1785,10 +2602,23 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17275.mp3",
-  "bytes": 2825950
+  "bytes": 2825950,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019362205",
+   "composers": [
+    "Godard, Benjamin, 1849-1895"
+   ],
+   "lyricists": [
+    "Guttinguer, Ulric, 1787-1866"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb44389798v"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12292",
@@ -1798,10 +2628,24 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1910,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12292.mp3",
-  "bytes": 1647280
+  "bytes": 1647280,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621625",
+   "composers": [
+    "Gounod, Charles, 1818-1893"
+   ],
+   "lyricists": [
+    "Augier, Émile, 1820-1889"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb43022940h",
+    "https://catalogue.bnf.fr/ark:/12148/cb12131147d"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17400",
@@ -1811,10 +2655,15 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1907,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17400.mp3",
-  "bytes": 2041772
+  "bytes": 2041772,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007770800",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12303",
@@ -1824,10 +2673,18 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1915,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12303.mp3",
-  "bytes": 2962622
+  "bytes": 2962622,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621734",
+   "note": "LAC record: folk song, Fortier arrangement",
+   "arrangers": [
+    "Fortier, Achille, 1864-1939"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17399",
@@ -1837,10 +2694,22 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1912,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17399.mp3",
-  "bytes": 2381520
+  "bytes": 2381520,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007662096",
+   "composers": [
+    "Adam, Adolphe, 1803-1856"
+   ],
+   "lyricists": [
+    "Ennery, Adolphe d', 1811-1899",
+    "Brésil, Jules Henri, 1823-1899"
+   ],
+   "note": "Si j'étais roi"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17409",
@@ -1850,10 +2719,19 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17409.mp3",
-  "bytes": 2047623
+  "bytes": 2047623,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007662436",
+   "composers": [
+    "Grieg, Edvard, 1843-1907"
+   ],
+   "lyricists": [],
+   "unresolved": "French singing translation of Grieg's 'Ich liebe dich' has no named translator"
+  },
+  "status": "UNRESOLVED"
  },
  {
   "id": "12306",
@@ -1863,10 +2741,19 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1915,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12306.mp3",
-  "bytes": 1573645
+  "bytes": 1573645,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1034309342",
+   "composers": [
+    "Massenet, Jules, 1842-1912"
+   ],
+   "lyricists": [],
+   "unresolved": "poet of Massenet's 'L'improvisateur' not named by LAC or found at BnF"
+  },
+  "status": "UNRESOLVED"
  },
  {
   "id": "17393",
@@ -1876,10 +2763,20 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1906,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17393.mp3",
-  "bytes": 2118206
+  "bytes": 2118206,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007662295",
+   "composers": [
+    "Rouget de Lisle, Claude Joseph, 1760-1836"
+   ],
+   "lyricists": [
+    "Rouget de Lisle, Claude Joseph, 1760-1836"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12296",
@@ -1889,10 +2786,20 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1915,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12296.mp3",
-  "bytes": 1793953
+  "bytes": 1793953,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621624",
+   "composers": [
+    "Sabatier, Charles Wugk, 1819-1862"
+   ],
+   "lyricists": [
+    "Crémazie, Octave, 1827-1879"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12271",
@@ -1902,10 +2809,20 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1910,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12271.mp3",
-  "bytes": 1656769
+  "bytes": 1656769,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621378",
+   "composers": [
+    "Sabatier, Charles Wugk, 1819-1862"
+   ],
+   "lyricists": [
+    "Crémazie, Octave, 1827-1879"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17408",
@@ -1915,10 +2832,23 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17408.mp3",
-  "bytes": 2115280
+  "bytes": 2115280,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019366972",
+   "composers": [
+    "Planquette, Robert, 1848-1903"
+   ],
+   "lyricists": [
+    "Cézano, Paul, 1841-1887"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb102356798"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17394",
@@ -1928,10 +2858,15 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1906,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17394.mp3",
-  "bytes": 2629475
+  "bytes": 2629475,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019382111",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12287",
@@ -1941,10 +2876,21 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1915,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12287.mp3",
-  "bytes": 1678521
+  "bytes": 1678521,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007660780",
+   "composers": [
+    "Nadaud, Gustave, 1820-1893"
+   ],
+   "lyricists": [
+    "Nadaud, Gustave, 1820-1893"
+   ],
+   "note": "auteur-compositeur (BnF cb12171746j)"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17407",
@@ -1954,10 +2900,21 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1906,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17407.mp3",
-  "bytes": 2363235
+  "bytes": 2363235,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007771131",
+   "composers": [
+    "Faure, J. (Jean), 1830-1914"
+   ],
+   "lyricists": [
+    "Faure, J. (Jean), 1830-1914"
+   ],
+   "note": "Faure wrote words and music"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12297",
@@ -1967,10 +2924,21 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1915,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12297.mp3",
-  "bytes": 1289647
+  "bytes": 1289647,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1034324166",
+   "composers": [
+    "Faure, J. (Jean), 1830-1914"
+   ],
+   "lyricists": [
+    "Faure, J. (Jean), 1830-1914"
+   ],
+   "note": "Faure wrote words and music"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17397",
@@ -1980,10 +2948,25 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1907,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17397.mp3",
-  "bytes": 2084926
+  "bytes": 2084926,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007662300",
+   "composers": [
+    "Massé, Victor, 1822-1884"
+   ],
+   "lyricists": [
+    "Barbier, Jules, 1825-1901",
+    "Carré, Michel, 1819-1872"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb43140030t"
+   ],
+   "note": "Les saisons (opéra comique)"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17410",
@@ -1993,10 +2976,23 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17410.mp3",
-  "bytes": 2504035
+  "bytes": 2504035,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007662419",
+   "composers": [
+    "Pfeiffer, Georges (Jean), 1835-1908"
+   ],
+   "lyricists": [
+    "Barbier, Jules, 1825-1901"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb442155005"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17403",
@@ -2006,10 +3002,24 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1906,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17403.mp3",
-  "bytes": 2768446
+  "bytes": 2768446,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007770958",
+   "composers": [
+    "Adam, Adolphe, 1803-1856"
+   ],
+   "lyricists": [
+    "Cappeau, Placide, 1808-1877"
+   ],
+   "also": [
+    "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621443",
+    "https://catalogue.bnf.fr/ark:/12148/cb125670785"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12274",
@@ -2019,10 +3029,23 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1909,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12274.mp3",
-  "bytes": 1993991
+  "bytes": 1993991,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621443",
+   "composers": [
+    "Adam, Adolphe, 1803-1856"
+   ],
+   "lyricists": [
+    "Cappeau, Placide, 1808-1877"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb125670785"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17418",
@@ -2032,10 +3055,24 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17418.mp3",
-  "bytes": 1661429
+  "bytes": 1661429,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019368649",
+   "composers": [
+    "Massenet, Jules, 1842-1912"
+   ],
+   "lyricists": [
+    "Alexandre, André, 1860-1927"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb431409382",
+    "https://catalogue.bnf.fr/ark:/12148/cb12995339x"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17402",
@@ -2045,10 +3082,15 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1906,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17402.mp3",
-  "bytes": 2243646
+  "bytes": 2243646,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019411531",
+   "note": "LAC record: Anonyme / Traditionnel, no author"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12288",
@@ -2058,10 +3100,24 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1915,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12288.mp3",
-  "bytes": 1716464
+  "bytes": 1716464,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621579",
+   "composers": [
+    "Gounod, Charles, 1818-1893"
+   ],
+   "lyricists": [
+    "Barbier, Jules, 1825-1901"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb430226384"
+   ],
+   "note": "Gounod's Noël (Chantez Noël), poésie Barbier"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12301",
@@ -2071,10 +3127,20 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1915,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12301.mp3",
-  "bytes": 1713037
+  "bytes": 1713037,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621731",
+   "composers": [
+    "Massenet, Jules, 1842-1912"
+   ],
+   "lyricists": [
+    "Gallet, Louis, 1835-1898"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17404",
@@ -2084,10 +3150,23 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1907,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17404.mp3",
-  "bytes": 2365795
+  "bytes": 2365795,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019376745",
+   "composers": [
+    "Lavallée, Calixa, 1842-1891"
+   ],
+   "lyricists": [
+    "Routhier, A. B. (Adolphe Basile), Sir, 1839-1920"
+   ],
+   "also": [
+    "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1056969190"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17405",
@@ -2097,10 +3176,20 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1906,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17405.mp3",
-  "bytes": 2428697
+  "bytes": 2428697,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007662423",
+   "composers": [
+    "Labelle, J. B. (Jean-Baptiste), 1828-1898"
+   ],
+   "lyricists": [
+    "Cartier, Georges-Étienne, Sir, 1814-1873"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17268",
@@ -2110,10 +3199,23 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17268.mp3",
-  "bytes": 3110162
+  "bytes": 3110162,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019376792",
+   "composers": [
+    "Lavallée, Calixa, 1842-1891"
+   ],
+   "lyricists": [
+    "Routhier, A. B. (Adolphe Basile), Sir, 1839-1920"
+   ],
+   "also": [
+    "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1056969190"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17416",
@@ -2123,10 +3225,20 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17416.mp3",
-  "bytes": 1739692
+  "bytes": 1739692,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007662476",
+   "composers": [
+    "Massenet, Jules, 1842-1912"
+   ],
+   "lyricists": [
+    "Robiquet, Paul, 1848-1928"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17424",
@@ -2136,10 +3248,25 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17424.mp3",
-  "bytes": 2243646
+  "bytes": 2243646,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007662967",
+   "composers": [
+    "Drouet, Louis-François-Philippe, 1792-1873",
+    "Hortense, Queen, consort of Louis, King of Holland, 1783-1837"
+   ],
+   "lyricists": [
+    "Hortense, Queen, consort of Louis, King of Holland, 1783-1837"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb47393614w"
+   ],
+   "note": "LAC credits Drouet with the music, BnF credits Queen Hortense with words and music; both expired"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17406",
@@ -2149,10 +3276,19 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1907,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17406.mp3",
-  "bytes": 2543532
+  "bytes": 2543532,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007770864",
+   "composers": [
+    "Lambillotte, L. (Louis), 1796-1855"
+   ],
+   "lyricists": [],
+   "unresolved": "text author of Lambillotte's cantique not named by LAC or found at BnF"
+  },
+  "status": "UNRESOLVED"
  },
  {
   "id": "17423",
@@ -2162,10 +3298,20 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17423.mp3",
-  "bytes": 2140653
+  "bytes": 2140653,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007662329",
+   "composers": [
+    "Hahn, Reynaldo, 1875-1947"
+   ],
+   "lyricists": [
+    "Hugo, Victor, 1802-1885"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12299",
@@ -2175,10 +3321,20 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1915,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12299.mp3",
-  "bytes": 1587225
+  "bytes": 1587225,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1034248345",
+   "composers": [
+    "Massenet, Jules, 1842-1912"
+   ],
+   "lyricists": [
+    "Normand, Jacques Clary Jean, 1848-1931"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17398",
@@ -2188,10 +3344,21 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1912,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17398.mp3",
-  "bytes": 2274366
+  "bytes": 2274366,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007662327",
+   "composers": [
+    "Hérold, Ferdinand, 1791-1833"
+   ],
+   "lyricists": [
+    "Planard, Eugène de, 1783-1855"
+   ],
+   "note": "Le pré aux clercs"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12300",
@@ -2201,10 +3368,26 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1915,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12300.mp3",
-  "bytes": 1856259
+  "bytes": 1856259,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007773419",
+   "composers": [
+    "Delibes, Léo, 1836-1891"
+   ],
+   "lyricists": [
+    "Gondinet, Edmond, 1829-1888",
+    "Gille, Philippe, 1831-1901"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb119053644",
+    "https://catalogue.bnf.fr/ark:/12148/cb122040509"
+   ],
+   "note": "Stances de Lakmé (baritone)"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12281",
@@ -2214,10 +3397,20 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1910,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12281.mp3",
-  "bytes": 1855109
+  "bytes": 1855109,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621453",
+   "composers": [
+    "Lavigne, Ernest, 1851-1909"
+   ],
+   "lyricists": [
+    "Fréchette, Louis, 1839-1908"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12307",
@@ -2227,10 +3420,18 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": 1915,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12307.mp3",
-  "bytes": 1632082
+  "bytes": 1632082,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621691",
+   "note": "LAC record: author unknown; canonical folk song, no arranger credited",
+   "also": [
+    "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019400062"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12298",
@@ -2240,10 +3441,20 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1914,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12298.mp3",
-  "bytes": 1642785
+  "bytes": 1642785,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007621420",
+   "composers": [
+    "Lavigne, Ernest, 1851-1909"
+   ],
+   "lyricists": [
+    "Fréchette, Louis, 1839-1908"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12275",
@@ -2253,10 +3464,23 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1910,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12275.mp3",
-  "bytes": 1754585
+  "bytes": 1754585,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=937706972",
+   "composers": [
+    "Labelle, J. B. (Jean-Baptiste), 1828-1898"
+   ],
+   "lyricists": [
+    "Cartier, Georges-Étienne, Sir, 1814-1873"
+   ],
+   "also": [
+    "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007662423"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "12310",
@@ -2266,10 +3490,23 @@
    "Saucier, Joseph, 1869-1941"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1915,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/12310.mp3",
-  "bytes": 1759463
+  "bytes": 1759463,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019356778",
+   "composers": [
+    "Lavallée, Calixa, 1842-1891"
+   ],
+   "lyricists": [
+    "Routhier, A. B. (Adolphe Basile), Sir, 1839-1920"
+   ],
+   "also": [
+    "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1056969190"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17415",
@@ -2280,10 +3517,20 @@
    "Gour, Émile, 1893-1970"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1920,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17415.mp3",
-  "bytes": 2341657
+  "bytes": 2341657,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007662474",
+   "composers": [
+    "Faure, J. (Jean), 1830-1914"
+   ],
+   "lyricists": [
+    "Hugo, Victor, 1802-1885"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "13625",
@@ -2296,7 +3543,8 @@
   "basis": "own",
   "year": 1931,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13625.mp3",
-  "bytes": 1250121
+  "bytes": 1250121,
+  "status": "CLEAR"
  },
  {
   "id": "13516",
@@ -2309,7 +3557,8 @@
   "basis": "own",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13516.mp3",
-  "bytes": 1414680
+  "bytes": 1414680,
+  "status": "CLEAR"
  },
  {
   "id": "13352",
@@ -2322,7 +3571,8 @@
   "basis": "own",
   "year": 1929,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13352.mp3",
-  "bytes": 1483381
+  "bytes": 1483381,
+  "status": "CLEAR"
  },
  {
   "id": "13635",
@@ -2335,7 +3585,8 @@
   "basis": "own",
   "year": 1931,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13635.mp3",
-  "bytes": 1523304
+  "bytes": 1523304,
+  "status": "CLEAR"
  },
  {
   "id": "13718",
@@ -2348,7 +3599,8 @@
   "basis": "own",
   "year": 1932,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13718.mp3",
-  "bytes": 1444331
+  "bytes": 1444331,
+  "status": "CLEAR"
  },
  {
   "id": "13510",
@@ -2361,7 +3613,8 @@
   "basis": "own",
   "year": 1931,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13510.mp3",
-  "bytes": 1887022
+  "bytes": 1887022,
+  "status": "CLEAR"
  },
  {
   "id": "13649",
@@ -2374,7 +3627,8 @@
   "basis": "own",
   "year": 1931,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13649.mp3",
-  "bytes": 1906701
+  "bytes": 1906701,
+  "status": "CLEAR"
  },
  {
   "id": "13727",
@@ -2387,7 +3641,8 @@
   "basis": "own",
   "year": 1935,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13727.mp3",
-  "bytes": 1780137
+  "bytes": 1780137,
+  "status": "CLEAR"
  },
  {
   "id": "13219",
@@ -2400,7 +3655,8 @@
   "basis": "trad",
   "year": 1929,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13219.mp3",
-  "bytes": 1422895
+  "bytes": 1422895,
+  "status": "CLEAR"
  },
  {
   "id": "13533",
@@ -2413,7 +3669,8 @@
   "basis": "own",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13533.mp3",
-  "bytes": 2012350
+  "bytes": 2012350,
+  "status": "CLEAR"
  },
  {
   "id": "13553",
@@ -2426,7 +3683,8 @@
   "basis": "own",
   "year": 1931,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13553.mp3",
-  "bytes": 1403987
+  "bytes": 1403987,
+  "status": "CLEAR"
  },
  {
   "id": "13611",
@@ -2439,7 +3697,8 @@
   "basis": "own",
   "year": 1931,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13611.mp3",
-  "bytes": 1714418
+  "bytes": 1714418,
+  "status": "CLEAR"
  },
  {
   "id": "13551",
@@ -2452,7 +3711,8 @@
   "basis": "own",
   "year": 1931,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13551.mp3",
-  "bytes": 1869699
+  "bytes": 1869699,
+  "status": "CLEAR"
  },
  {
   "id": "13620",
@@ -2465,7 +3725,8 @@
   "basis": "own",
   "year": 1931,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13620.mp3",
-  "bytes": 1433570
+  "bytes": 1433570,
+  "status": "CLEAR"
  },
  {
   "id": "14430",
@@ -2478,7 +3739,8 @@
   "basis": "own",
   "year": 1931,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14430.mp3",
-  "bytes": 1556837
+  "bytes": 1556837,
+  "status": "CLEAR"
  },
  {
   "id": "14433",
@@ -2491,7 +3753,8 @@
   "basis": "own",
   "year": 1931,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14433.mp3",
-  "bytes": 1536181
+  "bytes": 1536181,
+  "status": "CLEAR"
  },
  {
   "id": "13548",
@@ -2504,7 +3767,8 @@
   "basis": "own",
   "year": 1931,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13548.mp3",
-  "bytes": 1588733
+  "bytes": 1588733,
+  "status": "CLEAR"
  },
  {
   "id": "13713",
@@ -2517,7 +3781,8 @@
   "basis": "own",
   "year": 1932,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13713.mp3",
-  "bytes": 1542335
+  "bytes": 1542335,
+  "status": "CLEAR"
  },
  {
   "id": "13726",
@@ -2530,7 +3795,8 @@
   "basis": "own",
   "year": 1935,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13726.mp3",
-  "bytes": 1500999
+  "bytes": 1500999,
+  "status": "CLEAR"
  },
  {
   "id": "13711",
@@ -2543,7 +3809,8 @@
   "basis": "own",
   "year": 1932,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13711.mp3",
-  "bytes": 1791661
+  "bytes": 1791661,
+  "status": "CLEAR"
  },
  {
   "id": "13717",
@@ -2556,7 +3823,8 @@
   "basis": "own",
   "year": 1932,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13717.mp3",
-  "bytes": 1905818
+  "bytes": 1905818,
+  "status": "CLEAR"
  },
  {
   "id": "13489",
@@ -2569,7 +3837,8 @@
   "basis": "own",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13489.mp3",
-  "bytes": 1532949
+  "bytes": 1532949,
+  "status": "CLEAR"
  },
  {
   "id": "13712",
@@ -2582,7 +3851,8 @@
   "basis": "own",
   "year": 1932,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13712.mp3",
-  "bytes": 1508476
+  "bytes": 1508476,
+  "status": "CLEAR"
  },
  {
   "id": "13532",
@@ -2595,7 +3865,8 @@
   "basis": "own",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13532.mp3",
-  "bytes": 1690982
+  "bytes": 1690982,
+  "status": "CLEAR"
  },
  {
   "id": "13716",
@@ -2608,7 +3879,8 @@
   "basis": "own",
   "year": 1932,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13716.mp3",
-  "bytes": 1551429
+  "bytes": 1551429,
+  "status": "CLEAR"
  },
  {
   "id": "13719",
@@ -2621,7 +3893,8 @@
   "basis": "own",
   "year": 1932,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13719.mp3",
-  "bytes": 1431631
+  "bytes": 1431631,
+  "status": "CLEAR"
  },
  {
   "id": "13709",
@@ -2634,7 +3907,8 @@
   "basis": "own",
   "year": 1932,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13709.mp3",
-  "bytes": 1638576
+  "bytes": 1638576,
+  "status": "CLEAR"
  },
  {
   "id": "13715",
@@ -2647,7 +3921,8 @@
   "basis": "own",
   "year": 1932,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13715.mp3",
-  "bytes": 1446810
+  "bytes": 1446810,
+  "status": "CLEAR"
  },
  {
   "id": "13447",
@@ -2660,7 +3935,8 @@
   "basis": "own",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13447.mp3",
-  "bytes": 1407239
+  "bytes": 1407239,
+  "status": "CLEAR"
  },
  {
   "id": "13590",
@@ -2673,7 +3949,8 @@
   "basis": "own",
   "year": 1932,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13590.mp3",
-  "bytes": 1726861
+  "bytes": 1726861,
+  "status": "CLEAR"
  },
  {
   "id": "13488",
@@ -2686,7 +3963,8 @@
   "basis": "own",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13488.mp3",
-  "bytes": 1674387
+  "bytes": 1674387,
+  "status": "CLEAR"
  },
  {
   "id": "13505",
@@ -2699,7 +3977,8 @@
   "basis": "own",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13505.mp3",
-  "bytes": 1635458
+  "bytes": 1635458,
+  "status": "CLEAR"
  },
  {
   "id": "13520",
@@ -2714,7 +3993,8 @@
   "basis": "trad",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13520.mp3",
-  "bytes": 1785782
+  "bytes": 1785782,
+  "status": "CLEAR"
  },
  {
   "id": "14408",
@@ -2729,7 +4009,8 @@
   "basis": "own",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14408.mp3",
-  "bytes": 1451598
+  "bytes": 1451598,
+  "status": "CLEAR"
  },
  {
   "id": "13223",
@@ -2743,7 +4024,8 @@
   "basis": "own",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13223.mp3",
-  "bytes": 1482324
+  "bytes": 1482324,
+  "status": "CLEAR"
  },
  {
   "id": "14392",
@@ -2757,7 +4039,8 @@
   "basis": "own",
   "year": 1929,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14392.mp3",
-  "bytes": 1335315
+  "bytes": 1335315,
+  "status": "CLEAR"
  },
  {
   "id": "14398",
@@ -2771,7 +4054,8 @@
   "basis": "own",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14398.mp3",
-  "bytes": 1599238
+  "bytes": 1599238,
+  "status": "CLEAR"
  },
  {
   "id": "14390",
@@ -2785,7 +4069,8 @@
   "basis": "own",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14390.mp3",
-  "bytes": 1316217
+  "bytes": 1316217,
+  "status": "CLEAR"
  },
  {
   "id": "13444",
@@ -2799,7 +4084,8 @@
   "basis": "own",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13444.mp3",
-  "bytes": 1517696
+  "bytes": 1517696,
+  "status": "CLEAR"
  },
  {
   "id": "14397",
@@ -2813,7 +4099,8 @@
   "basis": "own",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/14397.mp3",
-  "bytes": 1807459
+  "bytes": 1807459,
+  "status": "CLEAR"
  },
  {
   "id": "13445",
@@ -2827,7 +4114,8 @@
   "basis": "own",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13445.mp3",
-  "bytes": 1555008
+  "bytes": 1555008,
+  "status": "CLEAR"
  },
  {
   "id": "13398",
@@ -2842,7 +4130,8 @@
   "basis": "own",
   "year": 1930,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13398.mp3",
-  "bytes": 1505475
+  "bytes": 1505475,
+  "status": "CLEAR"
  },
  {
   "id": "13286",
@@ -2857,7 +4146,8 @@
   "basis": "own",
   "year": 1929,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13286.mp3",
-  "bytes": 1593354
+  "bytes": 1593354,
+  "status": "CLEAR"
  },
  {
   "id": "13353",
@@ -2871,7 +4161,8 @@
   "basis": "own",
   "year": 1929,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/13353.mp3",
-  "bytes": 1717643
+  "bytes": 1717643,
+  "status": "CLEAR"
  },
  {
   "id": "16894",
@@ -2881,10 +4172,23 @@
    "Dufault, Paul, 1872-1930"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1911,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16894.mp3",
-  "bytes": 2434549
+  "bytes": 2434549,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007655609",
+   "composers": [
+    "Lecocq, Charles, 1832-1918"
+   ],
+   "lyricists": [
+    "Clairville, M., 1811-1879",
+    "Siraudin, M. (Paul), 1813-1883",
+    "Koning, Victor, 1842-1894"
+   ],
+   "note": "La fille de Madame Angot"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16100",
@@ -2894,10 +4198,20 @@
    "Dufault, Paul, 1872-1930"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16100.mp3",
-  "bytes": 2373475
+  "bytes": 2373475,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007651042",
+   "composers": [
+    "Rouget de Lisle, Claude Joseph, 1760-1836"
+   ],
+   "lyricists": [
+    "Rouget de Lisle, Claude Joseph, 1760-1836"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17270",
@@ -2907,10 +4221,20 @@
    "Dufault, Paul, 1872-1930"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17270.mp3",
-  "bytes": 3956111
+  "bytes": 3956111,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1034317235",
+   "composers": [
+    "Sabatier, Charles Wugk, 1819-1862"
+   ],
+   "lyricists": [
+    "Crémazie, Octave, 1827-1879"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16108",
@@ -2920,10 +4244,20 @@
    "Dufault, Paul, 1872-1930"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16108.mp3",
-  "bytes": 2964835
+  "bytes": 2964835,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007651101",
+   "composers": [
+    "Missa, Edmond, 1861-1910"
+   ],
+   "lyricists": [
+    "Carré, Michel, 1819-1872"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16902",
@@ -2933,10 +4267,26 @@
    "Dufault, Paul, 1872-1930"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1916,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16902.mp3",
-  "bytes": 2731509
+  "bytes": 2731509,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007770996",
+   "composers": [
+    "Missa, Edmond, 1861-1910"
+   ],
+   "lyricists": [
+    "Gravollet, Paul, d. 1936"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb44871653b",
+    "https://catalogue.bnf.fr/ark:/12148/cb43353554g",
+    "https://catalogue.bnf.fr/ark:/12148/cb156028686"
+   ],
+   "note": "Les frissons, poésies de Paul Gravollet"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16103",
@@ -2946,10 +4296,24 @@
    "Dufault, Paul, 1872-1930"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16103.mp3",
-  "bytes": 2093703
+  "bytes": 2093703,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007651095",
+   "composers": [
+    "Holmès, Augusta Mary Anne, 1847-1903"
+   ],
+   "lyricists": [
+    "Holmès, Augusta Mary Anne, 1847-1903"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb430533087"
+   ],
+   "note": "paroles et musique Holmès"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16161",
@@ -2959,10 +4323,24 @@
    "Dufault, Paul, 1872-1930"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16161.mp3",
-  "bytes": 2000080
+  "bytes": 2000080,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007651564",
+   "composers": [
+    "Chaminade, Cécile, 1857-1944"
+   ],
+   "lyricists": [
+    "Manuel, Eugène, 1823-1901"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb429007336",
+    "https://catalogue.bnf.fr/ark:/12148/cb12119583w"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16172",
@@ -2972,10 +4350,26 @@
    "Dufault, Paul, 1872-1930"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16172.mp3",
-  "bytes": 1902208
+  "bytes": 1902208,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=936902724",
+   "composers": [
+    "Hüe, Georges Adolphe, 1858-1948",
+    "Pessard, Émile, 1843-1917"
+   ],
+   "lyricists": [
+    "Adenis, Eugène, 1854-1923"
+   ],
+   "also": [
+    "https://catalogue.bnf.fr/ark:/12148/cb43619941c",
+    "https://catalogue.bnf.fr/ark:/12148/cb46838071r"
+   ],
+   "note": "À des oiseaux (Hüe) and Premiers rayons (Pessard), both poésie Adenis"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16791",
@@ -2986,10 +4380,20 @@
    "Plamondon, Rodolphe, 1876-1940"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1926,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16791.mp3",
-  "bytes": 2731509
+  "bytes": 2731509,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007654820",
+   "composers": [
+    "Labelle, J. B. (Jean-Baptiste), 1828-1898"
+   ],
+   "lyricists": [
+    "Cartier, Georges-Étienne, Sir, 1814-1873"
+   ]
+  },
+  "status": "CLEAR"
  },
  {
   "id": "17389",
@@ -2999,10 +4403,19 @@
    "Plamondon, Rodolphe, 1876-1940"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/17389.mp3",
-  "bytes": 1905499
+  "bytes": 1905499,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007662215",
+   "composers": [
+    "Busser, Henri, 1872-1973"
+   ],
+   "lyricists": [],
+   "note": "Busser d. 1973: work runs to 2044"
+  },
+  "status": "HELD"
  },
  {
   "id": "9883",
@@ -3014,10 +4427,19 @@
    "Miro's Band"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1918,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/9883.mp3",
-  "bytes": 1685546
+  "bytes": 1685546,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007620517",
+   "composers": [
+    "Rogers, Walter B., 1865-1939"
+   ],
+   "lyricists": [],
+   "note": "instrumental"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "9879",
@@ -3029,10 +4451,19 @@
    "Miro's Band"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1918,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/9879.mp3",
-  "bytes": 1704256
+  "bytes": 1704256,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007620516",
+   "composers": [
+    "Rogers, Walter B., 1865-1939"
+   ],
+   "lyricists": [],
+   "note": "instrumental"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16694",
@@ -3042,10 +4473,21 @@
    "Eckstein, Willie, 1888-1963"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1924,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16694.mp3",
-  "bytes": 2394093
+  "bytes": 2394093,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007654428",
+   "composers": [
+    "Herbert, Victor, 1859-1924"
+   ],
+   "lyricists": [
+    "De Sylva, B. G. (Buddy Gard), 1896-1950"
+   ],
+   "note": "instrumental (piano); lyricist per LAC note"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16424",
@@ -3055,10 +4497,19 @@
    "Eckstein, Willie, 1888-1963"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16424.mp3",
-  "bytes": 2483189
+  "bytes": 2483189,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007653249",
+   "composers": [
+    "Hanley, James F. (James Frederick), 1892-1942"
+   ],
+   "lyricists": [],
+   "note": "instrumental (piano)"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16653",
@@ -3068,10 +4519,15 @@
    "Eckstein, Willie, 1888-1963"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "trad",
   "year": null,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16653.mp3",
-  "bytes": 2113956
+  "bytes": 2113956,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007653873",
+   "note": "LAC record: Anonymous; no arranger credited"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "9946",
@@ -3082,10 +4538,21 @@
    "O'Hara, Geoffrey, 1882-1967"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1919,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/9946.mp3",
-  "bytes": 1639517
+  "bytes": 1639517,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007620570",
+   "composers": [
+    "Rice, Gitz, 1891-1947"
+   ],
+   "lyricists": [
+    "Rice, Gitz, 1891-1947"
+   ],
+   "note": "LAC credits Gitz Rice alone"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "9947",
@@ -3096,10 +4563,21 @@
    "O'Hara, Geoffrey, 1882-1967"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1919,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/9947.mp3",
-  "bytes": 1709471
+  "bytes": 1709471,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007620806",
+   "composers": [
+    "Rice, Gitz, 1891-1947"
+   ],
+   "lyricists": [
+    "Rice, Gitz, 1891-1947"
+   ],
+   "note": "LAC credits Gitz Rice alone"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "10270",
@@ -3110,10 +4588,19 @@
    "Strand Trio"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1919,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/10270.mp3",
-  "bytes": 1846770
+  "bytes": 1846770,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007623791",
+   "composers": [
+    "Rice, Gitz, 1891-1947"
+   ],
+   "lyricists": [],
+   "note": "instrumental (trio)"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16673",
@@ -3124,10 +4611,19 @@
    "Willie Eckstein Trio"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1924,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16673.mp3",
-  "bytes": 2522093
+  "bytes": 2522093,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007654340",
+   "composers": [
+    "Godin, Felix, c.1864-1925"
+   ],
+   "lyricists": [],
+   "note": "instrumental (trio)"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16614",
@@ -3138,10 +4634,19 @@
    "Willie Eckstein Trio"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1922,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16614.mp3",
-  "bytes": 2531236
+  "bytes": 2531236,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1007654002",
+   "composers": [
+    "Godin, Felix, c.1864-1925"
+   ],
+   "lyricists": [],
+   "note": "instrumental (trio)"
+  },
+  "status": "CLEAR"
  },
  {
   "id": "16983",
@@ -3151,9 +4656,18 @@
    "Gour, Émile, 1893-1970"
   ],
   "repertoire": "salon/concert (Canadian performer)",
-  "basis": null,
+  "basis": "named",
   "year": 1921,
   "url": "https://www.collectionscanada.gc.ca/obj/m2/f7/16983.mp3",
-  "bytes": 2810276
+  "bytes": 2810276,
+  "work": {
+   "source": "https://www.bac-lac.gc.ca/eng/discover/films-videos-sound-recordings/virtual-gramophone/Pages/Item.aspx?idNumber=1019304036",
+   "composers": [
+    "Lavallée-Smith, Alphonse, 1873-1912"
+   ],
+   "lyricists": [],
+   "unresolved": "LAC credits Lavallée-Smith with the music only; the lyricist is unnamed"
+  },
+  "status": "UNRESOLVED"
  }
 ]
