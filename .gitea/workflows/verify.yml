@@ -1,0 +1,136 @@
+# Gitea reads .gitea/workflows/ and, only when that directory is absent,
+# .github/workflows/. This repository has had .gitea/workflows/mirror-to-github.yml
+# since the 2026-09-07 import, so Gitea never read ../.github/workflows/verify.yml:
+# every one of its Actions runs to 2026-09-15 was the mirror job, and "CI green" on a
+# pull request here meant the mirror had pushed. This file is that workflow, kept in
+# step by hand (diff the two before editing either). GitHub ignores this directory
+# and runs the .github copy on the mirror, so neither host runs it twice.
+#
+name: verify
+
+# Channel Z0 had no CI at all, and it is the repository in the estate where
+# that costs the most: a bad push here does not fail a build, it goes to air.
+#
+# The sharp failure this guards is the one z0-validate-schedule.py was written
+# for. From ErsatzTV 25.4 the sequential schedule is validated against a schema
+# where every object is additionalProperties:false, and SequentialPlayoutBuilder
+# returns None on a failed validation -- the playout does not build AT ALL. The
+# symptom is not an error, it is silence: the items already built keep airing
+# until they run out, and only then does the channel drop to colour bars, hours
+# later, looking like something else entirely.
+#
+# NOT path-filtered. The schedules import _content.yml and _sequences.yml, so a
+# change to either can break a schedule that was not itself touched, and a
+# filter scoped to playout/ would miss a validator change under tools/.
+
+on:
+  push:
+    branches: [main]   # branches run once, as pull_request
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  schedules:
+    name: every schedule still builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+
+      # Pinned. An unpinned jsonschema bump changes which drafts are accepted,
+      # and this validator names Draft202012Validator explicitly -- a surprise
+      # there would read as a broken schedule rather than a broken dependency.
+      - name: Install the validator dependencies
+        run: python3 -m pip install --quiet "pyyaml==6.0.3" "jsonschema==4.26.0"
+
+      # Every variant, not just the one on air. The seasonal schedules are the
+      # ones nobody looks at until the morning they are deployed, which is the
+      # worst possible moment to discover they reference something that has
+      # been deleted from _sequences.yml.
+      - name: Validate every schedule variant
+        run: |
+          status=0
+          for s in playout/channel-z0*.yml; do
+            echo "── $s"
+            python3 tools/z0-validate-schedule.py "$s" || status=1
+          done
+          exit $status
+
+  # station.env must already be applied to the tree, and a fork's rebrand
+  # must round-trip byte-exact. Pure Python, no packages.
+  rebrand:
+    name: rebrand round trip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/rebrand.py --check
+      - run: python3 tools/test_rebrand.py
+
+  relay:
+    name: comment relay
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # No install step: this test imports nothing outside node: builtins.
+      - name: Comment relay
+        run: npm run test:relay
+
+  gramophone:
+    name: gramophone cards render
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+
+      # Pillow only. The ffmpeg-backed test skips itself where there is no
+      # ffmpeg, and the picture tests skip without the Liberation fonts.
+      - name: Install Pillow
+        run: python3 -m pip install --quiet "pillow==12.3.0"
+
+      - name: Gramophone tests
+        run: python3 tools/z0-gramo/test_gramo.py
+
+  titles:
+    name: titles and transition cards
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+
+      # Pinned for the same reason as the validator: a Pillow bump that
+      # changes text rasterisation would read as a broken card.
+      - name: Install Pillow
+        run: python3 -m pip install --quiet "pillow==12.3.0"
+
+      # The lockup's crosshair check and the transition manifest, sidecars
+      # and stings. The two TTF grammars' picture checks skip here (no
+      # monospace face on the runner) and run for real in build.sh.
+      - name: Lockup
+        run: python3 tools/z0-gz-open/test_logo.py
+      - name: Transition cards
+        run: python3 tools/z0-transitions/test_transitions.py
+
+# Not run here, and each for a reason rather than an oversight:
+#
+#   z0-lists.py --check   needs --db, a live ErsatzTV SQLite database on vile.
+#   z0-day-align.py       drives a running container and reads the tower clock.
+#   tools/test-*.mjs      the eight DOM tests need a full Chrome (Fullscreen
+#                         API, H.264) that neither runner image ships, and two
+#                         of them tune into the live tower. Installing Chrome
+#                         per run is ~170 MB on a runner with an ENOSPC
+#                         history, for a suite that would flap with the
+#                         signal. Run them locally: `npm ci && npm test`.
