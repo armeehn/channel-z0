@@ -14,6 +14,15 @@ feed each other over WebRTC): keep Owncast and enable the `P2P_*` block in
 [`peertube/`](peertube/), which owns the P2P and the player itself. Pick one;
 see [`peertube/README.md`](peertube/README.md) for the trade-offs.
 
+**Past a few dozen average viewers, take video off the tower entirely.** The
+free egress covers about 23 average concurrent viewers at 1.3 Mbps and the
+micro's NIC tops out near 350. Owncast can upload every segment once to an
+S3-compatible bucket (Cloudflare R2: no egress fee) and viewers pull from a
+CDN in front of it, so delivery cost stops depending on the audience.
+[`tools/z0-r2-offload.sh`](../tools/z0-r2-offload.sh) applies the Owncast side
+through the admin API; the bucket, cache rules and player cutover are in
+`docs/pdf/docs-scaling.pdf`.
+
 The storefront is **not** served from here anymore — it lives on Cloudflare
 Pages (`ch0.ripostelabs.xyz`), so the VPS carries only video and Caddy's only
 job is to terminate TLS for the tower and hand the cross-origin page the CORS

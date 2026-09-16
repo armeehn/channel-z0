@@ -90,6 +90,13 @@
       "class": "riposte-doc"
     },
     {
+      "id": "docs-scaling",
+      "source": "docs/scaling.tex",
+      "docno": "RL-Z0-SCALING",
+      "rev": "A",
+      "class": "riposte-doc"
+    },
+    {
       "id": "docs-self-hosting",
       "source": "docs/self-hosting.tex",
       "docno": "RL-Z0-SELF-HOSTING",
