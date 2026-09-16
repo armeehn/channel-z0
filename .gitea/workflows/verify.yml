@@ -6,6 +6,11 @@
 # step by hand (diff the two before editing either). GitHub ignores this directory
 # and runs the .github copy on the mirror, so neither host runs it twice.
 #
+# One deliberate difference: no actions/setup-python or setup-node steps. The
+# runner image (catthehacker/ubuntu:act-latest) ships python3 and node, and
+# parallel jobs cloning the same action into act_runner's shared cache race
+# (setup-python died with MODULE_NOT_FOUND twice on this PR's first runs).
+#
 name: verify
 
 # Channel Z0 had no CI at all, and it is the repository in the estate where
@@ -39,9 +44,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: 3.x
 
       # Pinned. An unpinned jsonschema bump changes which drafts are accepted,
       # and this validator names Draft202012Validator explicitly -- a surprise
@@ -77,9 +79,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
 
       # No install step: this test imports nothing outside node: builtins.
       - name: Comment relay
@@ -90,9 +89,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: 3.x
 
       # Pillow only. The ffmpeg-backed test skips itself where there is no
       # ffmpeg, and the picture tests skip without the Liberation fonts.
@@ -107,9 +103,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: 3.x
 
       # Pinned for the same reason as the validator: a Pillow bump that
       # changes text rasterisation would read as a broken card.
