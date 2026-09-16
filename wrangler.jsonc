@@ -34,6 +34,12 @@
   "vars": {
     "WATCH_HOST": "watch.ch0.ripostelabs.xyz",
 
+    // Receiver count (GET /api/viewers): distinct IPs pulling the variant
+    // playlist from the CDN host, read from this zone's analytics with the
+    // CF_ANALYTICS_TOKEN secret (Analytics Read only). See docs/scaling.tex.
+    "HLS_HOST": "hls.ch0.ripostelabs.xyz",
+    "ANALYTICS_ZONE_TAG": "73de698a1e8018347c045effac52031c",
+
     // anthropic | workers-ai | off   (see docs/comment-relay.md)
     "MODERATION_PROVIDER": "anthropic",
     "MODERATION_MODEL": "claude-haiku-4-5",

@@ -1290,6 +1290,8 @@ const CONFIG = {
   // cooldownSeconds}; POST { body, name, viewerId } to say something. Set to
   // null to take the comment box off the page without touching the Worker.
   CHAT_POST_ENDPOINT: "/api/comment",
+  // Receiver count from the Worker (CDN analytics); "" to rely on Owncast alone.
+  RECEIVERS_ENDPOINT: "/api/viewers",
   LAB_URL:      "https://ripostelabs.xyz",
   STATUS_POLL_SECONDS: 30,
   RETRY_SECONDS: 20,
@@ -1831,10 +1833,24 @@ async function pollStatus() {
     state.owncastOnline = !!j.online;
     setOnAir(state.owncastOnline);
     renderOffair();
-    if (typeof j.viewerCount === "number") els.viewerNote.textContent = "RECEIVERS: " + j.viewerCount;
+    pollReceivers(j.viewerCount);
     state.streamTitle = (state.owncastOnline && j.streamTitle) ? String(j.streamTitle) : "";
     updateNowShowing();
   } catch (e) { state.owncastOnline = null; els.viewerNote.textContent = "RECEIVERS: —"; state.streamTitle = ""; renderOffair(); }
+}
+
+/* Once segments come from the CDN the tower never sees a receiver, so the
+   Worker counts them from the CDN's analytics (GET /api/viewers). Owncast's own
+   number is the fallback for a station without the Worker. */
+async function pollReceivers(owncastCount) {
+  if (CONFIG.RECEIVERS_ENDPOINT) {
+    try {
+      const r = await fetch(CONFIG.RECEIVERS_ENDPOINT);
+      const j = await r.json();
+      if (r.ok && typeof j.receivers === "number") { els.viewerNote.textContent = "RECEIVERS: " + j.receivers; return; }
+    } catch (e) { /* fall through to Owncast */ }
+  }
+  if (typeof owncastCount === "number") els.viewerNote.textContent = "RECEIVERS: " + owncastCount;
 }
 
 /* ---------------- clock + program grid ---------------- */
