@@ -1,0 +1,7 @@
+[Unit]
+Description=Channel Z0 encoder autosense (Iris Xe > RX 580 > libx264)
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/z0-gpu-autosense

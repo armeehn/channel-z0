@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+# Channel Z0 — pick the best encoder that actually works right now.
+#
+# The RX 580 lives in a Thunderbolt eGPU. If it drops off the bus, ErsatzTV keeps
+# spawning ffmpeg against a dead /dev/dri/renderD129 and the channel goes black.
+# Every minute this probes the candidate nodes with a real 1 s h264_vaapi encode
+# inside the ErsatzTV image, and re-points FFmpegProfile at the first one that
+# passes, falling through to software (libx264). A change restarts z0-ersatztv.
+#
+#   preference:  renderD128 (Iris Xe)  >  renderD129 (RX 580)  >  libx264
+#
+# The Iris Xe ranks first since 2026-09-14: radeonsi's pad_vaapi never finishes
+# (the encoder thread spins at 100% and ignores SIGTERM), so every 4:3 item
+# on the RX 580 ran at ~0.5x and the tower dropped the stream. The probe pads
+# a 4:3 frame for that reason; a plain same-size scale_vaapi passed on it.
+#
+# Down-switches happen at once when the probe ERRORS (device gone, VAAPI init
+# failed). A probe TIMEOUT is ambiguous: a wedged VCE hangs, but so does
+# `docker run` on a host at load 300 (2026-09-15: two spurious restarts in
+# 3 min while CI and three emulators pinned x). So a timeout must repeat
+# DOWN_STREAK times before it counts. Up-switches wait for UP_STREAK
+# consecutive passes so a flapping cable does not restart the station every
+# minute.
+set -uo pipefail
+
+DB=/mnt/solid-state/ersatztv/ersatztv.sqlite3
+IMAGE=ghcr.io/ersatztv/legacy:v26.7.1
+CANDIDATES=(/dev/dri/renderD128 /dev/dri/renderD129)
+LOG=/mnt/main-data/channelz0/.z0-station/gpu-autosense.log
+STATE=/run/z0-gpu-autosense.streak
+DOWN_STATE=/run/z0-gpu-autosense.down
+UP_STREAK=2
+DOWN_STREAK=2
+PROBE_SECS=${PROBE_SECS:-25}   # overridable so a timeout can be rehearsed
+TIMEOUT_RC=124                 # what `timeout` returns when it had to kill
+HW_VAAPI=3; HW_NONE=0
+SOFTWARE=software
+
+log() { printf '%s %s\n' "$(date -u +%FT%TZ)" "$*" >> "$LOG"; }
+
+# A real encode, not vainfo: a wedged VCE still answers vainfo.
+# Named container: when `timeout` kills the docker client mid-creation the
+# container is left behind in Created state, so remove it before and after.
+probe() {
+  local name="z0-gpu-probe-${1##*/}" rc
+  docker rm -f "$name" >/dev/null 2>&1
+  timeout "$PROBE_SECS" docker run --rm --name "$name" --device "$1:$1" \
+    --entrypoint ffmpeg "$IMAGE" \
+    -hide_banner -v error -init_hw_device "vaapi=va:$1" -f lavfi \
+    -i testsrc=size=640x480:rate=30 -t 1 -vf format=nv12,hwupload,pad_vaapi=w=854:h=480:x=-1:y=-1 \
+    -c:v h264_vaapi -f null - >/dev/null 2>&1
+  rc=$?
+  docker rm -f "$name" >/dev/null 2>&1
+  return "$rc"
+}
+
+# Position in CANDIDATES; software ranks last.
+rank() {
+  local i
+  for i in "${!CANDIDATES[@]}"; do
+    [[ "${CANDIDATES[$i]}" == "$1" ]] && { echo "$i"; return; }
+  done
+  echo 99
+}
+
+current="$(sqlite3 "$DB" "select coalesce(VaapiDevice,'') from FFmpegProfile where HardwareAcceleration=${HW_VAAPI} limit 1;")"
+[[ -n "$current" ]] || current="$SOFTWARE"
+
+best="$SOFTWARE"
+current_rc=0
+for dev in "${CANDIDATES[@]}"; do
+  [[ -e "$dev" ]] || continue
+  probe "$dev"
+  rc=$?
+  if (( rc == 0 )); then best="$dev"; break; fi
+
+  [[ "$dev" == "$current" ]] && current_rc=$rc
+  log "probe ${dev} failed rc=${rc} (load $(cut -d' ' -f1 /proc/loadavg))"
+done
+
+if [[ "$best" == "$current" ]]; then
+  rm -f "$STATE" "$DOWN_STATE"
+  exit 0
+fi
+
+if (( $(rank "$best") < $(rank "$current") )); then
+  # Up-switch: hold until the better node has passed UP_STREAK times running.
+  streak=$(( $(cat "$STATE" 2>/dev/null || echo 0) + 1 ))
+  echo "$streak" > "$STATE"
+  if (( streak < UP_STREAK )); then
+    log "candidate ${best} passed ${streak}/${UP_STREAK}, holding on ${current}"
+    exit 0
+  fi
+elif (( current_rc == TIMEOUT_RC )); then
+  # Down-switch on a timeout only: could be a hung encoder, could be a busy
+  # host. Hold until it has timed out DOWN_STREAK times running.
+  down=$(( $(cat "$DOWN_STATE" 2>/dev/null || echo 0) + 1 ))
+  echo "$down" > "$DOWN_STATE"
+  if (( down < DOWN_STREAK )); then
+    log "probe ${current} timed out ${down}/${DOWN_STREAK}, holding on ${current}"
+    exit 0
+  fi
+fi
+rm -f "$STATE" "$DOWN_STATE"
+
+if [[ "$best" == "$SOFTWARE" ]]; then
+  sqlite3 "$DB" "UPDATE FFmpegProfile SET HardwareAcceleration=${HW_NONE}, VaapiDevice=NULL, Name=REPLACE(Name,'h264_vaapi','libx264');"
+else
+  sqlite3 "$DB" "UPDATE FFmpegProfile SET HardwareAcceleration=${HW_VAAPI}, VaapiDevice='${best}', Name=REPLACE(Name,'libx264','h264_vaapi');"
+fi
+
+log "encoder ${current} -> ${best}; restarting z0-ersatztv"
+docker restart z0-ersatztv >/dev/null 2>&1 || log "restart failed"

@@ -13,6 +13,7 @@ now-playing bridge tells the storefront what's on.
 | `graphics-elements/` | The on-air overlays — bug, weather card, up-next, crawl. Deploy to ErsatzTV’s `/config/templates/graphics-elements/` ([manual](../docs/pdf/docs-weather.pdf)) |
 | `z0-tools-sync.sh` | Populates the node's `.z0tools/tools/` and `.z0tools/lists/` copies (what root's cron runs, and the manifest `z0-lists.py` applies) from Gitea main; cron 04:30 and by hand after a merge. Watched by the sentinel check `z0-tools-in-sync` |
 | `z0-uplink.service` | Bare-metal alternative to the compose `uplink`: systemd ffmpeg `-c copy` relay |
+| `z0-gpu-autosense` + `.service`/`.timer` | Every minute, a real 1 s h264_vaapi encode on each `/dev/dri` node; re-points `FFmpegProfile` at the first that passes (Iris Xe > RX 580 > libx264) and restarts ErsatzTV on a change. A probe *timeout* must repeat twice before a down-switch (a loaded host stalls `docker run`); an error switches at once. Install: copy to `/usr/local/sbin/` and `/etc/systemd/system/`, `systemctl enable --now z0-gpu-autosense.timer`. Log `.z0-station/gpu-autosense.log` |
 
 ## Quick start (containerized)
 
