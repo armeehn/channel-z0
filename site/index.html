@@ -1256,11 +1256,12 @@
    (Full checklist: docs/pdf/docs-build-guide.pdf, Phase 4 → "When channelz0.tv goes live".)
    ====================================================================== */
 const WATCH_HOST = "watch.ch0.ripostelabs.xyz";   // the Owncast tower on the VPS
+const HLS_HOST   = WATCH_HOST;                    // where viewers pull HLS; becomes the R2 custom domain at the 100s tier (docs/scaling.tex)
 const AD_EMAIL   = "ch0@ripostelabs.xyz";          // where spot submissions land
 
 const CONFIG = {
   // Live HLS stream (Owncast serves this at /hls/stream.m3u8):
-  STREAM_URL:   `https://${WATCH_HOST}/hls/stream.m3u8`,
+  STREAM_URL:   `https://${HLS_HOST}/hls/stream.m3u8`,
   // Owncast base URL — enables the ON AIR chip, receiver count, AND the live
   // "NOW SHOWING" title (fed by playout/nowplaying.py) via /api/status.
   // Set WATCH_HOST to "" above to skip polling (chip then follows the player).

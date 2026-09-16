@@ -10,6 +10,14 @@
 #   sudo systemctl reload caddy
 
 watch.ch0.ripostelabs.xyz {
+    # Every viewer polls /api/status every 30 s and Owncast marks it no-store.
+    # Ten seconds of shared cache keeps the tower's load flat once this host
+    # sits behind Cloudflare (docs/scaling.tex, tier 2). The leading ">" makes
+    # Caddy replace the header AFTER the upstream response, otherwise
+    # Owncast's own value wins.
+    @status path /api/status
+    header @status >Cache-Control "public, s-maxage=10"
+
     reverse_proxy 127.0.0.1:8080 {
         # The page is served from another origin (Cloudflare), so the HLS player
         # and the /api/status polling need permissive CORS.
