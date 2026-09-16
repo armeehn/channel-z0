@@ -16,6 +16,14 @@
 /retro/index.html
   Cache-Control: public, max-age=0, must-revalidate
 
+/tv/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# The channel as a one-line playlist for IPTV apps and smart TVs.
+/ch0.m3u
+  Content-Type: audio/x-mpegurl
+  Cache-Control: public, max-age=3600
+
 # NOTE: no Content-Security-Policy is set here on purpose. Note that the chat
 # panel in SEC.01 talks to the tower over BOTH https (the message backlog) and
 # wss (everything said after that), and renders custom emoji served from it —

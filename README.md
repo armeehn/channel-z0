@@ -52,6 +52,7 @@ is ~20 seconds and that is fine, because this is television, not a phone call.
 | [`docs/comment-relay.md`](docs/comment-relay.md) | **The comment relay.** How a viewer's comment gets from the storefront into the chat room: shape, allowance, house rules, post |
 | [`site/index.html`](site/index.html) | The storefront — tabbed sections pinned to the window, live player (pause, volume, full screen), the tower's live chat in the rail, program grid, ad submissions (Riposte Labs design language) |
 | [`site/retro/index.html`](site/retro/index.html) | The original CRT-and-wood-cabinet version, preserved |
+| [`site/tv/index.html`](site/tv/index.html) · [`site/ch0.m3u`](site/ch0.m3u) | The channel as a television (`/tv`, for a smart TV browser) and as a one-line playlist for IPTV apps and Live TV tuners |
 | [`site/_headers`](site/_headers) · [`site/_redirects`](site/_redirects) | Cloudflare headers + short links (`/watch`, `/lab`) |
 | [`vps/`](vps/) | The tower: Owncast `docker-compose.yml` + `Caddyfile` (and [`vps/peertube/`](vps/peertube/) — a peer-to-peer alternative tower) |
 | [`playout/`](playout/) | Master control: `compose.yml` (containerized), ErsatzTV launcher, uplink supervisor, now-playing bridge |

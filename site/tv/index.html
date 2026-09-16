@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHANNEL Z0 — TV</title>
+<meta name="description" content="Channel Z0 for the big screen: the live stream, full frame, nothing else. Open it in a smart TV browser and leave it on.">
+<style>
+  /* ============================================================
+     CHANNEL Z0 · designation RL-Z0 · the TV page
+     One <video>, full frame, black surround. Built for a smart TV
+     browser driven by a remote: no hover, no scroll, one key does
+     everything. The storefront (/) is the living room; this is the
+     set in the corner.
+     ============================================================ */
+  :root {
+    --paper: #f2f0e9;
+    --ink: #141414;
+    --red: #c8102e;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  html, body { height: 100%; margin: 0; background: #000; color: var(--paper); font-family: var(--mono); overflow: hidden; }
+  video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+
+  /* The station chip: top centre, over the picture and clear of the
+     burned-in rails, for a few seconds after any key. */
+  #chip {
+    position: fixed; top: 4vh; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 1.2vw;
+    padding: 1vh 1.4vw; background: var(--paper); color: var(--ink);
+    font-size: 2.4vh; letter-spacing: .08em; text-transform: uppercase;
+    opacity: 0; transition: opacity .4s;
+  }
+  #chip.show { opacity: 1; }
+  #chip .lamp { width: 1.6vh; height: 1.6vh; border-radius: 50%; background: #777; }
+  #chip.on .lamp { background: var(--red); }
+  #chip b { font-weight: 700; }
+
+  /* The one instruction the viewer ever needs. */
+  #hint {
+    position: fixed; left: 0; right: 0; bottom: 6vh; text-align: center;
+    font-size: 2.6vh; letter-spacing: .1em; text-transform: uppercase; opacity: 0; transition: opacity .4s;
+  }
+  #hint.show { opacity: 1; }
+  #hint span { background: var(--ink); padding: 1vh 2vw; border: 1px solid var(--paper); }
+</style>
+</head>
+<body>
+<video id="tv" playsinline autoplay></video>
+<div id="chip"><span class="lamp"></span><b>CH 0</b><span id="title">CHANNEL Z0</span></div>
+<div id="hint"><span>PRESS OK</span></div>
+
+<script>
+/* Plain ES5 on purpose: the browser inside a 2017 television is not the one on
+   your laptop, and this page has to play on both. */
+var WATCH_HOST = "watch.ch0.ripostelabs.xyz";
+var STREAM_URL = "https://" + WATCH_HOST + "/hls/stream.m3u8";
+var STATUS_URL = "https://" + WATCH_HOST + "/api/status";
+var HLS_JS = [
+  "https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.6.16/hls.min.js",
+  "https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"
+];
+var RETRY_MS = 5000;        // when the stream errors, try again this often
+var STATUS_MS = 30000;      // how often to ask the tower what is on
+var CHIP_MS = 6000;         // how long the chip stays after a key press
+var NATIVE_GRACE_MS = 12000; // native HLS gets this long to show a frame
+
+var tv = document.getElementById("tv");
+var chip = document.getElementById("chip");
+var hint = document.getElementById("hint");
+var titleEl = document.getElementById("title");
+var hls = null;
+var chipTimer = null;
+var retryTimer = null;
+
+/* ---- the station chip ---- */
+function showChip() {
+  chip.classList.add("show");
+  clearTimeout(chipTimer);
+  chipTimer = setTimeout(function () { chip.classList.remove("show"); }, CHIP_MS);
+}
+
+function pollStatus() {
+  var x = new XMLHttpRequest();
+  x.open("GET", STATUS_URL + "?t=" + Date.now(), true);
+  x.onload = function () {
+    try {
+      var s = JSON.parse(x.responseText);
+      chip.classList.toggle("on", !!s.online);
+      /* The tower's title carries a "CH0 · " prefix; the chip already says CH 0. */
+      var title = String(s.streamTitle || "").replace(/^CH0\s*[·-]\s*/, "") || "CHANNEL Z0";
+      titleEl.textContent = s.online ? title : "OFF AIR";
+    } catch (e) { /* keep the last title */ }
+  };
+  x.send();
+}
+
+/* ---- playback ---- */
+function loadScript(url, ok, fail) {
+  var s = document.createElement("script");
+  s.src = url; s.onload = ok; s.onerror = fail;
+  document.head.appendChild(s);
+}
+
+function tryPlay() {
+  /* Autoplay with sound is refused on most sets until a key is pressed:
+     fall back to muted, ask for one press, and unmute on it. */
+  tv.muted = false;
+  var p = tv.play();
+  if (!p || !p.catch) { return; }
+  p.catch(function () {
+    tv.muted = true;
+    tv.play().catch(function () {});
+    hint.classList.add("show");
+  });
+}
+
+function retryIfStuck() {
+  /* A stall that already cleared itself is not a reason to re-tune. */
+  if (!tv.paused && tv.readyState >= 3) { return; }
+  tune();
+}
+
+function scheduleRetry() {
+  clearTimeout(retryTimer);
+  retryTimer = setTimeout(retryIfStuck, RETRY_MS);
+}
+
+function tuneWithHlsJs() {
+  if (!window.Hls || !window.Hls.isSupported()) { scheduleRetry(); return; }
+  if (hls) { hls.destroy(); }
+  hls = new window.Hls({ liveSyncDurationCount: 3, enableWorker: true });
+  hls.on(window.Hls.Events.MANIFEST_PARSED, tryPlay);
+  hls.on(window.Hls.Events.ERROR, function (_, data) {
+    if (!data.fatal) { return; }
+    if (data.type === window.Hls.ErrorTypes.MEDIA_ERROR) { hls.recoverMediaError(); return; }
+    scheduleRetry();
+  });
+  hls.loadSource(STREAM_URL + "?t=" + Date.now());
+  hls.attachMedia(tv);
+}
+
+function loadHlsJs(i) {
+  if (window.Hls) { tuneWithHlsJs(); return; }
+  if (i >= HLS_JS.length) { scheduleRetry(); return; }
+  loadScript(HLS_JS[i], tuneWithHlsJs, function () { loadHlsJs(i + 1); });
+}
+
+function tuneNative() {
+  /* Tizen, WebOS and Safari play HLS themselves. If no frame arrives in
+     time, hand over to hls.js rather than sit on a black screen. */
+  var handed = false;
+  var grace = setTimeout(function () {
+    if (tv.readyState >= 2) { return; }
+    handed = true;
+    loadHlsJs(0);
+  }, NATIVE_GRACE_MS);
+  tv.onerror = function () {
+    if (handed) { return; }
+    clearTimeout(grace); handed = true;
+    loadHlsJs(0);
+  };
+  tv.src = STREAM_URL + "?t=" + Date.now();
+  tryPlay();
+}
+
+function tune() {
+  clearTimeout(retryTimer);
+  if (hls) { hls.destroy(); hls = null; }
+  showChip();
+  if (tv.canPlayType("application/vnd.apple.mpegurl")) { tuneNative(); return; }
+  loadHlsJs(0);
+}
+
+/* ---- the remote ---- */
+function onKey() {
+  hint.classList.remove("show");
+  tv.muted = false;
+  if (tv.paused) { tv.play().catch(function () {}); }
+  showChip();
+}
+document.addEventListener("keydown", onKey);
+document.addEventListener("click", onKey);
+tv.addEventListener("ended", scheduleRetry);
+tv.addEventListener("stalled", scheduleRetry);
+tv.addEventListener("playing", function () { clearTimeout(retryTimer); });
+
+pollStatus();
+setInterval(pollStatus, STATUS_MS);
+tune();
+</script>
+</body>
+</html>
