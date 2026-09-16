@@ -54,7 +54,7 @@
 /* Plain ES5 on purpose: the browser inside a 2017 television is not the one on
    your laptop, and this page has to play on both. */
 var WATCH_HOST = "watch.ch0.ripostelabs.xyz";
-var HLS_HOST = WATCH_HOST; /* the R2 custom domain once video is offloaded (docs/scaling.tex) */
+var HLS_HOST = WATCH_HOST; /* master playlist host; Owncast rewrites it so segments come from R2 (docs/scaling.tex) */
 var STREAM_URL = "https://" + HLS_HOST + "/hls/stream.m3u8";
 var STATUS_URL = "https://" + WATCH_HOST + "/api/status";
 var HLS_JS = [
