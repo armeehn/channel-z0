@@ -73,6 +73,8 @@ jobs:
       - uses: actions/checkout@v4
       - run: python3 tools/rebrand.py --check
       - run: python3 tools/test_rebrand.py
+      # The drift monitor must name itself to the tower (Cloudflare 403s urllib's default).
+      - run: python3 tools/test_drift_reset.py
 
   relay:
     name: comment relay

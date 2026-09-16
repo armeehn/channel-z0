@@ -43,8 +43,14 @@ def now():
     return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%SZ")
 
 
+# Cloudflare in front of the tower answers urllib's default agent with 403
+# (since 2026-09-16 01:45Z); every other tower client here already names itself.
+USER_AGENT = "channel-z0/1.0 (z0-drift-reset)"
+
+
 def fetch(path, timeout=15):
-    with urllib.request.urlopen(TOWER + path, timeout=timeout) as r:
+    req = urllib.request.Request(TOWER + path, headers={"User-Agent": USER_AGENT})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read().decode("utf-8", "replace")
 
 
