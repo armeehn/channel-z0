@@ -1,0 +1,3 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="C0.0.ersatztv.org" tvg-name="Channel Z0" tvg-chno="0" group-title="Channel Z0",Channel Z0
+https://watch.ch0.ripostelabs.xyz/hls/stream.m3u8
