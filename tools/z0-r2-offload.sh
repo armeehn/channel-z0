@@ -6,7 +6,7 @@
 # Through Owncast's admin API it:
 #   1. sets the S3 storage block (endpoint, key pair, bucket, region, path-style)
 #   2. sets the video serving endpoint (the CDN hostname players pull from)
-#   3. raises the latency level one notch (object storage adds a few seconds)
+#   3. raises the latency level to 3 if it is lower (object storage adds seconds)
 #
 # Owncast only builds the new pipeline on a NEW RTMP session, so nothing
 # changes on air until the uplink reconnects. The script says so at the end.
@@ -26,8 +26,9 @@ set -euo pipefail
 
 WATCH_HOST="${Z0_WATCH_HOST:-watch.ch0.ripostelabs.xyz}"
 API="https://${WATCH_HOST}/api/admin"
-# Owncast latency levels run 0 (lowest latency) to 4 (most buffering).
-MAX_LATENCY_LEVEL=4
+# Owncast latency levels run 0 (lowest latency) to 4 (most buffering). Object
+# storage adds a few seconds, so settle one notch above the default of 2.
+TARGET_LATENCY_LEVEL=3
 # R2 has no regions; its S3 endpoint wants the literal "auto".
 R2_REGION=auto
 
@@ -89,7 +90,7 @@ fi
 
 # 1. Storage block. ACL stays empty: R2 has no object ACLs and public access
 #    comes from the custom domain, not from the object.
-S3_JSON=$(python3 -c '
+S3_JSON=$(R2_REGION="$R2_REGION" python3 -c '
 import json, os
 print(json.dumps({"value": {
   "enabled": True,
@@ -100,7 +101,7 @@ print(json.dumps({"value": {
   "region": os.environ["R2_REGION"],
   "acl": "",
   "forcePathStyle": True,
-}}))' R2_REGION="$R2_REGION")
+}}))')
 admin POST /config/s3 "$S3_JSON" >/dev/null
 echo "S3 storage set: ${Z0_R2_BUCKET} at ${Z0_R2_ENDPOINT}"
 
@@ -108,11 +109,11 @@ echo "S3 storage set: ${Z0_R2_BUCKET} at ${Z0_R2_ENDPOINT}"
 admin POST /config/videoservingendpoint "{\"value\":\"https://${Z0_HLS_HOST}\"}" >/dev/null
 echo "Serving endpoint set: https://${Z0_HLS_HOST}"
 
-# 3. One notch more buffering, capped at the top level.
+# 3. More buffering for the object-storage hop; never lower an operator's choice.
 LEVEL=$(current_level)
-if [ "$LEVEL" -lt "$MAX_LATENCY_LEVEL" ]; then
-  admin POST /config/video/streamlatencylevel "{\"value\":$((LEVEL + 1))}" >/dev/null
-  echo "Latency level ${LEVEL} -> $((LEVEL + 1))"
+if [ "$LEVEL" -lt "$TARGET_LATENCY_LEVEL" ]; then
+  admin POST /config/video/streamlatencylevel "{\"value\":${TARGET_LATENCY_LEVEL}}" >/dev/null
+  echo "Latency level ${LEVEL} -> ${TARGET_LATENCY_LEVEL}"
 else
   echo "Latency level already ${LEVEL}; not raised"
 fi
@@ -126,6 +127,6 @@ Next:
      (a config change alone leaves the old pipeline running).
   2. curl -sI https://${Z0_HLS_HOST}/hls/stream.m3u8 | grep -i "cf-cache-status\|access-control"
      Expect HIT (after the first fetch) and Access-Control-Allow-Origin: *.
-  3. Point HLS_HOST in site/index.html and site/tv/index.html, and the URL in
-     site/ch0.m3u, at ${Z0_HLS_HOST}.
+  3. Nothing to change in the storefront: the master playlist stays on
+     ${WATCH_HOST} and now points variants and segments at ${Z0_HLS_HOST}.
 EOF

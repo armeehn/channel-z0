@@ -1256,7 +1256,7 @@
    (Full checklist: docs/pdf/docs-build-guide.pdf, Phase 4 → "When channelz0.tv goes live".)
    ====================================================================== */
 const WATCH_HOST = "watch.ch0.ripostelabs.xyz";   // the Owncast tower on the VPS
-const HLS_HOST   = WATCH_HOST;                    // where viewers pull HLS; becomes the R2 custom domain at the 100s tier (docs/scaling.tex)
+const HLS_HOST   = WATCH_HOST;                    // master playlist host; Owncast rewrites it so segments come from R2 (docs/scaling.tex)
 const AD_EMAIL   = "ch0@ripostelabs.xyz";          // where spot submissions land
 
 const CONFIG = {
