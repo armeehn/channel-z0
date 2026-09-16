@@ -24,10 +24,16 @@
 import { screen, format, LIMITS } from "./screen.js";
 import { moderate } from "./moderate.js";
 import { viewerKey, DEFAULT_LIMITS } from "./gate.js";
+import { countReceivers, RECEIVER_WINDOW_S } from "./viewers.js";
 
 export { CommentGate } from "./gate.js";
 
 const RELAY_PATH = "/api/comment";
+const RECEIVERS_PATH = "/api/viewers";
+
+// How long the edge and browsers may reuse one receiver count. The analytics
+// query behind it then runs a couple of times a minute no matter the audience.
+const RECEIVERS_CACHE_S = 30;
 
 export default {
   async fetch(request, env, ctx) {
@@ -40,12 +46,38 @@ export default {
       return withCors(problem(405, "method_not_allowed", "POST a comment here."), request, env);
     }
 
+    if (url.pathname === RECEIVERS_PATH) {
+      if (request.method !== "GET") return withCors(problem(405, "method_not_allowed", "GET the receiver count here."), request, env);
+      return withCors(await receivers(request, env, ctx), request, env);
+    }
+
     // Everything else is the site. If the assets binding is missing (a
     // misconfigured wrangler.jsonc), say so instead of returning a blank 500.
     if (!env.ASSETS) return problem(500, "no_assets", "The static assets binding is not configured.");
     return env.ASSETS.fetch(request);
   },
 };
+
+/* ---- GET /api/viewers ----
+ * Owncast stops seeing receivers once segments come from the CDN, so the
+ * count comes from the CDN's analytics (worker/viewers.js). One answer is
+ * cached at the edge for RECEIVERS_CACHE_S; a 503 with receivers:null means
+ * "don't know", and the page falls back to whatever Owncast still reports. */
+async function receivers(request, env, ctx) {
+  const cache = globalThis.caches && globalThis.caches.default;
+  const key = new Request(new URL(RECEIVERS_PATH, request.url).toString(), { method: "GET" });
+  if (cache) {
+    const hit = await cache.match(key);
+    if (hit) return hit;
+  }
+
+  const n = await countReceivers(env);
+  const known = n !== null;
+  const res = json({ ok: known, receivers: n, window_s: RECEIVER_WINDOW_S }, known ? 200 : 503,
+                   { "Cache-Control": `public, max-age=${RECEIVERS_CACHE_S}` });
+  if (cache && known) ctx.waitUntil(cache.put(key, res.clone()));
+  return res;
+}
 
 /* ---- GET /api/comment ----
    The page asks what it is allowed to render. A relay that is deployed but
