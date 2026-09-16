@@ -17,6 +17,7 @@ name: verify
 
 on:
   push:
+    branches: [main]   # branches run once, as pull_request (riposte-labs #102)
   pull_request:
   workflow_dispatch:
 
