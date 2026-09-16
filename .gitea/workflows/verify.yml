@@ -49,7 +49,7 @@ jobs:
       # and this validator names Draft202012Validator explicitly -- a surprise
       # there would read as a broken schedule rather than a broken dependency.
       - name: Install the validator dependencies
-        run: python3 -m pip install --quiet "pyyaml==6.0.3" "jsonschema==4.26.0"
+        run: python3 -m pip install --quiet --break-system-packages "pyyaml==6.0.3" "jsonschema==4.26.0"
 
       # Every variant, not just the one on air. The seasonal schedules are the
       # ones nobody looks at until the morning they are deployed, which is the
@@ -93,7 +93,7 @@ jobs:
       # Pillow only. The ffmpeg-backed test skips itself where there is no
       # ffmpeg, and the picture tests skip without the Liberation fonts.
       - name: Install Pillow
-        run: python3 -m pip install --quiet "pillow==12.3.0"
+        run: python3 -m pip install --quiet --break-system-packages "pillow==12.3.0"
 
       - name: Gramophone tests
         run: python3 tools/z0-gramo/test_gramo.py
@@ -107,7 +107,7 @@ jobs:
       # Pinned for the same reason as the validator: a Pillow bump that
       # changes text rasterisation would read as a broken card.
       - name: Install Pillow
-        run: python3 -m pip install --quiet "pillow==12.3.0"
+        run: python3 -m pip install --quiet --break-system-packages "pillow==12.3.0"
 
       # The lockup's crosshair check and the transition manifest, sidecars
       # and stings. The two TTF grammars' picture checks skip here (no
