@@ -26,6 +26,10 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
+# The watch host sits behind a CDN whose bot check refuses the stock
+# "Python-urllib" agent (docs/scaling.tex, tier 2). Say who is calling.
+USER_AGENT = "channel-z0-nowplaying/1"
+
 XMLTV = os.environ.get("Z0_CHANNEL_XMLTV", "http://127.0.0.1:8409/iptv/xmltv.xml")
 CHANNEL_ID = os.environ.get("Z0_CHANNEL_ID", "").strip()
 WATCH = os.environ.get("Z0_WATCH_DOMAIN", "").strip()
@@ -87,6 +91,7 @@ def push_title(value):
         headers={
             "Authorization": f"Bearer {TOKEN}",
             "Content-Type": "application/json",
+            "User-Agent": USER_AGENT,
         },
     )
     with urllib.request.urlopen(req, timeout=15) as r:
