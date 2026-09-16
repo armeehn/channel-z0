@@ -85,6 +85,9 @@ UPLINK_CMD="${Z0_UPLINK_CMD:-}"
 # So ask the tower itself whether it is receiving, and restart the uplink
 # when it has said "no" for longer than a normal reconnect takes (~15s).
 TOWER_STATUS_URL="${Z0_TOWER_STATUS_URL:-https://${Z0_WATCH_DOMAIN:-}/api/status}"
+# RTMP cannot cross a CDN proxy, so once the watch host sits behind one the
+# push goes to a DNS-only name for the same box (docs/scaling.tex, tier 2).
+INGEST_DOMAIN="${Z0_INGEST_DOMAIN:-${Z0_WATCH_DOMAIN:-}}"
 OFFLINE_GRACE="${Z0_OFFLINE_GRACE:-45}"
 
 log() { printf '%s z0-leader[%s] %s\n' "$(date -u +%H:%M:%S)" "$NODE_ID" "$*" >&2; }
@@ -192,7 +195,7 @@ start_uplink() {
   else
     ffmpeg -hide_banner -loglevel warning \
       -i "$CHANNEL_URL" -c copy \
-      -f flv "rtmp://${Z0_WATCH_DOMAIN}:1935/live/${Z0_STREAM_KEY}" &
+      -f flv "rtmp://${INGEST_DOMAIN}:1935/live/${Z0_STREAM_KEY}" &
   fi
   UPLINK_PID=$!
   uplink_since=$(date +%s); offline_since=0
