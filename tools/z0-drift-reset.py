@@ -37,6 +37,7 @@ CONFIRM_WAIT = 30        # both samples must clear RESET_AT
 OFF_HOURS = range(3, 6)  # local (America/Vancouver) hours the restart may run
 SETTLE = 75              # seconds to let the fresh session produce segments
 UPLINK = "z0-uplink"
+MASTER = "/hls/stream.m3u8"   # master on the tower; its one variant is wherever it says
 
 
 def now():
@@ -49,9 +50,20 @@ USER_AGENT = "channel-z0/1.0 (z0-drift-reset)"
 
 
 def fetch(path, timeout=15):
-    req = urllib.request.Request(TOWER + path, headers={"User-Agent": USER_AGENT})
+    url = path if path.startswith("http") else TOWER + path
+    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read().decode("utf-8", "replace")
+
+
+def variant_url(master):
+    """First media playlist named by the master, absolute; relative -> tower."""
+    for line in master.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        return line if line.startswith("http") else TOWER + "/" + line.lstrip("/")
+    raise ValueError("master playlist names no variant")
 
 
 def measure():
@@ -64,8 +76,10 @@ def measure():
         return None, "tower reports offline — a reset is z0-leader's job, not ours"
 
     server = datetime.fromisoformat(status["serverTime"].replace("Z", "+00:00"))
+    # Follow the master to the variant: since the R2 offload (2026-09-15) the
+    # variant lives on the CDN host, and the old fixed tower path 404s.
     try:
-        playlist = fetch("/hls/0/stream.m3u8")
+        playlist = fetch(variant_url(fetch(MASTER)))
     except Exception as e:
         return None, f"playlist unreachable ({e})"
     pdts = [l.split(":", 1)[1] for l in playlist.splitlines()
