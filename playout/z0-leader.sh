@@ -27,6 +27,12 @@ host_name() {
 }
 NODE_ID="${Z0_NODE_ID:-$(host_name)}"
 CHANNEL_URL="${Z0_CHANNEL_URL:-http://127.0.0.1:8409/iptv/channel/1.ts}"
+# Health probes read the segmenter playlist, not the .ts. A .ts request makes
+# ErsatzTV spawn a wrapper ffmpeg for that one client and takes ~5 s to answer;
+# at a 5 s tick that was 2,841 "Starting ts stream" a day (2026-09-18), each
+# ending in Broken pipe. The playlist's newest segment decodes in ~0.1 s and
+# proves the same thing: ErsatzTV is emitting a decodable stream.
+HEALTH_URL="${Z0_HEALTH_URL:-${CHANNEL_URL%.ts}.m3u8?mode=segmenter}"
 
 NODE_ROLE="${Z0_NODE_ROLE:-playout}"
 
@@ -100,7 +106,7 @@ health_ok() {
   [[ -n "$UPLINK_CMD" ]] && return 0        # test mode: no ErsatzTV to probe
   timeout 12 ffprobe -v error -rw_timeout 8000000 \
     -select_streams v:0 -show_entries stream=codec_type \
-    -of csv=p=0 "$CHANNEL_URL" 2>/dev/null | grep -q video
+    -of csv=p=0 "$HEALTH_URL" 2>/dev/null | grep -q video
 }
 
 # Unreachable tower counts as online: a dead API is not evidence the stream
