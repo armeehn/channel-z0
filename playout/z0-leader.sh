@@ -96,6 +96,19 @@ TOWER_STATUS_URL="${Z0_TOWER_STATUS_URL:-https://${Z0_WATCH_DOMAIN:-}/api/status
 INGEST_DOMAIN="${Z0_INGEST_DOMAIN:-${Z0_WATCH_DOMAIN:-}}"
 OFFLINE_GRACE="${Z0_OFFLINE_GRACE:-45}"
 
+# ── Live hold ─────────────────────────────────────────────────────────────────
+# A live show reaches the tower through Smear (the FFglitch studio), which
+# pushes to the same stream key. Owncast takes one publisher, so while Smear
+# has a session aimed at our ingest this node must be off the air, and it must
+# come back the moment that session ends. Smear's own status is the signal:
+# starting a session IS the hand-off, and there is nothing to clear afterwards.
+#
+# Unreachable Smear counts as no hold — the schedule keeps airing. Being wrong
+# that way costs one refused RTMP connect on Smear's side; being wrong the
+# other way is dead air until somebody notices.
+LIVE_HOLD_URL="${Z0_LIVE_HOLD_URL:-}"
+LIVE_HOLD_MATCH="${Z0_LIVE_HOLD_MATCH:-${INGEST_DOMAIN}}"
+
 log() { printf '%s z0-leader[%s] %s\n' "$(date -u +%H:%M:%S)" "$NODE_ID" "$*" >&2; }
 
 # ── Health ────────────────────────────────────────────────────────────────────
@@ -116,6 +129,18 @@ tower_online() {
   local body
   body=$(curl -fsS -m 8 "$TOWER_STATUS_URL" 2>/dev/null) || return 0
   grep -q '"online": *true' <<<"$body"
+}
+
+# A session that is up (waiting for OBS, or running) and whose push_url names
+# our ingest. Any other session on the studio -- an HLS-only experiment, a push
+# somewhere else -- is not our business.
+live_hold() {
+  [[ -z "$LIVE_HOLD_URL" ]] && return 1
+  local body
+  body=$(curl -fsS -m 5 "$LIVE_HOLD_URL" 2>/dev/null) || return 1
+  grep -qE '"state": *"(waiting|running)"' <<<"$body" || return 1
+  [[ -z "$LIVE_HOLD_MATCH" ]] && return 0
+  grep -q "\"push_url\": *\"[^\"]*${LIVE_HOLD_MATCH}" <<<"$body"
 }
 
 # ── The lease ─────────────────────────────────────────────────────────────────
@@ -272,11 +297,13 @@ on_term() { shutting_down=1; log "shutting down"; stop_uplink "shutdown"; releas
 trap on_term TERM INT
 
 log "watching (cluster=${CLUSTER_DIR} renew=${RENEW}s fence=${FENCE}s ttl=${TTL}s health=${HEALTH_EVERY}s)"
+[[ -n "$LIVE_HOLD_URL" ]] && log "live hold: yielding to ${LIVE_HOLD_URL} while it pushes to '${LIVE_HOLD_MATCH:-anywhere}'"
 
 leader=0
 last_renew=$(date +%s)
 unhealthy_since=0
 last_probe=0
+held=0
 
 while (( ! shutting_down )); do
   now=$(date +%s)
@@ -290,6 +317,20 @@ while (( ! shutting_down )); do
       stop_uplink "cannot renew lease (fencing)"
       leader=0
       log "demoted — lost the lease"
+    fi
+
+    if (( leader )) && live_hold; then
+      # Keep renewing the lease (done above) so no standby takes it and starts
+      # publishing into a tower that is busy; just get, and stay, off the air.
+      if (( ! held )); then
+        held=1; log "live show incoming (${LIVE_HOLD_URL}) — standing by off air"
+      fi
+      [[ -n "$UPLINK_PID" ]] && stop_uplink "live show hold"
+      register "hold"
+      sleep "$RENEW"
+      continue
+    elif (( held )); then
+      held=0; (( leader )) && log "live show over — resuming the schedule"
     fi
 
     if (( leader )); then
@@ -335,8 +376,9 @@ while (( ! shutting_down )); do
       fi
     fi
   else
-    # Only healthy nodes stand for election.
-    if health_ok && try_acquire; then
+    # Only healthy nodes stand for election, and nobody does during a live hold:
+    # winning it would only mean publishing into a busy tower.
+    if ! live_hold && health_ok && try_acquire; then
       leader=1; last_renew=$(date +%s); unhealthy_since=0; last_probe="$last_renew"
       start_uplink
     fi

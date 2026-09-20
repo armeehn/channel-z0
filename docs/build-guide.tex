@@ -422,6 +422,20 @@ sudo systemctl start z0-uplink    # network feed returns
 
 Viewers see a few seconds of "transmission interrupted" at each swap — which, for a channel run by an alien in a human suit, is arguably canon.
 
+\textbf{Pattern A, automated — the live hold.} The swap dance goes away once the live show comes in through Smear, the FFglitch studio, pushing to the same key. Set \ripmono{Z0\_LIVE\_HOLD\_URL} in \ripmono{.env} to Smear's \ripmono{/api/live/status} and the uplink supervisor polls it every lease tick: the moment Smear has a session whose push names \ripmono{Z0\_INGEST\_DOMAIN}, the node on air stops its uplink — and keeps the lease, so no standby wanders onto the busy tower — then restarts the schedule when the session ends. From the laptop that is the whole procedure:
+
+\ripcodeopen
+\ripcodehead{bash}
+\ripcodesize{9.0}{13.95}
+\begin{ripcodeblock}
+smear go --z0        # opens the session; the uplink yields within a tick
+# ...show happens...
+smear down           # session ends; the schedule is back on air
+\end{ripcodeblock}
+\ripcodesizereset\ripcodeclose
+
+A session pushing anywhere else is ignored, and an unreachable studio counts as no hold — the schedule keeps airing rather than going dark on a hunch. \ripmono{z0-leader.sh --status} shows the node as \ripmono{hold} for the duration.
+
 \textbf{Pattern B — OBS as master control (the upgrade).} OBS runs 24/7 on the playout PC and \riphi{it} owns the uplink; the ErsatzTV feed becomes just another input:
 
 \begin{ripbullets}

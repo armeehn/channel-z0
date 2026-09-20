@@ -31,7 +31,22 @@ PUBDIR="${CLUSTER}/publishing"
 LOG="${CLUSTER}/test.log"
 
 PIDS_DIR="${CLUSTER}/pids"; mkdir -p "$PIDS_DIR"
+
+# A stand-in for Smear's /api/live/status: one static JSON file the test
+# rewrites, served over plain HTTP, so the live hold is exercised through the
+# same curl the leader uses in production.
+STUDIO_DIR="${CLUSTER}/studio"; mkdir -p "$STUDIO_DIR"
+studio_says() { printf '%s\n' "$1" > "${STUDIO_DIR}/status"; }
+studio_says '{"state": "idle"}'
+STUDIO_PORT=$(python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1",0)); print(s.getsockname()[1])')
+( python3 -m http.server "$STUDIO_PORT" --bind 127.0.0.1 --directory "$STUDIO_DIR" \
+    >/dev/null 2>&1 & echo $! > "${CLUSTER}/studio.pid" )
+STUDIO_PID=$(cat "${CLUSTER}/studio.pid")
+export Z0_LIVE_HOLD_URL="http://127.0.0.1:${STUDIO_PORT}/status"
+export Z0_LIVE_HOLD_MATCH="ingest.test"
+
 cleanup() {
+  [[ -n "${STUDIO_PID:-}" ]] && kill -KILL "$STUDIO_PID" 2>/dev/null
   for f in "$PIDS_DIR"/*; do
     [[ -f "$f" ]] || continue
     kill -KILL -- "-$(cat "$f")" 2>/dev/null
@@ -147,7 +162,50 @@ else
   bad "no node took over after graceful stop"
 fi
 
-# ── 4 · The invariant ─────────────────────────────────────────────────────────
+# ── 4 · Live hold ─────────────────────────────────────────────────────────────
+# A live show comes in through the studio on the same stream key. The moment
+# the studio has a session aimed at our ingest, whoever is on air must get off
+# it -- and keep the lease, so nobody else gets on -- then resume when it ends.
+echo ""
+echo "  studio opens a session pushing to our ingest"
+studio_says '{"state": "waiting", "config": {"output": {"push_url": "rtmp://ingest.test:1935/live/k"}}}'
+took=0
+for _ in $(seq 1 $(( GRACE * 10 ))); do
+  [[ "$(publishers)" == "0" ]] && break
+  sleep 0.1; took=$(( took + 1 ))
+done
+yielded=$(awk -v t="$took" 'BEGIN{printf "%.1f", t/10}')
+[[ "$(publishers)" == "0" ]] && ok "uplink stood down for the live show in ~${yielded}s" \
+                            || bad "uplink still publishing $(publishers) during the live hold"
+sleep $(( Z0_LEASE_RENEW * 3 ))
+[[ "$(publishers)" == "0" ]] && ok "stayed off air while the session ran (nobody stole the lease)" \
+                            || bad "a node came on air during the live hold"
+grep -q '|hold|' "${CLUSTER}/nodes/${third}" 2>/dev/null \
+  && ok "${third} reports 'hold' to --status" \
+  || bad "${third} did not register the hold state"
+
+echo "  studio session ends"
+studio_says '{"state": "idle"}'
+took=0
+for _ in $(seq 1 $(( GRACE * 10 ))); do
+  [[ "$(publishers)" == "1" ]] && break
+  sleep 0.1; took=$(( took + 1 ))
+done
+resumed=$(awk -v t="$took" 'BEGIN{printf "%.1f", t/10}')
+fourth="$(publisher_id)"
+[[ "$(publishers)" == "1" ]] && ok "schedule resumed in ~${resumed}s (${fourth})" \
+                            || bad "nobody resumed after the live show"
+[[ "$fourth" == "$third" ]] && ok "the same node resumed — the lease was kept through the hold" \
+                            || bad "a different node (${fourth}) took over; the lease was lost during the hold"
+
+echo "  studio session pushing somewhere else is ignored"
+studio_says '{"state": "running", "config": {"output": {"push_url": "rtmp://elsewhere.test/live/k"}}}'
+sleep $(( Z0_LEASE_RENEW * 3 ))
+[[ "$(publishers)" == "1" ]] && ok "a push to another destination does not hold the channel" \
+                            || bad "the channel yielded to a session that was not aimed at it"
+studio_says '{"state": "idle"}'
+
+# ── 5 · The invariant ─────────────────────────────────────────────────────────
 echo ""
 maxseen=$(cat "$MAXSEEN")
 [[ "$maxseen" -le 1 ]] && ok "SAFETY: never more than one publisher (max observed: ${maxseen})" \
