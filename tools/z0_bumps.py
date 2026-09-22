@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Channel Z0 — generative station bumps.
 
-A bump is 8–15 seconds of computed picture with a Z0 tagline on the end: the
+A bump is 8–15 seconds of computed picture with the Z0 mark on the end: the
 thing that plays between two cartoons so the join reads as an advert break
 and not a playlist. Everything here is drawn from a formula — no footage, no
 stock, no AI — so the pool can be topped up forever without clearing rights.
@@ -54,7 +54,11 @@ W, H = 854, 480
 FPS = 30
 DEFAULT_SECS = 12
 MIN_SECS, MAX_SECS = 6, 30
-CARD_SECS = 3.2          # the tagline card at the end
+CARD_SECS = 3.2          # the end card
+CARD_MARK = "mark"       # end card = the wordmark alone (the station default)
+CARD_TAGLINE = "tagline" # end card = one line from TAGLINES
+CARD_COPIES = (CARD_MARK, CARD_TAGLINE)
+MARK_SIZE = 72           # the wordmark on a mark card
 CAPTION_AT = 1.2         # when the genre fact fades in
 CAPTION_FADE = 0.5
 CARD_FADE = 0.3          # video fade-out at the very end
@@ -1756,36 +1760,47 @@ def draw_wordmark(d, fonts, x_right, y, size=26):
 
 
 def card_frame(tagline, fonts, style, art=None, dim=0.55):
-    """The tagline card. `card`: a hard cut to an ink field with the line
-    centred (the Adult Swim grammar, in the station's own type). `band`: the
-    art keeps running, dimmed, under a centred ink band."""
+    """The end card. `card`: a hard cut to an ink field (the Adult Swim
+    grammar, in the station's own type). `band`: the art keeps running,
+    dimmed, under a centred ink band. `tagline=None` is the station default:
+    the wordmark carries the card, no copy at all."""
     if style == "band" and art is not None:
         base = (art.astype(np.float32) * dim).astype(np.uint8)
         img = Image.fromarray(base)
     else:
         img = Image.new("RGB", (W, H), INK)
     d = ImageDraw.Draw(img)
-    size = 40
-    font = fonts.at(size)
-    lines = wrap_text(d, tagline, font, W - 260)
-    while len(lines) > 2 and size > 26:
-        size -= 2
+    if tagline is None:
+        size, font, lines = MARK_SIZE, fonts.at(MARK_SIZE), []
+    else:
+        size = 40
         font = fonts.at(size)
         lines = wrap_text(d, tagline, font, W - 260)
+        while len(lines) > 2 and size > 26:
+            size -= 2
+            font = fonts.at(size)
+            lines = wrap_text(d, tagline, font, W - 260)
     lh = size + 12
-    block_h = lh * len(lines)
+    block_h = lh * max(len(lines), 1)
     y0 = (H - block_h) // 2
     if style == "band":
         d.rectangle((0, y0 - 28, W, y0 + block_h + 20), fill=INK)
     # Two bone rules echo the ident's checker rule.
     d.rectangle((150, y0 - 44, W - 150, y0 - 41), fill=BONE)
     d.rectangle((150, y0 + block_h + 36, W - 150, y0 + block_h + 39), fill=BONE)
-    for k, line in enumerate(lines):
-        tw = d.textlength(line, font=font)
-        d.text(((W - tw) / 2, y0 + k * lh), line, font=font, fill=BONE)
-    draw_wordmark(d, fonts, W - 132, H - 58)
+    if tagline is None:
+        # Mark card: the wordmark sits centred between the rules, alone.
+        mark_w = d.textlength("CHANNEL ", font=font) + d.textlength("Z0", font=font)
+        draw_wordmark(d, fonts, (W + mark_w) / 2, y0, size=MARK_SIZE)
+    else:
+        for k, line in enumerate(lines):
+            tw = d.textlength(line, font=font)
+            d.text(((W - tw) / 2, y0 + k * lh), line, font=font, fill=BONE)
+        draw_wordmark(d, fonts, W - 132, H - 58)
+
     small = fonts.at(16)
-    d.text((132, H - 54), "CH 0 · A LOCAL CHANNEL, FOR LOCALS", font=small, fill=INK_LINE)
+    slug = "CH 0" if tagline is None else "CH 0 · A LOCAL CHANNEL, FOR LOCALS"
+    d.text((132, H - 54), slug, font=small, fill=INK_LINE)
     return np.asarray(img)
 
 
@@ -1893,7 +1908,8 @@ def make_genre(name, rng, art_secs, font_path=None, palette=None):
 
 
 def render_clip(spec):
-    """spec: dict(genre, family, seed, secs, out_dir, font, treatment?, tagline?)
+    """spec: dict(genre, family, seed, secs, out_dir, font, treatment?, copy?,
+    tagline?)
     Renders one .mp4 + .nfo, returns a manifest row."""
     genre_name = spec["genre"]
     family = spec["family"]
@@ -1912,7 +1928,9 @@ def render_clip(spec):
         t_name = spec.get("treatment") or str(rng.choice(list(TREATMENTS)))
         treatment = TREATMENTS[t_name](rng)
         env = burst_envelope(rng, n_art, treatment.BURSTY)
-    tagline = spec.get("tagline") or str(rng.choice(TAGLINES))
+    tagline = spec.get("tagline")
+    if tagline is None and spec.get("copy", CARD_MARK) == CARD_TAGLINE:
+        tagline = str(rng.choice(TAGLINES))
     style = spec.get("style") or ("card" if rng.random() < 0.6 else "band")
 
     clip_id = f"z0-bump-{family}-{genre_name}-{seed:05d}"
@@ -1961,7 +1979,7 @@ def render_clip(spec):
     tags = ["media", "bumps", "station-furniture", f"bump-{family}", genre_name]
     if treatment is not None:
         tags.append(f"treatment-{treatment.NAME}")
-    outline = f"{tagline} — {fact}"
+    outline = f"{tagline} — {fact}" if tagline else fact
     with open(nfo, "w", encoding="utf-8") as fh:
         fh.write(nfo_xml(clip_id, outline, tags))
     with open(mp4, "rb") as fh:
@@ -2016,6 +2034,7 @@ def cmd_render(args):
             "genre": genre, "family": family, "seed": seed, "secs": secs,
             "out_dir": os.path.join(args.out, family), "font": font,
             "treatment": args.treatment, "tagline": args.tagline, "style": args.style,
+            "copy": args.copy,
         })
     jobs = args.jobs or max(1, min(len(specs), os.cpu_count() or 1))
     manifest = os.path.join(args.out, "manifest.jsonl")
@@ -2028,7 +2047,8 @@ def cmd_render(args):
                 mf.write(json.dumps(row) + "\n")
                 mf.flush()
                 kbps = row["bytes"] * 8 / row["secs"] / 1000
-                print(f"ok   {row['id']}  {kbps:5.0f} kbps  {row['style']:4s}  “{row['tagline']}”")
+                copy = f"“{row['tagline']}”" if row["tagline"] else "mark"
+                print(f"ok   {row['id']}  {kbps:5.0f} kbps  {row['style']:4s}  {copy}")
             else:
                 err += 1
                 print(f"FAIL {row['id']}  {row['error']}", file=sys.stderr)
@@ -2075,6 +2095,7 @@ def main(argv=None):
     r.add_argument("--jobs", type=int)
     r.add_argument("--font")
     r.add_argument("--tagline")
+    r.add_argument("--copy", choices=CARD_COPIES, default=CARD_MARK)
     r.add_argument("--style", choices=["card", "band"])
     r.set_defaults(fn=cmd_render)
 

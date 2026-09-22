@@ -25,7 +25,7 @@ two promo collections rather than one of each.
 ## Files
 
 ```
-tools/z0_bumps.py        engine + CLI: 26 genres, 8 treatments, taglines, audio
+tools/z0_bumps.py        engine + CLI: 26 genres, 8 treatments, cards, audio
 tools/z0-promos.py       merch + projects spots; imports z0_bumps
 tools/z0-promos-extra.yml      public projects api.hq does not list yet
 lists/z0-lists.yml       Z0 Bumps {Math,Glitch,L-System}, Z0 Promos {Merch,Projects}
@@ -60,9 +60,14 @@ Media on the node:
   different thing and stay as they are.
 
 Every clip carries a one-line caption under the picture (what the formula
-is) and a tagline card at the end in the ident's grammar: ink field, bone
-mono, `CHANNEL Z0` with the red Z0. `card` cuts hard to the field; `band`
-keeps the art running under it. Taglines live in `TAGLINES` in the engine.
+is) and an end card in the ident's grammar: ink field, bone mono,
+`CHANNEL Z0` with the red Z0. `card` cuts hard to the field; `band` keeps
+the art running under it.
+
+The card carries **no copy**. The wordmark is the whole card, standing rule
+since 2026-09-22. `--copy tagline` brings back a line from `TAGLINES` for a
+one-off batch, and `--tagline "..."` sets one by hand; neither is what the
+timer renders.
 
 ## Rendering
 
