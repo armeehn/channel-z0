@@ -64,10 +64,13 @@ is) and an end card in the ident's grammar: ink field, bone mono,
 `CHANNEL Z0` with the red Z0. `card` cuts hard to the field; `band` keeps
 the art running under it.
 
-The card carries **no copy**. The wordmark is the whole card, standing rule
-since 2026-09-22. `--copy tagline` brings back a line from `TAGLINES` for a
-one-off batch, and `--tagline "..."` sets one by hand; neither is what the
-timer renders.
+New clips carry **no copy** on the card. The wordmark is the whole card,
+standing rule since 2026-09-22. `--copy tagline` brings back a line from
+`TAGLINES` for a one-off batch, and `--tagline "..."` sets one by hand;
+neither is what the timer renders.
+
+The 126 tagline clips rendered before that rule stay in the pool and keep
+playing. The pool is only ever added to: nothing retires a clip that works.
 
 ## Rendering
 
