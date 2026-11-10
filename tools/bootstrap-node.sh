@@ -326,6 +326,8 @@ Z0_CHANNEL_NUMBER=${CHANNEL:-0}
 Z0_CHANNEL_URL=http://127.0.0.1:8409/iptv/channel/${CHANNEL:-0}.ts
 Z0_CHANNEL_XMLTV=http://127.0.0.1:8409/iptv/xmltv.xml
 Z0_MEDIA_ROOT=${MEDIA}
+# The station clock. The schedule's times and the guide are local to it.
+TZ=America/Vancouver
 
 # --- Cluster ---------------------------------------------------------------
 # Node identity must be unique across the station. The cluster dir must be on

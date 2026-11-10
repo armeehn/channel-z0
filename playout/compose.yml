@@ -25,6 +25,13 @@ services:
     volumes:
       - ./ersatztv-config:/config
       - ${Z0_MEDIA_ROOT:-/media/channelz0}:/media:ro
+    # The station clock. Every time in the schedule file (`pad_until: '20:00'`)
+    # is local to this zone, and the guide is published in it. Name the
+    # station's own zone, never a neighbour that happens to agree today: BC
+    # stopped changing clocks in 2026, US Pacific time did not, and the
+    # channel aired an hour late from 2026-11-01 until this line existed.
+    environment:
+      TZ: ${TZ:-America/Vancouver}
     # No hardware block here on purpose.
     #
     # A device passthrough cannot be selected by variable, so hardcoding
