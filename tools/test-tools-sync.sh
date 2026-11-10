@@ -4,10 +4,12 @@
 # The forge went private with the Forgejo move on 2026-10-28. The node holds
 # no credential, so every nightly z0-tools-sync since has died on
 # "could not read Username" and the copy the station crons run from froze.
+# The node now holds a read-only deploy key and reads the forge over SSH.
 # Nothing diverged for two weeks only because nothing merged.
 #
 # Two assertions:
-#   SOURCE   the default source answers an anonymous reader (the public mirror)
+#   SOURCE   the default source is the forge over SSH (a deploy key can read
+#            it), not the HTTPS URL that asks for a username
 #   REPOINT  a clone made from an old source follows Z0_REPO_URL, not its
 #            remembered origin
 #
@@ -28,15 +30,16 @@ fail() { echo "  FAIL: $*"; fails=$((fails + 1)); }
 # ── SOURCE ───────────────────────────────────────────────────────────────────
 default_url="$(sed -n 's/^REPO_URL="\${Z0_REPO_URL:-\(.*\)}"$/\1/p' "$SYNC")"
 case "$default_url" in
-  *gitea.hq.*) fail "default source is the private forge ($default_url)" ;;
-  "")          fail "no default REPO_URL found in z0-tools-sync.sh" ;;
+  ssh://*)  ;;
+  "")       fail "no default REPO_URL found in z0-tools-sync.sh" ;;
+  *)        fail "default source is not SSH, so a deploy key cannot read it ($default_url)" ;;
 esac
 
 # ── REPOINT ──────────────────────────────────────────────────────────────────
 # The sync itself needs rsync, which the forge's runner image does not carry.
 if ! command -v rsync >/dev/null 2>&1; then
   [ "$fails" -eq 0 ] || { echo "test-tools-sync: $fails failure(s)"; exit 1; }
-  echo "ok: default source is public (no rsync on PATH — REPOINT skipped)"
+  echo "ok: default source is SSH (no rsync on PATH — REPOINT skipped)"
   exit 0
 fi
 
@@ -69,4 +72,4 @@ if [ "$fails" -gt 0 ]; then
   echo "test-tools-sync: $fails failure(s)"
   exit 1
 fi
-echo "ok: tools sync reads a public source and re-points an old clone"
+echo "ok: tools sync reads the forge over SSH and re-points an old clone"

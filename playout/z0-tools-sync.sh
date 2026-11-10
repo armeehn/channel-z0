@@ -1,7 +1,7 @@
 #!/bin/bash
 # Channel Z0 — make the node's tool copy derive from main, mechanically.
 #
-#   main (mirror) ─git fetch─▶ /opt/channel-z0/src ──rsync──▶ .z0tools/tools/
+#   forge main ──git fetch──▶ /opt/channel-z0/src ──rsync──▶ .z0tools/tools/
 #                                                    └─rsync──▶ .z0tools/lists/
 #                                                              ▲
 #                                        root's cron runs from ┘
@@ -16,14 +16,14 @@
 # manifest run from the copy deletes collections main still has (2026-09-15).
 # Idempotent. Watched by the sentinel check `z0-tools-in-sync`.
 #
-# The source is the public GitHub mirror, not the forge. The forge has needed
-# a login since the Forgejo move (2026-10-28) and the node holds no
-# credential, so every run from then until 2026-11-10 died on "could not read
-# Username". The mirror is pushed from the forge on every merge to main; run
-# this by hand only once that push has gone through.
+# The source is the forge over SSH, read with a read-only deploy key that
+# lives on the node (/root/.ssh/z0-tools-sync, see playout/README.md). The
+# forge has needed a login since the Forgejo move (2026-10-28); the old
+# anonymous HTTPS URL died on "could not read Username" every night from
+# then until 2026-11-10. The forge is truth, so a merge is readable at once.
 set -euo pipefail
 
-REPO_URL="${Z0_REPO_URL:-https://github.com/armeehn/channel-z0.git}"
+REPO_URL="${Z0_REPO_URL:-ssh://git@vile-ssh.hq.ripostelabs.xyz:30009/sasha/channel-z0.git}"
 CLONE="${Z0_REPO_CLONE:-/opt/channel-z0/src}"
 TOOLS_DIR="${Z0_TOOLS_DIR:-/mnt/main-data/channelz0/.z0tools/tools}"
 LISTS_DIR="${Z0_LISTS_DIR:-/mnt/main-data/channelz0/.z0tools/lists}"
