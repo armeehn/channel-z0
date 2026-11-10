@@ -1,7 +1,7 @@
 #!/bin/bash
 # Channel Z0 — make the node's tool copy derive from main, mechanically.
 #
-#   Gitea main ──git fetch──▶ /opt/channel-z0/src ──rsync──▶ .z0tools/tools/
+#   main (mirror) ─git fetch─▶ /opt/channel-z0/src ──rsync──▶ .z0tools/tools/
 #                                                    └─rsync──▶ .z0tools/lists/
 #                                                              ▲
 #                                        root's cron runs from ┘
@@ -15,14 +15,20 @@
 # lists/ rides along: z0-lists.py --check WRITES the ErsatzTV DB, so a stale
 # manifest run from the copy deletes collections main still has (2026-09-15).
 # Idempotent. Watched by the sentinel check `z0-tools-in-sync`.
+#
+# The source is the public GitHub mirror, not the forge. The forge has needed
+# a login since the Forgejo move (2026-10-28) and the node holds no
+# credential, so every run from then until 2026-11-10 died on "could not read
+# Username". The mirror is pushed from the forge on every merge to main; run
+# this by hand only once that push has gone through.
 set -euo pipefail
 
-REPO_URL="${Z0_REPO_URL:-https://gitea.hq.ripostelabs.xyz/sasha/channel-z0.git}"
+REPO_URL="${Z0_REPO_URL:-https://github.com/armeehn/channel-z0.git}"
 CLONE="${Z0_REPO_CLONE:-/opt/channel-z0/src}"
 TOOLS_DIR="${Z0_TOOLS_DIR:-/mnt/main-data/channelz0/.z0tools/tools}"
 LISTS_DIR="${Z0_LISTS_DIR:-/mnt/main-data/channelz0/.z0tools/lists}"
 PLAYOUT_DIR="${Z0_PLAYOUT_DIR:-/mnt/main-data/channelz0/.z0tools/playout}"
-SELF=/usr/local/sbin/z0-tools-sync
+SELF="${Z0_SYNC_SELF:-/usr/local/sbin/z0-tools-sync}"
 
 # Generated on the node, never in git: survive the --delete.
 KEEP=(__pycache__ inventory.json)
@@ -30,6 +36,9 @@ KEEP=(__pycache__ inventory.json)
 if [ ! -d "$CLONE/.git" ]; then
     git clone --quiet --branch main "$REPO_URL" "$CLONE"
 fi
+# A clone remembers the source it was made from. Re-point it every run, or a
+# node cloned from the forge keeps asking the forge.
+git -C "$CLONE" remote set-url origin "$REPO_URL"
 git -C "$CLONE" fetch --quiet origin main
 git -C "$CLONE" checkout --quiet --detach origin/main
 
