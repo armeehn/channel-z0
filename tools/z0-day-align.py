@@ -81,6 +81,7 @@ import argparse
 import datetime as dt
 import json
 import os
+import re
 import shutil
 import sqlite3
 import subprocess
@@ -101,6 +102,12 @@ UPLINK = "z0-uplink"
 # station interval that lands at 06:00:00, and the block's last instruction is
 # COLOUR BARS with `pad_until: '06:00'` + `tomorrow: true`).
 DAY_START_HOUR = 6
+
+# .NET stores a DateTime and a TimeSpan to 100 ns; Python's datetime stops at
+# 1 µs. Seam arithmetic is done in whole ticks so nothing is rounded.
+TICKS_PER_SEC = 10_000_000
+TICK_DIGITS = 7
+SPAN_SHAPE = re.compile(r"^(\d+):(\d\d):(\d\d)(?:\.(\d+))?$")
 
 WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday",
             "saturday", "sunday"]
@@ -204,6 +211,73 @@ def cut_boundary(now_local, frontier_local):
         latest -= dt.timedelta(days=1)
     first = next_boundary(now_local)
     return max(latest, first)
+
+
+def frac_ticks(digits):
+    """'6478108' → 6478108, '5' → 5000000, '' → 0."""
+    return int((digits or "").ljust(TICK_DIGITS, "0")[:TICK_DIGITS])
+
+
+def stamp_ticks(text):
+    """'2026-11-12 12:55:59.6478108' (UTC, as the DB stores it) → ticks."""
+    whole, _, frac = text.partition(".")
+    stamp = dt.datetime.strptime(whole, "%Y-%m-%d %H:%M:%S")
+    secs = int((stamp - dt.datetime(1970, 1, 1)).total_seconds())
+    return secs * TICKS_PER_SEC + frac_ticks(frac)
+
+
+def span_ticks(text):
+    """'00:11:47.4000000' → ticks, or None for a shape this does not read."""
+    m = SPAN_SHAPE.match(text or "")
+    if not m:
+        return None
+    hours, minutes, secs, frac = m.groups()
+    whole = int(hours) * 3600 + int(minutes) * 60 + int(secs)
+    return whole * TICKS_PER_SEC + frac_ticks(frac)
+
+
+def span_text(ticks):
+    """ticks → '00:04:00.3521892', or '00:06:00' when there is no fraction."""
+    whole, frac = divmod(ticks, TICKS_PER_SEC)
+    text = f"{whole // 3600:02}:{whole % 3600 // 60:02}:{whole % 60:02}"
+    return text + (f".{frac:0{TICK_DIGITS}}" if frac else "")
+
+
+def trim_straddler(cur, boundary_utc):
+    """End an item that runs across the seam ON the seam. Returns its title,
+    or None when nothing crosses.
+
+    Normally nothing does: COLOUR BARS pads to 06:00 exactly. But the items
+    already built keep the clock they were built on, so after a change of
+    station zone the old day ends at 06:00 OLD time while the seam is 06:00
+    NEW time, and whatever is airing then runs across it:
+
+        old clock   …ALL-NIGHT SHOW ─────────────┤ bars ├ 06:00 PST
+        seam                        06:00 MST ┃
+        kept        …ALL-NIGHT SHOW ──────────┤   (OutPoint pulled in)
+        rebuilt                               ┃ SIGN-ON, the new day…
+
+    Left alone, that item overlaps the first minutes of the rebuilt block.
+    """
+    row = cur.execute(
+        "select Id, Start, InPoint, CustomTitle from PlayoutItem "
+        "where Start < ? and Finish > ? order by Start desc limit 1",
+        (boundary_utc, boundary_utc)).fetchone()
+    if not row:
+        return None
+    item_id, start, in_point, title = row
+
+    played = stamp_ticks(boundary_utc) - stamp_ticks(start)
+    in_ticks = span_ticks(in_point)
+    if played <= 0:
+        return None
+    if in_ticks is None:
+        die(f"item {item_id} crosses the seam with an InPoint this cannot "
+            f"read ({in_point!r}); refusing to cut over it")
+
+    cur.execute("update PlayoutItem set Finish = ?, OutPoint = ? where Id = ?",
+                (boundary_utc, span_text(in_ticks + played), item_id))
+    return title or f"item {item_id}"
 
 
 def frontier(conn):
@@ -435,6 +509,10 @@ def _stop_edit_start(args, db_path, schedule, staged, backup, boundary):
             "that has nothing to keep")
     guide_group, last_local, last_title = row
     log(f"  last item kept: {last_local}  {last_title}  (guide group {guide_group})")
+
+    trimmed = trim_straddler(cur, boundary_utc)
+    if trimmed:
+        log(f"  trimmed to the seam: {trimmed} (it ran across it)")
 
     cur.execute("delete from PlayoutItem where Start >= ?", (boundary_utc,))
     n_items = cur.rowcount

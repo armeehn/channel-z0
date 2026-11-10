@@ -68,6 +68,8 @@ jobs:
       - run: python3 tools/test_promos_fetch.py
       # The node's tool copy must follow a source it can read without a login.
       - run: bash tools/test-tools-sync.sh
+      # The station clock is the station's zone; a seam cut leaves no overlap.
+      - run: python3 tools/test_station_clock.py
 
   relay:
     name: comment relay

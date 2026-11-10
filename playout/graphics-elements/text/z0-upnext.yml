@@ -98,10 +98,10 @@ include_fonts_from: "/media/branding/fonts"
 # `format_datetime(value, timeZoneId, format)` is the function the graphics
 # engine actually imports, and it takes an IANA zone. Naming the zone is the
 # point: Epg[n].Start is a DateTimeOffset, and anything that formats it
-# implicitly formats it in the CONTAINER's timezone. vile's ErsatzTV runs on
-# TZ=America/Los_Angeles, which is the right hour for Kelowna today and would
-# quietly be the wrong one if that variable were ever changed. The station is
-# in Kelowna; say so here.
+# implicitly formats it in the CONTAINER's timezone. That zone is set in
+# compose.yml and has been wrong before (a US Pacific zone, an hour off
+# Kelowna every winter since BC stopped changing clocks). The station is in
+# Kelowna; say so here.
 text: |
   {{ if Epg.size > 1 }}[t]{{ format_datetime Epg[1].Start "America/Vancouver" "h:mm tt" }}[/t]{{ end }}
   {{ if Epg.size > 1 }}{{ Epg[1].Title | string.upcase }}{{ end }}
