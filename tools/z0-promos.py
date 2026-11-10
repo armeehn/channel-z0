@@ -11,7 +11,7 @@ station runs: its own. Two kinds, two folders, two collections
                       /v1/software) plus tools/z0-promos-extra.yml for
                       anything public that the API does not list yet
 
-    z0-promos.py fetch  --feed DIR                     # on x: store + API → DIR
+    z0-promos.py fetch  --feed DIR                     # on x: Storefront API + api.hq → DIR
     z0-promos.py render --feed DIR --out DIR [--kind merch|projects|all]
                         [--extra z0-promos-extra.yml] [--seed N] [--jobs J]
 
@@ -55,6 +55,29 @@ def _load_engine():
 
 SHOP_URL = "https://shop.ripostelabs.xyz"
 API_URL = "https://api.hq.ripostelabs.xyz/v1"
+USER_AGENT = "z0-promos/1"
+HTTP_TIMEOUT = 30
+
+# The shop is read through the Storefront API, which answers without a token.
+# The theme route /products.json is not a machine route: since 2026-11-08
+# Shopify's bot protection answers it with `429 local_rate_limited` on the
+# first request from any unsigned client.
+STOREFRONT_VERSION = "2026-10"
+STOREFRONT_URL = SHOP_URL + "/api/" + STOREFRONT_VERSION + "/graphql.json"
+STOREFRONT_PAGE = 50
+PRODUCTS_QUERY = """
+query Products($first: Int!, $after: String) {
+  products(first: $first, after: $after) {
+    pageInfo { hasNextPage endCursor }
+    nodes {
+      handle
+      title
+      priceRange { minVariantPrice { amount } maxVariantPrice { amount } }
+      images(first: 1) { nodes { url } }
+    }
+  }
+}
+"""
 MERCH_SECS = 15
 PROJECT_SECS = 18
 FRAME_W = 854
@@ -80,19 +103,66 @@ MERCH_LINES = [
 
 # ══ Feed ═════════════════════════════════════════════════════════════════════
 
+def http_read(url, body=None):
+    headers = {"User-Agent": USER_AGENT}
+    if body is not None:
+        headers["Content-Type"] = "application/json"
+
+    req = urllib.request.Request(url, data=body, headers=headers)
+    with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as r:
+        return r.read()
+
+
+def storefront(query, variables):
+    body = json.dumps({"query": query, "variables": variables}).encode()
+    answer = json.loads(http_read(STOREFRONT_URL, body))
+
+    # GraphQL reports a refused query as 200 with an `errors` list.
+    if answer.get("errors") or "data" not in answer:
+        raise RuntimeError(f"Storefront API refused the query: {answer.get('errors')}")
+    return answer["data"]
+
+
+def feed_product(node):
+    """One Storefront node in the shape the renderer reads from products.json:
+    handle, title, variants[].price, images[].src. The price range stands in
+    for the variant list; price_of() only needs the lowest price and whether
+    there is more than one.
+
+        28.0 … 34.0  →  variants [{price: 28.0}, {price: 34.0}]  →  "from CA$28"
+    """
+    price = node["priceRange"]
+    amounts = [price["minVariantPrice"]["amount"], price["maxVariantPrice"]["amount"]]
+    variants = [{"price": a} for a in sorted(set(amounts), key=float)]
+    images = [{"src": i["url"]} for i in node["images"]["nodes"]]
+    return {"handle": node["handle"], "title": node["title"],
+            "variants": variants, "images": images}
+
+
+def shop_products():
+    products, cursor = [], None
+    while True:
+        page = storefront(PRODUCTS_QUERY, {"first": STOREFRONT_PAGE, "after": cursor})["products"]
+        products.extend(feed_product(n) for n in page["nodes"])
+
+        if not page["pageInfo"]["hasNextPage"]:
+            return products
+        cursor = page["pageInfo"]["endCursor"]
+
+
 def fetch(feed_dir):
     os.makedirs(os.path.join(feed_dir, "images"), exist_ok=True)
 
     def get(url, out):
-        req = urllib.request.Request(url, headers={"User-Agent": "z0-promos/1"})
-        with urllib.request.urlopen(req, timeout=30) as r, open(out, "wb") as fh:
-            fh.write(r.read())
+        with open(out, "wb") as fh:
+            fh.write(http_read(url))
 
-    get(SHOP_URL + "/products.json?limit=250", os.path.join(feed_dir, "products.json"))
+    products = shop_products()
+    with open(os.path.join(feed_dir, "products.json"), "w", encoding="utf-8") as fh:
+        json.dump({"products": products}, fh, ensure_ascii=False)
+
     get(API_URL + "/projects", os.path.join(feed_dir, "projects.json"))
     get(API_URL + "/software", os.path.join(feed_dir, "software.json"))
-    with open(os.path.join(feed_dir, "products.json"), encoding="utf-8") as fh:
-        products = json.load(fh)["products"]
     n = 0
     for p in products:
         if not p.get("images"):

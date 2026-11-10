@@ -64,6 +64,8 @@ jobs:
       - run: python3 tools/test_rebrand.py
       # The drift monitor must name itself to the tower (Cloudflare 403s urllib's default).
       - run: python3 tools/test_drift_reset.py
+      # The promo feed must come from the Storefront API (Shopify 429s /products.json).
+      - run: python3 tools/test_promos_fetch.py
 
   relay:
     name: comment relay
