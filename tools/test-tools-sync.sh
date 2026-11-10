@@ -33,6 +33,13 @@ case "$default_url" in
 esac
 
 # ── REPOINT ──────────────────────────────────────────────────────────────────
+# The sync itself needs rsync, which the forge's runner image does not carry.
+if ! command -v rsync >/dev/null 2>&1; then
+  [ "$fails" -eq 0 ] || { echo "test-tools-sync: $fails failure(s)"; exit 1; }
+  echo "ok: default source is public (no rsync on PATH — REPOINT skipped)"
+  exit 0
+fi
+
 # A source repository with one tool in it, and a clone whose origin is dead.
 git init -q -b main "$SCRATCH/source"
 mkdir -p "$SCRATCH/source/tools" "$SCRATCH/source/lists" "$SCRATCH/source/playout"
